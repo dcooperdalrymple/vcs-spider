@@ -1,0 +1,1260 @@
+------- FILE spider.asm LEVEL 1 PASS 1
+      1  0000 ????						; 8 Legs of Love game for Atari VCS/2600
+      2  0000 ????						; Created by D Cooper Dalrymple 2018 - dcdalrymple.com
+      3  0000 ????						; Licensed under GNU LGPL V3.0
+      4  0000 ????						; Last revision: August 28th, 2018
+      5  0000 ????
+      6  0000 ????				      processor	6502
+------- FILE vcs.h LEVEL 2 PASS 1
+      0  0000 ????				      include	"vcs.h"
+      1  0000 ????						; VCS.H
+      2  0000 ????						; Version 1.05, 13/November/2003
+      3  0000 ????
+      4  0000 ????	       00 69	   VERSION_VCS =	105
+      5  0000 ????
+      6  0000 ????						; THIS IS A PRELIMINARY RELEASE OF *THE* "STANDARD" VCS.H
+      7  0000 ????						; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
+      8  0000 ????						; PLEASE DO *NOT* REDISTRIBUTE THIS FILE!
+      9  0000 ????						;
+     10  0000 ????						; This file defines hardware registers and memory mapping for the
+     11  0000 ????						; Atari 2600. It is distributed as a companion machine-specific support package
+     12  0000 ????						; for the DASM compiler. Updates to this file, DASM, and associated tools are
+     13  0000 ????						; available at at http://www.atari2600.org/dasm
+     14  0000 ????						;
+     15  0000 ????						; Many thanks to the original author(s) of this file, and to everyone who has
+     16  0000 ????						; contributed to understanding the Atari 2600.  If you take issue with the
+     17  0000 ????						; contents, or naming of registers, please write to me (atari2600@taswegian.com)
+     18  0000 ????						; with your views.  Please contribute, if you think you can improve this
+     19  0000 ????						; file!
+     20  0000 ????						;
+     21  0000 ????						; Latest Revisions...
+     22  0000 ????						; 1.05  13/NOV/2003	  - Correction to 1.04 - now functions as requested by MR.
+     23  0000 ????						;			  - Added VERSION_VCS equate (which will reflect 100x version #)
+     24  0000 ????						;			    This will allow conditional code to verify VCS.H being
+     25  0000 ????						;			    used for code assembly.
+     26  0000 ????						; 1.04  12/NOV/2003	 Added TIA_BASE_WRITE_ADDRESS and TIA_BASE_READ_ADDRESS for
+     27  0000 ????						;			 convenient disassembly/reassembly compatibility for hardware
+     28  0000 ????						;			 mirrored reading/writing differences.	This is more a
+     29  0000 ????						;			 readability issue, and binary compatibility with disassembled
+     30  0000 ????						;			 and reassembled sources.  Per Manuel Rotschkar's suggestion.
+     31  0000 ????						; 1.03  12/MAY/2003	 Added SEG segment at end of file to fix old-code compatibility
+     32  0000 ????						;			 which was broken by the use of segments in this file, as
+     33  0000 ????						;			 reported by Manuel Polik on [stella] 11/MAY/2003
+     34  0000 ????						; 1.02  22/MAR/2003	 Added TIMINT($285)
+     35  0000 ????						; 1.01				Constant offset added to allow use for 3F-style bankswitching
+     36  0000 ????						;						 - define TIA_BASE_ADDRESS as $40 for Tigervision carts, otherwise
+     37  0000 ????						;						   it is safe to leave it undefined, and the base address will
+     38  0000 ????						;						   be set to 0.  Thanks to Eckhard Stolberg for the suggestion.
+     39  0000 ????						;			    Note, may use -DLABEL=EXPRESSION to define TIA_BASE_ADDRESS
+     40  0000 ????						;			  - register definitions are now generated through assignment
+     41  0000 ????						;			    in uninitialised segments.	This allows a changeable base
+     42  0000 ????						;			    address architecture.
+     43  0000 ????						; 1.0	22/MAR/2003		Initial release
+     44  0000 ????
+     45  0000 ????
+     46  0000 ????						;-------------------------------------------------------------------------------
+     47  0000 ????
+     48  0000 ????						; TIA_BASE_ADDRESS
+     49  0000 ????						; The TIA_BASE_ADDRESS defines the base address of access to TIA registers.
+     50  0000 ????						; Normally 0, the base address should (externally, before including this file)
+     51  0000 ????						; be set to $40 when creating 3F-bankswitched (and other?) cartridges.
+     52  0000 ????						; The reason is that this bankswitching scheme treats any access to locations
+     53  0000 ????						; < $40 as a bankswitch.
+     54  0000 ????
+     55  0000 ????				      IFNCONST	TIA_BASE_ADDRESS
+     56  0000 ????	       00 00	   TIA_BASE_ADDRESS =	0
+     57  0000 ????				      ENDIF
+     58  0000 ????
+     59  0000 ????						; Note: The address may be defined on the command-line using the -D switch, eg:
+     60  0000 ????						; dasm.exe code.asm -DTIA_BASE_ADDRESS=$40 -f3 -v5 -ocode.bin
+     61  0000 ????						; *OR* by declaring the label before including this file, eg:
+     62  0000 ????						; TIA_BASE_ADDRESS = $40
+     63  0000 ????						;   include "vcs.h"
+     64  0000 ????
+     65  0000 ????						; Alternate read/write address capability - allows for some disassembly compatibility
+     66  0000 ????						; usage ; to allow reassembly to binary perfect copies).  This is essentially catering
+     67  0000 ????						; for the mirrored ROM hardware registers.
+     68  0000 ????
+     69  0000 ????						; Usage: As per above, define the TIA_BASE_READ_ADDRESS and/or TIA_BASE_WRITE_ADDRESS
+     70  0000 ????						; using the -D command-line switch, as required.  If the addresses are not defined,
+     71  0000 ????						; they defaut to the TIA_BASE_ADDRESS.
+     72  0000 ????
+     73  0000 ????				      IFNCONST	TIA_BASE_READ_ADDRESS
+     74  0000 ????	       00 00	   TIA_BASE_READ_ADDRESS =	TIA_BASE_ADDRESS
+     75  0000 ????				      ENDIF
+     76  0000 ????
+     77  0000 ????				      IFNCONST	TIA_BASE_WRITE_ADDRESS
+     78  0000 ????	       00 00	   TIA_BASE_WRITE_ADDRESS =	TIA_BASE_ADDRESS
+     79  0000 ????				      ENDIF
+     80  0000 ????
+     81  0000 ????						;-------------------------------------------------------------------------------
+     82  0000 ????
+     83 U0000 ????				      SEG.U	TIA_REGISTERS_WRITE
+     84 U0000					      ORG	TIA_BASE_WRITE_ADDRESS
+     85 U0000
+     86 U0000							; DO NOT CHANGE THE RELATIVE ORDERING OF REGISTERS!
+     87 U0000
+     88 U0000		       00	   VSYNC      ds	1	; $00	 0000 00x0   Vertical Sync Set-Clear
+     89 U0001		       00	   VBLANK     ds	1	; $01	 xx00 00x0   Vertical Blank Set-Clear
+     90 U0002		       00	   WSYNC      ds	1	; $02	 ---- ----   Wait for Horizontal Blank
+     91 U0003		       00	   RSYNC      ds	1	; $03	 ---- ----   Reset Horizontal Sync Counter
+     92 U0004		       00	   NUSIZ0     ds	1	; $04	 00xx 0xxx   Number-Size player/missle 0
+     93 U0005		       00	   NUSIZ1     ds	1	; $05	 00xx 0xxx   Number-Size player/missle 1
+     94 U0006		       00	   COLUP0     ds	1	; $06	 xxxx xxx0   Color-Luminance Player 0
+     95 U0007		       00	   COLUP1     ds	1	; $07	 xxxx xxx0   Color-Luminance Player 1
+     96 U0008		       00	   COLUPF     ds	1	; $08	 xxxx xxx0   Color-Luminance Playfield
+     97 U0009		       00	   COLUBK     ds	1	; $09	 xxxx xxx0   Color-Luminance Background
+     98 U000a		       00	   CTRLPF     ds	1	; $0A	 00xx 0xxx   Control Playfield, Ball, Collisions
+     99 U000b		       00	   REFP0      ds	1	; $0B	 0000 x000   Reflection Player 0
+    100 U000c		       00	   REFP1      ds	1	; $0C	 0000 x000   Reflection Player 1
+    101 U000d		       00	   PF0	      ds	1	; $0D	 xxxx 0000   Playfield Register Byte 0
+    102 U000e		       00	   PF1	      ds	1	; $0E	 xxxx xxxx   Playfield Register Byte 1
+    103 U000f		       00	   PF2	      ds	1	; $0F	 xxxx xxxx   Playfield Register Byte 2
+    104 U0010		       00	   RESP0      ds	1	; $10	 ---- ----   Reset Player 0
+    105 U0011		       00	   RESP1      ds	1	; $11	 ---- ----   Reset Player 1
+    106 U0012		       00	   RESM0      ds	1	; $12	 ---- ----   Reset Missle 0
+    107 U0013		       00	   RESM1      ds	1	; $13	 ---- ----   Reset Missle 1
+    108 U0014		       00	   RESBL      ds	1	; $14	 ---- ----   Reset Ball
+    109 U0015		       00	   AUDC0      ds	1	; $15	 0000 xxxx   Audio Control 0
+    110 U0016		       00	   AUDC1      ds	1	; $16	 0000 xxxx   Audio Control 1
+    111 U0017		       00	   AUDF0      ds	1	; $17	 000x xxxx   Audio Frequency 0
+    112 U0018		       00	   AUDF1      ds	1	; $18	 000x xxxx   Audio Frequency 1
+    113 U0019		       00	   AUDV0      ds	1	; $19	 0000 xxxx   Audio Volume 0
+    114 U001a		       00	   AUDV1      ds	1	; $1A	 0000 xxxx   Audio Volume 1
+    115 U001b		       00	   GRP0       ds	1	; $1B	 xxxx xxxx   Graphics Register Player 0
+    116 U001c		       00	   GRP1       ds	1	; $1C	 xxxx xxxx   Graphics Register Player 1
+    117 U001d		       00	   ENAM0      ds	1	; $1D	 0000 00x0   Graphics Enable Missle 0
+    118 U001e		       00	   ENAM1      ds	1	; $1E	 0000 00x0   Graphics Enable Missle 1
+    119 U001f		       00	   ENABL      ds	1	; $1F	 0000 00x0   Graphics Enable Ball
+    120 U0020		       00	   HMP0       ds	1	; $20	 xxxx 0000   Horizontal Motion Player 0
+    121 U0021		       00	   HMP1       ds	1	; $21	 xxxx 0000   Horizontal Motion Player 1
+    122 U0022		       00	   HMM0       ds	1	; $22	 xxxx 0000   Horizontal Motion Missle 0
+    123 U0023		       00	   HMM1       ds	1	; $23	 xxxx 0000   Horizontal Motion Missle 1
+    124 U0024		       00	   HMBL       ds	1	; $24	 xxxx 0000   Horizontal Motion Ball
+    125 U0025		       00	   VDELP0     ds	1	; $25	 0000 000x   Vertical Delay Player 0
+    126 U0026		       00	   VDELP1     ds	1	; $26	 0000 000x   Vertical Delay Player 1
+    127 U0027		       00	   VDELBL     ds	1	; $27	 0000 000x   Vertical Delay Ball
+    128 U0028		       00	   RESMP0     ds	1	; $28	 0000 00x0   Reset Missle 0 to Player 0
+    129 U0029		       00	   RESMP1     ds	1	; $29	 0000 00x0   Reset Missle 1 to Player 1
+    130 U002a		       00	   HMOVE      ds	1	; $2A	 ---- ----   Apply Horizontal Motion
+    131 U002b		       00	   HMCLR      ds	1	; $2B	 ---- ----   Clear Horizontal Move Registers
+    132 U002c		       00	   CXCLR      ds	1	; $2C	 ---- ----   Clear Collision Latches
+    133 U002d
+    134 U002d							;-------------------------------------------------------------------------------
+    135 U002d
+    136 U0000 ????				      SEG.U	TIA_REGISTERS_READ
+    137 U0000					      ORG	TIA_BASE_READ_ADDRESS
+    138 U0000
+    139 U0000							;											bit 7	 bit 6
+    140 U0000		       00	   CXM0P      ds	1	; $00	     xx00 0000	     Read Collision  M0-P1   M0-P0
+    141 U0001		       00	   CXM1P      ds	1	; $01	     xx00 0000			     M1-P0   M1-P1
+    142 U0002		       00	   CXP0FB     ds	1	; $02	     xx00 0000			     P0-PF   P0-BL
+    143 U0003		       00	   CXP1FB     ds	1	; $03	     xx00 0000			     P1-PF   P1-BL
+    144 U0004		       00	   CXM0FB     ds	1	; $04	     xx00 0000			     M0-PF   M0-BL
+    145 U0005		       00	   CXM1FB     ds	1	; $05	     xx00 0000			     M1-PF   M1-BL
+    146 U0006		       00	   CXBLPF     ds	1	; $06	     x000 0000			     BL-PF   -----
+    147 U0007		       00	   CXPPMM     ds	1	; $07	     xx00 0000			     P0-P1   M0-M1
+    148 U0008		       00	   INPT0      ds	1	; $08	     x000 0000	     Read Pot Port 0
+    149 U0009		       00	   INPT1      ds	1	; $09	     x000 0000	     Read Pot Port 1
+    150 U000a		       00	   INPT2      ds	1	; $0A	     x000 0000	     Read Pot Port 2
+    151 U000b		       00	   INPT3      ds	1	; $0B	     x000 0000	     Read Pot Port 3
+    152 U000c		       00	   INPT4      ds	1	; $0C		x000 0000	 Read Input (Trigger) 0
+    153 U000d		       00	   INPT5      ds	1	; $0D		x000 0000	 Read Input (Trigger) 1
+    154 U000e
+    155 U000e							;-------------------------------------------------------------------------------
+    156 U000e
+    157 U0000 ????				      SEG.U	RIOT
+    158 U0280					      ORG	$280
+    159 U0280
+    160 U0280							; RIOT MEMORY MAP
+    161 U0280
+    162 U0280		       00	   SWCHA      ds	1	; $280      Port A data register for joysticks:
+    163 U0281							;			Bits 4-7 for player 1.  Bits 0-3 for player 2.
+    164 U0281
+    165 U0281		       00	   SWACNT     ds	1	; $281      Port A data direction register (DDR)
+    166 U0282		       00	   SWCHB      ds	1	; $282		Port B data (console switches)
+    167 U0283		       00	   SWBCNT     ds	1	; $283      Port B DDR
+    168 U0284		       00	   INTIM      ds	1	; $284		Timer output
+    169 U0285
+    170 U0285		       00	   TIMINT     ds	1	; $285
+    171 U0286
+    172 U0286							; Unused/undefined registers ($285-$294)
+    173 U0286
+    174 U0286		       00		      ds	1	; $286
+    175 U0287		       00		      ds	1	; $287
+    176 U0288		       00		      ds	1	; $288
+    177 U0289		       00		      ds	1	; $289
+    178 U028a		       00		      ds	1	; $28A
+    179 U028b		       00		      ds	1	; $28B
+    180 U028c		       00		      ds	1	; $28C
+    181 U028d		       00		      ds	1	; $28D
+    182 U028e		       00		      ds	1	; $28E
+    183 U028f		       00		      ds	1	; $28F
+    184 U0290		       00		      ds	1	; $290
+    185 U0291		       00		      ds	1	; $291
+    186 U0292		       00		      ds	1	; $292
+    187 U0293		       00		      ds	1	; $293
+    188 U0294
+    189 U0294		       00	   TIM1T      ds	1	; $294		set 1 clock interval
+    190 U0295		       00	   TIM8T      ds	1	; $295      set 8 clock interval
+    191 U0296		       00	   TIM64T     ds	1	; $296      set 64 clock interval
+    192 U0297		       00	   T1024T     ds	1	; $297      set 1024 clock interval
+    193 U0298
+    194 U0298							;-------------------------------------------------------------------------------
+    195 U0298							; The following required for back-compatibility with code which does not use
+    196 U0298							; segments.
+    197 U0298
+    198  0000 ????				      SEG
+    199  0000 ????
+    200  0000 ????						; EOF
+------- FILE spider.asm
+------- FILE macro.h LEVEL 2 PASS 1
+      0  0000 ????				      include	"macro.h"
+      1  0000 ????						; MACRO.H
+      2  0000 ????						; Version 1.06, 3/SEPTEMBER/2004
+      3  0000 ????
+      4  0000 ????	       00 6a	   VERSION_MACRO =	106
+      5  0000 ????
+      6  0000 ????						;
+      7  0000 ????						; THIS FILE IS EXPLICITLY SUPPORTED AS A DASM-PREFERRED COMPANION FILE
+      8  0000 ????						; PLEASE DO *NOT* REDISTRIBUTE MODIFIED VERSIONS OF THIS FILE!
+      9  0000 ????						;
+     10  0000 ????						; This file defines DASM macros useful for development for the Atari 2600.
+     11  0000 ????						; It is distributed as a companion machine-specific support package
+     12  0000 ????						; for the DASM compiler. Updates to this file, DASM, and associated tools are
+     13  0000 ????						; available at at http://www.atari2600.org/dasm
+     14  0000 ????						;
+     15  0000 ????						; Many thanks to the people who have contributed.  If you take issue with the
+     16  0000 ????						; contents, or would like to add something, please write to me
+     17  0000 ????						; (atari2600@taswegian.com) with your contribution.
+     18  0000 ????						;
+     19  0000 ????						; Latest Revisions...
+     20  0000 ????						;
+     21  0000 ????						; 1.06  03/SEP/2004	 - nice revision of VERTICAL_BLANK (Edwin Blink)
+     22  0000 ????						; 1.05  14/NOV/2003	 - Added VERSION_MACRO equate (which will reflect 100x version #)
+     23  0000 ????						;			   This will allow conditional code to verify MACRO.H being
+     24  0000 ????						;			   used for code assembly.
+     25  0000 ????						; 1.04  13/NOV/2003	 - SET_POINTER macro added (16-bit address load)
+     26  0000 ????						;
+     27  0000 ????						; 1.03  23/JUN/2003	 - CLEAN_START macro added - clears TIA, RAM, registers
+     28  0000 ????						;
+     29  0000 ????						; 1.02  14/JUN/2003	 - VERTICAL_SYNC macro added
+     30  0000 ????						;			   (standardised macro for vertical synch code)
+     31  0000 ????						; 1.01  22/MAR/2003	 - SLEEP macro added.
+     32  0000 ????						;			 - NO_ILLEGAL_OPCODES switch implemented
+     33  0000 ????						; 1.0	22/MAR/2003		Initial release
+     34  0000 ????
+     35  0000 ????						; Note: These macros use illegal opcodes.  To disable illegal opcode usage,
+     36  0000 ????						;   define the symbol NO_ILLEGAL_OPCODES (-DNO_ILLEGAL_OPCODES=1 on command-line).
+     37  0000 ????						;   If you do not allow illegal opcode usage, you must include this file
+     38  0000 ????						;   *after* including VCS.H (as the non-illegal opcodes access hardware
+     39  0000 ????						;   registers and require them to be defined first).
+     40  0000 ????
+     41  0000 ????						; Available macros...
+     42  0000 ????						;   SLEEP n		 - sleep for n cycles
+     43  0000 ????						;   VERTICAL_SYNC	 - correct 3 scanline vertical synch code
+     44  0000 ????						;   CLEAN_START	 - set machine to known state on startup
+     45  0000 ????						;   SET_POINTER	 - load a 16-bit absolute to a 16-bit variable
+     46  0000 ????
+     47  0000 ????						;-------------------------------------------------------------------------------
+     48  0000 ????						; SLEEP duration
+     49  0000 ????						; Original author: Thomas Jentzsch
+     50  0000 ????						; Inserts code which takes the specified number of cycles to execute.	This is
+     51  0000 ????						; useful for code where precise timing is required.
+     52  0000 ????						; ILLEGAL-OPCODE VERSION DOES NOT AFFECT FLAGS OR REGISTERS.
+     53  0000 ????						; LEGAL OPCODE VERSION MAY AFFECT FLAGS
+     54  0000 ????						; Uses illegal opcode (DASM 2.20.01 onwards).
+     55  0000 ????
+     56  0000 ????				      MAC	sleep
+     57  0000 ????			   .CYCLES    SET	{1}
+     58  0000 ????
+     59  0000 ????				      IF	.CYCLES < 2
+     60  0000 ????				      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+     61  0000 ????				      ERR
+     62  0000 ????				      ENDIF
+     63  0000 ????
+     64  0000 ????				      IF	.CYCLES & 1
+     65  0000 ????				      IFNCONST	NO_ILLEGAL_OPCODES
+     66  0000 ????				      nop	0
+     67  0000 ????				      ELSE
+     68  0000 ????				      bit	VSYNC
+     69  0000 ????				      ENDIF
+     70  0000 ????			   .CYCLES    SET	.CYCLES - 3
+     71  0000 ????				      ENDIF
+     72  0000 ????
+     73  0000 ????				      REPEAT	.CYCLES / 2
+     74  0000 ????				      nop
+     75  0000 ????				      REPEND
+     76  0000 ????				      ENDM		;usage: SLEEP n (n>1)
+     77  0000 ????
+     78  0000 ????						;-------------------------------------------------------------------------------
+     79  0000 ????						; VERTICAL_SYNC
+     80  0000 ????						; revised version by Edwin Blink -- saves bytes!
+     81  0000 ????						; Inserts the code required for a proper 3 scanline vertical sync sequence
+     82  0000 ????						; Note: Alters the accumulator
+     83  0000 ????
+     84  0000 ????						; OUT: A = 0
+     85  0000 ????
+     86  0000 ????				      MAC	vertical_sync
+     87  0000 ????				      lda	#%1110	; each '1' bits generate a VSYNC ON line (bits 1..3)
+     88  0000 ????			   .VSLP1     sta	WSYNC	; 1st '0' bit resets Vsync, 2nd '0' bit exit loop
+     89  0000 ????				      sta	VSYNC
+     90  0000 ????				      lsr
+     91  0000 ????				      bne	.VSLP1	; branch until VYSNC has been reset
+     92  0000 ????				      ENDM
+     93  0000 ????
+     94  0000 ????						;-------------------------------------------------------------------------------
+     95  0000 ????						; CLEAN_START
+     96  0000 ????						; Original author: Andrew Davie
+     97  0000 ????						; Standardised start-up code, clears stack, all TIA registers and RAM to 0
+     98  0000 ????						; Sets stack pointer to $FF, and all registers to 0
+     99  0000 ????						; Sets decimal mode off, sets interrupt flag (kind of un-necessary)
+    100  0000 ????						; Use as very first section of code on boot (ie: at reset)
+    101  0000 ????						; Code written to minimise total ROM usage - uses weird 6502 knowledge :)
+    102  0000 ????
+    103  0000 ????				      MAC	clean_start
+    104  0000 ????				      sei
+    105  0000 ????				      cld
+    106  0000 ????
+    107  0000 ????				      ldx	#0
+    108  0000 ????				      txa
+    109  0000 ????				      tay
+    110  0000 ????			   .CLEAR_STACK dex
+    111  0000 ????				      txs
+    112  0000 ????				      pha
+    113  0000 ????				      bne	.CLEAR_STACK	; SP=$FF, X = A = Y = 0
+    114  0000 ????
+    115  0000 ????				      ENDM
+    116  0000 ????
+    117  0000 ????						;-------------------------------------------------------
+    118  0000 ????						; SET_POINTER
+    119  0000 ????						; Original author: Manuel Rotschkar
+    120  0000 ????						;
+    121  0000 ????						; Sets a 2 byte RAM pointer to an absolute address.
+    122  0000 ????						;
+    123  0000 ????						; Usage: SET_POINTER pointer, address
+    124  0000 ????						; Example: SET_POINTER SpritePTR, SpriteData
+    125  0000 ????						;
+    126  0000 ????						; Note: Alters the accumulator, NZ flags
+    127  0000 ????						; IN 1: 2 byte RAM location reserved for pointer
+    128  0000 ????						; IN 2: absolute address
+    129  0000 ????
+    130  0000 ????				      MAC	set_pointer
+    131  0000 ????			   .POINTER   SET	{1}
+    132  0000 ????			   .ADDRESS   SET	{2}
+    133  0000 ????
+    134  0000 ????				      LDA	#<.ADDRESS	; Get Lowbyte of Address
+    135  0000 ????				      STA	.POINTER	; Store in pointer
+    136  0000 ????				      LDA	#>.ADDRESS	; Get Hibyte of Address
+    137  0000 ????				      STA	.POINTER+1	; Store in pointer+1
+    138  0000 ????
+    139  0000 ????				      ENDM
+    140  0000 ????
+    141  0000 ????						;-------------------------------------------------------
+    142  0000 ????						; BOUNDARY byte#
+    143  0000 ????						; Original author: Denis Debro (borrowed from Bob Smith / Thomas)
+    144  0000 ????						;
+    145  0000 ????						; Push data to a certain position inside a page and keep count of how
+    146  0000 ????						; many free bytes the programmer will have.
+    147  0000 ????						;
+    148  0000 ????						; eg: BOUNDARY 5    ; position at byte #5 in page
+    149  0000 ????
+    150  0000 ????			   .FREE_BYTES SET	0
+    151  0000 ????				      MAC	boundary
+    152  0000 ????				      REPEAT	256
+    153  0000 ????				      IF	<. % {1} = 0
+    154  0000 ????				      MEXIT
+    155  0000 ????				      ELSE
+    156  0000 ????			   .FREE_BYTES SET	.FREE_BYTES + 1
+    157  0000 ????				      .byte	$00
+    158  0000 ????				      ENDIF
+    159  0000 ????				      REPEND
+    160  0000 ????				      ENDM
+    161  0000 ????
+    162  0000 ????
+    163  0000 ????						; EOF
+------- FILE spider.asm
+      9  0000 ????
+     10  0000 ????				      SEG
+     11  f000					      ORG	$F000
+     12  f000
+     13  f000				   Reset
+     14  f000
+     15  f000				   StartOfFrame
+     16  f000
+     17  f000							; Start of vertical blank processing
+     18  f000
+     19  f000		       a9 00		      lda	#0
+     20  f002		       85 01		      sta	VBLANK
+     21  f004
+     22  f004		       a9 02		      lda	#2
+     23  f006		       85 00		      sta	VSYNC
+     24  f008
+     25  f008							; 3 scanlines of VSYNCH signal
+     26  f008
+     27  f008		       85 02		      sta	WSYNC
+     28  f00a		       85 02		      sta	WSYNC
+     29  f00c		       85 02		      sta	WSYNC
+     30  f00e
+     31  f00e		       a9 00		      lda	#0
+     32  f010		       85 00		      sta	VSYNC
+     33  f012
+     34  f012							; 37 scanlines of vertical blank
+     35  f012
+     36  f012		       85 02		      sta	WSYNC
+     37  f014		       85 02		      sta	WSYNC
+     38  f016		       85 02		      sta	WSYNC
+     39  f018		       85 02		      sta	WSYNC
+     40  f01a		       85 02		      sta	WSYNC
+     41  f01c		       85 02		      sta	WSYNC
+     42  f01e		       85 02		      sta	WSYNC
+     43  f020		       85 02		      sta	WSYNC
+     44  f022		       85 02		      sta	WSYNC
+     45  f024		       85 02		      sta	WSYNC
+     46  f026		       85 02		      sta	WSYNC
+     47  f028		       85 02		      sta	WSYNC
+     48  f02a		       85 02		      sta	WSYNC
+     49  f02c		       85 02		      sta	WSYNC
+     50  f02e		       85 02		      sta	WSYNC
+     51  f030		       85 02		      sta	WSYNC
+     52  f032		       85 02		      sta	WSYNC
+     53  f034		       85 02		      sta	WSYNC
+     54  f036		       85 02		      sta	WSYNC
+     55  f038		       85 02		      sta	WSYNC
+     56  f03a		       85 02		      sta	WSYNC
+     57  f03c		       85 02		      sta	WSYNC
+     58  f03e		       85 02		      sta	WSYNC
+     59  f040		       85 02		      sta	WSYNC
+     60  f042		       85 02		      sta	WSYNC
+     61  f044		       85 02		      sta	WSYNC
+     62  f046		       85 02		      sta	WSYNC
+     63  f048		       85 02		      sta	WSYNC
+     64  f04a		       85 02		      sta	WSYNC
+     65  f04c		       85 02		      sta	WSYNC
+     66  f04e		       85 02		      sta	WSYNC
+     67  f050		       85 02		      sta	WSYNC
+     68  f052		       85 02		      sta	WSYNC
+     69  f054		       85 02		      sta	WSYNC
+     70  f056		       85 02		      sta	WSYNC
+     71  f058		       85 02		      sta	WSYNC
+     72  f05a		       85 02		      sta	WSYNC
+     73  f05c
+     74  f05c							; 192 scanlines of picture
+     75  f05c
+     76  f05c		       a2 00		      ldx	#0
+     77  f05e
+     78  f05e					      REPEAT	192	; scanlines
+     79  f05e		       e8		      inx
+     80  f05f		       86 09		      stx	COLUBK
+     81  f061		       85 02		      sta	WSYNC
+     78  f061					      REPEND
+     79  f063		       e8		      inx
+     80  f064		       86 09		      stx	COLUBK
+     81  f066		       85 02		      sta	WSYNC
+     78  f066					      REPEND
+     79  f068		       e8		      inx
+     80  f069		       86 09		      stx	COLUBK
+     81  f06b		       85 02		      sta	WSYNC
+     78  f06b					      REPEND
+     79  f06d		       e8		      inx
+     80  f06e		       86 09		      stx	COLUBK
+     81  f070		       85 02		      sta	WSYNC
+     78  f070					      REPEND
+     79  f072		       e8		      inx
+     80  f073		       86 09		      stx	COLUBK
+     81  f075		       85 02		      sta	WSYNC
+     78  f075					      REPEND
+     79  f077		       e8		      inx
+     80  f078		       86 09		      stx	COLUBK
+     81  f07a		       85 02		      sta	WSYNC
+     78  f07a					      REPEND
+     79  f07c		       e8		      inx
+     80  f07d		       86 09		      stx	COLUBK
+     81  f07f		       85 02		      sta	WSYNC
+     78  f07f					      REPEND
+     79  f081		       e8		      inx
+     80  f082		       86 09		      stx	COLUBK
+     81  f084		       85 02		      sta	WSYNC
+     78  f084					      REPEND
+     79  f086		       e8		      inx
+     80  f087		       86 09		      stx	COLUBK
+     81  f089		       85 02		      sta	WSYNC
+     78  f089					      REPEND
+     79  f08b		       e8		      inx
+     80  f08c		       86 09		      stx	COLUBK
+     81  f08e		       85 02		      sta	WSYNC
+     78  f08e					      REPEND
+     79  f090		       e8		      inx
+     80  f091		       86 09		      stx	COLUBK
+     81  f093		       85 02		      sta	WSYNC
+     78  f093					      REPEND
+     79  f095		       e8		      inx
+     80  f096		       86 09		      stx	COLUBK
+     81  f098		       85 02		      sta	WSYNC
+     78  f098					      REPEND
+     79  f09a		       e8		      inx
+     80  f09b		       86 09		      stx	COLUBK
+     81  f09d		       85 02		      sta	WSYNC
+     78  f09d					      REPEND
+     79  f09f		       e8		      inx
+     80  f0a0		       86 09		      stx	COLUBK
+     81  f0a2		       85 02		      sta	WSYNC
+     78  f0a2					      REPEND
+     79  f0a4		       e8		      inx
+     80  f0a5		       86 09		      stx	COLUBK
+     81  f0a7		       85 02		      sta	WSYNC
+     78  f0a7					      REPEND
+     79  f0a9		       e8		      inx
+     80  f0aa		       86 09		      stx	COLUBK
+     81  f0ac		       85 02		      sta	WSYNC
+     78  f0ac					      REPEND
+     79  f0ae		       e8		      inx
+     80  f0af		       86 09		      stx	COLUBK
+     81  f0b1		       85 02		      sta	WSYNC
+     78  f0b1					      REPEND
+     79  f0b3		       e8		      inx
+     80  f0b4		       86 09		      stx	COLUBK
+     81  f0b6		       85 02		      sta	WSYNC
+     78  f0b6					      REPEND
+     79  f0b8		       e8		      inx
+     80  f0b9		       86 09		      stx	COLUBK
+     81  f0bb		       85 02		      sta	WSYNC
+     78  f0bb					      REPEND
+     79  f0bd		       e8		      inx
+     80  f0be		       86 09		      stx	COLUBK
+     81  f0c0		       85 02		      sta	WSYNC
+     78  f0c0					      REPEND
+     79  f0c2		       e8		      inx
+     80  f0c3		       86 09		      stx	COLUBK
+     81  f0c5		       85 02		      sta	WSYNC
+     78  f0c5					      REPEND
+     79  f0c7		       e8		      inx
+     80  f0c8		       86 09		      stx	COLUBK
+     81  f0ca		       85 02		      sta	WSYNC
+     78  f0ca					      REPEND
+     79  f0cc		       e8		      inx
+     80  f0cd		       86 09		      stx	COLUBK
+     81  f0cf		       85 02		      sta	WSYNC
+     78  f0cf					      REPEND
+     79  f0d1		       e8		      inx
+     80  f0d2		       86 09		      stx	COLUBK
+     81  f0d4		       85 02		      sta	WSYNC
+     78  f0d4					      REPEND
+     79  f0d6		       e8		      inx
+     80  f0d7		       86 09		      stx	COLUBK
+     81  f0d9		       85 02		      sta	WSYNC
+     78  f0d9					      REPEND
+     79  f0db		       e8		      inx
+     80  f0dc		       86 09		      stx	COLUBK
+     81  f0de		       85 02		      sta	WSYNC
+     78  f0de					      REPEND
+     79  f0e0		       e8		      inx
+     80  f0e1		       86 09		      stx	COLUBK
+     81  f0e3		       85 02		      sta	WSYNC
+     78  f0e3					      REPEND
+     79  f0e5		       e8		      inx
+     80  f0e6		       86 09		      stx	COLUBK
+     81  f0e8		       85 02		      sta	WSYNC
+     78  f0e8					      REPEND
+     79  f0ea		       e8		      inx
+     80  f0eb		       86 09		      stx	COLUBK
+     81  f0ed		       85 02		      sta	WSYNC
+     78  f0ed					      REPEND
+     79  f0ef		       e8		      inx
+     80  f0f0		       86 09		      stx	COLUBK
+     81  f0f2		       85 02		      sta	WSYNC
+     78  f0f2					      REPEND
+     79  f0f4		       e8		      inx
+     80  f0f5		       86 09		      stx	COLUBK
+     81  f0f7		       85 02		      sta	WSYNC
+     78  f0f7					      REPEND
+     79  f0f9		       e8		      inx
+     80  f0fa		       86 09		      stx	COLUBK
+     81  f0fc		       85 02		      sta	WSYNC
+     78  f0fc					      REPEND
+     79  f0fe		       e8		      inx
+     80  f0ff		       86 09		      stx	COLUBK
+     81  f101		       85 02		      sta	WSYNC
+     78  f101					      REPEND
+     79  f103		       e8		      inx
+     80  f104		       86 09		      stx	COLUBK
+     81  f106		       85 02		      sta	WSYNC
+     78  f106					      REPEND
+     79  f108		       e8		      inx
+     80  f109		       86 09		      stx	COLUBK
+     81  f10b		       85 02		      sta	WSYNC
+     78  f10b					      REPEND
+     79  f10d		       e8		      inx
+     80  f10e		       86 09		      stx	COLUBK
+     81  f110		       85 02		      sta	WSYNC
+     78  f110					      REPEND
+     79  f112		       e8		      inx
+     80  f113		       86 09		      stx	COLUBK
+     81  f115		       85 02		      sta	WSYNC
+     78  f115					      REPEND
+     79  f117		       e8		      inx
+     80  f118		       86 09		      stx	COLUBK
+     81  f11a		       85 02		      sta	WSYNC
+     78  f11a					      REPEND
+     79  f11c		       e8		      inx
+     80  f11d		       86 09		      stx	COLUBK
+     81  f11f		       85 02		      sta	WSYNC
+     78  f11f					      REPEND
+     79  f121		       e8		      inx
+     80  f122		       86 09		      stx	COLUBK
+     81  f124		       85 02		      sta	WSYNC
+     78  f124					      REPEND
+     79  f126		       e8		      inx
+     80  f127		       86 09		      stx	COLUBK
+     81  f129		       85 02		      sta	WSYNC
+     78  f129					      REPEND
+     79  f12b		       e8		      inx
+     80  f12c		       86 09		      stx	COLUBK
+     81  f12e		       85 02		      sta	WSYNC
+     78  f12e					      REPEND
+     79  f130		       e8		      inx
+     80  f131		       86 09		      stx	COLUBK
+     81  f133		       85 02		      sta	WSYNC
+     78  f133					      REPEND
+     79  f135		       e8		      inx
+     80  f136		       86 09		      stx	COLUBK
+     81  f138		       85 02		      sta	WSYNC
+     78  f138					      REPEND
+     79  f13a		       e8		      inx
+     80  f13b		       86 09		      stx	COLUBK
+     81  f13d		       85 02		      sta	WSYNC
+     78  f13d					      REPEND
+     79  f13f		       e8		      inx
+     80  f140		       86 09		      stx	COLUBK
+     81  f142		       85 02		      sta	WSYNC
+     78  f142					      REPEND
+     79  f144		       e8		      inx
+     80  f145		       86 09		      stx	COLUBK
+     81  f147		       85 02		      sta	WSYNC
+     78  f147					      REPEND
+     79  f149		       e8		      inx
+     80  f14a		       86 09		      stx	COLUBK
+     81  f14c		       85 02		      sta	WSYNC
+     78  f14c					      REPEND
+     79  f14e		       e8		      inx
+     80  f14f		       86 09		      stx	COLUBK
+     81  f151		       85 02		      sta	WSYNC
+     78  f151					      REPEND
+     79  f153		       e8		      inx
+     80  f154		       86 09		      stx	COLUBK
+     81  f156		       85 02		      sta	WSYNC
+     78  f156					      REPEND
+     79  f158		       e8		      inx
+     80  f159		       86 09		      stx	COLUBK
+     81  f15b		       85 02		      sta	WSYNC
+     78  f15b					      REPEND
+     79  f15d		       e8		      inx
+     80  f15e		       86 09		      stx	COLUBK
+     81  f160		       85 02		      sta	WSYNC
+     78  f160					      REPEND
+     79  f162		       e8		      inx
+     80  f163		       86 09		      stx	COLUBK
+     81  f165		       85 02		      sta	WSYNC
+     78  f165					      REPEND
+     79  f167		       e8		      inx
+     80  f168		       86 09		      stx	COLUBK
+     81  f16a		       85 02		      sta	WSYNC
+     78  f16a					      REPEND
+     79  f16c		       e8		      inx
+     80  f16d		       86 09		      stx	COLUBK
+     81  f16f		       85 02		      sta	WSYNC
+     78  f16f					      REPEND
+     79  f171		       e8		      inx
+     80  f172		       86 09		      stx	COLUBK
+     81  f174		       85 02		      sta	WSYNC
+     78  f174					      REPEND
+     79  f176		       e8		      inx
+     80  f177		       86 09		      stx	COLUBK
+     81  f179		       85 02		      sta	WSYNC
+     78  f179					      REPEND
+     79  f17b		       e8		      inx
+     80  f17c		       86 09		      stx	COLUBK
+     81  f17e		       85 02		      sta	WSYNC
+     78  f17e					      REPEND
+     79  f180		       e8		      inx
+     80  f181		       86 09		      stx	COLUBK
+     81  f183		       85 02		      sta	WSYNC
+     78  f183					      REPEND
+     79  f185		       e8		      inx
+     80  f186		       86 09		      stx	COLUBK
+     81  f188		       85 02		      sta	WSYNC
+     78  f188					      REPEND
+     79  f18a		       e8		      inx
+     80  f18b		       86 09		      stx	COLUBK
+     81  f18d		       85 02		      sta	WSYNC
+     78  f18d					      REPEND
+     79  f18f		       e8		      inx
+     80  f190		       86 09		      stx	COLUBK
+     81  f192		       85 02		      sta	WSYNC
+     78  f192					      REPEND
+     79  f194		       e8		      inx
+     80  f195		       86 09		      stx	COLUBK
+     81  f197		       85 02		      sta	WSYNC
+     78  f197					      REPEND
+     79  f199		       e8		      inx
+     80  f19a		       86 09		      stx	COLUBK
+     81  f19c		       85 02		      sta	WSYNC
+     78  f19c					      REPEND
+     79  f19e		       e8		      inx
+     80  f19f		       86 09		      stx	COLUBK
+     81  f1a1		       85 02		      sta	WSYNC
+     78  f1a1					      REPEND
+     79  f1a3		       e8		      inx
+     80  f1a4		       86 09		      stx	COLUBK
+     81  f1a6		       85 02		      sta	WSYNC
+     78  f1a6					      REPEND
+     79  f1a8		       e8		      inx
+     80  f1a9		       86 09		      stx	COLUBK
+     81  f1ab		       85 02		      sta	WSYNC
+     78  f1ab					      REPEND
+     79  f1ad		       e8		      inx
+     80  f1ae		       86 09		      stx	COLUBK
+     81  f1b0		       85 02		      sta	WSYNC
+     78  f1b0					      REPEND
+     79  f1b2		       e8		      inx
+     80  f1b3		       86 09		      stx	COLUBK
+     81  f1b5		       85 02		      sta	WSYNC
+     78  f1b5					      REPEND
+     79  f1b7		       e8		      inx
+     80  f1b8		       86 09		      stx	COLUBK
+     81  f1ba		       85 02		      sta	WSYNC
+     78  f1ba					      REPEND
+     79  f1bc		       e8		      inx
+     80  f1bd		       86 09		      stx	COLUBK
+     81  f1bf		       85 02		      sta	WSYNC
+     78  f1bf					      REPEND
+     79  f1c1		       e8		      inx
+     80  f1c2		       86 09		      stx	COLUBK
+     81  f1c4		       85 02		      sta	WSYNC
+     78  f1c4					      REPEND
+     79  f1c6		       e8		      inx
+     80  f1c7		       86 09		      stx	COLUBK
+     81  f1c9		       85 02		      sta	WSYNC
+     78  f1c9					      REPEND
+     79  f1cb		       e8		      inx
+     80  f1cc		       86 09		      stx	COLUBK
+     81  f1ce		       85 02		      sta	WSYNC
+     78  f1ce					      REPEND
+     79  f1d0		       e8		      inx
+     80  f1d1		       86 09		      stx	COLUBK
+     81  f1d3		       85 02		      sta	WSYNC
+     78  f1d3					      REPEND
+     79  f1d5		       e8		      inx
+     80  f1d6		       86 09		      stx	COLUBK
+     81  f1d8		       85 02		      sta	WSYNC
+     78  f1d8					      REPEND
+     79  f1da		       e8		      inx
+     80  f1db		       86 09		      stx	COLUBK
+     81  f1dd		       85 02		      sta	WSYNC
+     78  f1dd					      REPEND
+     79  f1df		       e8		      inx
+     80  f1e0		       86 09		      stx	COLUBK
+     81  f1e2		       85 02		      sta	WSYNC
+     78  f1e2					      REPEND
+     79  f1e4		       e8		      inx
+     80  f1e5		       86 09		      stx	COLUBK
+     81  f1e7		       85 02		      sta	WSYNC
+     78  f1e7					      REPEND
+     79  f1e9		       e8		      inx
+     80  f1ea		       86 09		      stx	COLUBK
+     81  f1ec		       85 02		      sta	WSYNC
+     78  f1ec					      REPEND
+     79  f1ee		       e8		      inx
+     80  f1ef		       86 09		      stx	COLUBK
+     81  f1f1		       85 02		      sta	WSYNC
+     78  f1f1					      REPEND
+     79  f1f3		       e8		      inx
+     80  f1f4		       86 09		      stx	COLUBK
+     81  f1f6		       85 02		      sta	WSYNC
+     78  f1f6					      REPEND
+     79  f1f8		       e8		      inx
+     80  f1f9		       86 09		      stx	COLUBK
+     81  f1fb		       85 02		      sta	WSYNC
+     78  f1fb					      REPEND
+     79  f1fd		       e8		      inx
+     80  f1fe		       86 09		      stx	COLUBK
+     81  f200		       85 02		      sta	WSYNC
+     78  f200					      REPEND
+     79  f202		       e8		      inx
+     80  f203		       86 09		      stx	COLUBK
+     81  f205		       85 02		      sta	WSYNC
+     78  f205					      REPEND
+     79  f207		       e8		      inx
+     80  f208		       86 09		      stx	COLUBK
+     81  f20a		       85 02		      sta	WSYNC
+     78  f20a					      REPEND
+     79  f20c		       e8		      inx
+     80  f20d		       86 09		      stx	COLUBK
+     81  f20f		       85 02		      sta	WSYNC
+     78  f20f					      REPEND
+     79  f211		       e8		      inx
+     80  f212		       86 09		      stx	COLUBK
+     81  f214		       85 02		      sta	WSYNC
+     78  f214					      REPEND
+     79  f216		       e8		      inx
+     80  f217		       86 09		      stx	COLUBK
+     81  f219		       85 02		      sta	WSYNC
+     78  f219					      REPEND
+     79  f21b		       e8		      inx
+     80  f21c		       86 09		      stx	COLUBK
+     81  f21e		       85 02		      sta	WSYNC
+     78  f21e					      REPEND
+     79  f220		       e8		      inx
+     80  f221		       86 09		      stx	COLUBK
+     81  f223		       85 02		      sta	WSYNC
+     78  f223					      REPEND
+     79  f225		       e8		      inx
+     80  f226		       86 09		      stx	COLUBK
+     81  f228		       85 02		      sta	WSYNC
+     78  f228					      REPEND
+     79  f22a		       e8		      inx
+     80  f22b		       86 09		      stx	COLUBK
+     81  f22d		       85 02		      sta	WSYNC
+     78  f22d					      REPEND
+     79  f22f		       e8		      inx
+     80  f230		       86 09		      stx	COLUBK
+     81  f232		       85 02		      sta	WSYNC
+     78  f232					      REPEND
+     79  f234		       e8		      inx
+     80  f235		       86 09		      stx	COLUBK
+     81  f237		       85 02		      sta	WSYNC
+     78  f237					      REPEND
+     79  f239		       e8		      inx
+     80  f23a		       86 09		      stx	COLUBK
+     81  f23c		       85 02		      sta	WSYNC
+     78  f23c					      REPEND
+     79  f23e		       e8		      inx
+     80  f23f		       86 09		      stx	COLUBK
+     81  f241		       85 02		      sta	WSYNC
+     78  f241					      REPEND
+     79  f243		       e8		      inx
+     80  f244		       86 09		      stx	COLUBK
+     81  f246		       85 02		      sta	WSYNC
+     78  f246					      REPEND
+     79  f248		       e8		      inx
+     80  f249		       86 09		      stx	COLUBK
+     81  f24b		       85 02		      sta	WSYNC
+     78  f24b					      REPEND
+     79  f24d		       e8		      inx
+     80  f24e		       86 09		      stx	COLUBK
+     81  f250		       85 02		      sta	WSYNC
+     78  f250					      REPEND
+     79  f252		       e8		      inx
+     80  f253		       86 09		      stx	COLUBK
+     81  f255		       85 02		      sta	WSYNC
+     78  f255					      REPEND
+     79  f257		       e8		      inx
+     80  f258		       86 09		      stx	COLUBK
+     81  f25a		       85 02		      sta	WSYNC
+     78  f25a					      REPEND
+     79  f25c		       e8		      inx
+     80  f25d		       86 09		      stx	COLUBK
+     81  f25f		       85 02		      sta	WSYNC
+     78  f25f					      REPEND
+     79  f261		       e8		      inx
+     80  f262		       86 09		      stx	COLUBK
+     81  f264		       85 02		      sta	WSYNC
+     78  f264					      REPEND
+     79  f266		       e8		      inx
+     80  f267		       86 09		      stx	COLUBK
+     81  f269		       85 02		      sta	WSYNC
+     78  f269					      REPEND
+     79  f26b		       e8		      inx
+     80  f26c		       86 09		      stx	COLUBK
+     81  f26e		       85 02		      sta	WSYNC
+     78  f26e					      REPEND
+     79  f270		       e8		      inx
+     80  f271		       86 09		      stx	COLUBK
+     81  f273		       85 02		      sta	WSYNC
+     78  f273					      REPEND
+     79  f275		       e8		      inx
+     80  f276		       86 09		      stx	COLUBK
+     81  f278		       85 02		      sta	WSYNC
+     78  f278					      REPEND
+     79  f27a		       e8		      inx
+     80  f27b		       86 09		      stx	COLUBK
+     81  f27d		       85 02		      sta	WSYNC
+     78  f27d					      REPEND
+     79  f27f		       e8		      inx
+     80  f280		       86 09		      stx	COLUBK
+     81  f282		       85 02		      sta	WSYNC
+     78  f282					      REPEND
+     79  f284		       e8		      inx
+     80  f285		       86 09		      stx	COLUBK
+     81  f287		       85 02		      sta	WSYNC
+     78  f287					      REPEND
+     79  f289		       e8		      inx
+     80  f28a		       86 09		      stx	COLUBK
+     81  f28c		       85 02		      sta	WSYNC
+     78  f28c					      REPEND
+     79  f28e		       e8		      inx
+     80  f28f		       86 09		      stx	COLUBK
+     81  f291		       85 02		      sta	WSYNC
+     78  f291					      REPEND
+     79  f293		       e8		      inx
+     80  f294		       86 09		      stx	COLUBK
+     81  f296		       85 02		      sta	WSYNC
+     78  f296					      REPEND
+     79  f298		       e8		      inx
+     80  f299		       86 09		      stx	COLUBK
+     81  f29b		       85 02		      sta	WSYNC
+     78  f29b					      REPEND
+     79  f29d		       e8		      inx
+     80  f29e		       86 09		      stx	COLUBK
+     81  f2a0		       85 02		      sta	WSYNC
+     78  f2a0					      REPEND
+     79  f2a2		       e8		      inx
+     80  f2a3		       86 09		      stx	COLUBK
+     81  f2a5		       85 02		      sta	WSYNC
+     78  f2a5					      REPEND
+     79  f2a7		       e8		      inx
+     80  f2a8		       86 09		      stx	COLUBK
+     81  f2aa		       85 02		      sta	WSYNC
+     78  f2aa					      REPEND
+     79  f2ac		       e8		      inx
+     80  f2ad		       86 09		      stx	COLUBK
+     81  f2af		       85 02		      sta	WSYNC
+     78  f2af					      REPEND
+     79  f2b1		       e8		      inx
+     80  f2b2		       86 09		      stx	COLUBK
+     81  f2b4		       85 02		      sta	WSYNC
+     78  f2b4					      REPEND
+     79  f2b6		       e8		      inx
+     80  f2b7		       86 09		      stx	COLUBK
+     81  f2b9		       85 02		      sta	WSYNC
+     78  f2b9					      REPEND
+     79  f2bb		       e8		      inx
+     80  f2bc		       86 09		      stx	COLUBK
+     81  f2be		       85 02		      sta	WSYNC
+     78  f2be					      REPEND
+     79  f2c0		       e8		      inx
+     80  f2c1		       86 09		      stx	COLUBK
+     81  f2c3		       85 02		      sta	WSYNC
+     78  f2c3					      REPEND
+     79  f2c5		       e8		      inx
+     80  f2c6		       86 09		      stx	COLUBK
+     81  f2c8		       85 02		      sta	WSYNC
+     78  f2c8					      REPEND
+     79  f2ca		       e8		      inx
+     80  f2cb		       86 09		      stx	COLUBK
+     81  f2cd		       85 02		      sta	WSYNC
+     78  f2cd					      REPEND
+     79  f2cf		       e8		      inx
+     80  f2d0		       86 09		      stx	COLUBK
+     81  f2d2		       85 02		      sta	WSYNC
+     78  f2d2					      REPEND
+     79  f2d4		       e8		      inx
+     80  f2d5		       86 09		      stx	COLUBK
+     81  f2d7		       85 02		      sta	WSYNC
+     78  f2d7					      REPEND
+     79  f2d9		       e8		      inx
+     80  f2da		       86 09		      stx	COLUBK
+     81  f2dc		       85 02		      sta	WSYNC
+     78  f2dc					      REPEND
+     79  f2de		       e8		      inx
+     80  f2df		       86 09		      stx	COLUBK
+     81  f2e1		       85 02		      sta	WSYNC
+     78  f2e1					      REPEND
+     79  f2e3		       e8		      inx
+     80  f2e4		       86 09		      stx	COLUBK
+     81  f2e6		       85 02		      sta	WSYNC
+     78  f2e6					      REPEND
+     79  f2e8		       e8		      inx
+     80  f2e9		       86 09		      stx	COLUBK
+     81  f2eb		       85 02		      sta	WSYNC
+     78  f2eb					      REPEND
+     79  f2ed		       e8		      inx
+     80  f2ee		       86 09		      stx	COLUBK
+     81  f2f0		       85 02		      sta	WSYNC
+     78  f2f0					      REPEND
+     79  f2f2		       e8		      inx
+     80  f2f3		       86 09		      stx	COLUBK
+     81  f2f5		       85 02		      sta	WSYNC
+     78  f2f5					      REPEND
+     79  f2f7		       e8		      inx
+     80  f2f8		       86 09		      stx	COLUBK
+     81  f2fa		       85 02		      sta	WSYNC
+     78  f2fa					      REPEND
+     79  f2fc		       e8		      inx
+     80  f2fd		       86 09		      stx	COLUBK
+     81  f2ff		       85 02		      sta	WSYNC
+     78  f2ff					      REPEND
+     79  f301		       e8		      inx
+     80  f302		       86 09		      stx	COLUBK
+     81  f304		       85 02		      sta	WSYNC
+     78  f304					      REPEND
+     79  f306		       e8		      inx
+     80  f307		       86 09		      stx	COLUBK
+     81  f309		       85 02		      sta	WSYNC
+     78  f309					      REPEND
+     79  f30b		       e8		      inx
+     80  f30c		       86 09		      stx	COLUBK
+     81  f30e		       85 02		      sta	WSYNC
+     78  f30e					      REPEND
+     79  f310		       e8		      inx
+     80  f311		       86 09		      stx	COLUBK
+     81  f313		       85 02		      sta	WSYNC
+     78  f313					      REPEND
+     79  f315		       e8		      inx
+     80  f316		       86 09		      stx	COLUBK
+     81  f318		       85 02		      sta	WSYNC
+     78  f318					      REPEND
+     79  f31a		       e8		      inx
+     80  f31b		       86 09		      stx	COLUBK
+     81  f31d		       85 02		      sta	WSYNC
+     78  f31d					      REPEND
+     79  f31f		       e8		      inx
+     80  f320		       86 09		      stx	COLUBK
+     81  f322		       85 02		      sta	WSYNC
+     78  f322					      REPEND
+     79  f324		       e8		      inx
+     80  f325		       86 09		      stx	COLUBK
+     81  f327		       85 02		      sta	WSYNC
+     78  f327					      REPEND
+     79  f329		       e8		      inx
+     80  f32a		       86 09		      stx	COLUBK
+     81  f32c		       85 02		      sta	WSYNC
+     78  f32c					      REPEND
+     79  f32e		       e8		      inx
+     80  f32f		       86 09		      stx	COLUBK
+     81  f331		       85 02		      sta	WSYNC
+     78  f331					      REPEND
+     79  f333		       e8		      inx
+     80  f334		       86 09		      stx	COLUBK
+     81  f336		       85 02		      sta	WSYNC
+     78  f336					      REPEND
+     79  f338		       e8		      inx
+     80  f339		       86 09		      stx	COLUBK
+     81  f33b		       85 02		      sta	WSYNC
+     78  f33b					      REPEND
+     79  f33d		       e8		      inx
+     80  f33e		       86 09		      stx	COLUBK
+     81  f340		       85 02		      sta	WSYNC
+     78  f340					      REPEND
+     79  f342		       e8		      inx
+     80  f343		       86 09		      stx	COLUBK
+     81  f345		       85 02		      sta	WSYNC
+     78  f345					      REPEND
+     79  f347		       e8		      inx
+     80  f348		       86 09		      stx	COLUBK
+     81  f34a		       85 02		      sta	WSYNC
+     78  f34a					      REPEND
+     79  f34c		       e8		      inx
+     80  f34d		       86 09		      stx	COLUBK
+     81  f34f		       85 02		      sta	WSYNC
+     78  f34f					      REPEND
+     79  f351		       e8		      inx
+     80  f352		       86 09		      stx	COLUBK
+     81  f354		       85 02		      sta	WSYNC
+     78  f354					      REPEND
+     79  f356		       e8		      inx
+     80  f357		       86 09		      stx	COLUBK
+     81  f359		       85 02		      sta	WSYNC
+     78  f359					      REPEND
+     79  f35b		       e8		      inx
+     80  f35c		       86 09		      stx	COLUBK
+     81  f35e		       85 02		      sta	WSYNC
+     78  f35e					      REPEND
+     79  f360		       e8		      inx
+     80  f361		       86 09		      stx	COLUBK
+     81  f363		       85 02		      sta	WSYNC
+     78  f363					      REPEND
+     79  f365		       e8		      inx
+     80  f366		       86 09		      stx	COLUBK
+     81  f368		       85 02		      sta	WSYNC
+     78  f368					      REPEND
+     79  f36a		       e8		      inx
+     80  f36b		       86 09		      stx	COLUBK
+     81  f36d		       85 02		      sta	WSYNC
+     78  f36d					      REPEND
+     79  f36f		       e8		      inx
+     80  f370		       86 09		      stx	COLUBK
+     81  f372		       85 02		      sta	WSYNC
+     78  f372					      REPEND
+     79  f374		       e8		      inx
+     80  f375		       86 09		      stx	COLUBK
+     81  f377		       85 02		      sta	WSYNC
+     78  f377					      REPEND
+     79  f379		       e8		      inx
+     80  f37a		       86 09		      stx	COLUBK
+     81  f37c		       85 02		      sta	WSYNC
+     78  f37c					      REPEND
+     79  f37e		       e8		      inx
+     80  f37f		       86 09		      stx	COLUBK
+     81  f381		       85 02		      sta	WSYNC
+     78  f381					      REPEND
+     79  f383		       e8		      inx
+     80  f384		       86 09		      stx	COLUBK
+     81  f386		       85 02		      sta	WSYNC
+     78  f386					      REPEND
+     79  f388		       e8		      inx
+     80  f389		       86 09		      stx	COLUBK
+     81  f38b		       85 02		      sta	WSYNC
+     78  f38b					      REPEND
+     79  f38d		       e8		      inx
+     80  f38e		       86 09		      stx	COLUBK
+     81  f390		       85 02		      sta	WSYNC
+     78  f390					      REPEND
+     79  f392		       e8		      inx
+     80  f393		       86 09		      stx	COLUBK
+     81  f395		       85 02		      sta	WSYNC
+     78  f395					      REPEND
+     79  f397		       e8		      inx
+     80  f398		       86 09		      stx	COLUBK
+     81  f39a		       85 02		      sta	WSYNC
+     78  f39a					      REPEND
+     79  f39c		       e8		      inx
+     80  f39d		       86 09		      stx	COLUBK
+     81  f39f		       85 02		      sta	WSYNC
+     78  f39f					      REPEND
+     79  f3a1		       e8		      inx
+     80  f3a2		       86 09		      stx	COLUBK
+     81  f3a4		       85 02		      sta	WSYNC
+     78  f3a4					      REPEND
+     79  f3a6		       e8		      inx
+     80  f3a7		       86 09		      stx	COLUBK
+     81  f3a9		       85 02		      sta	WSYNC
+     78  f3a9					      REPEND
+     79  f3ab		       e8		      inx
+     80  f3ac		       86 09		      stx	COLUBK
+     81  f3ae		       85 02		      sta	WSYNC
+     78  f3ae					      REPEND
+     79  f3b0		       e8		      inx
+     80  f3b1		       86 09		      stx	COLUBK
+     81  f3b3		       85 02		      sta	WSYNC
+     78  f3b3					      REPEND
+     79  f3b5		       e8		      inx
+     80  f3b6		       86 09		      stx	COLUBK
+     81  f3b8		       85 02		      sta	WSYNC
+     78  f3b8					      REPEND
+     79  f3ba		       e8		      inx
+     80  f3bb		       86 09		      stx	COLUBK
+     81  f3bd		       85 02		      sta	WSYNC
+     78  f3bd					      REPEND
+     79  f3bf		       e8		      inx
+     80  f3c0		       86 09		      stx	COLUBK
+     81  f3c2		       85 02		      sta	WSYNC
+     78  f3c2					      REPEND
+     79  f3c4		       e8		      inx
+     80  f3c5		       86 09		      stx	COLUBK
+     81  f3c7		       85 02		      sta	WSYNC
+     78  f3c7					      REPEND
+     79  f3c9		       e8		      inx
+     80  f3ca		       86 09		      stx	COLUBK
+     81  f3cc		       85 02		      sta	WSYNC
+     78  f3cc					      REPEND
+     79  f3ce		       e8		      inx
+     80  f3cf		       86 09		      stx	COLUBK
+     81  f3d1		       85 02		      sta	WSYNC
+     78  f3d1					      REPEND
+     79  f3d3		       e8		      inx
+     80  f3d4		       86 09		      stx	COLUBK
+     81  f3d6		       85 02		      sta	WSYNC
+     78  f3d6					      REPEND
+     79  f3d8		       e8		      inx
+     80  f3d9		       86 09		      stx	COLUBK
+     81  f3db		       85 02		      sta	WSYNC
+     78  f3db					      REPEND
+     79  f3dd		       e8		      inx
+     80  f3de		       86 09		      stx	COLUBK
+     81  f3e0		       85 02		      sta	WSYNC
+     78  f3e0					      REPEND
+     79  f3e2		       e8		      inx
+     80  f3e3		       86 09		      stx	COLUBK
+     81  f3e5		       85 02		      sta	WSYNC
+     78  f3e5					      REPEND
+     79  f3e7		       e8		      inx
+     80  f3e8		       86 09		      stx	COLUBK
+     81  f3ea		       85 02		      sta	WSYNC
+     78  f3ea					      REPEND
+     79  f3ec		       e8		      inx
+     80  f3ed		       86 09		      stx	COLUBK
+     81  f3ef		       85 02		      sta	WSYNC
+     78  f3ef					      REPEND
+     79  f3f1		       e8		      inx
+     80  f3f2		       86 09		      stx	COLUBK
+     81  f3f4		       85 02		      sta	WSYNC
+     78  f3f4					      REPEND
+     79  f3f6		       e8		      inx
+     80  f3f7		       86 09		      stx	COLUBK
+     81  f3f9		       85 02		      sta	WSYNC
+     78  f3f9					      REPEND
+     79  f3fb		       e8		      inx
+     80  f3fc		       86 09		      stx	COLUBK
+     81  f3fe		       85 02		      sta	WSYNC
+     78  f3fe					      REPEND
+     79  f400		       e8		      inx
+     80  f401		       86 09		      stx	COLUBK
+     81  f403		       85 02		      sta	WSYNC
+     78  f403					      REPEND
+     79  f405		       e8		      inx
+     80  f406		       86 09		      stx	COLUBK
+     81  f408		       85 02		      sta	WSYNC
+     78  f408					      REPEND
+     79  f40a		       e8		      inx
+     80  f40b		       86 09		      stx	COLUBK
+     81  f40d		       85 02		      sta	WSYNC
+     78  f40d					      REPEND
+     79  f40f		       e8		      inx
+     80  f410		       86 09		      stx	COLUBK
+     81  f412		       85 02		      sta	WSYNC
+     78  f412					      REPEND
+     79  f414		       e8		      inx
+     80  f415		       86 09		      stx	COLUBK
+     81  f417		       85 02		      sta	WSYNC
+     78  f417					      REPEND
+     79  f419		       e8		      inx
+     80  f41a		       86 09		      stx	COLUBK
+     81  f41c		       85 02		      sta	WSYNC
+     82  f41e					      REPEND
+     83  f41e
+     84  f41e		       a9 42		      lda	#%01000010
+     85  f420		       85 01		      sta	VBLANK	; end of screen -enter blanking
+     86  f422
+     87  f422							; 30 scanlines of overscan
+     88  f422
+     89  f422		       85 02		      sta	WSYNC
+     90  f424		       85 02		      sta	WSYNC
+     91  f426		       85 02		      sta	WSYNC
+     92  f428		       85 02		      sta	WSYNC
+     93  f42a		       85 02		      sta	WSYNC
+     94  f42c		       85 02		      sta	WSYNC
+     95  f42e		       85 02		      sta	WSYNC
+     96  f430		       85 02		      sta	WSYNC
+     97  f432		       85 02		      sta	WSYNC
+     98  f434		       85 02		      sta	WSYNC
+     99  f436		       85 02		      sta	WSYNC
+    100  f438		       85 02		      sta	WSYNC
+    101  f43a		       85 02		      sta	WSYNC
+    102  f43c		       85 02		      sta	WSYNC
+    103  f43e		       85 02		      sta	WSYNC
+    104  f440		       85 02		      sta	WSYNC
+    105  f442		       85 02		      sta	WSYNC
+    106  f444		       85 02		      sta	WSYNC
+    107  f446		       85 02		      sta	WSYNC
+    108  f448		       85 02		      sta	WSYNC
+    109  f44a		       85 02		      sta	WSYNC
+    110  f44c		       85 02		      sta	WSYNC
+    111  f44e		       85 02		      sta	WSYNC
+    112  f450		       85 02		      sta	WSYNC
+    113  f452		       85 02		      sta	WSYNC
+    114  f454		       85 02		      sta	WSYNC
+    115  f456		       85 02		      sta	WSYNC
+    116  f458		       85 02		      sta	WSYNC
+    117  f45a		       85 02		      sta	WSYNC
+    118  f45c		       85 02		      sta	WSYNC
+    119  f45e
+    120  f45e		       4c 00 f0 	      jmp	StartOfFrame
+    121  f461
+    122  fffa					      ORG	$FFFA
+    123  fffa
+    124  fffa		       00 f0		      .word.w	Reset	; NMI
+    125  fffc		       00 f0		      .word.w	Reset	; RESET
+    126  fffe		       00 f0		      .word.w	Reset	; IRQ
+    127  10000
+    128  10000				    END
