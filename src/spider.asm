@@ -30,20 +30,19 @@ InitializeStackLoop
 
     ; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
 
+InitializeVariables
+
     ; Set background color
     lda #0
     sta COLUBK
 
-    ; The binary PF pattern
-    lda #0
-    sta PATTERN
-
     ; Set the playfield color
-    lda #$45
+    lda #$0E ; White
     sta COLUPF
 
-    ; "speed" counter
-    ldy #0
+    ; Playfield Control
+    lda #%00000001
+    sta CTRLPF
 
 StartOfFrame
 
@@ -66,27 +65,16 @@ StartOfFrame
 
     ; 37 scanlines of vertical blank
 
-    ldx #0
 VerticalBlank
+
+    ldx #0
+
+VerticalBlankLoop
+
     sta WSYNC
     inx
     cpx #37
-    bne VerticalBlank
-
-    ; Handle a change in the pattern once every 20 frames
-    ; and write the pattern to the PF1 register
-    iny                 ; Increment speed count by one
-    cpy #TIMETOCHANGE   ; has it reached our "change point"?
-    bne notyet          ; no, so branch past
-
-    ldy #0              ; reset speed count
-
-    inc PATTERN         ; switch to next pattern
-
-notyet
-
-    lda PATTERN         ; use our saved pattern
-    sta PF1             ; as the playfield shape
+    bne VerticalBlankLoop
 
     ; Do 192 scanlines of color-changing (our picture)
 
@@ -94,10 +82,33 @@ Picture
 
     ldx #0              ; This counts our scanline number
 
+SolidPattern
+
+    lda #%11111111
+    sta PF0
+    sta PF1
+    sta PF2
+    jmp PictureLoop
+
+WallPattern
+
+    lda #%00010000
+    sta PF0
+    lda #%00000000
+    sta PF1
+    sta PF2
+
 PictureLoop
 
     sta WSYNC
     inx
+
+    ; Pattern Changes
+    cpx #8
+    beq WallPattern
+    cpx #184
+    beq SolidPattern
+
     cpx #192
     bne PictureLoop
 

@@ -398,109 +398,116 @@
      30  f008
      31  f008							; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
      32  f008
-     33  f008							; Set background color
-     34  f008		       a9 00		      lda	#0
-     35  f00a		       85 09		      sta	COLUBK
-     36  f00c
-     37  f00c							; The binary PF pattern
-     38  f00c		       a9 00		      lda	#0
-     39  f00e		       85 80		      sta	PATTERN
-     40  f010
-     41  f010							; Set the playfield color
-     42  f010		       a9 45		      lda	#$45
-     43  f012		       85 08		      sta	COLUPF
-     44  f014
-     45  f014							; "speed" counter
-     46  f014		       a0 00		      ldy	#0
-     47  f016
-     48  f016				   StartOfFrame
-     49  f016
-     50  f016							; Start of vertical blank processing
-     51  f016
-     52  f016		       a9 00		      lda	#0
-     53  f018		       85 01		      sta	VBLANK
-     54  f01a
-     55  f01a		       a9 02		      lda	#2
-     56  f01c		       85 00		      sta	VSYNC
-     57  f01e
-     58  f01e							; 3 scanlines of VSYNCH signal
-     59  f01e
+     33  f008				   InitializeVariables
+     34  f008
+     35  f008							; Set background color
+     36  f008		       a9 00		      lda	#0
+     37  f00a		       85 09		      sta	COLUBK
+     38  f00c
+     39  f00c							; Set the playfield color
+     40  f00c		       a9 0e		      lda	#$0E	; White
+     41  f00e		       85 08		      sta	COLUPF
+     42  f010
+     43  f010							; Playfield Control
+     44  f010		       a9 01		      lda	#%00000001
+     45  f012		       85 0a		      sta	CTRLPF
+     46  f014
+     47  f014				   StartOfFrame
+     48  f014
+     49  f014							; Start of vertical blank processing
+     50  f014
+     51  f014		       a9 00		      lda	#0
+     52  f016		       85 01		      sta	VBLANK
+     53  f018
+     54  f018		       a9 02		      lda	#2
+     55  f01a		       85 00		      sta	VSYNC
+     56  f01c
+     57  f01c							; 3 scanlines of VSYNCH signal
+     58  f01c
+     59  f01c		       85 02		      sta	WSYNC
      60  f01e		       85 02		      sta	WSYNC
      61  f020		       85 02		      sta	WSYNC
-     62  f022		       85 02		      sta	WSYNC
-     63  f024
-     64  f024		       a9 00		      lda	#0
-     65  f026		       85 00		      sta	VSYNC
-     66  f028
-     67  f028							; 37 scanlines of vertical blank
-     68  f028
-     69  f028		       a2 00		      ldx	#0
-     70  f02a				   VerticalBlank
-     71  f02a		       85 02		      sta	WSYNC
-     72  f02c		       e8		      inx
-     73  f02d		       e0 25		      cpx	#37
-     74  f02f		       d0 f9		      bne	VerticalBlank
-     75  f031
-     76  f031							; Handle a change in the pattern once every 20 frames
-     77  f031							; and write the pattern to the PF1 register
-     78  f031		       c8		      iny		; Increment speed count by one
-     79  f032		       c0 14		      cpy	#TIMETOCHANGE	; has it reached our "change point"?
-     80  f034		       d0 04		      bne	notyet	; no, so branch past
-     81  f036
-     82  f036		       a0 00		      ldy	#0	; reset speed count
-     83  f038
-     84  f038		       e6 80		      inc	PATTERN	; switch to next pattern
-     85  f03a
-     86  f03a				   notyet
-     87  f03a
-     88  f03a		       a5 80		      lda	PATTERN	; use our saved pattern
-     89  f03c		       85 0e		      sta	PF1	; as the playfield shape
-     90  f03e
-     91  f03e							; Do 192 scanlines of color-changing (our picture)
-     92  f03e
-     93  f03e				   Picture
-     94  f03e
-     95  f03e		       a2 00		      ldx	#0	; This counts our scanline number
-     96  f040
-     97  f040				   PictureLoop
-     98  f040
-     99  f040		       e6 80		      inc	PATTERN
-    100  f042		       a5 80		      lda	PATTERN
-    101  f044		       85 0e		      sta	PF1
+     62  f022
+     63  f022		       a9 00		      lda	#0
+     64  f024		       85 00		      sta	VSYNC
+     65  f026
+     66  f026							; 37 scanlines of vertical blank
+     67  f026
+     68  f026				   VerticalBlank
+     69  f026
+     70  f026		       a2 00		      ldx	#0
+     71  f028
+     72  f028				   VerticalBlankLoop
+     73  f028
+     74  f028		       85 02		      sta	WSYNC
+     75  f02a		       e8		      inx
+     76  f02b		       e0 25		      cpx	#37
+     77  f02d		       d0 f9		      bne	VerticalBlankLoop
+     78  f02f
+     79  f02f							; Do 192 scanlines of color-changing (our picture)
+     80  f02f
+     81  f02f				   Picture
+     82  f02f
+     83  f02f		       a2 00		      ldx	#0	; This counts our scanline number
+     84  f031
+     85  f031				   SolidPattern
+     86  f031
+     87  f031		       a9 ff		      lda	#%11111111
+     88  f033		       85 0d		      sta	PF0
+     89  f035		       85 0e		      sta	PF1
+     90  f037		       85 0f		      sta	PF2
+     91  f039		       4c 46 f0 	      jmp	PictureLoop
+     92  f03c
+     93  f03c				   WallPattern
+     94  f03c
+     95  f03c		       a9 10		      lda	#%00010000
+     96  f03e		       85 0d		      sta	PF0
+     97  f040		       a9 00		      lda	#%00000000
+     98  f042		       85 0e		      sta	PF1
+     99  f044		       85 0f		      sta	PF2
+    100  f046
+    101  f046				   PictureLoop
     102  f046
     103  f046		       85 02		      sta	WSYNC
     104  f048		       e8		      inx
-    105  f049		       e0 c0		      cpx	#192
-    106  f04b		       d0 f3		      bne	PictureLoop
-    107  f04d
-    108  f04d							;----------------------------------------
-    109  f04d
-    110  f04d		       a9 42		      lda	#%01000010
-    111  f04f		       85 01		      sta	VBLANK	; end of screen - enter blanking
-    112  f051
-    113  f051							; 30 scanlines of overscan...
-    114  f051
-    115  f051				   Overscan
-    116  f051
-    117  f051		       a2 00		      ldx	#0
-    118  f053
-    119  f053				   OverscanLoop
-    120  f053
-    121  f053		       85 02		      sta	WSYNC
-    122  f055		       e8		      inx
-    123  f056		       e0 1e		      cpx	#30
-    124  f058		       d0 f9		      bne	OverscanLoop
-    125  f05a
-    126  f05a		       4c 16 f0 	      jmp	StartOfFrame
-    127  f05d
-    128  f05d							;-------------------------------------------
-    129  f05d
-    130  fffa					      ORG	$FFFA
-    131  fffa
-    132  fffa				   InterruptVectors
-    133  fffa
-    134  fffa		       00 f0		      .word.w	Reset	; NMI
-    135  fffc		       00 f0		      .word.w	Reset	; RESET
-    136  fffe		       00 f0		      .word.w	Reset	; IRQ
-    137  10000
-    138  10000				    END
+    105  f049
+    106  f049							; Pattern Changes
+    107  f049		       e0 08		      cpx	#8
+    108  f04b		       f0 ef		      beq	WallPattern
+    109  f04d		       e0 b8		      cpx	#184
+    110  f04f		       f0 e0		      beq	SolidPattern
+    111  f051
+    112  f051		       e0 c0		      cpx	#192
+    113  f053		       d0 f1		      bne	PictureLoop
+    114  f055
+    115  f055							;----------------------------------------
+    116  f055
+    117  f055		       a9 42		      lda	#%01000010
+    118  f057		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    119  f059
+    120  f059							; 30 scanlines of overscan...
+    121  f059
+    122  f059				   Overscan
+    123  f059
+    124  f059		       a2 00		      ldx	#0
+    125  f05b
+    126  f05b				   OverscanLoop
+    127  f05b
+    128  f05b		       85 02		      sta	WSYNC
+    129  f05d		       e8		      inx
+    130  f05e		       e0 1e		      cpx	#30
+    131  f060		       d0 f9		      bne	OverscanLoop
+    132  f062
+    133  f062		       4c 14 f0 	      jmp	StartOfFrame
+    134  f065
+    135  f065							;-------------------------------------------
+    136  f065
+    137  fffa					      ORG	$FFFA
+    138  fffa
+    139  fffa				   InterruptVectors
+    140  fffa
+    141  fffa		       00 f0		      .word.w	Reset	; NMI
+    142  fffc		       00 f0		      .word.w	Reset	; RESET
+    143  fffe		       00 f0		      .word.w	Reset	; IRQ
+    144  10000
+    145  10000				    END
