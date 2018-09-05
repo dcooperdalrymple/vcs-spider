@@ -153,45 +153,36 @@ LogoFrame:
     and #%11111110      ; Remove 0th bit
     tay
 
-    ; load first half of data
+    ; Load first half of data
     lda LogoData,y
     sta PF2
-
-    ; -8 pixels, 228 pixels in total, pf0 starts at 68 pixels, 160 per line, 80 is middle
-    ; 88 more pixels to middle, 3 pixels per 6502 clock, 29 clocks needed, nop = 2 clocks
 
     ; Load second half of data
     iny
     lda LogoData,y
-    ; tay ; Make a copy of the data
 
-    ; and #%11110000 ; Use 4 MSB bits
+    ; Use 4 MSB bits on PF0
     sta PF0
 
-    ; tya ; Use 4 LSB bits
-    ; and #%00001111
-    asl
-    asl
-    asl
-    asl
-    sta PF1
-
-    ; Delay before cleanup
+    ; Use 4 LSB bits on PF1
     REPEAT 4
-        nop
+        asl
     REPEND
+    sta PF1
 
     ; Cleanup
     lda #$00
-    sta PF0
     sta PF2
+    sta PF0
 
+    ; Wait for next line
     sta WSYNC
     inx
-    cpx #LOGO_SIZE*LOGO_INTERVAL
+    cpx #LOGO_SIZE*LOGO_INTERVAL    ; Check if end of logo
     bne .scanline_logo
 
-    lda #$00            ; Clear Playfields
+    ; Clear Playfields
+    lda #$00
     sta PF0
     sta PF1
     sta PF2

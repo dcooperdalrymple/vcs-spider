@@ -525,116 +525,107 @@
     153  f05b		       29 fe		      and	#%11111110	; Remove 0th bit
     154  f05d		       a8		      tay
     155  f05e
-    156  f05e							; load first half of data
-    157  f05e		       b9 a1 f0 	      lda	LogoData,y
+    156  f05e							; Load first half of data
+    157  f05e		       b9 9d f0 	      lda	LogoData,y
     158  f061		       85 0f		      sta	PF2
     159  f063
-    160  f063							; -8 pixels, 228 pixels in total, pf0 starts at 68 pixels, 160 per line, 80 is middle
-    161  f063							; 88 more pixels to middle, 3 pixels per 6502 clock, 29 clocks needed, nop = 2 clocks
-    162  f063
-    163  f063							; Load second half of data
-    164  f063		       c8		      iny
-    165  f064		       b9 a1 f0 	      lda	LogoData,y
-    166  f067							; tay ; Make a copy of the data
-    167  f067
-    168  f067							; and #%11110000 ; Use 4 MSB bits
-    169  f067		       85 0d		      sta	PF0
-    170  f069
-    171  f069							; tya ; Use 4 LSB bits
-    172  f069							; and #%00001111
-    173  f069		       0a		      asl
-    174  f06a		       0a		      asl
-    175  f06b		       0a		      asl
-    176  f06c		       0a		      asl
-    177  f06d		       85 0e		      sta	PF1
-    178  f06f
-    179  f06f							; Delay before cleanup
-    180  f06f					      REPEAT	4
-    181  f06f		       ea		      nop
-    180  f06f					      REPEND
-    181  f070		       ea		      nop
-    180  f070					      REPEND
-    181  f071		       ea		      nop
-    180  f071					      REPEND
-    181  f072		       ea		      nop
-    182  f073					      REPEND
-    183  f073
-    184  f073							; Cleanup
-    185  f073		       a9 00		      lda	#$00
-    186  f075		       85 0d		      sta	PF0
-    187  f077		       85 0f		      sta	PF2
-    188  f079
-    189  f079		       85 02		      sta	WSYNC
-    190  f07b		       e8		      inx
-    191  f07c		       e0 48		      cpx	#LOGO_SIZE*LOGO_INTERVAL
-    192  f07e		       d0 d6		      bne	.scanline_logo
-    193  f080
-    194  f080		       a9 00		      lda	#$00	; Clear Playfields
-    195  f082		       85 0d		      sta	PF0
-    196  f084		       85 0e		      sta	PF1
-    197  f086		       85 0f		      sta	PF2
-    198  f088
-    199  f088		       a2 00		      ldx	#0
-    200  f08a				   .scanline_end
-    201  f08a
-    202  f08a		       85 02		      sta	WSYNC
-    203  f08c		       e8		      inx
-    204  f08d		       e0 48		      cpx	#KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL
-    205  f08f		       d0 f9		      bne	.scanline_end
-    206  f091
-    207  f091				   .overscan		; 30 scanlines of overscan
-    208  f091
-    209  f091		       a9 42		      lda	#%01000010
-    210  f093		       85 01		      sta	VBLANK	; end of screen - enter blanking
-    211  f095
-    212  f095		       a2 00		      ldx	#0
-    213  f097
-    214  f097				   .overscan_loop
-    215  f097
-    216  f097		       85 02		      sta	WSYNC
-    217  f099		       e8		      inx
-    218  f09a		       e0 1e		      cpx	#KERNEL_OVERSCAN
-    219  f09c		       d0 f9		      bne	.overscan_loop
-    220  f09e
-    221  f09e		       4c 28 f0 	      jmp	LogoFrame
-    222  f0a1
-    223  f0a1				   LogoData		; 6 bytes over 8 lines each, total of 48 lines
-    224  f0a1
-    225  f0a1		       00		      .BYTE.b	%00000000	; Reversed
-    226  f0a2		       10		      .BYTE.b	%00010000	; First 4 bits reversed
-    227  f0a3
-    228  f0a3		       80		      .BYTE.b	%10000000
-    229  f0a4		       20		      .BYTE.b	%00100000
-    230  f0a5
-    231  f0a5		       40		      .BYTE.b	%01000000
-    232  f0a6		       40		      .BYTE.b	%01000000
-    233  f0a7
-    234  f0a7		       20		      .BYTE.b	%00100000
-    235  f0a8		       80		      .BYTE.b	%10000000
-    236  f0a9
-    237  f0a9		       10		      .BYTE.b	%00010000
-    238  f0aa		       08		      .BYTE.b	%00001000
-    239  f0ab
-    240  f0ab		       08		      .BYTE.b	%00001000
-    241  f0ac		       00		      .BYTE.b	%00000000
-    242  f0ad
-    243  f0ad		       04		      .BYTE.b	%00000100
-    244  f0ae		       00		      .BYTE.b	%00000000
-    245  f0af
-    246  f0af		       02		      .BYTE.b	%00000010
-    247  f0b0		       00		      .BYTE.b	%00000000
-    248  f0b1
-    249  f0b1		       ff		      .BYTE.b	%11111111
-    250  f0b2		       ff		      .BYTE.b	%11111111
-    251  f0b3
-    252  f0b3							;-------------------------------------------
-    253  f0b3
-    254  fffa					      ORG	$FFFA	; End of cart area
-    255  fffa
-    256  fffa				   InterruptVectors
-    257  fffa
-    258  fffa		       00 f0		      .word.w	Reset	; NMI
-    259  fffc		       00 f0		      .word.w	Reset	; RESET
-    260  fffe		       00 f0		      .word.w	Reset	; IRQ
-    261  10000
-    262  10000					       END
+    160  f063							; Load second half of data
+    161  f063		       c8		      iny
+    162  f064		       b9 9d f0 	      lda	LogoData,y
+    163  f067
+    164  f067							; Use 4 MSB bits on PF0
+    165  f067		       85 0d		      sta	PF0
+    166  f069
+    167  f069							; Use 4 LSB bits on PF1
+    168  f069					      REPEAT	4
+    169  f069		       0a		      asl
+    168  f069					      REPEND
+    169  f06a		       0a		      asl
+    168  f06a					      REPEND
+    169  f06b		       0a		      asl
+    168  f06b					      REPEND
+    169  f06c		       0a		      asl
+    170  f06d					      REPEND
+    171  f06d		       85 0e		      sta	PF1
+    172  f06f
+    173  f06f							; Cleanup
+    174  f06f		       a9 00		      lda	#$00
+    175  f071		       85 0f		      sta	PF2
+    176  f073		       85 0d		      sta	PF0
+    177  f075
+    178  f075							; Wait for next line
+    179  f075		       85 02		      sta	WSYNC
+    180  f077		       e8		      inx
+    181  f078		       e0 48		      cpx	#LOGO_SIZE*LOGO_INTERVAL	; Check if end of logo
+    182  f07a		       d0 da		      bne	.scanline_logo
+    183  f07c
+    184  f07c							; Clear Playfields
+    185  f07c		       a9 00		      lda	#$00
+    186  f07e		       85 0d		      sta	PF0
+    187  f080		       85 0e		      sta	PF1
+    188  f082		       85 0f		      sta	PF2
+    189  f084
+    190  f084		       a2 00		      ldx	#0
+    191  f086				   .scanline_end
+    192  f086
+    193  f086		       85 02		      sta	WSYNC
+    194  f088		       e8		      inx
+    195  f089		       e0 48		      cpx	#KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL
+    196  f08b		       d0 f9		      bne	.scanline_end
+    197  f08d
+    198  f08d				   .overscan		; 30 scanlines of overscan
+    199  f08d
+    200  f08d		       a9 42		      lda	#%01000010
+    201  f08f		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    202  f091
+    203  f091		       a2 00		      ldx	#0
+    204  f093
+    205  f093				   .overscan_loop
+    206  f093
+    207  f093		       85 02		      sta	WSYNC
+    208  f095		       e8		      inx
+    209  f096		       e0 1e		      cpx	#KERNEL_OVERSCAN
+    210  f098		       d0 f9		      bne	.overscan_loop
+    211  f09a
+    212  f09a		       4c 28 f0 	      jmp	LogoFrame
+    213  f09d
+    214  f09d				   LogoData		; 6 bytes over 8 lines each, total of 48 lines
+    215  f09d
+    216  f09d		       00		      .BYTE.b	%00000000	; Reversed
+    217  f09e		       10		      .BYTE.b	%00010000	; First 4 bits reversed
+    218  f09f
+    219  f09f		       80		      .BYTE.b	%10000000
+    220  f0a0		       20		      .BYTE.b	%00100000
+    221  f0a1
+    222  f0a1		       40		      .BYTE.b	%01000000
+    223  f0a2		       40		      .BYTE.b	%01000000
+    224  f0a3
+    225  f0a3		       20		      .BYTE.b	%00100000
+    226  f0a4		       80		      .BYTE.b	%10000000
+    227  f0a5
+    228  f0a5		       10		      .BYTE.b	%00010000
+    229  f0a6		       08		      .BYTE.b	%00001000
+    230  f0a7
+    231  f0a7		       08		      .BYTE.b	%00001000
+    232  f0a8		       00		      .BYTE.b	%00000000
+    233  f0a9
+    234  f0a9		       04		      .BYTE.b	%00000100
+    235  f0aa		       00		      .BYTE.b	%00000000
+    236  f0ab
+    237  f0ab		       02		      .BYTE.b	%00000010
+    238  f0ac		       00		      .BYTE.b	%00000000
+    239  f0ad
+    240  f0ad		       ff		      .BYTE.b	%11111111
+    241  f0ae		       ff		      .BYTE.b	%11111111
+    242  f0af
+    243  f0af							;-------------------------------------------
+    244  f0af
+    245  fffa					      ORG	$FFFA	; End of cart area
+    246  fffa
+    247  fffa				   InterruptVectors
+    248  fffa
+    249  fffa		       00 f0		      .word.w	Reset	; NMI
+    250  fffc		       00 f0		      .word.w	Reset	; RESET
+    251  fffe		       00 f0		      .word.w	Reset	; IRQ
+    252  10000
+    253  10000					       END
