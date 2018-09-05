@@ -36,9 +36,9 @@ KERNEL_VBLANK       = 37
 KERNEL_OVERSCAN     = 30
 
 ; Logo
-LOGO_START          = 32
-LOGO_HEIGHT         = 48
-LOGO_END            = 80
+LOGO_SIZE           = 9
+LOGO_START          = 48
+LOGO_INTERVAL       = 4*2
 
 ;================
 ; Variables
@@ -47,7 +47,7 @@ LOGO_END            = 80
     SEG.U vars
     org $80
 
-logoDrawLine        ds 1
+unused_variable     ds 1
 
     SEG
 
@@ -55,21 +55,21 @@ logoDrawLine        ds 1
 
 Reset:
 
-InitializeStack:
+.initstack
 
     ldx #0
     txa
 
-InitializeStackLoop:
+.initstack_loop:
 
     dex
     txs
     pha
-    bne InitializeStackLoop
+    bne .initstack_loop
 
     ; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
 
-InitializeVariables:
+.initvars
 
     ; Set background color
     lda #$00 ; White
@@ -80,7 +80,7 @@ InitializeVariables:
     sta COLUPF
 
     ; Playfield Control
-    lda #%00000001
+    lda #%00000000 ; 1 for mirroring
     sta CTRLPF
 
     ; Disable Game Elements
@@ -97,7 +97,9 @@ InitializeVariables:
     sta PF1
     sta PF2
 
-StartOfFrame:           ; Start of vertical blank processing
+LogoFrame:
+
+.vsync:                 ; Start of vertical blank processing
 
     lda #0
     sta VBLANK
@@ -113,86 +115,138 @@ StartOfFrame:           ; Start of vertical blank processing
     lda #0
     sta VSYNC
 
-VerticalBlank:          ; scanlines of vertical blank
+.vblank:                ; scanlines of vertical blank
 
     ldx #0
 
-VerticalBlankLoop:
+.vblank_loop:
 
     sta WSYNC
     inx
     cpx #KERNEL_VBLANK
-    bne VerticalBlankLoop
+    bne .vblank_loop
 
-Picture:                ; Do 192 scanlines
+.scanline:              ; Do 192 scanlines
+
+    lda #$00            ; Clear playfields
+    sta PF0
+    sta PF1
+    sta PF2
 
     ldx #0              ; This counts our scanline number
-    ldy #$FF              ; This counts our logo line number, set to $FF to loop
-
-PictureScanline:
-
-    ; Check if we are outside of logo bounds
-    cpx #LOGO_START
-    bcc PictureScanlineClear
-    cpx #LOGO_END
-    bcs PictureScanlineClear
-
-    ; Increment logo line and check for 4th bit change (every 8)
-    tya
-    iny
-    sty $80
-    eor $80
-    and #%00001000
-    beq PictureScanlineEnd
-
-    tya                 ; Load up logo index
-    pha                 ; Push logo line index to stack
-    lsr                 ; Divide by 8 (3 bitshifts)
-    lsr
-    lsr
-    tay                 ; Move accumulator to y
-    lda LogoData,y      ; Load logo data from yth line
-    sta PF1             ; Store logo line into playfield
-    pla                 ; Recall logo line index from stack
-    tay                 ; Store logo line index back into y register
-    jmp PictureScanlineEnd
-
-PictureScanlineClear:
-
-    lda #0
-    sta PF1
-
-PictureScanlineEnd:
+.scanline_start:
 
     sta WSYNC
     inx
+    cpx #LOGO_START
+    bne .scanline_start
 
-    cpx #KERNEL_SCANLINES
-    bne PictureScanline
+    ldx #0
+.scanline_logo:
 
-Overscan:               ; 30 scanlines of overscan...
+    ; Cleanup
+    sta PF1
+
+    txa
+    lsr                 ; Divide counter by 4
+    lsr
+    and #%11111110      ; Remove 0th bit
+    tay
+
+    ; load first half of data
+    lda LogoData,y
+    sta PF2
+
+    ; -8 pixels, 228 pixels in total, pf0 starts at 68 pixels, 160 per line, 80 is middle
+    ; 88 more pixels to middle, 3 pixels per 6502 clock, 29 clocks needed, nop = 2 clocks
+
+    ; Load second half of data
+    iny
+    lda LogoData,y
+    ; tay ; Make a copy of the data
+
+    ; and #%11110000 ; Use 4 MSB bits
+    sta PF0
+
+    ; tya ; Use 4 LSB bits
+    ; and #%00001111
+    asl
+    asl
+    asl
+    asl
+    sta PF1
+
+    ; Delay before cleanup
+    REPEAT 4
+        nop
+    REPEND
+
+    ; Cleanup
+    lda #$00
+    sta PF0
+    sta PF2
+
+    sta WSYNC
+    inx
+    cpx #LOGO_SIZE*LOGO_INTERVAL
+    bne .scanline_logo
+
+    lda #$00            ; Clear Playfields
+    sta PF0
+    sta PF1
+    sta PF2
+
+    ldx #0
+.scanline_end:
+
+    sta WSYNC
+    inx
+    cpx #KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL
+    bne .scanline_end
+
+.overscan:              ; 30 scanlines of overscan
 
     lda #%01000010
     sta VBLANK          ; end of screen - enter blanking
 
     ldx #0
 
-OverscanLoop:
+.overscan_loop:
 
     sta WSYNC
     inx
     cpx #KERNEL_OVERSCAN
-    bne OverscanLoop
+    bne .overscan_loop
 
-    jmp StartOfFrame
+    jmp LogoFrame
 
 LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
 
+    .BYTE %00000000 ; Reversed
+    .BYTE %00010000 ; First 4 bits reversed
+
+    .BYTE %10000000
+    .BYTE %00100000
+
+    .BYTE %01000000
+    .BYTE %01000000
+
+    .BYTE %00100000
+    .BYTE %10000000
+
+    .BYTE %00010000
     .BYTE %00001000
-    .BYTE %00011100
-    .BYTE %00110110
-    .BYTE %01100000
-    .BYTE %11000000
+
+    .BYTE %00001000
+    .BYTE %00000000
+
+    .BYTE %00000100
+    .BYTE %00000000
+
+    .BYTE %00000010
+    .BYTE %00000000
+
+    .BYTE %11111111
     .BYTE %11111111
 
     ;-------------------------------------------
