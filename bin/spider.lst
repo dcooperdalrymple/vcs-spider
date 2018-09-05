@@ -375,139 +375,206 @@
     163  10000 ????						; EOF
 ------- FILE spider.asm
       9  10000 ????
-     10  10000 ????						; Constants
-     11  10000 ????		00 80	    PATTERN    =	$80	; storage location (1st byte in RAM)
-     12  10000 ????		00 14	    TIMETOCHANGE =	20	; speed of animation
+     10  10000 ????						;================
+     11  10000 ????						; Constants
+     12  10000 ????						;================
      13  10000 ????
-     14  10000 ????				       SEG
-     15  f000					      ORG	$F000
-     16  f000
-     17  f000				   Reset
-     18  f000
-     19  f000				   InitializeStack
-     20  f000
-     21  f000		       a2 00		      ldx	#0
-     22  f002		       8a		      txa
-     23  f003
-     24  f003				   InitializeStackLoop
-     25  f003
-     26  f003		       ca		      dex
-     27  f004		       9a		      txs
-     28  f005		       48		      pha
-     29  f006		       d0 fb		      bne	InitializeStackLoop
-     30  f008
-     31  f008							; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
-     32  f008
-     33  f008				   InitializeVariables
-     34  f008
-     35  f008							; Set background color
-     36  f008		       a9 00		      lda	#0
-     37  f00a		       85 09		      sta	COLUBK
-     38  f00c
-     39  f00c							; Set the playfield color
-     40  f00c		       a9 0e		      lda	#$0E	; White
-     41  f00e		       85 08		      sta	COLUPF
-     42  f010
-     43  f010							; Playfield Control
-     44  f010		       a9 01		      lda	#%00000001
-     45  f012		       85 0a		      sta	CTRLPF
-     46  f014
-     47  f014				   StartOfFrame
-     48  f014
-     49  f014							; Start of vertical blank processing
-     50  f014
-     51  f014		       a9 00		      lda	#0
-     52  f016		       85 01		      sta	VBLANK
-     53  f018
-     54  f018		       a9 02		      lda	#2
-     55  f01a		       85 00		      sta	VSYNC
-     56  f01c
-     57  f01c							; 3 scanlines of VSYNCH signal
-     58  f01c
-     59  f01c		       85 02		      sta	WSYNC
-     60  f01e		       85 02		      sta	WSYNC
-     61  f020		       85 02		      sta	WSYNC
-     62  f022
-     63  f022		       a9 00		      lda	#0
-     64  f024		       85 00		      sta	VSYNC
-     65  f026
-     66  f026							; 37 scanlines of vertical blank
-     67  f026
-     68  f026				   VerticalBlank
-     69  f026
-     70  f026		       a2 00		      ldx	#0
-     71  f028
-     72  f028				   VerticalBlankLoop
-     73  f028
-     74  f028		       85 02		      sta	WSYNC
-     75  f02a		       e8		      inx
-     76  f02b		       e0 25		      cpx	#37
-     77  f02d		       d0 f9		      bne	VerticalBlankLoop
-     78  f02f
-     79  f02f							; Do 192 scanlines of color-changing (our picture)
-     80  f02f
-     81  f02f				   Picture
-     82  f02f
-     83  f02f		       a2 00		      ldx	#0	; This counts our scanline number
-     84  f031
-     85  f031				   SolidPattern
-     86  f031
-     87  f031		       a9 ff		      lda	#%11111111
-     88  f033		       85 0d		      sta	PF0
-     89  f035		       85 0e		      sta	PF1
-     90  f037		       85 0f		      sta	PF2
-     91  f039		       4c 46 f0 	      jmp	PictureLoop
-     92  f03c
-     93  f03c				   WallPattern
-     94  f03c
-     95  f03c		       a9 10		      lda	#%00010000
-     96  f03e		       85 0d		      sta	PF0
-     97  f040		       a9 00		      lda	#%00000000
-     98  f042		       85 0e		      sta	PF1
-     99  f044		       85 0f		      sta	PF2
-    100  f046
-    101  f046				   PictureLoop
-    102  f046
-    103  f046		       85 02		      sta	WSYNC
-    104  f048		       e8		      inx
-    105  f049
-    106  f049							; Pattern Changes
-    107  f049		       e0 08		      cpx	#8
-    108  f04b		       f0 ef		      beq	WallPattern
-    109  f04d		       e0 b8		      cpx	#184
-    110  f04f		       f0 e0		      beq	SolidPattern
-    111  f051
-    112  f051		       e0 c0		      cpx	#192
-    113  f053		       d0 f1		      bne	PictureLoop
-    114  f055
-    115  f055							;----------------------------------------
-    116  f055
-    117  f055		       a9 42		      lda	#%01000010
-    118  f057		       85 01		      sta	VBLANK	; end of screen - enter blanking
-    119  f059
-    120  f059							; 30 scanlines of overscan...
-    121  f059
-    122  f059				   Overscan
-    123  f059
-    124  f059		       a2 00		      ldx	#0
-    125  f05b
-    126  f05b				   OverscanLoop
-    127  f05b
-    128  f05b		       85 02		      sta	WSYNC
-    129  f05d		       e8		      inx
-    130  f05e		       e0 1e		      cpx	#30
-    131  f060		       d0 f9		      bne	OverscanLoop
-    132  f062
-    133  f062		       4c 14 f0 	      jmp	StartOfFrame
-    134  f065
-    135  f065							;-------------------------------------------
-    136  f065
-    137  fffa					      ORG	$FFFA
-    138  fffa
-    139  fffa				   InterruptVectors
-    140  fffa
-    141  fffa		       00 f0		      .word.w	Reset	; NMI
-    142  fffc		       00 f0		      .word.w	Reset	; RESET
-    143  fffe		       00 f0		      .word.w	Reset	; IRQ
-    144  10000
-    145  10000				    END
+     14  10000 ????						; PAL Region
+     15  10000 ????		00 00	    PAL        =	0
+     16  10000 ????		00 f2	    PAL_SCANLINES =	242
+     17  10000 ????		01 38	    PAL_TOTAL  =	312
+     18  10000 ????
+     19  10000 ????						; NTSC Region
+     20  10000 ????		00 01	    NTSC       =	1
+     21  10000 ????		00 c0	    NTSC_SCANLINES =	192
+     22  10000 ????		01 06	    NTSC_TOTAL =	262
+     23  10000 ????
+     24  10000 ????						; Kernel
+     25  10000 ????		00 01	    SYSTEM     =	NTSC
+     26  10000 ????				       if	SYSTEM = NTSC
+     27  10000 ????		00 c0	    KERNEL_SCANLINES =	NTSC_SCANLINES
+     28  10000 ????		01 06	    KERNEL_TOTAL =	NTSC_TOTAL
+     29  10000 ????				       endif
+     30  10000 ????			   -	       if	SYSTEM = PAL
+     31  10000 ????			   -KERNEL_SCANLINES =	PAL_SCANLINES
+     32  10000 ????			   -KERNEL_TOTAL =	PAL_TOTAL
+     33  10000 ????				       endif
+     34  10000 ????		00 03	    KERNEL_VSYNC =	3
+     35  10000 ????		00 25	    KERNEL_VBLANK =	37
+     36  10000 ????		00 1e	    KERNEL_OVERSCAN =	30
+     37  10000 ????
+     38  10000 ????						; Logo
+     39  10000 ????		00 20	    LOGO_START =	32
+     40  10000 ????		00 30	    LOGO_HEIGHT =	48
+     41  10000 ????		00 50	    LOGO_END   =	80
+     42  10000 ????
+     43  10000 ????						;================
+     44  10000 ????						; Variables
+     45  10000 ????						;================
+     46  10000 ????
+     47 U0081 ????				      SEG.U	vars
+     48 U0080					      org	$80
+     49 U0080
+     50 U0080		       00	   logoDrawLine ds	1
+     51 U0081
+     52  10000 ????				       SEG
+     53  10000 ????
+     54  f000					      ORG	$F000	; Start of cart area
+     55  f000
+     56  f000				   Reset
+     57  f000
+     58  f000				   InitializeStack
+     59  f000
+     60  f000		       a2 00		      ldx	#0
+     61  f002		       8a		      txa
+     62  f003
+     63  f003				   InitializeStackLoop
+     64  f003
+     65  f003		       ca		      dex
+     66  f004		       9a		      txs
+     67  f005		       48		      pha
+     68  f006		       d0 fb		      bne	InitializeStackLoop
+     69  f008
+     70  f008							; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
+     71  f008
+     72  f008				   InitializeVariables
+     73  f008
+     74  f008							; Set background color
+     75  f008		       a9 00		      lda	#$00	; White
+     76  f00a		       85 09		      sta	COLUBK
+     77  f00c
+     78  f00c							; Set the playfield color
+     79  f00c		       a9 0e		      lda	#$0E	; White
+     80  f00e		       85 08		      sta	COLUPF
+     81  f010
+     82  f010							; Playfield Control
+     83  f010		       a9 01		      lda	#%00000001
+     84  f012		       85 0a		      sta	CTRLPF
+     85  f014
+     86  f014							; Disable Game Elements
+     87  f014		       a9 00		      lda	#$00
+     88  f016		       85 1f		      sta	ENABL	; Turn off ball
+     89  f018		       85 1d		      sta	ENAM0	; Turn off player 1 missile
+     90  f01a		       85 1e		      sta	ENAM1	; Turn off player 2 missile
+     91  f01c		       85 1b		      sta	GRP0	; Turn off player 1
+     92  f01e		       85 1c		      sta	GRP1	; Turn off player 2
+     93  f020
+     94  f020							; Empty playfield
+     95  f020		       a9 00		      lda	#%00000000
+     96  f022		       85 0d		      sta	PF0
+     97  f024		       85 0e		      sta	PF1
+     98  f026		       85 0f		      sta	PF2
+     99  f028
+    100  f028				   StartOfFrame 		; Start of vertical blank processing
+    101  f028
+    102  f028		       a9 00		      lda	#0
+    103  f02a		       85 01		      sta	VBLANK
+    104  f02c
+    105  f02c		       a9 02		      lda	#2
+    106  f02e		       85 00		      sta	VSYNC
+    107  f030
+    108  f030							; VSYNCH signal scanlines
+    109  f030					      REPEAT	#KERNEL_VSYNC
+    110  f030		       85 02		      sta	WSYNC
+    109  f030					      REPEND
+    110  f032		       85 02		      sta	WSYNC
+    109  f032					      REPEND
+    110  f034		       85 02		      sta	WSYNC
+    111  f036					      REPEND
+    112  f036
+    113  f036		       a9 00		      lda	#0
+    114  f038		       85 00		      sta	VSYNC
+    115  f03a
+    116  f03a				   VerticalBlank		; scanlines of vertical blank
+    117  f03a
+    118  f03a		       a2 00		      ldx	#0
+    119  f03c
+    120  f03c				   VerticalBlankLoop
+    121  f03c
+    122  f03c		       85 02		      sta	WSYNC
+    123  f03e		       e8		      inx
+    124  f03f		       e0 25		      cpx	#KERNEL_VBLANK
+    125  f041		       d0 f9		      bne	VerticalBlankLoop
+    126  f043
+    127  f043				   Picture		; Do 192 scanlines
+    128  f043
+    129  f043		       a2 00		      ldx	#0	; This counts our scanline number
+    130  f045		       a0 ff		      ldy	#$FF	; This counts our logo line number, set to $FF to loop
+    131  f047
+    132  f047				   PictureScanline
+    133  f047
+    134  f047							; Check if we are outside of logo bounds
+    135  f047		       e0 20		      cpx	#LOGO_START
+    136  f049		       90 1e		      bcc	PictureScanlineClear
+    137  f04b		       e0 50		      cpx	#LOGO_END
+    138  f04d		       b0 1a		      bcs	PictureScanlineClear
+    139  f04f
+    140  f04f							; Increment logo line and check for 4th bit change (every 8)
+    141  f04f		       98		      tya
+    142  f050		       c8		      iny
+    143  f051		       84 80		      sty	$80
+    144  f053		       45 80		      eor	$80
+    145  f055		       29 08		      and	#%00001000
+    146  f057		       f0 14		      beq	PictureScanlineEnd
+    147  f059
+    148  f059		       98		      tya		; Load up logo index
+    149  f05a		       48		      pha		; Push logo line index to stack
+    150  f05b		       4a		      lsr		; Divide by 8 (3 bitshifts)
+    151  f05c		       4a		      lsr
+    152  f05d		       4a		      lsr
+    153  f05e		       a8		      tay		; Move accumulator to y
+    154  f05f		       b9 84 f0 	      lda	LogoData,y	; Load logo data from yth line
+    155  f062		       85 0e		      sta	PF1	; Store logo line into playfield
+    156  f064		       68		      pla		; Recall logo line index from stack
+    157  f065		       a8		      tay		; Store logo line index back into y register
+    158  f066		       4c 6d f0 	      jmp	PictureScanlineEnd
+    159  f069
+    160  f069				   PictureScanlineClear
+    161  f069
+    162  f069		       a9 00		      lda	#0
+    163  f06b		       85 0e		      sta	PF1
+    164  f06d
+    165  f06d				   PictureScanlineEnd
+    166  f06d
+    167  f06d		       85 02		      sta	WSYNC
+    168  f06f		       e8		      inx
+    169  f070
+    170  f070		       e0 c0		      cpx	#KERNEL_SCANLINES
+    171  f072		       d0 d3		      bne	PictureScanline
+    172  f074
+    173  f074				   Overscan		; 30 scanlines of overscan...
+    174  f074
+    175  f074		       a9 42		      lda	#%01000010
+    176  f076		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    177  f078
+    178  f078		       a2 00		      ldx	#0
+    179  f07a
+    180  f07a				   OverscanLoop
+    181  f07a
+    182  f07a		       85 02		      sta	WSYNC
+    183  f07c		       e8		      inx
+    184  f07d		       e0 1e		      cpx	#KERNEL_OVERSCAN
+    185  f07f		       d0 f9		      bne	OverscanLoop
+    186  f081
+    187  f081		       4c 28 f0 	      jmp	StartOfFrame
+    188  f084
+    189  f084				   LogoData		; 6 bytes over 8 lines each, total of 48 lines
+    190  f084
+    191  f084		       08		      .BYTE.b	%00001000
+    192  f085		       1c		      .BYTE.b	%00011100
+    193  f086		       36		      .BYTE.b	%00110110
+    194  f087		       60		      .BYTE.b	%01100000
+    195  f088		       c0		      .BYTE.b	%11000000
+    196  f089		       ff		      .BYTE.b	%11111111
+    197  f08a
+    198  f08a							;-------------------------------------------
+    199  f08a
+    200  fffa					      ORG	$FFFA	; End of cart area
+    201  fffa
+    202  fffa				   InterruptVectors
+    203  fffa
+    204  fffa		       00 f0		      .word.w	Reset	; NMI
+    205  fffc		       00 f0		      .word.w	Reset	; RESET
+    206  fffe		       00 f0		      .word.w	Reset	; IRQ
+    207  10000
+    208  10000					       END
