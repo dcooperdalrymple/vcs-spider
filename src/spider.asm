@@ -39,6 +39,8 @@ KERNEL_OVERSCAN     = 30
 LOGO_SIZE           = 9
 LOGO_START          = 48
 LOGO_INTERVAL       = 4*2
+LOGO_TEXT           = 16
+LOGO_PADDING        = 8
 
 ;================
 ; Variables
@@ -48,6 +50,15 @@ LOGO_INTERVAL       = 4*2
     org $80
 
 unused_variable     ds 1
+Overlay             ds 8
+
+    org Overlay         ; <= overlay size of 8 bytes
+
+; Animation/Logic System
+
+    org Overlay
+
+; Drawing System, etc
 
     SEG
 
@@ -75,9 +86,11 @@ Reset:
     lda #$00 ; White
     sta COLUBK
 
-    ; Set the playfield color
+    ; Set the playfield and player color
     lda #$0E ; White
     sta COLUPF
+    sta COLUP0
+    sta COLUP1
 
     ; Playfield Control
     lda #%00000000 ; 1 for mirroring
@@ -188,11 +201,41 @@ LogoFrame:
     sta PF2
 
     ldx #0
+.scanline_padding
+
+    sta WSYNC
+    inx
+    cpx #LOGO_PADDING
+    bne .scanline_padding
+
+    ldx #0
+.scanline_text
+
+    SLEEP 26 ; Set Position
+    sta RESP0
+
+    SLEEP 17
+    sta RESP1
+
+    stx GRP0
+    stx GRP1
+
+    sta WSYNC
+    inx
+    cpx #LOGO_TEXT
+    bne .scanline_text
+
+    ; Clear Players
+    lda #0
+    sta GRP0
+    sta GRP1
+
+    ldx #0
 .scanline_end:
 
     sta WSYNC
     inx
-    cpx #KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL
+    cpx #KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL-LOGO_PADDING-LOGO_TEXT
     bne .scanline_end
 
 .overscan:              ; 30 scanlines of overscan
