@@ -39,7 +39,8 @@ KERNEL_OVERSCAN     = 30
 LOGO_SIZE           = 9
 LOGO_START          = 48
 LOGO_INTERVAL       = 4*2
-LOGO_TEXT           = 16
+LOGO_TEXT_SIZE      = 8
+LOGO_TEXT_INTERVAL  = 1
 LOGO_PADDING        = 8
 
 ;================
@@ -49,7 +50,6 @@ LOGO_PADDING        = 8
     SEG.U vars
     org $80
 
-unused_variable     ds 1
 Overlay             ds 8
 
     org Overlay         ; <= overlay size of 8 bytes
@@ -130,13 +130,11 @@ LogoFrame:
 
 .vblank:                ; scanlines of vertical blank
 
-    ldx #0
-
+    ldx #KERNEL_VBLANK
 .vblank_loop:
 
     sta WSYNC
-    inx
-    cpx #KERNEL_VBLANK
+    dex
     bne .vblank_loop
 
 .scanline:              ; Do 192 scanlines
@@ -146,12 +144,11 @@ LogoFrame:
     sta PF1
     sta PF2
 
-    ldx #0              ; This counts our scanline number
+    ldx #LOGO_START     ; This counts our scanline number
 .scanline_start:
 
     sta WSYNC
-    inx
-    cpx #LOGO_START
+    dex
     bne .scanline_start
 
     ldx #0
@@ -191,7 +188,7 @@ LogoFrame:
     ; Wait for next line
     sta WSYNC
     inx
-    cpx #LOGO_SIZE*LOGO_INTERVAL    ; Check if end of logo
+    cpx #LOGO_SIZE*LOGO_INTERVAL
     bne .scanline_logo
 
     ; Clear Playfields
@@ -200,42 +197,63 @@ LogoFrame:
     sta PF1
     sta PF2
 
-    ldx #0
+    ldx #LOGO_PADDING
 .scanline_padding
 
     sta WSYNC
-    inx
-    cpx #LOGO_PADDING
+    dex
     bne .scanline_padding
 
-    ldx #0
+    ldx #LOGO_TEXT_SIZE*#LOGO_TEXT_INTERVAL
 .scanline_text
 
-    SLEEP 26 ; Set Position
-    sta RESP0
+    sta WSYNC
 
-    SLEEP 17
+    dex                 ; Decrement x by 1
+    txa
+    inx                 ; Restore value of x
+    ;lsr                 ; Divide by 2
+
+    ; 1st Character
+    tay
+    lda LogoTextData,y
+    sta GRP0
+
+    ; 2nd Character
+    tya
+    adc #LOGO_TEXT_SIZE
+    tay
+    lda LogoTextData,y
+    sta GRP1
+
+    SLEEP 4
+    sta RESP0
     sta RESP1
 
-    stx GRP0
-    stx GRP1
+    ; 2-8 Characters
+    ;REPEAT 2
+    ;tya
+    ;adc #LOGO_TEXT_SIZE
+    ;tay
+    ;lda LogoTextData,y
+    ;sta GRP0
+    ;sta RESP0
+    ;REPEND
 
-    sta WSYNC
-    inx
-    cpx #LOGO_TEXT
+    dex
     bne .scanline_text
+    sta WSYNC           ; Extra scanline to finish displaying sprites
 
     ; Clear Players
     lda #0
     sta GRP0
     sta GRP1
 
-    ldx #0
+    ldx #KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL-LOGO_PADDING-LOGO_TEXT_SIZE*LOGO_TEXT_INTERVAL-1 ; Extra -1 is from logo text
 .scanline_end:
 
     sta WSYNC
-    inx
-    cpx #KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL-LOGO_PADDING-LOGO_TEXT
+    dex
     bne .scanline_end
 
 .overscan:              ; 30 scanlines of overscan
@@ -243,21 +261,19 @@ LogoFrame:
     lda #%01000010
     sta VBLANK          ; end of screen - enter blanking
 
-    ldx #0
-
+    ldx #KERNEL_OVERSCAN
 .overscan_loop:
 
     sta WSYNC
-    inx
-    cpx #KERNEL_OVERSCAN
+    dex
     bne .overscan_loop
 
     jmp LogoFrame
 
 LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
 
-    .BYTE %00000000 ; Reversed
-    .BYTE %00010000 ; First 4 bits reversed
+    .BYTE %00000000     ; Reversed
+    .BYTE %00010000     ; First 4 bits reversed
 
     .BYTE %10000000
     .BYTE %00100000
@@ -282,6 +298,76 @@ LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
 
     .BYTE %11111111
     .BYTE %11111111
+
+LogoTextData: ; 6x8, flipped for decrementing loop
+
+    ; C
+    .BYTE %01111000
+    .BYTE %11111100
+    .BYTE %11001100
+    .BYTE %11000000
+    .BYTE %11000000
+    .BYTE %11001100
+    .BYTE %11111100
+    .BYTE %01111000
+
+    ; R
+    .BYTE %11001100
+    .BYTE %11001100
+    .BYTE %11001100
+    .BYTE %11111000
+    .BYTE %11111100
+    .BYTE %11001100
+    .BYTE %11001100
+    .BYTE %11111000
+
+    ; E
+    .BYTE %11111100
+    .BYTE %11000000
+    .BYTE %11000000
+    .BYTE %11111000
+    .BYTE %11000000
+    .BYTE %11111100
+
+    ; A
+    .BYTE %01111100
+    .BYTE %11000100
+    .BYTE %11000100
+    .BYTE %11111100
+    .BYTE %11000100
+    .BYTE %11000100
+
+    ; T
+    .BYTE %11111100
+    .BYTE %00110000
+    .BYTE %00110000
+    .BYTE %00110000
+    .BYTE %00110000
+    .BYTE %00110000
+
+    ; U
+    .BYTE %11100100
+    .BYTE %11100100
+    .BYTE %11100100
+    .BYTE %11100100
+    .BYTE %11100100
+    .BYTE %01111000
+
+    ; R
+    .BYTE %11111000
+    .BYTE %11000100
+    .BYTE %11000100
+    .BYTE %11111000
+    .BYTE %11000100
+    .BYTE %11000100
+
+    ; E
+    .BYTE %11111100
+    .BYTE %11000000
+    .BYTE %11000000
+    .BYTE %11111000
+    .BYTE %11000000
+    .BYTE %11111100
 
     ;-------------------------------------------
 
