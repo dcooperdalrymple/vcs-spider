@@ -13,13 +13,46 @@
 0.logo_vblank            f046                  
 0.logo_vblank_loop       f048              (R )
 0.logo_vsync             f034                  
-0.start_overscan         f0d9                  
-0.start_overscan_loop    f0df              (R )
-0.start_scanline         f0ca                  
-0.start_scanline_loop    f0d4              (R )
-0.start_vblank           f0c3                  
-0.start_vblank_loop      f0c5              (R )
-0.start_vsync            f0b1                  
+0.start_overscan         f1ee                  
+0.start_overscan_loop    f1f4              (R )
+0.start_scanline         f1df                  
+0.start_scanline_loop    f1e9              (R )
+0.start_vblank           f1d8                  
+0.start_vblank_loop      f1da              (R )
+0.start_vsync            f1c6                  
+0.title_border_h_bottom  f1a5                  
+0.title_border_h_bottom_loop f1af              (R )
+0.title_border_h_top     f0d2                  
+0.title_border_h_top_loop f0dc              (R )
+0.title_border_v_bottom  f190                  
+0.title_border_v_bottom_loop f1a0              (R )
+0.title_border_v_top     f0e1                  
+0.title_border_v_top_loop f0f1              (R )
+0.title_gap              f138                  
+0.title_gap_loop         f148              (R )
+0.title_image_bottom     f14d                  
+0.title_image_bottom_line f153              (R )
+0.title_image_bottom_line_skip_wait f158              (R )
+0.title_image_bottom_loop f15d              (R )
+0.title_image_bottom_loop_skip_wait f167              (R )
+0.title_image_top        f0f6                  
+0.title_image_top_line   f0fc              (R )
+0.title_image_top_line_skip_wait f100              (R )
+0.title_image_top_loop   f105              (R )
+0.title_image_top_loop_skip_wait f10f              (R )
+0.title_overscan         f1b4                  
+0.title_overscan_loop    f1ba              (R )
+0.title_vblank           f0cb                  
+0.title_vblank_loop      f0cd              (R )
+0.title_vsync            f0b9                  
+1.CYCLES                 0002              (R )
+2.CYCLES                 0008              (R )
+3.CYCLES                 0010              (R )
+4.CYCLES                 0002              (R )
+5.CYCLES                 0002              (R )
+6.CYCLES                 0006              (R )
+7.CYCLES                 0010              (R )
+8.CYCLES                 0002              (R )
 AnimationFrame           0080              (R )
 AnimationSubFrame        0081              (R )
 AUDC0                    0015                  
@@ -59,7 +92,7 @@ INPT0                    0008
 INPT1                    0009                  
 INPT2                    000a                  
 INPT3                    000b                  
-INPT4                    000c                  
+INPT4                    000c              (R )
 INPT5                    000d                  
 InterruptVectors         fffa                  
 INTIM                    0284                  
@@ -68,15 +101,14 @@ KERNEL_SCANLINES         00c0              (R )
 KERNEL_TOTAL             0106                  
 KERNEL_VBLANK            0025              (R )
 KERNEL_VSYNC             0003              (R )
-LOGO_CHAR_DELAY          0008                  
-LOGO_DELAY               00ff              (R )
+LOGO_FRAMES              00ff              (R )
 LOGO_INTERVAL            0008              (R )
 LOGO_SIZE                0009              (R )
 LOGO_START               0030              (R )
-LogoData                 f0e7              (R )
+LogoData                 f1fc              (R )
 LogoFrame                f034              (R )
 LogoScreen               f02c                  
-LogoTextData             f0f9                  
+NO_ILLEGAL_OPCODES       0000 ????         (R )
 NTSC                     0001              (R )
 NTSC_SCANLINES           00c0              (R )
 NTSC_TOTAL               0106              (R )
@@ -100,8 +132,8 @@ RESMP1                   0029
 RESP0                    0010                  
 RESP1                    0011                  
 RSYNC                    0003                  
-StartFrame               f0b1                  
-StartScreen              f0b1              (R )
+StartFrame               f1c6              (R )
+StartScreen              f1c6              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
 SWCHA                    0280                  
@@ -115,6 +147,17 @@ TIM1T                    0294
 TIM64T                   0296                  
 TIM8T                    0295                  
 TIMINT                   0285                  
+TITLE_BORDER             0001              (R )
+TITLE_DATA_SIZE          0004              (R )
+TITLE_GAP                0002              (R )
+TITLE_IMAGE              0006              (R )
+TITLE_LINE_SIZE          0008              (R )
+TITLE_PAD                0004              (R )
+TitleFrame               f0b9              (R )
+TitleImageBottom         f226              (R )
+TitleImagePtr            0080                  
+TitleImageTop            f20e              (R )
+TitleScreen              f0b1                  
 VBLANK                   0001              (R )
 VDELBL                   0027                  
 VDELP0                   0025                  

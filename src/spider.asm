@@ -41,6 +41,14 @@ LOGO_START          = 48
 LOGO_INTERVAL       = 4*2
 LOGO_FRAMES         = 255
 
+; Title
+TITLE_LINE_SIZE     = 8
+TITLE_DATA_SIZE     = %00000100
+TITLE_BORDER        = 1
+TITLE_PAD           = 4
+TITLE_IMAGE         = 6
+TITLE_GAP           = 2
+
 ;================
 ; Variables
 ;================
@@ -60,6 +68,8 @@ AnimationSubFrame   ds 1 ; 1 byte to count portions of frames
     org Overlay
 
 ; Drawing System, etc
+
+TitleImagePtr       ds 2 ; Pointer to image data location
 
     SEG
 
@@ -84,7 +94,7 @@ Reset:
 .initvars
 
     ; Set background color
-    lda #$00 ; White
+    lda #$00 ; Black
     sta COLUBK
 
     ; Set the playfield and player color
@@ -250,6 +260,268 @@ LogoFrame:
     ; Check if we're at the end of the animation
     bne LogoFrame
 
+TitleScreen:
+
+    lda #$00            ; Clear playfields
+    sta PF0
+    sta PF1
+    sta PF2
+
+TitleFrame:
+
+.title_vsync:                 ; Start of vertical blank processing
+
+    lda #0
+    sta VBLANK
+
+    lda #2
+    sta VSYNC
+
+    ; VSYNCH signal scanlines
+    REPEAT #KERNEL_VSYNC
+        sta WSYNC
+    REPEND
+
+    lda #0
+    sta VSYNC
+
+.title_vblank:                  ; scanlines of vertical blank
+
+    ldx #KERNEL_VBLANK
+.title_vblank_loop:
+
+    sta WSYNC
+    dex
+    bne .title_vblank_loop
+
+.title_border_h_top:
+
+    ; Number of Scanlines
+    ldx #TITLE_BORDER*TITLE_LINE_SIZE
+
+    ; Draw Playfield
+    lda #$FF
+    sta PF0
+    sta PF1
+    sta PF2
+
+.title_border_h_top_loop:
+
+    sta WSYNC
+    dex
+    bne .title_border_h_top_loop
+
+.title_border_v_top:
+
+    ; Number of Scanlines
+    ldx #TITLE_PAD*TITLE_LINE_SIZE
+
+    ; Mirror playfield
+    lda #%00000001
+    sta CTRLPF
+
+    ; Draw Playfield
+    lda #%00010000
+    sta PF0
+
+    lda #$00
+    sta PF1
+    sta PF2
+
+.title_border_v_top_loop:
+
+    sta WSYNC
+    dex
+    bne .title_border_v_top_loop
+
+.title_image_top:
+
+    ldy #$00    ; Current Image Index
+
+    sleep 2
+    jmp .title_image_top_line_skip_wait
+
+.title_image_top_line:
+
+    sleep 8
+
+.title_image_top_line_skip_wait:
+
+    ldx #TITLE_LINE_SIZE                ; Current scanline
+    jmp .title_image_top_loop_skip_wait
+
+.title_image_top_loop:
+
+    ; Wait until new line is ready to draw
+    sta WSYNC
+    sleep 16
+
+.title_image_top_loop_skip_wait:
+
+    ; Draw Image
+    lda TitleImageTop,y
+    sta PF1
+    iny
+    lda TitleImageTop,y
+    sta PF2
+    iny
+    lda TitleImageTop,y
+    iny
+    sleep 5
+    sta PF2
+    lda TitleImageTop,y
+    sta PF1
+
+    ; Clear bottom of index
+    tya
+    and #%11111100
+    tay
+
+    dex
+    bne .title_image_top_loop
+
+    ; Add 4 to the image index to skip to next line
+    REPEAT 4
+        iny
+    REPEND
+
+    cpy #TITLE_IMAGE*TITLE_DATA_SIZE
+    bne .title_image_top_line
+
+.title_gap:
+
+    ; Number of Scanlines
+    ldx #TITLE_GAP*TITLE_LINE_SIZE
+
+    ; Mirror playfield
+    lda #%00000001
+    sta CTRLPF
+
+    ; Draw Playfield
+    lda #%00010000
+    sta PF0
+
+    lda #$00
+    sta PF1
+    sta PF2
+
+.title_gap_loop:
+
+    sta WSYNC
+    dex
+    bne .title_gap_loop
+
+.title_image_bottom:
+
+    ldy #$00                ; Current Image Index
+
+    sleep 2
+    jmp .title_image_bottom_line_skip_wait
+
+.title_image_bottom_line:
+
+    sleep 9
+
+.title_image_bottom_line_skip_wait
+
+    ldx #TITLE_LINE_SIZE    ; Current scanline
+    jmp .title_image_bottom_loop_skip_wait
+
+.title_image_bottom_loop:
+
+    ; Wait until new line is ready to draw
+    sta WSYNC
+    sleep 16
+
+.title_image_bottom_loop_skip_wait:
+
+    ; Draw Image
+    lda TitleImageBottom,y
+    sta PF1
+    iny
+    lda TitleImageBottom,y
+    sta PF2
+    iny
+    lda TitleImageBottom,y
+    iny
+    sleep 5
+    sta PF2
+    lda TitleImageBottom,y
+    sta PF1
+
+    ; Clear bottom of index
+    tya
+    and #%11111100
+    tay
+
+    dex
+    bne .title_image_bottom_loop
+
+    ; Add 4 to image index to skip to next line
+    REPEAT 4
+        iny
+    REPEND
+
+    cpy #TITLE_IMAGE*TITLE_DATA_SIZE
+    bne .title_image_bottom_line
+
+.title_border_v_bottom:
+
+    ; Number of Scanlines
+    ldx #TITLE_PAD*TITLE_LINE_SIZE
+
+    ; Mirror playfield
+    lda #%00000001
+    sta CTRLPF
+
+    ; Draw Playfield
+    lda #%00010000
+    sta PF0
+
+    lda #$00
+    sta PF1
+    sta PF2
+
+.title_border_v_bottom_loop:
+
+    sta WSYNC
+    dex
+    bne .title_border_v_bottom_loop
+
+.title_border_h_bottom:
+
+    ; Number of Scanlines
+    ldx #TITLE_BORDER*TITLE_LINE_SIZE
+
+    ; Draw Playfield
+    lda #$FF
+    sta PF0
+    sta PF1
+    sta PF2
+
+.title_border_h_bottom_loop:
+
+    sta WSYNC
+    dex
+    bne .title_border_h_bottom_loop
+
+.title_overscan:              ; 30 scanlines of overscan
+
+    lda #%01000010
+    sta VBLANK          ; end of screen - enter blanking
+
+    ldx #KERNEL_OVERSCAN
+.title_overscan_loop:
+
+    sta WSYNC
+    dex
+    bne .title_overscan_loop
+
+    ; Check if Fire Button on controller 1 is pressed
+    lda INPT4
+    bpl StartScreen
+    jmp TitleFrame
+
 StartScreen:
 
     ; Init variables here
@@ -307,7 +579,7 @@ StartFrame:
     dex
     bne .start_overscan_loop
 
-    jmp StartScreen
+    jmp StartFrame
 
 LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
 
@@ -338,75 +610,69 @@ LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
     .BYTE %11111111
     .BYTE %11111111
 
-LogoTextData: ; 6x8, flipped for decrementing loop
+TitleImageTop:          ; Spider
 
-    ; C
-    .BYTE %01111000
-    .BYTE %11111100
-    .BYTE %11001100
-    .BYTE %11000000
-    .BYTE %11000000
-    .BYTE %11001100
-    .BYTE %11111100
-    .BYTE %01111000
+    .BYTE %00011110     ; Normal
+    .BYTE %01110111     ; Reversed
+    .BYTE %11100111     ; Normal
+    .BYTE %00001110     ; Reversed
 
-    ; R
-    .BYTE %11001100
-    .BYTE %11001100
-    .BYTE %11001100
-    .BYTE %11111000
-    .BYTE %11111100
-    .BYTE %11000110
-    .BYTE %11000110
-    .BYTE %11111000
+    .BYTE %00010000
+    .BYTE %00100101
+    .BYTE %10010100
+    .BYTE %00010010
 
-    ; E
-    .BYTE %11111100
-    .BYTE %11000000
-    .BYTE %11000000
-    .BYTE %11111000
-    .BYTE %11000000
-    .BYTE %11111100
+    .BYTE %00010000
+    .BYTE %00100111
+    .BYTE %10010110
+    .BYTE %00010010
 
-    ; A
-    .BYTE %01111100
-    .BYTE %11000100
-    .BYTE %11000100
-    .BYTE %11111100
-    .BYTE %11000100
-    .BYTE %11000100
+    .BYTE %00011100
+    .BYTE %00100001
+    .BYTE %10010100
+    .BYTE %00001110
 
-    ; T
-    .BYTE %11111100
-    .BYTE %00110000
-    .BYTE %00110000
-    .BYTE %00110000
-    .BYTE %00110000
-    .BYTE %00110000
+    .BYTE %00000100
+    .BYTE %00100001
+    .BYTE %10010100
+    .BYTE %00010010
 
-    ; U
-    .BYTE %11100100
-    .BYTE %11100100
-    .BYTE %11100100
-    .BYTE %11100100
-    .BYTE %11100100
-    .BYTE %01111000
+    .BYTE %00011100
+    .BYTE %01110001
+    .BYTE %11100111
+    .BYTE %00010010
 
-    ; R
-    .BYTE %11111000
-    .BYTE %11000100
-    .BYTE %11000100
-    .BYTE %11111000
-    .BYTE %11000100
-    .BYTE %11000100
+TitleImageBottom:       ; Web & Art
 
-    ; E
-    .BYTE %11111100
-    .BYTE %11000000
-    .BYTE %11000000
-    .BYTE %11111000
-    .BYTE %11000000
-    .BYTE %11111100
+    .BYTE %00000001     ; Normal
+    .BYTE %00000011     ; Reversed
+    .BYTE %10001011     ; Normal
+    .BYTE %00011101     ; Reversed
+
+    .BYTE %00001010
+    .BYTE %00010100
+    .BYTE %10001010
+    .BYTE %00100100
+
+    .BYTE %00010101
+    .BYTE %00101010
+    .BYTE %10001011
+    .BYTE %00011100
+
+    .BYTE %00100100
+    .BYTE %01001001
+    .BYTE %10001010
+    .BYTE %00100100
+
+    .BYTE %00100010
+    .BYTE %01000100
+    .BYTE %10101010
+    .BYTE %00100100
+
+    .BYTE %00010001
+    .BYTE %00100011
+    .BYTE %01010011
+    .BYTE %00011101
 
     ;-------------------------------------------
 
