@@ -39,9 +39,7 @@ KERNEL_OVERSCAN     = 30
 LOGO_SIZE           = 9
 LOGO_START          = 48
 LOGO_INTERVAL       = 4*2
-LOGO_TEXT_SIZE      = 8
-LOGO_TEXT_INTERVAL  = 1
-LOGO_PADDING        = 8
+LOGO_FRAMES         = 255
 
 ;================
 ; Variables
@@ -52,9 +50,12 @@ LOGO_PADDING        = 8
 
 Overlay             ds 8
 
-    org Overlay         ; <= overlay size of 8 bytes
+    org Overlay
 
 ; Animation/Logic System
+
+AnimationFrame      ds 1 ; 1 byte to count frames
+AnimationSubFrame   ds 1 ; 1 byte to count portions of frames
 
     org Overlay
 
@@ -110,9 +111,18 @@ Reset:
     sta PF1
     sta PF2
 
+LogoScreen:
+
+    ; Load number of frames into AnimationFrame
+    lda #LOGO_FRAMES
+    sta AnimationFrame
+
+    lda #0
+    sta AnimationSubFrame
+
 LogoFrame:
 
-.vsync:                 ; Start of vertical blank processing
+.logo_vsync:                 ; Start of vertical blank processing
 
     lda #0
     sta VBLANK
@@ -128,16 +138,16 @@ LogoFrame:
     lda #0
     sta VSYNC
 
-.vblank:                ; scanlines of vertical blank
+.logo_vblank:                ; scanlines of vertical blank
 
     ldx #KERNEL_VBLANK
-.vblank_loop:
+.logo_vblank_loop:
 
     sta WSYNC
     dex
-    bne .vblank_loop
+    bne .logo_vblank_loop
 
-.scanline:              ; Do 192 scanlines
+.logo_scanline:              ; Do 192 scanlines
 
     lda #$00            ; Clear playfields
     sta PF0
@@ -145,14 +155,14 @@ LogoFrame:
     sta PF2
 
     ldx #LOGO_START     ; This counts our scanline number
-.scanline_start:
+.logo_scanline_start:
 
     sta WSYNC
     dex
-    bne .scanline_start
+    bne .logo_scanline_start
 
     ldx #0
-.scanline_logo:
+.logo_scanline_loop:
 
     ; Cleanup
     sta PF1
@@ -162,6 +172,10 @@ LogoFrame:
     lsr
     and #%11111110      ; Remove 0th bit
     tay
+
+    ; Check if we need to display line
+    cpy AnimationSubFrame
+    bcs .logo_scanline_skip
 
     ; Load first half of data
     lda LogoData,y
@@ -185,11 +199,7 @@ LogoFrame:
     sta PF2
     sta PF0
 
-    ; Wait for next line
-    sta WSYNC
-    inx
-    cpx #LOGO_SIZE*LOGO_INTERVAL
-    bne .scanline_logo
+.logo_scanline_skip:
 
     ; Clear Playfields
     lda #$00
@@ -197,78 +207,107 @@ LogoFrame:
     sta PF1
     sta PF2
 
-    ldx #LOGO_PADDING
-.scanline_padding
+    ; Wait for next line
+    sta WSYNC
+
+    ; Check if at end of logo display
+    inx
+    cpx #LOGO_SIZE*LOGO_INTERVAL
+    bne .logo_scanline_loop
+
+    ldx #KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL
+.logo_scanline_end:
 
     sta WSYNC
     dex
-    bne .scanline_padding
+    bne .logo_scanline_end
 
-    ldx #LOGO_TEXT_SIZE*#LOGO_TEXT_INTERVAL
-.scanline_text
-
-    sta WSYNC
-
-    dex                 ; Decrement x by 1
-    txa
-    inx                 ; Restore value of x
-    ;lsr                 ; Divide by 2
-
-    ; 1st Character
-    tay
-    lda LogoTextData,y
-    sta GRP0
-
-    ; 2nd Character
-    tya
-    adc #LOGO_TEXT_SIZE
-    tay
-    lda LogoTextData,y
-    sta GRP1
-
-    SLEEP 4
-    sta RESP0
-    sta RESP1
-
-    ; 2-8 Characters
-    ;REPEAT 2
-    ;tya
-    ;adc #LOGO_TEXT_SIZE
-    ;tay
-    ;lda LogoTextData,y
-    ;sta GRP0
-    ;sta RESP0
-    ;REPEND
-
-    dex
-    bne .scanline_text
-    sta WSYNC           ; Extra scanline to finish displaying sprites
-
-    ; Clear Players
-    lda #0
-    sta GRP0
-    sta GRP1
-
-    ldx #KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL-LOGO_PADDING-LOGO_TEXT_SIZE*LOGO_TEXT_INTERVAL-1 ; Extra -1 is from logo text
-.scanline_end:
-
-    sta WSYNC
-    dex
-    bne .scanline_end
-
-.overscan:              ; 30 scanlines of overscan
+.logo_overscan:              ; 30 scanlines of overscan
 
     lda #%01000010
     sta VBLANK          ; end of screen - enter blanking
 
     ldx #KERNEL_OVERSCAN
-.overscan_loop:
+.logo_overscan_loop:
 
     sta WSYNC
     dex
-    bne .overscan_loop
+    bne .logo_overscan_loop
 
-    jmp LogoFrame
+    ldx AnimationFrame
+
+    ; Divide inverted AnimationFrame by 4 and put in AnimationSubFrame
+    lda #LOGO_FRAMES
+    sbc AnimationFrame
+    lsr
+    lsr
+    sta AnimationSubFrame
+
+    ; Decrement AnimationFrame
+    dex
+    stx AnimationFrame
+
+    ; Check if we're at the end of the animation
+    bne LogoFrame
+
+StartScreen:
+
+    ; Init variables here
+
+StartFrame:
+
+.start_vsync:                 ; Start of vertical blank processing
+
+    lda #0
+    sta VBLANK
+
+    lda #2
+    sta VSYNC
+
+    ; VSYNCH signal scanlines
+    REPEAT #KERNEL_VSYNC
+        sta WSYNC
+    REPEND
+
+    lda #0
+    sta VSYNC
+
+.start_vblank:                ; scanlines of vertical blank
+
+    ldx #KERNEL_VBLANK
+.start_vblank_loop:
+
+    sta WSYNC
+    dex
+    bne .start_vblank_loop
+
+.start_scanline:              ; Do 192 scanlines
+
+    lda #$08            ; Clear playfields (with temp design)
+    sta PF0
+    sta PF1
+    sta PF2
+
+    ldx #KERNEL_SCANLINES ; Iterate through all scanlines
+.start_scanline_loop:
+
+    sta WSYNC
+    dex
+    bne .start_scanline_loop
+
+.start_overscan:              ; 30 scanlines of overscan
+
+    lda #%01000010
+    sta VBLANK          ; end of screen - enter blanking
+
+    ldx #KERNEL_OVERSCAN
+.start_overscan_loop:
+
+    sta WSYNC
+    dex
+    bne .start_overscan_loop
+
+    jmp StartScreen
 
 LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
 
@@ -317,8 +356,8 @@ LogoTextData: ; 6x8, flipped for decrementing loop
     .BYTE %11001100
     .BYTE %11111000
     .BYTE %11111100
-    .BYTE %11001100
-    .BYTE %11001100
+    .BYTE %11000110
+    .BYTE %11000110
     .BYTE %11111000
 
     ; E

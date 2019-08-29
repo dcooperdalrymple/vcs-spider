@@ -1,0 +1,126 @@
+--- Symbol List (sorted by symbol)
+0.FREE_BYTES             0000                  
+0.initstack              f000                  
+0.initstack_loop         f003              (R )
+0.initvars               f008                  
+0.logo_overscan          f097                  
+0.logo_overscan_loop     f09d              (R )
+0.logo_scanline          f04d                  
+0.logo_scanline_end      f092              (R )
+0.logo_scanline_loop     f05e              (R )
+0.logo_scanline_skip     f081              (R )
+0.logo_scanline_start    f057              (R )
+0.logo_vblank            f046                  
+0.logo_vblank_loop       f048              (R )
+0.logo_vsync             f034                  
+0.start_overscan         f0d9                  
+0.start_overscan_loop    f0df              (R )
+0.start_scanline         f0ca                  
+0.start_scanline_loop    f0d4              (R )
+0.start_vblank           f0c3                  
+0.start_vblank_loop      f0c5              (R )
+0.start_vsync            f0b1                  
+AnimationFrame           0080              (R )
+AnimationSubFrame        0081              (R )
+AUDC0                    0015                  
+AUDC1                    0016                  
+AUDF0                    0017                  
+AUDF1                    0018                  
+AUDV0                    0019                  
+AUDV1                    001a                  
+COLOR_NTSC               0001                  
+COLUBK                   0009              (R )
+COLUP0                   0006              (R )
+COLUP1                   0007              (R )
+COLUPF                   0008              (R )
+CTRLPF                   000a              (R )
+CXBLPF                   0006                  
+CXCLR                    002c                  
+CXM0FB                   0004                  
+CXM0P                    0000                  
+CXM1FB                   0005                  
+CXM1P                    0001                  
+CXP0FB                   0002                  
+CXP1FB                   0003                  
+CXPPMM                   0007                  
+ENABL                    001f              (R )
+ENAM0                    001d              (R )
+ENAM1                    001e              (R )
+GRP0                     001b              (R )
+GRP1                     001c              (R )
+HMBL                     0024                  
+HMCLR                    002b                  
+HMM0                     0022                  
+HMM1                     0023                  
+HMOVE                    002a                  
+HMP0                     0020                  
+HMP1                     0021                  
+INPT0                    0008                  
+INPT1                    0009                  
+INPT2                    000a                  
+INPT3                    000b                  
+INPT4                    000c                  
+INPT5                    000d                  
+InterruptVectors         fffa                  
+INTIM                    0284                  
+KERNEL_OVERSCAN          001e              (R )
+KERNEL_SCANLINES         00c0              (R )
+KERNEL_TOTAL             0106                  
+KERNEL_VBLANK            0025              (R )
+KERNEL_VSYNC             0003              (R )
+LOGO_CHAR_DELAY          0008                  
+LOGO_DELAY               00ff              (R )
+LOGO_INTERVAL            0008              (R )
+LOGO_SIZE                0009              (R )
+LOGO_START               0030              (R )
+LogoData                 f0e7              (R )
+LogoFrame                f034              (R )
+LogoScreen               f02c                  
+LogoTextData             f0f9                  
+NTSC                     0001              (R )
+NTSC_SCANLINES           00c0              (R )
+NTSC_TOTAL               0106              (R )
+NUSIZ0                   0004                  
+NUSIZ1                   0005                  
+Overlay                  0080              (R )
+PAL                      0000              (R )
+PAL_SCANLINES            00f2                  
+PAL_TOTAL                0138                  
+PF0                      000d              (R )
+PF1                      000e              (R )
+PF2                      000f              (R )
+REFP0                    000b                  
+REFP1                    000c                  
+RESBL                    0014                  
+Reset                    f000              (R )
+RESM0                    0012                  
+RESM1                    0013                  
+RESMP0                   0028                  
+RESMP1                   0029                  
+RESP0                    0010                  
+RESP1                    0011                  
+RSYNC                    0003                  
+StartFrame               f0b1                  
+StartScreen              f0b1              (R )
+SWACNT                   0281                  
+SWBCNT                   0283                  
+SWCHA                    0280                  
+SWCHB                    0282                  
+SYSTEM                   0001              (R )
+T1024T                   0297                  
+TIA_BASE_ADDRESS         0000              (R )
+TIA_BASE_READ_ADDRESS    0000              (R )
+TIA_BASE_WRITE_ADDRESS   0000              (R )
+TIM1T                    0294                  
+TIM64T                   0296                  
+TIM8T                    0295                  
+TIMINT                   0285                  
+VBLANK                   0001              (R )
+VDELBL                   0027                  
+VDELP0                   0025                  
+VDELP1                   0026                  
+VERSION_MACRO            006a                  
+VERSION_VCS              0069                  
+VSYNC                    0000              (R )
+WSYNC                    0002              (R )
+--- End of Symbol List.

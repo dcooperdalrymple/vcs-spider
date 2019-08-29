@@ -407,375 +407,398 @@
      39  10000 ????		00 09	    LOGO_SIZE  =	9
      40  10000 ????		00 30	    LOGO_START =	48
      41  10000 ????		00 08	    LOGO_INTERVAL =	4*2
-     42  10000 ????		00 08	    LOGO_TEXT_SIZE =	8
-     43  10000 ????		00 01	    LOGO_TEXT_INTERVAL =	1
-     44  10000 ????		00 08	    LOGO_PADDING =	8
-     45  10000 ????
-     46  10000 ????						;================
-     47  10000 ????						; Variables
-     48  10000 ????						;================
-     49  10000 ????
-     50 U0080 ????				      SEG.U	vars
-     51 U0080					      org	$80
-     52 U0080
-     53 U0080		       00 00 00 00*Overlay    ds	8
-     54 U0088
-     55 U0080					      org	Overlay	; <= overlay size of 8 bytes
-     56 U0080
-     57 U0080							; Animation/Logic System
-     58 U0080
-     59 U0080					      org	Overlay
-     60 U0080
-     61 U0080							; Drawing System, etc
+     42  10000 ????		00 ff	    LOGO_DELAY =	255
+     43  10000 ????		00 08	    LOGO_CHAR_DELAY =	8
+     44  10000 ????
+     45  10000 ????						;================
+     46  10000 ????						; Variables
+     47  10000 ????						;================
+     48  10000 ????
+     49 U0080 ????				      SEG.U	vars
+     50 U0080					      org	$80
+     51 U0080
+     52 U0080		       00 00 00 00*Overlay    ds	8
+     53 U0088
+     54 U0080					      org	Overlay
+     55 U0080
+     56 U0080							; Animation/Logic System
+     57 U0080
+     58 U0080		       00	   AnimationFrame ds	1	; 1 byte to count frames
+     59 U0081		       00	   AnimationSubFrame ds	1	; 1 byte to count portions of frames
+     60 U0082
+     61 U0080					      org	Overlay
      62 U0080
-     63  10000 ????				       SEG
-     64  10000 ????
-     65  f000					      ORG	$F000	; Start of cart area
-     66  f000
-     67  f000				   Reset
+     63 U0080							; Drawing System, etc
+     64 U0080
+     65  10000 ????				       SEG
+     66  10000 ????
+     67  f000					      ORG	$F000	; Start of cart area
      68  f000
-     69  f000				   .initstack
+     69  f000				   Reset
      70  f000
-     71  f000		       a2 00		      ldx	#0
-     72  f002		       8a		      txa
-     73  f003
-     74  f003				   .initstack_loop
+     71  f000				   .initstack
+     72  f000
+     73  f000		       a2 00		      ldx	#0
+     74  f002		       8a		      txa
      75  f003
-     76  f003		       ca		      dex
-     77  f004		       9a		      txs
-     78  f005		       48		      pha
-     79  f006		       d0 fb		      bne	.initstack_loop
-     80  f008
-     81  f008							; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
+     76  f003				   .initstack_loop
+     77  f003
+     78  f003		       ca		      dex
+     79  f004		       9a		      txs
+     80  f005		       48		      pha
+     81  f006		       d0 fb		      bne	.initstack_loop
      82  f008
-     83  f008				   .initvars
+     83  f008							; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
      84  f008
-     85  f008							; Set background color
-     86  f008		       a9 00		      lda	#$00	; White
-     87  f00a		       85 09		      sta	COLUBK
-     88  f00c
-     89  f00c							; Set the playfield and player color
-     90  f00c		       a9 0e		      lda	#$0E	; White
-     91  f00e		       85 08		      sta	COLUPF
-     92  f010		       85 06		      sta	COLUP0
-     93  f012		       85 07		      sta	COLUP1
-     94  f014
-     95  f014							; Playfield Control
-     96  f014		       a9 00		      lda	#%00000000	; 1 for mirroring
-     97  f016		       85 0a		      sta	CTRLPF
-     98  f018
-     99  f018							; Disable Game Elements
-    100  f018		       a9 00		      lda	#$00
-    101  f01a		       85 1f		      sta	ENABL	; Turn off ball
-    102  f01c		       85 1d		      sta	ENAM0	; Turn off player 1 missile
-    103  f01e		       85 1e		      sta	ENAM1	; Turn off player 2 missile
-    104  f020		       85 1b		      sta	GRP0	; Turn off player 1
-    105  f022		       85 1c		      sta	GRP1	; Turn off player 2
-    106  f024
-    107  f024							; Empty playfield
-    108  f024		       a9 00		      lda	#%00000000
-    109  f026		       85 0d		      sta	PF0
-    110  f028		       85 0e		      sta	PF1
-    111  f02a		       85 0f		      sta	PF2
-    112  f02c
-    113  f02c				   LogoFrame
+     85  f008				   .initvars
+     86  f008
+     87  f008							; Set background color
+     88  f008		       a9 00		      lda	#$00	; White
+     89  f00a		       85 09		      sta	COLUBK
+     90  f00c
+     91  f00c							; Set the playfield and player color
+     92  f00c		       a9 0e		      lda	#$0E	; White
+     93  f00e		       85 08		      sta	COLUPF
+     94  f010		       85 06		      sta	COLUP0
+     95  f012		       85 07		      sta	COLUP1
+     96  f014
+     97  f014							; Playfield Control
+     98  f014		       a9 00		      lda	#%00000000	; 1 for mirroring
+     99  f016		       85 0a		      sta	CTRLPF
+    100  f018
+    101  f018							; Disable Game Elements
+    102  f018		       a9 00		      lda	#$00
+    103  f01a		       85 1f		      sta	ENABL	; Turn off ball
+    104  f01c		       85 1d		      sta	ENAM0	; Turn off player 1 missile
+    105  f01e		       85 1e		      sta	ENAM1	; Turn off player 2 missile
+    106  f020		       85 1b		      sta	GRP0	; Turn off player 1
+    107  f022		       85 1c		      sta	GRP1	; Turn off player 2
+    108  f024
+    109  f024							; Empty playfield
+    110  f024		       a9 00		      lda	#%00000000
+    111  f026		       85 0d		      sta	PF0
+    112  f028		       85 0e		      sta	PF1
+    113  f02a		       85 0f		      sta	PF2
     114  f02c
-    115  f02c				   .vsync		; Start of vertical blank processing
+    115  f02c				   LogoScreen
     116  f02c
-    117  f02c		       a9 00		      lda	#0
-    118  f02e		       85 01		      sta	VBLANK
-    119  f030
-    120  f030		       a9 02		      lda	#2
-    121  f032		       85 00		      sta	VSYNC
-    122  f034
-    123  f034							; VSYNCH signal scanlines
-    124  f034					      REPEAT	#KERNEL_VSYNC
-    125  f034		       85 02		      sta	WSYNC
-    124  f034					      REPEND
-    125  f036		       85 02		      sta	WSYNC
-    124  f036					      REPEND
-    125  f038		       85 02		      sta	WSYNC
-    126  f03a					      REPEND
-    127  f03a
-    128  f03a		       a9 00		      lda	#0
-    129  f03c		       85 00		      sta	VSYNC
-    130  f03e
-    131  f03e				   .vblank		; scanlines of vertical blank
-    132  f03e
-    133  f03e		       a2 25		      ldx	#KERNEL_VBLANK
-    134  f040				   .vblank_loop
-    135  f040
+    117  f02c							; Load number of frames into AnimationFrame
+    118  f02c		       a9 ff		      lda	#LOGO_DELAY
+    119  f02e		       85 80		      sta	AnimationFrame
+    120  f030
+    121  f030		       a9 00		      lda	#0
+    122  f032		       85 81		      sta	AnimationSubFrame
+    123  f034
+    124  f034				   LogoFrame
+    125  f034
+    126  f034				   .logo_vsync		; Start of vertical blank processing
+    127  f034
+    128  f034		       a9 00		      lda	#0
+    129  f036		       85 01		      sta	VBLANK
+    130  f038
+    131  f038		       a9 02		      lda	#2
+    132  f03a		       85 00		      sta	VSYNC
+    133  f03c
+    134  f03c							; VSYNCH signal scanlines
+    135  f03c					      REPEAT	#KERNEL_VSYNC
+    136  f03c		       85 02		      sta	WSYNC
+    135  f03c					      REPEND
+    136  f03e		       85 02		      sta	WSYNC
+    135  f03e					      REPEND
     136  f040		       85 02		      sta	WSYNC
-    137  f042		       ca		      dex
-    138  f043		       d0 fb		      bne	.vblank_loop
-    139  f045
-    140  f045				   .scanline		; Do 192 scanlines
-    141  f045
-    142  f045		       a9 00		      lda	#$00	; Clear playfields
-    143  f047		       85 0d		      sta	PF0
-    144  f049		       85 0e		      sta	PF1
-    145  f04b		       85 0f		      sta	PF2
-    146  f04d
-    147  f04d		       a2 30		      ldx	#LOGO_START	; This counts our scanline number
-    148  f04f				   .scanline_start
-    149  f04f
-    150  f04f		       85 02		      sta	WSYNC
-    151  f051		       ca		      dex
-    152  f052		       d0 fb		      bne	.scanline_start
-    153  f054
-    154  f054		       a2 00		      ldx	#0
-    155  f056				   .scanline_logo
-    156  f056
-    157  f056							; Cleanup
-    158  f056		       85 0e		      sta	PF1
-    159  f058
-    160  f058		       8a		      txa
-    161  f059		       4a		      lsr		; Divide counter by 4
-    162  f05a		       4a		      lsr
-    163  f05b		       29 fe		      and	#%11111110	; Remove 0th bit
-    164  f05d		       a8		      tay
-    165  f05e
-    166  f05e							; Load first half of data
-    167  f05e		       b9 c7 f0 	      lda	LogoData,y
-    168  f061		       85 0f		      sta	PF2
-    169  f063
-    170  f063							; Load second half of data
-    171  f063		       c8		      iny
-    172  f064		       b9 c7 f0 	      lda	LogoData,y
-    173  f067
-    174  f067							; Use 4 MSB bits on PF0
-    175  f067		       85 0d		      sta	PF0
-    176  f069
-    177  f069							; Use 4 LSB bits on PF1
-    178  f069					      REPEAT	4
-    179  f069		       0a		      asl
-    178  f069					      REPEND
-    179  f06a		       0a		      asl
-    178  f06a					      REPEND
-    179  f06b		       0a		      asl
-    178  f06b					      REPEND
-    179  f06c		       0a		      asl
-    180  f06d					      REPEND
-    181  f06d		       85 0e		      sta	PF1
-    182  f06f
-    183  f06f							; Cleanup
-    184  f06f		       a9 00		      lda	#$00
-    185  f071		       85 0f		      sta	PF2
-    186  f073		       85 0d		      sta	PF0
-    187  f075
-    188  f075							; Wait for next line
-    189  f075		       85 02		      sta	WSYNC
-    190  f077		       e8		      inx
-    191  f078		       e0 48		      cpx	#LOGO_SIZE*LOGO_INTERVAL
-    192  f07a		       d0 da		      bne	.scanline_logo
-    193  f07c
-    194  f07c							; Clear Playfields
-    195  f07c		       a9 00		      lda	#$00
-    196  f07e		       85 0d		      sta	PF0
-    197  f080		       85 0e		      sta	PF1
-    198  f082		       85 0f		      sta	PF2
-    199  f084
-    200  f084		       a2 08		      ldx	#LOGO_PADDING
-    201  f086				   .scanline_padding
-    202  f086
-    203  f086		       85 02		      sta	WSYNC
-    204  f088		       ca		      dex
-    205  f089		       d0 fb		      bne	.scanline_padding
-    206  f08b
-    207  f08b		       a2 08		      ldx	#LOGO_TEXT_SIZE*#LOGO_TEXT_INTERVAL
-    208  f08d				   .scanline_text
-    209  f08d
-    210  f08d		       85 02		      sta	WSYNC
-    211  f08f
-    212  f08f		       ca		      dex		; Decrement x by 1
-    213  f090		       8a		      txa
-    214  f091		       e8		      inx		; Restore value of x
-    215  f092							;lsr		      ; Divide by 2
-    216  f092
-    217  f092							; 1st Character
-    218  f092		       a8		      tay
-    219  f093		       b9 d9 f0 	      lda	LogoTextData,y
-    220  f096		       85 1b		      sta	GRP0
-    221  f098
-    222  f098							; 2nd Character
-    223  f098		       98		      tya
-    224  f099		       69 08		      adc	#LOGO_TEXT_SIZE
-    225  f09b		       a8		      tay
-    226  f09c		       b9 d9 f0 	      lda	LogoTextData,y
-    227  f09f		       85 1c		      sta	GRP1
-    228  f0a1
-      0  f0a1					      SLEEP	4
-      1  f0a1				   .CYCLES    SET	4
-      2  f0a1
-      3  f0a1				  -	      IF	.CYCLES < 2
-      4  f0a1				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
-      5  f0a1				  -	      ERR
-      6  f0a1					      ENDIF
-      7  f0a1
-      8  f0a1				  -	      IF	.CYCLES & 1
-      9  f0a1				  -	      IFNCONST	NO_ILLEGAL_OPCODES
-     10  f0a1				  -	      nop	0
-     11  f0a1				  -	      ELSE
-     12  f0a1				  -	      bit	VSYNC
-     13  f0a1				  -	      ENDIF
-     14  f0a1				  -.CYCLES    SET	.CYCLES - 3
-     15  f0a1					      ENDIF
-     16  f0a1
-     17  f0a1					      REPEAT	.CYCLES / 2
-     18  f0a1		       ea		      nop
-     17  f0a1					      REPEND
-     18  f0a2		       ea		      nop
-     19  f0a3					      REPEND
-    230  f0a3		       85 10		      sta	RESP0
-    231  f0a5		       85 11		      sta	RESP1
-    232  f0a7
-    233  f0a7							; 2-8 Characters
-    234  f0a7							;REPEAT 2
-    235  f0a7							;tya
-    236  f0a7							;adc #LOGO_TEXT_SIZE
-    237  f0a7							;tay
-    238  f0a7							;lda LogoTextData,y
-    239  f0a7							;sta GRP0
-    240  f0a7							;sta RESP0
-    241  f0a7							;REPEND
-    242  f0a7
-    243  f0a7		       ca		      dex
-    244  f0a8		       d0 e3		      bne	.scanline_text
-    245  f0aa		       85 02		      sta	WSYNC	; Extra scanline to finish displaying sprites
+    137  f042					      REPEND
+    138  f042
+    139  f042		       a9 00		      lda	#0
+    140  f044		       85 00		      sta	VSYNC
+    141  f046
+    142  f046				   .logo_vblank 		; scanlines of vertical blank
+    143  f046
+    144  f046		       a2 25		      ldx	#KERNEL_VBLANK
+    145  f048				   .logo_vblank_loop
+    146  f048
+    147  f048		       85 02		      sta	WSYNC
+    148  f04a		       ca		      dex
+    149  f04b		       d0 fb		      bne	.logo_vblank_loop
+    150  f04d
+    151  f04d				   .logo_scanline		; Do 192 scanlines
+    152  f04d
+    153  f04d		       a9 00		      lda	#$00	; Clear playfields
+    154  f04f		       85 0d		      sta	PF0
+    155  f051		       85 0e		      sta	PF1
+    156  f053		       85 0f		      sta	PF2
+    157  f055
+    158  f055		       a2 30		      ldx	#LOGO_START	; This counts our scanline number
+    159  f057				   .logo_scanline_start
+    160  f057
+    161  f057		       85 02		      sta	WSYNC
+    162  f059		       ca		      dex
+    163  f05a		       d0 fb		      bne	.logo_scanline_start
+    164  f05c
+    165  f05c		       a2 00		      ldx	#0
+    166  f05e				   .logo_scanline_loop
+    167  f05e
+    168  f05e							; Cleanup
+    169  f05e		       85 0e		      sta	PF1
+    170  f060
+    171  f060		       8a		      txa
+    172  f061		       4a		      lsr		; Divide counter by 4
+    173  f062		       4a		      lsr
+    174  f063		       29 fe		      and	#%11111110	; Remove 0th bit
+    175  f065		       a8		      tay
+    176  f066
+    177  f066							; Check if we need to display line
+    178  f066		       c4 81		      cpy	AnimationSubFrame
+    179  f068		       b0 17		      bcs	.logo_scanline_skip
+    180  f06a
+    181  f06a							; Load first half of data
+    182  f06a		       b9 e7 f0 	      lda	LogoData,y
+    183  f06d		       85 0f		      sta	PF2
+    184  f06f
+    185  f06f							; Load second half of data
+    186  f06f		       c8		      iny
+    187  f070		       b9 e7 f0 	      lda	LogoData,y
+    188  f073
+    189  f073							; Use 4 MSB bits on PF0
+    190  f073		       85 0d		      sta	PF0
+    191  f075
+    192  f075							; Use 4 LSB bits on PF1
+    193  f075					      REPEAT	4
+    194  f075		       0a		      asl
+    193  f075					      REPEND
+    194  f076		       0a		      asl
+    193  f076					      REPEND
+    194  f077		       0a		      asl
+    193  f077					      REPEND
+    194  f078		       0a		      asl
+    195  f079					      REPEND
+    196  f079		       85 0e		      sta	PF1
+    197  f07b
+    198  f07b							; Cleanup
+    199  f07b		       a9 00		      lda	#$00
+    200  f07d		       85 0f		      sta	PF2
+    201  f07f		       85 0d		      sta	PF0
+    202  f081
+    203  f081				   .logo_scanline_skip
+    204  f081
+    205  f081							; Clear Playfields
+    206  f081		       a9 00		      lda	#$00
+    207  f083		       85 0d		      sta	PF0
+    208  f085		       85 0e		      sta	PF1
+    209  f087		       85 0f		      sta	PF2
+    210  f089
+    211  f089							; Wait for next line
+    212  f089		       85 02		      sta	WSYNC
+    213  f08b
+    214  f08b							; Check if at end of logo display
+    215  f08b		       e8		      inx
+    216  f08c		       e0 48		      cpx	#LOGO_SIZE*LOGO_INTERVAL
+    217  f08e		       d0 ce		      bne	.logo_scanline_loop
+    218  f090
+    219  f090		       a2 48		      ldx	#KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL
+    220  f092				   .logo_scanline_end
+    221  f092
+    222  f092		       85 02		      sta	WSYNC
+    223  f094		       ca		      dex
+    224  f095		       d0 fb		      bne	.logo_scanline_end
+    225  f097
+    226  f097				   .logo_overscan		; 30 scanlines of overscan
+    227  f097
+    228  f097		       a9 42		      lda	#%01000010
+    229  f099		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    230  f09b
+    231  f09b		       a2 1e		      ldx	#KERNEL_OVERSCAN
+    232  f09d				   .logo_overscan_loop
+    233  f09d
+    234  f09d		       85 02		      sta	WSYNC
+    235  f09f		       ca		      dex
+    236  f0a0		       d0 fb		      bne	.logo_overscan_loop
+    237  f0a2
+    238  f0a2		       a6 80		      ldx	AnimationFrame
+    239  f0a4
+    240  f0a4							; Divide inverted AnimationFrame by 4 and put in AnimationSubFrame
+    241  f0a4		       a9 ff		      lda	#LOGO_DELAY
+    242  f0a6		       e5 80		      sbc	AnimationFrame
+    243  f0a8		       4a		      lsr
+    244  f0a9		       4a		      lsr
+    245  f0aa		       85 81		      sta	AnimationSubFrame
     246  f0ac
-    247  f0ac							; Clear Players
-    248  f0ac		       a9 00		      lda	#0
-    249  f0ae		       85 1b		      sta	GRP0
-    250  f0b0		       85 1c		      sta	GRP1
-    251  f0b2
-    252  f0b2		       a2 37		      ldx	#KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL-LOGO_PADDING-LOGO_TEXT_SIZE*LOGO_TEXT_INTERVAL-1	; Extra -1 is from logo text
-    253  f0b4				   .scanline_end
-    254  f0b4
-    255  f0b4		       85 02		      sta	WSYNC
-    256  f0b6		       ca		      dex
-    257  f0b7		       d0 fb		      bne	.scanline_end
-    258  f0b9
-    259  f0b9				   .overscan		; 30 scanlines of overscan
-    260  f0b9
-    261  f0b9		       a9 42		      lda	#%01000010
-    262  f0bb		       85 01		      sta	VBLANK	; end of screen - enter blanking
-    263  f0bd
-    264  f0bd		       a2 1e		      ldx	#KERNEL_OVERSCAN
-    265  f0bf				   .overscan_loop
-    266  f0bf
-    267  f0bf		       85 02		      sta	WSYNC
-    268  f0c1		       ca		      dex
-    269  f0c2		       d0 fb		      bne	.overscan_loop
-    270  f0c4
-    271  f0c4		       4c 2c f0 	      jmp	LogoFrame
-    272  f0c7
-    273  f0c7				   LogoData		; 6 bytes over 8 lines each, total of 48 lines
-    274  f0c7
-    275  f0c7		       00		      .BYTE.b	%00000000	; Reversed
-    276  f0c8		       10		      .BYTE.b	%00010000	; First 4 bits reversed
-    277  f0c9
-    278  f0c9		       80		      .BYTE.b	%10000000
-    279  f0ca		       20		      .BYTE.b	%00100000
-    280  f0cb
-    281  f0cb		       40		      .BYTE.b	%01000000
-    282  f0cc		       40		      .BYTE.b	%01000000
-    283  f0cd
-    284  f0cd		       20		      .BYTE.b	%00100000
-    285  f0ce		       80		      .BYTE.b	%10000000
-    286  f0cf
-    287  f0cf		       10		      .BYTE.b	%00010000
-    288  f0d0		       08		      .BYTE.b	%00001000
-    289  f0d1
-    290  f0d1		       08		      .BYTE.b	%00001000
-    291  f0d2		       00		      .BYTE.b	%00000000
-    292  f0d3
-    293  f0d3		       04		      .BYTE.b	%00000100
-    294  f0d4		       00		      .BYTE.b	%00000000
-    295  f0d5
-    296  f0d5		       02		      .BYTE.b	%00000010
-    297  f0d6		       00		      .BYTE.b	%00000000
-    298  f0d7
-    299  f0d7		       ff		      .BYTE.b	%11111111
-    300  f0d8		       ff		      .BYTE.b	%11111111
-    301  f0d9
-    302  f0d9				   LogoTextData 		; 6x8, flipped for decrementing loop
-    303  f0d9
-    304  f0d9							; C
-    305  f0d9		       78		      .BYTE.b	%01111000
-    306  f0da		       fc		      .BYTE.b	%11111100
-    307  f0db		       cc		      .BYTE.b	%11001100
-    308  f0dc		       c0		      .BYTE.b	%11000000
-    309  f0dd		       c0		      .BYTE.b	%11000000
-    310  f0de		       cc		      .BYTE.b	%11001100
-    311  f0df		       fc		      .BYTE.b	%11111100
-    312  f0e0		       78		      .BYTE.b	%01111000
-    313  f0e1
-    314  f0e1							; R
-    315  f0e1		       cc		      .BYTE.b	%11001100
-    316  f0e2		       cc		      .BYTE.b	%11001100
-    317  f0e3		       cc		      .BYTE.b	%11001100
-    318  f0e4		       f8		      .BYTE.b	%11111000
-    319  f0e5		       fc		      .BYTE.b	%11111100
-    320  f0e6		       cc		      .BYTE.b	%11001100
-    321  f0e7		       cc		      .BYTE.b	%11001100
-    322  f0e8		       f8		      .BYTE.b	%11111000
-    323  f0e9
-    324  f0e9							; E
-    325  f0e9		       fc		      .BYTE.b	%11111100
-    326  f0ea		       c0		      .BYTE.b	%11000000
-    327  f0eb		       c0		      .BYTE.b	%11000000
-    328  f0ec		       f8		      .BYTE.b	%11111000
-    329  f0ed		       c0		      .BYTE.b	%11000000
-    330  f0ee		       fc		      .BYTE.b	%11111100
-    331  f0ef
-    332  f0ef							; A
-    333  f0ef		       7c		      .BYTE.b	%01111100
-    334  f0f0		       c4		      .BYTE.b	%11000100
-    335  f0f1		       c4		      .BYTE.b	%11000100
-    336  f0f2		       fc		      .BYTE.b	%11111100
-    337  f0f3		       c4		      .BYTE.b	%11000100
-    338  f0f4		       c4		      .BYTE.b	%11000100
-    339  f0f5
-    340  f0f5							; T
-    341  f0f5		       fc		      .BYTE.b	%11111100
-    342  f0f6		       30		      .BYTE.b	%00110000
-    343  f0f7		       30		      .BYTE.b	%00110000
-    344  f0f8		       30		      .BYTE.b	%00110000
-    345  f0f9		       30		      .BYTE.b	%00110000
-    346  f0fa		       30		      .BYTE.b	%00110000
-    347  f0fb
-    348  f0fb							; U
-    349  f0fb		       e4		      .BYTE.b	%11100100
-    350  f0fc		       e4		      .BYTE.b	%11100100
-    351  f0fd		       e4		      .BYTE.b	%11100100
-    352  f0fe		       e4		      .BYTE.b	%11100100
-    353  f0ff		       e4		      .BYTE.b	%11100100
-    354  f100		       78		      .BYTE.b	%01111000
-    355  f101
-    356  f101							; R
-    357  f101		       f8		      .BYTE.b	%11111000
-    358  f102		       c4		      .BYTE.b	%11000100
-    359  f103		       c4		      .BYTE.b	%11000100
-    360  f104		       f8		      .BYTE.b	%11111000
-    361  f105		       c4		      .BYTE.b	%11000100
-    362  f106		       c4		      .BYTE.b	%11000100
-    363  f107
-    364  f107							; E
-    365  f107		       fc		      .BYTE.b	%11111100
-    366  f108		       c0		      .BYTE.b	%11000000
-    367  f109		       c0		      .BYTE.b	%11000000
-    368  f10a		       f8		      .BYTE.b	%11111000
-    369  f10b		       c0		      .BYTE.b	%11000000
-    370  f10c		       fc		      .BYTE.b	%11111100
-    371  f10d
-    372  f10d							;-------------------------------------------
-    373  f10d
-    374  fffa					      ORG	$FFFA	; End of cart area
-    375  fffa
-    376  fffa				   InterruptVectors
-    377  fffa
-    378  fffa		       00 f0		      .word.w	Reset	; NMI
-    379  fffc		       00 f0		      .word.w	Reset	; RESET
-    380  fffe		       00 f0		      .word.w	Reset	; IRQ
-    381  10000
-    382  10000					       END
+    247  f0ac							; Decrement AnimationFrame
+    248  f0ac		       ca		      dex
+    249  f0ad		       86 80		      stx	AnimationFrame
+    250  f0af
+    251  f0af							; Check if we're at the end of the animation
+    252  f0af		       d0 83		      bne	LogoFrame
+    253  f0b1
+    254  f0b1				   StartScreen
+    255  f0b1
+    256  f0b1							; Init variables here
+    257  f0b1
+    258  f0b1				   StartFrame
+    259  f0b1
+    260  f0b1				   .start_vsync 		; Start of vertical blank processing
+    261  f0b1
+    262  f0b1		       a9 00		      lda	#0
+    263  f0b3		       85 01		      sta	VBLANK
+    264  f0b5
+    265  f0b5		       a9 02		      lda	#2
+    266  f0b7		       85 00		      sta	VSYNC
+    267  f0b9
+    268  f0b9							; VSYNCH signal scanlines
+    269  f0b9					      REPEAT	#KERNEL_VSYNC
+    270  f0b9		       85 02		      sta	WSYNC
+    269  f0b9					      REPEND
+    270  f0bb		       85 02		      sta	WSYNC
+    269  f0bb					      REPEND
+    270  f0bd		       85 02		      sta	WSYNC
+    271  f0bf					      REPEND
+    272  f0bf
+    273  f0bf		       a9 00		      lda	#0
+    274  f0c1		       85 00		      sta	VSYNC
+    275  f0c3
+    276  f0c3				   .start_vblank		; scanlines of vertical blank
+    277  f0c3
+    278  f0c3		       a2 25		      ldx	#KERNEL_VBLANK
+    279  f0c5				   .start_vblank_loop
+    280  f0c5
+    281  f0c5		       85 02		      sta	WSYNC
+    282  f0c7		       ca		      dex
+    283  f0c8		       d0 fb		      bne	.start_vblank_loop
+    284  f0ca
+    285  f0ca				   .start_scanline		; Do 192 scanlines
+    286  f0ca
+    287  f0ca		       a9 08		      lda	#$08	; Clear playfields (with temp design)
+    288  f0cc		       85 0d		      sta	PF0
+    289  f0ce		       85 0e		      sta	PF1
+    290  f0d0		       85 0f		      sta	PF2
+    291  f0d2
+    292  f0d2		       a2 c0		      ldx	#KERNEL_SCANLINES	; Iterate through all scanlines
+    293  f0d4				   .start_scanline_loop
+    294  f0d4
+    295  f0d4		       85 02		      sta	WSYNC
+    296  f0d6		       ca		      dex
+    297  f0d7		       d0 fb		      bne	.start_scanline_loop
+    298  f0d9
+    299  f0d9				   .start_overscan		; 30 scanlines of overscan
+    300  f0d9
+    301  f0d9		       a9 42		      lda	#%01000010
+    302  f0db		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    303  f0dd
+    304  f0dd		       a2 1e		      ldx	#KERNEL_OVERSCAN
+    305  f0df				   .start_overscan_loop
+    306  f0df
+    307  f0df		       85 02		      sta	WSYNC
+    308  f0e1		       ca		      dex
+    309  f0e2		       d0 fb		      bne	.start_overscan_loop
+    310  f0e4
+    311  f0e4		       4c b1 f0 	      jmp	StartScreen
+    312  f0e7
+    313  f0e7				   LogoData		; 6 bytes over 8 lines each, total of 48 lines
+    314  f0e7
+    315  f0e7		       00		      .BYTE.b	%00000000	; Reversed
+    316  f0e8		       10		      .BYTE.b	%00010000	; First 4 bits reversed
+    317  f0e9
+    318  f0e9		       80		      .BYTE.b	%10000000
+    319  f0ea		       20		      .BYTE.b	%00100000
+    320  f0eb
+    321  f0eb		       40		      .BYTE.b	%01000000
+    322  f0ec		       40		      .BYTE.b	%01000000
+    323  f0ed
+    324  f0ed		       20		      .BYTE.b	%00100000
+    325  f0ee		       80		      .BYTE.b	%10000000
+    326  f0ef
+    327  f0ef		       10		      .BYTE.b	%00010000
+    328  f0f0		       08		      .BYTE.b	%00001000
+    329  f0f1
+    330  f0f1		       08		      .BYTE.b	%00001000
+    331  f0f2		       00		      .BYTE.b	%00000000
+    332  f0f3
+    333  f0f3		       04		      .BYTE.b	%00000100
+    334  f0f4		       00		      .BYTE.b	%00000000
+    335  f0f5
+    336  f0f5		       02		      .BYTE.b	%00000010
+    337  f0f6		       00		      .BYTE.b	%00000000
+    338  f0f7
+    339  f0f7		       ff		      .BYTE.b	%11111111
+    340  f0f8		       ff		      .BYTE.b	%11111111
+    341  f0f9
+    342  f0f9				   LogoTextData 		; 6x8, flipped for decrementing loop
+    343  f0f9
+    344  f0f9							; C
+    345  f0f9		       78		      .BYTE.b	%01111000
+    346  f0fa		       fc		      .BYTE.b	%11111100
+    347  f0fb		       cc		      .BYTE.b	%11001100
+    348  f0fc		       c0		      .BYTE.b	%11000000
+    349  f0fd		       c0		      .BYTE.b	%11000000
+    350  f0fe		       cc		      .BYTE.b	%11001100
+    351  f0ff		       fc		      .BYTE.b	%11111100
+    352  f100		       78		      .BYTE.b	%01111000
+    353  f101
+    354  f101							; R
+    355  f101		       cc		      .BYTE.b	%11001100
+    356  f102		       cc		      .BYTE.b	%11001100
+    357  f103		       cc		      .BYTE.b	%11001100
+    358  f104		       f8		      .BYTE.b	%11111000
+    359  f105		       fc		      .BYTE.b	%11111100
+    360  f106		       c6		      .BYTE.b	%11000110
+    361  f107		       c6		      .BYTE.b	%11000110
+    362  f108		       f8		      .BYTE.b	%11111000
+    363  f109
+    364  f109							; E
+    365  f109		       fc		      .BYTE.b	%11111100
+    366  f10a		       c0		      .BYTE.b	%11000000
+    367  f10b		       c0		      .BYTE.b	%11000000
+    368  f10c		       f8		      .BYTE.b	%11111000
+    369  f10d		       c0		      .BYTE.b	%11000000
+    370  f10e		       fc		      .BYTE.b	%11111100
+    371  f10f
+    372  f10f							; A
+    373  f10f		       7c		      .BYTE.b	%01111100
+    374  f110		       c4		      .BYTE.b	%11000100
+    375  f111		       c4		      .BYTE.b	%11000100
+    376  f112		       fc		      .BYTE.b	%11111100
+    377  f113		       c4		      .BYTE.b	%11000100
+    378  f114		       c4		      .BYTE.b	%11000100
+    379  f115
+    380  f115							; T
+    381  f115		       fc		      .BYTE.b	%11111100
+    382  f116		       30		      .BYTE.b	%00110000
+    383  f117		       30		      .BYTE.b	%00110000
+    384  f118		       30		      .BYTE.b	%00110000
+    385  f119		       30		      .BYTE.b	%00110000
+    386  f11a		       30		      .BYTE.b	%00110000
+    387  f11b
+    388  f11b							; U
+    389  f11b		       e4		      .BYTE.b	%11100100
+    390  f11c		       e4		      .BYTE.b	%11100100
+    391  f11d		       e4		      .BYTE.b	%11100100
+    392  f11e		       e4		      .BYTE.b	%11100100
+    393  f11f		       e4		      .BYTE.b	%11100100
+    394  f120		       78		      .BYTE.b	%01111000
+    395  f121
+    396  f121							; R
+    397  f121		       f8		      .BYTE.b	%11111000
+    398  f122		       c4		      .BYTE.b	%11000100
+    399  f123		       c4		      .BYTE.b	%11000100
+    400  f124		       f8		      .BYTE.b	%11111000
+    401  f125		       c4		      .BYTE.b	%11000100
+    402  f126		       c4		      .BYTE.b	%11000100
+    403  f127
+    404  f127							; E
+    405  f127		       fc		      .BYTE.b	%11111100
+    406  f128		       c0		      .BYTE.b	%11000000
+    407  f129		       c0		      .BYTE.b	%11000000
+    408  f12a		       f8		      .BYTE.b	%11111000
+    409  f12b		       c0		      .BYTE.b	%11000000
+    410  f12c		       fc		      .BYTE.b	%11111100
+    411  f12d
+    412  f12d							;-------------------------------------------
+    413  f12d
+    414  fffa					      ORG	$FFFA	; End of cart area
+    415  fffa
+    416  fffa				   InterruptVectors
+    417  fffa
+    418  fffa		       00 f0		      .word.w	Reset	; NMI
+    419  fffc		       00 f0		      .word.w	Reset	; RESET
+    420  fffe		       00 f0		      .word.w	Reset	; IRQ
+    421  10000
+    422  10000					       END
