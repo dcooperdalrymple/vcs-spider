@@ -38,8 +38,11 @@ KERNEL_OVERSCAN     = 30
 ; Logo
 LOGO_SIZE           = 9
 LOGO_START          = 48
-LOGO_INTERVAL       = 4*2
-LOGO_FRAMES         = 255
+LOGO_INTERVAL       = 8
+LOGO_FRAMES         = 180
+
+LOGO_BG_COLU        = #$A2
+LOGO_FG_COLU        = #$5E
 
 ; Title
 TITLE_LINE_SIZE     = 8
@@ -48,6 +51,10 @@ TITLE_BORDER        = 1
 TITLE_PAD           = 4
 TITLE_IMAGE         = 6
 TITLE_GAP           = 2
+
+TITLE_BG_COLU       = #$70
+TITLE_BD_COLU       = #$7E
+TITLE_FG_COLU       = #$0E
 
 ;================
 ; Variables
@@ -122,6 +129,12 @@ Reset:
     sta PF2
 
 LogoScreen:
+
+    ; Load Colors
+    lda #LOGO_BG_COLU
+    sta COLUBK
+    lda #LOGO_FG_COLU
+    sta COLUPF
 
     ; Load number of frames into AnimationFrame
     lda #LOGO_FRAMES
@@ -262,10 +275,19 @@ LogoFrame:
 
 TitleScreen:
 
-    lda #$00            ; Clear playfields
+    ; Clear playfields
+    lda #$00
     sta PF0
     sta PF1
     sta PF2
+
+    ; Background Color
+    lda #TITLE_BG_COLU
+    sta COLUBK
+
+    ; Border Color
+    lda #TITLE_BD_COLU
+    sta COLUPF
 
 TitleFrame:
 
@@ -337,31 +359,28 @@ TitleFrame:
 .title_image_top:
 
     ldy #$00    ; Current Image Index
-
-    sleep 2
-    jmp .title_image_top_line_skip_wait
-
-.title_image_top_line:
-
-    sleep 8
-
-.title_image_top_line_skip_wait:
-
     ldx #TITLE_LINE_SIZE                ; Current scanline
-    jmp .title_image_top_loop_skip_wait
 
-.title_image_top_loop:
+    jmp .title_image_top_loop
+
+.title_image_top_loop_wait:
 
     ; Wait until new line is ready to draw
     sta WSYNC
-    sleep 16
+    sleep 11
 
-.title_image_top_loop_skip_wait:
+.title_image_top_loop:
 
     ; Draw Image
     lda TitleImageTop,y
     sta PF1
     iny
+
+    ; Set Image Color
+    lda #TITLE_FG_COLU
+    sta COLUPF
+
+    ; Finish Drawing Image
     lda TitleImageTop,y
     sta PF2
     iny
@@ -377,16 +396,23 @@ TitleFrame:
     and #%11111100
     tay
 
+    ; Restore border color
+    sleep 2
+    lda #TITLE_BD_COLU
+    sta COLUPF
+
     dex
-    bne .title_image_top_loop
+    bne .title_image_top_loop_wait
 
     ; Add 4 to the image index to skip to next line
     REPEAT 4
         iny
     REPEND
 
+    ldx #TITLE_LINE_SIZE                ; Current scanline
+
     cpy #TITLE_IMAGE*TITLE_DATA_SIZE
-    bne .title_image_top_line
+    bne .title_image_top_loop
 
 .title_gap:
 
@@ -414,31 +440,28 @@ TitleFrame:
 .title_image_bottom:
 
     ldy #$00                ; Current Image Index
+    ldx #TITLE_LINE_SIZE
 
-    sleep 2
-    jmp .title_image_bottom_line_skip_wait
+    jmp .title_image_bottom_loop
 
-.title_image_bottom_line:
-
-    sleep 9
-
-.title_image_bottom_line_skip_wait
-
-    ldx #TITLE_LINE_SIZE    ; Current scanline
-    jmp .title_image_bottom_loop_skip_wait
-
-.title_image_bottom_loop:
+.title_image_bottom_loop_wait:
 
     ; Wait until new line is ready to draw
     sta WSYNC
-    sleep 16
+    sleep 11
 
-.title_image_bottom_loop_skip_wait:
+.title_image_bottom_loop:
 
     ; Draw Image
     lda TitleImageBottom,y
     sta PF1
     iny
+
+    ; Set Image Color
+    lda #TITLE_FG_COLU
+    sta COLUPF
+
+    ; Finish Drawing Image
     lda TitleImageBottom,y
     sta PF2
     iny
@@ -454,16 +477,23 @@ TitleFrame:
     and #%11111100
     tay
 
+    ; Restore border color
+    sleep 2
+    lda #TITLE_BD_COLU
+    sta COLUPF
+
     dex
-    bne .title_image_bottom_loop
+    bne .title_image_bottom_loop_wait
 
     ; Add 4 to image index to skip to next line
     REPEAT 4
         iny
     REPEND
 
+    ldx #TITLE_LINE_SIZE                ; Current scanline
+
     cpy #TITLE_IMAGE*TITLE_DATA_SIZE
-    bne .title_image_bottom_line
+    bne .title_image_bottom_loop
 
 .title_border_v_bottom:
 
