@@ -1,5 +1,16 @@
 --- Symbol List (sorted by symbol)
 0.FREE_BYTES             0000                  
+0.game_overscan          f30d                  
+0.game_overscan_loop     f313              (R )
+0.game_playfield_bottom  f2df                  
+0.game_playfield_bottom_line f2e1              (R )
+0.game_playfield_bottom_loop f2fc              (R )
+0.game_playfield_top     f2b7                  
+0.game_playfield_top_line f2b9              (R )
+0.game_playfield_top_loop f2d4              (R )
+0.game_vblank            f2b0                  
+0.game_vblank_loop       f2b2              (R )
+0.game_vsync             f29e                  
 0.initstack              f000                  
 0.initstack_loop         f003              (R )
 0.initvars               f008                  
@@ -19,13 +30,6 @@
 0.logo_vblank            f0a0                  
 0.logo_vblank_loop       f0a2              (R )
 0.logo_vsync             f08e                  
-0.start_overscan         f2b2                  
-0.start_overscan_loop    f2b8              (R )
-0.start_scanline         f2a3                  
-0.start_scanline_loop    f2ad              (R )
-0.start_vblank           f29c                  
-0.start_vblank_loop      f29e              (R )
-0.start_vsync            f28a                  
 0.title_audio            f134                  
 0.title_audio_play       f13d                  
 0.title_audio_play_note  f14a              (R )
@@ -86,6 +90,14 @@ CXPPMM                   0007
 ENABL                    001f              (R )
 ENAM0                    001d              (R )
 ENAM1                    001e              (R )
+GAME_BG_COLU             0000              (R )
+GAME_FG_COLU             000c              (R )
+GAME_PF_DATA_SIZE        0004              (R )
+GAME_PF_LINE_SIZE        0008              (R )
+GAME_PF_SIZE             000c              (R )
+GameFrame                f29e              (R )
+GameImage                f3a5              (R )
+GameScreen               f27c              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
@@ -120,9 +132,9 @@ LOGO_FRAMES              00b4              (R )
 LOGO_INTERVAL            0008              (R )
 LOGO_SIZE                0009              (R )
 LOGO_START               0030              (R )
-LogoAudio0               f2d2              (R )
-LogoAudio1               f2de              (R )
-LogoData                 f2c0              (R )
+LogoAudio0               f32d              (R )
+LogoAudio1               f339              (R )
+LogoData                 f31b              (R )
 LogoFrame                f05d              (R )
 LogoScreen               f02c                  
 NO_ILLEGAL_OPCODES       0000 ????         (R )
@@ -149,8 +161,6 @@ RESMP1                   0029
 RESP0                    0010                  
 RESP1                    0011                  
 RSYNC                    0003                  
-StartFrame               f28a              (R )
-StartScreen              f27c              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
 SWCHA                    0280                  
@@ -178,13 +188,13 @@ TITLE_GAP                0002              (R )
 TITLE_IMAGE              0006              (R )
 TITLE_LINE_SIZE          0008              (R )
 TITLE_PAD                0004              (R )
-TitleAudio0              f31a              (R )
-TitleAudio1              f33a              (R )
+TitleAudio0              f375              (R )
+TitleAudio1              f395              (R )
 TitleFrame               f134              (R )
-TitleImageBottom         f302              (R )
-TitleImageTop            f2ea              (R )
+TitleImageBottom         f35d              (R )
+TitleImageTop            f345              (R )
 TitleScreen              f10e              (R )
-TitleTone1               f32a              (R )
+TitleTone1               f385              (R )
 VBLANK                   0001              (R )
 VDELBL                   0027                  
 VDELP0                   0025                  

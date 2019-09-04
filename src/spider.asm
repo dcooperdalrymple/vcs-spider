@@ -69,6 +69,14 @@ TITLE_AUD_1_VOLUME  = 7
 TITLE_AUD_LENGTH    = 16
 TITLE_AUD_STEP      = 9
 
+; Game
+GAME_PF_LINE_SIZE   = 8
+GAME_PF_DATA_SIZE   = %00000100
+GAME_PF_SIZE        = 12
+
+GAME_BG_COLU        = #$00
+GAME_FG_COLU        = #$0C
+
 ;================
 ; Variables
 ;================
@@ -711,10 +719,28 @@ TitleFrame:
 
     ; Check if Fire Button on controller 1 is pressed
     lda INPT4
-    bpl StartScreen
+    bpl GameScreen
     jmp TitleFrame
 
-StartScreen:
+GameScreen:
+
+    ; Clear playfields
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+    ; Mirror playfield
+    lda #%00000001
+    sta CTRLPF
+
+    ; Background Color
+    lda #GAME_BG_COLU
+    sta COLUBK
+
+    ; Foreground Color
+    lda #GAME_FG_COLU
+    sta COLUPF
 
     ; Mute Audio
     lda #0
@@ -725,9 +751,9 @@ StartScreen:
     sta AUDV1
     sta AUDF1
 
-StartFrame:
+GameFrame:
 
-.start_vsync:                 ; Start of vertical blank processing
+.game_vsync:                 ; Start of vertical blank processing
 
     lda #0
     sta VBLANK
@@ -743,42 +769,111 @@ StartFrame:
     lda #0
     sta VSYNC
 
-.start_vblank:                ; scanlines of vertical blank
+.game_vblank:                ; scanlines of vertical blank
 
     ldx #KERNEL_VBLANK
-.start_vblank_loop:
+.game_vblank_loop:
 
     sta WSYNC
     dex
-    bne .start_vblank_loop
+    bne .game_vblank_loop
 
-.start_scanline:              ; Do 192 scanlines
+.game_playfield_top:
 
-    lda #$08            ; Clear playfields (with temp design)
+    ldy #0                  ; Current Image Index
+
+.game_playfield_top_line:
+
+    ; Draw Image
+    lda GameImage,y
+    sta PF0
+    iny
+    lda GameImage,y
+    sta PF1
+    iny
+    lda GameImage,y
+    sta PF2
+
+    ; Clear bottom of index
+    tya
+    and #%11111100
+    tay
+
+    ; Add 4 to the image index to skip to next line
+    REPEAT 4
+        iny
+    REPEND
+
+    ldx #GAME_PF_LINE_SIZE  ; Current scanline
+.game_playfield_top_loop:
+
+    sta WSYNC
+    dex
+    bne .game_playfield_top_loop
+
+    ; Reset scanlines
+    ldx #GAME_PF_LINE_SIZE
+
+    ; Check if we're at end of top half
+    cpy #GAME_PF_SIZE*GAME_PF_DATA_SIZE
+    bne .game_playfield_top_line
+
+.game_playfield_bottom:
+
+    ldy #(GAME_PF_SIZE-1)*GAME_PF_DATA_SIZE    ; Current image index
+
+.game_playfield_bottom_line:
+
+    ; Draw Image
+    lda GameImage,y
+    sta PF0
+    iny
+    lda GameImage,y
+    sta PF1
+    iny
+    lda GameImage,y
+    sta PF2
+
+    ; Clear bottom of index
+    tya
+    and #%11111100
+    tay
+
+    ; Subtract 4 from the image index to skip to next line
+    REPEAT 4
+        dey
+    REPEND
+
+    ldx #GAME_PF_LINE_SIZE                  ; Current scanline
+.game_playfield_bottom_loop:
+
+    sta WSYNC
+    dex
+    bne .game_playfield_bottom_loop
+
+    ; Check if we're at the end of the bottom half
+    cpy #0-GAME_PF_DATA_SIZE
+    bne .game_playfield_bottom_line
+
+    ; Clear Playfields
+    lda #0
     sta PF0
     sta PF1
     sta PF2
 
-    ldx #KERNEL_SCANLINES ; Iterate through all scanlines
-.start_scanline_loop:
-
-    sta WSYNC
-    dex
-    bne .start_scanline_loop
-
-.start_overscan:              ; 30 scanlines of overscan
+.game_overscan:              ; 30 scanlines of overscan
 
     lda #%01000010
     sta VBLANK          ; end of screen - enter blanking
 
     ldx #KERNEL_OVERSCAN
-.start_overscan_loop:
+.game_overscan_loop:
 
     sta WSYNC
     dex
-    bne .start_overscan_loop
+    bne .game_overscan_loop
 
-    jmp StartFrame
+    jmp GameFrame
 
 LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
 
@@ -959,6 +1054,68 @@ TitleAudio1:
     .BYTE #$FF
     .BYTE #23   ; F
     .BYTE #24   ; E
+
+GameImage:      ; Just one quadrant of web
+
+    .BYTE %00000000     ; First 4 bits reversed
+    .BYTE %00000000     ; Normal
+    .BYTE %00000011     ; Reversed
+    .BYTE %00000000     ; Empty
+
+    .BYTE %00000000
+    .BYTE %00000000
+    .BYTE %00111111
+    .BYTE %00000000
+
+    .BYTE %00000000
+    .BYTE %00000001
+    .BYTE %11000010
+    .BYTE %00000000
+
+    .BYTE %00000000
+    .BYTE %00000001
+    .BYTE %00000100
+    .BYTE %00000000
+
+    .BYTE %00000000
+    .BYTE %00000010
+    .BYTE %00001000
+    .BYTE %00000000
+
+    .BYTE %00000000
+    .BYTE %00001100
+    .BYTE %00001000
+    .BYTE %00000000
+
+    .BYTE %00110000
+    .BYTE %00110000
+    .BYTE %00010000
+    .BYTE %00000000
+
+    .BYTE %11100000
+    .BYTE %11000000
+    .BYTE %00100000
+    .BYTE %00000000
+
+    .BYTE %00100000
+    .BYTE %00111000
+    .BYTE %00100000
+    .BYTE %00000000
+
+    .BYTE %01000000
+    .BYTE %00000111
+    .BYTE %01000001
+    .BYTE %00000000
+
+    .BYTE %01000000
+    .BYTE %00000000
+    .BYTE %10001110
+    .BYTE %00000000
+
+    .BYTE %10000000
+    .BYTE %00000000
+    .BYTE %11110000
+    .BYTE %00000000
 
     ;-------------------------------------------
 

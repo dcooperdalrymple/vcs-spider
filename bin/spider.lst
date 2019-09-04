@@ -437,480 +437,488 @@
      69  10000 ????		00 10	    TITLE_AUD_LENGTH =	16
      70  10000 ????		00 09	    TITLE_AUD_STEP =	9
      71  10000 ????
-     72  10000 ????						;================
-     73  10000 ????						; Variables
-     74  10000 ????						;================
-     75  10000 ????
-     76 U0084 ????				      SEG.U	vars
-     77 U0080					      org	$80
-     78 U0080
-     79 U0080		       00 00 00 00*Overlay    ds	8
-     80 U0088
-     81 U0080					      org	Overlay
-     82 U0080
-     83 U0080							; Animation/Logic System
-     84 U0080
-     85 U0080		       00	   AnimationFrame ds	1	; 1 byte to count frames
-     86 U0081		       00	   AnimationSubFrame ds	1	; 1 byte to count portions of frames
-     87 U0082
-     88 U0082							; Audio System
-     89 U0082
-     90 U0082		       00	   AudioFrame ds	1
-     91 U0083		       00	   AudioStep  ds	1
-     92 U0084
-     93  10000 ????				       SEG
-     94  10000 ????
-     95  f000					      ORG	$F000	; Start of cart area
-     96  f000
-     97  f000				   Reset
-     98  f000
-     99  f000				   .initstack
-    100  f000
-    101  f000		       a2 00		      ldx	#0
-    102  f002		       8a		      txa
-    103  f003
-    104  f003				   .initstack_loop
-    105  f003
-    106  f003		       ca		      dex
-    107  f004		       9a		      txs
-    108  f005		       48		      pha
-    109  f006		       d0 fb		      bne	.initstack_loop
-    110  f008
-    111  f008							; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
-    112  f008
-    113  f008				   .initvars
-    114  f008
-    115  f008							; Set background color
-    116  f008		       a9 00		      lda	#$00	; Black
-    117  f00a		       85 09		      sta	COLUBK
-    118  f00c
-    119  f00c							; Set the playfield and player color
-    120  f00c		       a9 0e		      lda	#$0E	; White
-    121  f00e		       85 08		      sta	COLUPF
-    122  f010		       85 06		      sta	COLUP0
-    123  f012		       85 07		      sta	COLUP1
-    124  f014
-    125  f014							; Playfield Control
-    126  f014		       a9 00		      lda	#%00000000	; 1 for mirroring
-    127  f016		       85 0a		      sta	CTRLPF
-    128  f018
-    129  f018							; Disable Game Elements
-    130  f018		       a9 00		      lda	#$00
-    131  f01a		       85 1f		      sta	ENABL	; Turn off ball
-    132  f01c		       85 1d		      sta	ENAM0	; Turn off player 1 missile
-    133  f01e		       85 1e		      sta	ENAM1	; Turn off player 2 missile
-    134  f020		       85 1b		      sta	GRP0	; Turn off player 1
-    135  f022		       85 1c		      sta	GRP1	; Turn off player 2
-    136  f024
-    137  f024							; Empty playfield
-    138  f024		       a9 00		      lda	#%00000000
-    139  f026		       85 0d		      sta	PF0
-    140  f028		       85 0e		      sta	PF1
-    141  f02a		       85 0f		      sta	PF2
-    142  f02c
-    143  f02c				   LogoScreen
-    144  f02c
-    145  f02c							; Load Colors
-    146  f02c		       a9 a2		      lda	#LOGO_BG_COLU
-    147  f02e		       85 09		      sta	COLUBK
-    148  f030		       a9 5e		      lda	#LOGO_FG_COLU
-    149  f032		       85 08		      sta	COLUPF
-    150  f034
-    151  f034							; Load audio settings
-    152  f034		       a9 04		      lda	#LOGO_AUD_0_TONE
-    153  f036		       85 15		      sta	AUDC0
-    154  f038		       a9 0f		      lda	#LOGO_AUD_0_VOLUME
-    155  f03a		       85 19		      sta	AUDV0
-    156  f03c		       a9 01		      lda	#LOGO_AUD_1_TONE
-    157  f03e		       85 16		      sta	AUDC1
-    158  f040		       a9 03		      lda	#LOGO_AUD_1_VOLUME
-    159  f042		       85 1a		      sta	AUDV1
-    160  f044		       a9 00		      lda	#0
-    161  f046		       85 82		      sta	AudioFrame
-    162  f048		       85 83		      sta	AudioStep
-    163  f04a
-    164  f04a							; Play first note
-    165  f04a		       a8		      tay
-    166  f04b		       b9 d2 f2 	      lda	LogoAudio0,y
-    167  f04e		       85 17		      sta	AUDF0
-    168  f050		       b9 de f2 	      lda	LogoAudio1,y
-    169  f053		       85 18		      sta	AUDF1
-    170  f055
-    171  f055							; Load number of frames into AnimationFrame
-    172  f055		       a9 b4		      lda	#LOGO_FRAMES
-    173  f057		       85 80		      sta	AnimationFrame
-    174  f059
-    175  f059							; Initialize sub frame
-    176  f059		       a9 00		      lda	#0
-    177  f05b		       85 81		      sta	AnimationSubFrame
-    178  f05d
-    179  f05d				   LogoFrame
-    180  f05d
-    181  f05d				   .logo_audio
-    182  f05d
-    183  f05d							; Increment Audio Frame
-    184  f05d		       a6 82		      ldx	AudioFrame
-    185  f05f		       e8		      inx
-    186  f060		       86 82		      stx	AudioFrame
-    187  f062
-    188  f062							; Check if we need to play the next note
-    189  f062		       e0 08		      cpx	#LOGO_AUD_STEP
-    190  f064		       90 28		      bcc	.logo_audio_skip
-    191  f066
-    192  f066				   .logo_audio_play
-    193  f066
-    194  f066							; Reset AudioFrame
-    195  f066		       a9 00		      lda	#0
-    196  f068		       85 82		      sta	AudioFrame
-    197  f06a
-    198  f06a							; Check if we're at the end of the melody
-    199  f06a		       a4 83		      ldy	AudioStep
-    200  f06c		       c0 0b		      cpy	#LOGO_AUD_LENGTH-1
-    201  f06e		       f0 10		      beq	.logo_audio_mute
-    202  f070
-    203  f070				   .logo_audio_play_note
-    204  f070
-    205  f070							; Increment Audio position
-    206  f070		       c8		      iny
-    207  f071		       84 83		      sty	AudioStep
-    208  f073
-    209  f073							; Load note and play
-    210  f073		       b9 d2 f2 	      lda	LogoAudio0,y
-    211  f076		       85 17		      sta	AUDF0
-    212  f078		       b9 de f2 	      lda	LogoAudio1,y
-    213  f07b		       85 18		      sta	AUDF1
-    214  f07d		       4c 8e f0 	      jmp	.logo_audio_mute_skip
-    215  f080
-    216  f080				   .logo_audio_mute
-    217  f080
-    218  f080							; Mute audio
-    219  f080		       a9 00		      lda	#0
-    220  f082		       85 15		      sta	AUDC0
-    221  f084		       85 19		      sta	AUDV0
-    222  f086		       85 17		      sta	AUDF0
-    223  f088		       85 16		      sta	AUDC1
-    224  f08a		       85 1a		      sta	AUDV1
-    225  f08c		       85 18		      sta	AUDF1
-    226  f08e
-    227  f08e				   .logo_audio_mute_skip
-    228  f08e
-    229  f08e				   .logo_audio_skip
-    230  f08e
-    231  f08e				   .logo_vsync		; Start of vertical blank processing
-    232  f08e
-    233  f08e		       a9 00		      lda	#0
-    234  f090		       85 01		      sta	VBLANK
-    235  f092
-    236  f092		       a9 02		      lda	#2
-    237  f094		       85 00		      sta	VSYNC
-    238  f096
-    239  f096							; VSYNCH signal scanlines
-    240  f096					      REPEAT	#KERNEL_VSYNC
-    241  f096		       85 02		      sta	WSYNC
-    240  f096					      REPEND
-    241  f098		       85 02		      sta	WSYNC
-    240  f098					      REPEND
-    241  f09a		       85 02		      sta	WSYNC
-    242  f09c					      REPEND
-    243  f09c
-    244  f09c		       a9 00		      lda	#0
-    245  f09e		       85 00		      sta	VSYNC
-    246  f0a0
-    247  f0a0				   .logo_vblank 		; scanlines of vertical blank
-    248  f0a0
-    249  f0a0		       a2 25		      ldx	#KERNEL_VBLANK
-    250  f0a2				   .logo_vblank_loop
-    251  f0a2
-    252  f0a2		       85 02		      sta	WSYNC
-    253  f0a4		       ca		      dex
-    254  f0a5		       d0 fb		      bne	.logo_vblank_loop
-    255  f0a7
-    256  f0a7				   .logo_scanline		; Do 192 scanlines
-    257  f0a7
-    258  f0a7		       a9 00		      lda	#$00	; Clear playfields
-    259  f0a9		       85 0d		      sta	PF0
-    260  f0ab		       85 0e		      sta	PF1
-    261  f0ad		       85 0f		      sta	PF2
-    262  f0af
-    263  f0af		       a2 30		      ldx	#LOGO_START	; This counts our scanline number
-    264  f0b1				   .logo_scanline_start
-    265  f0b1
-    266  f0b1		       85 02		      sta	WSYNC
-    267  f0b3		       ca		      dex
-    268  f0b4		       d0 fb		      bne	.logo_scanline_start
-    269  f0b6
-    270  f0b6		       a2 00		      ldx	#0
-    271  f0b8				   .logo_scanline_loop
-    272  f0b8
-    273  f0b8							; Cleanup
-    274  f0b8		       85 0e		      sta	PF1
-    275  f0ba
-    276  f0ba		       8a		      txa
-    277  f0bb		       4a		      lsr		; Divide counter by 4
-    278  f0bc		       4a		      lsr
-    279  f0bd		       29 fe		      and	#%11111110	; Remove 0th bit
-    280  f0bf		       a8		      tay
-    281  f0c0
-    282  f0c0							; Check if we need to display line
-    283  f0c0		       c4 81		      cpy	AnimationSubFrame
-    284  f0c2		       b0 17		      bcs	.logo_scanline_skip
-    285  f0c4
-    286  f0c4							; Load first half of data
-    287  f0c4		       b9 c0 f2 	      lda	LogoData,y
-    288  f0c7		       85 0f		      sta	PF2
-    289  f0c9
-    290  f0c9							; Load second half of data
-    291  f0c9		       c8		      iny
-    292  f0ca		       b9 c0 f2 	      lda	LogoData,y
-    293  f0cd
-    294  f0cd							; Use 4 MSB bits on PF0
-    295  f0cd		       85 0d		      sta	PF0
-    296  f0cf
-    297  f0cf							; Use 4 LSB bits on PF1
-    298  f0cf					      REPEAT	4
-    299  f0cf		       0a		      asl
-    298  f0cf					      REPEND
-    299  f0d0		       0a		      asl
-    298  f0d0					      REPEND
-    299  f0d1		       0a		      asl
-    298  f0d1					      REPEND
-    299  f0d2		       0a		      asl
-    300  f0d3					      REPEND
-    301  f0d3		       85 0e		      sta	PF1
-    302  f0d5
-    303  f0d5							; Cleanup
-    304  f0d5		       a9 00		      lda	#$00
-    305  f0d7		       85 0f		      sta	PF2
-    306  f0d9		       85 0d		      sta	PF0
-    307  f0db
-    308  f0db				   .logo_scanline_skip
-    309  f0db
-    310  f0db							; Clear Playfields
-    311  f0db		       a9 00		      lda	#$00
-    312  f0dd		       85 0d		      sta	PF0
-    313  f0df		       85 0e		      sta	PF1
-    314  f0e1		       85 0f		      sta	PF2
-    315  f0e3
-    316  f0e3							; Wait for next line
-    317  f0e3		       85 02		      sta	WSYNC
-    318  f0e5
-    319  f0e5							; Check if at end of logo display
-    320  f0e5		       e8		      inx
-    321  f0e6		       e0 48		      cpx	#LOGO_SIZE*LOGO_INTERVAL
-    322  f0e8		       d0 ce		      bne	.logo_scanline_loop
-    323  f0ea
-    324  f0ea		       a2 48		      ldx	#KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL
-    325  f0ec				   .logo_scanline_end
-    326  f0ec
-    327  f0ec		       85 02		      sta	WSYNC
-    328  f0ee		       ca		      dex
-    329  f0ef		       d0 fb		      bne	.logo_scanline_end
-    330  f0f1
-    331  f0f1				   .logo_overscan		; 30 scanlines of overscan
-    332  f0f1
-    333  f0f1		       a9 42		      lda	#%01000010
-    334  f0f3		       85 01		      sta	VBLANK	; end of screen - enter blanking
-    335  f0f5
-    336  f0f5		       a2 1e		      ldx	#KERNEL_OVERSCAN
-    337  f0f7				   .logo_overscan_loop
-    338  f0f7
-    339  f0f7		       85 02		      sta	WSYNC
-    340  f0f9		       ca		      dex
-    341  f0fa		       d0 fb		      bne	.logo_overscan_loop
-    342  f0fc
-    343  f0fc		       a6 80		      ldx	AnimationFrame
-    344  f0fe
-    345  f0fe							; Divide inverted AnimationFrame by 4 and put in AnimationSubFrame
-    346  f0fe		       a9 b4		      lda	#LOGO_FRAMES
-    347  f100		       e5 80		      sbc	AnimationFrame
-    348  f102		       4a		      lsr
-    349  f103		       4a		      lsr
-    350  f104		       85 81		      sta	AnimationSubFrame
-    351  f106
-    352  f106							; Decrement AnimationFrame
-    353  f106		       ca		      dex
-    354  f107		       86 80		      stx	AnimationFrame
-    355  f109
-    356  f109							; Check if we're at the end of the animation
-    357  f109		       f0 03		      beq	TitleScreen
-    358  f10b		       4c 5d f0 	      jmp	LogoFrame
-    359  f10e
-    360  f10e				   TitleScreen
-    361  f10e
-    362  f10e							; Clear playfields
-    363  f10e		       a9 00		      lda	#$00
-    364  f110		       85 0d		      sta	PF0
-    365  f112		       85 0e		      sta	PF1
-    366  f114		       85 0f		      sta	PF2
-    367  f116
-    368  f116							; Background Color
-    369  f116		       a9 70		      lda	#TITLE_BG_COLU
-    370  f118		       85 09		      sta	COLUBK
-    371  f11a
-    372  f11a							; Border Color
-    373  f11a		       a9 7e		      lda	#TITLE_BD_COLU
-    374  f11c		       85 08		      sta	COLUPF
-    375  f11e
-    376  f11e							; Load audio settings
-    377  f11e
-    378  f11e							; Melody Line
-    379  f11e		       a9 04		      lda	#TITLE_AUD_0_TONE
-    380  f120		       85 15		      sta	AUDC0
-    381  f122		       a9 04		      lda	#TITLE_AUD_0_VOLUME
-    382  f124		       85 19		      sta	AUDV0
-    383  f126
-    384  f126							; Drums and Bass
-    385  f126		       a9 00		      lda	#0
-    386  f128		       85 16		      sta	AUDC1
-    387  f12a		       85 1a		      sta	AUDV1
-    388  f12c
-    389  f12c							; Make it so that we play the first note immediately
-    390  f12c		       a9 08		      lda	#TITLE_AUD_STEP-1
-    391  f12e		       85 82		      sta	AudioFrame
-    392  f130		       a9 0f		      lda	#TITLE_AUD_LENGTH-1
-    393  f132		       85 83		      sta	AudioStep
-    394  f134
-    395  f134				   TitleFrame
-    396  f134
-    397  f134				   .title_audio
-    398  f134
-    399  f134							; Increment Audio Frame
-    400  f134		       a6 82		      ldx	AudioFrame
-    401  f136		       e8		      inx
-    402  f137		       86 82		      stx	AudioFrame
-    403  f139
-    404  f139							; Check if we need to play the next note
-    405  f139		       e0 09		      cpx	#TITLE_AUD_STEP
-    406  f13b		       90 31		      bcc	.title_audio_skip
-    407  f13d
-    408  f13d				   .title_audio_play
-    409  f13d
-    410  f13d							; Reset AudioFrame
-    411  f13d		       a9 00		      lda	#0
-    412  f13f		       85 82		      sta	AudioFrame
-    413  f141
-    414  f141							; Increment melody position
-    415  f141		       a4 83		      ldy	AudioStep
-    416  f143		       c8		      iny
-    417  f144
-    418  f144							; Check if we're at the end of the melody
-    419  f144		       c0 10		      cpy	#TITLE_AUD_LENGTH
-    420  f146		       d0 02		      bne	.title_audio_play_note
-    421  f148
-    422  f148							; Loop our audio step
-    423  f148		       a0 00		      ldy	#0
-    424  f14a
-    425  f14a				   .title_audio_play_note
-    426  f14a
-    427  f14a							; Save current position
-    428  f14a		       84 83		      sty	AudioStep
-    429  f14c
-    430  f14c							; Basic Melody Line
-    431  f14c		       b9 1a f3 	      lda	TitleAudio0,y
-    432  f14f		       85 17		      sta	AUDF0
-    433  f151
-    434  f151							; Drums and Bass
-    435  f151		       b9 2a f3 	      lda	TitleTone1,y
-    436  f154		       c9 ff		      cmp	#$FF
-    437  f156		       f0 0e		      beq	.title_audio_play_note_1_mute
-    438  f158
-    439  f158		       85 16		      sta	AUDC1
-    440  f15a		       b9 3a f3 	      lda	TitleAudio1,y
-    441  f15d		       85 18		      sta	AUDF1
-    442  f15f		       a9 07		      lda	#TITLE_AUD_1_VOLUME
-    443  f161		       85 1a		      sta	AUDV1
-    444  f163
-    445  f163		       4c 6e f1 	      jmp	.title_audio_skip
-    446  f166
-    447  f166				   .title_audio_play_note_1_mute
-    448  f166
-    449  f166		       a9 00		      lda	#0
-    450  f168		       85 18		      sta	AUDF1
-    451  f16a		       85 16		      sta	AUDC1
-    452  f16c		       85 1a		      sta	AUDV1
-    453  f16e
-    454  f16e				   .title_audio_skip
-    455  f16e
-    456  f16e				   .title_vsync 		; Start of vertical blank processing
-    457  f16e
-    458  f16e		       a9 00		      lda	#0
-    459  f170		       85 01		      sta	VBLANK
-    460  f172
-    461  f172		       a9 02		      lda	#2
-    462  f174		       85 00		      sta	VSYNC
-    463  f176
-    464  f176							; VSYNCH signal scanlines
-    465  f176					      REPEAT	#KERNEL_VSYNC
-    466  f176		       85 02		      sta	WSYNC
-    465  f176					      REPEND
-    466  f178		       85 02		      sta	WSYNC
-    465  f178					      REPEND
-    466  f17a		       85 02		      sta	WSYNC
-    467  f17c					      REPEND
-    468  f17c
-    469  f17c		       a9 00		      lda	#0
-    470  f17e		       85 00		      sta	VSYNC
-    471  f180
-    472  f180				   .title_vblank		; scanlines of vertical blank
-    473  f180
-    474  f180		       a2 25		      ldx	#KERNEL_VBLANK
-    475  f182				   .title_vblank_loop
-    476  f182
-    477  f182		       85 02		      sta	WSYNC
-    478  f184		       ca		      dex
-    479  f185		       d0 fb		      bne	.title_vblank_loop
-    480  f187
-    481  f187				   .title_border_h_top
-    482  f187
-    483  f187							; Number of Scanlines
-    484  f187		       a2 08		      ldx	#TITLE_BORDER*TITLE_LINE_SIZE
-    485  f189
-    486  f189							; Draw Playfield
-    487  f189		       a9 ff		      lda	#$FF
-    488  f18b		       85 0d		      sta	PF0
-    489  f18d		       85 0e		      sta	PF1
-    490  f18f		       85 0f		      sta	PF2
-    491  f191
-    492  f191				   .title_border_h_top_loop
-    493  f191
-    494  f191		       85 02		      sta	WSYNC
-    495  f193		       ca		      dex
-    496  f194		       d0 fb		      bne	.title_border_h_top_loop
-    497  f196
-    498  f196				   .title_border_v_top
-    499  f196
-    500  f196							; Number of Scanlines
-    501  f196		       a2 20		      ldx	#TITLE_PAD*TITLE_LINE_SIZE
-    502  f198
-    503  f198							; Mirror playfield
-    504  f198		       a9 01		      lda	#%00000001
-    505  f19a		       85 0a		      sta	CTRLPF
-    506  f19c
-    507  f19c							; Draw Playfield
-    508  f19c		       a9 10		      lda	#%00010000
-    509  f19e		       85 0d		      sta	PF0
-    510  f1a0
-    511  f1a0		       a9 00		      lda	#$00
-    512  f1a2		       85 0e		      sta	PF1
-    513  f1a4		       85 0f		      sta	PF2
-    514  f1a6
-    515  f1a6				   .title_border_v_top_loop
-    516  f1a6
-    517  f1a6		       85 02		      sta	WSYNC
-    518  f1a8		       ca		      dex
-    519  f1a9		       d0 fb		      bne	.title_border_v_top_loop
-    520  f1ab
-    521  f1ab				   .title_image_top
-    522  f1ab
-    523  f1ab		       a0 00		      ldy	#$00	; Current Image Index
-    524  f1ad		       a2 08		      ldx	#TITLE_LINE_SIZE	; Current scanline
-    525  f1af
-    526  f1af		       4c ba f1 	      jmp	.title_image_top_loop
-    527  f1b2
-    528  f1b2				   .title_image_top_loop_wait
-    529  f1b2
-    530  f1b2							; Wait until new line is ready to draw
-    531  f1b2		       85 02		      sta	WSYNC
+     72  10000 ????						; Game
+     73  10000 ????		00 08	    GAME_PF_LINE_SIZE =	8
+     74  10000 ????		00 04	    GAME_PF_DATA_SIZE =	%00000100
+     75  10000 ????		00 0c	    GAME_PF_SIZE =	12
+     76  10000 ????
+     77  10000 ????		00 00	    GAME_BG_COLU =	#$00
+     78  10000 ????		00 0c	    GAME_FG_COLU =	#$0C
+     79  10000 ????
+     80  10000 ????						;================
+     81  10000 ????						; Variables
+     82  10000 ????						;================
+     83  10000 ????
+     84 U0084 ????				      SEG.U	vars
+     85 U0080					      org	$80
+     86 U0080
+     87 U0080		       00 00 00 00*Overlay    ds	8
+     88 U0088
+     89 U0080					      org	Overlay
+     90 U0080
+     91 U0080							; Animation/Logic System
+     92 U0080
+     93 U0080		       00	   AnimationFrame ds	1	; 1 byte to count frames
+     94 U0081		       00	   AnimationSubFrame ds	1	; 1 byte to count portions of frames
+     95 U0082
+     96 U0082							; Audio System
+     97 U0082
+     98 U0082		       00	   AudioFrame ds	1
+     99 U0083		       00	   AudioStep  ds	1
+    100 U0084
+    101  10000 ????				       SEG
+    102  10000 ????
+    103  f000					      ORG	$F000	; Start of cart area
+    104  f000
+    105  f000				   Reset
+    106  f000
+    107  f000				   .initstack
+    108  f000
+    109  f000		       a2 00		      ldx	#0
+    110  f002		       8a		      txa
+    111  f003
+    112  f003				   .initstack_loop
+    113  f003
+    114  f003		       ca		      dex
+    115  f004		       9a		      txs
+    116  f005		       48		      pha
+    117  f006		       d0 fb		      bne	.initstack_loop
+    118  f008
+    119  f008							; Stack pointer now $FF, a=x=0, TIA registers (0 - $7F) = RAM ($80 - $FF) = 0
+    120  f008
+    121  f008				   .initvars
+    122  f008
+    123  f008							; Set background color
+    124  f008		       a9 00		      lda	#$00	; Black
+    125  f00a		       85 09		      sta	COLUBK
+    126  f00c
+    127  f00c							; Set the playfield and player color
+    128  f00c		       a9 0e		      lda	#$0E	; White
+    129  f00e		       85 08		      sta	COLUPF
+    130  f010		       85 06		      sta	COLUP0
+    131  f012		       85 07		      sta	COLUP1
+    132  f014
+    133  f014							; Playfield Control
+    134  f014		       a9 00		      lda	#%00000000	; 1 for mirroring
+    135  f016		       85 0a		      sta	CTRLPF
+    136  f018
+    137  f018							; Disable Game Elements
+    138  f018		       a9 00		      lda	#$00
+    139  f01a		       85 1f		      sta	ENABL	; Turn off ball
+    140  f01c		       85 1d		      sta	ENAM0	; Turn off player 1 missile
+    141  f01e		       85 1e		      sta	ENAM1	; Turn off player 2 missile
+    142  f020		       85 1b		      sta	GRP0	; Turn off player 1
+    143  f022		       85 1c		      sta	GRP1	; Turn off player 2
+    144  f024
+    145  f024							; Empty playfield
+    146  f024		       a9 00		      lda	#%00000000
+    147  f026		       85 0d		      sta	PF0
+    148  f028		       85 0e		      sta	PF1
+    149  f02a		       85 0f		      sta	PF2
+    150  f02c
+    151  f02c				   LogoScreen
+    152  f02c
+    153  f02c							; Load Colors
+    154  f02c		       a9 a2		      lda	#LOGO_BG_COLU
+    155  f02e		       85 09		      sta	COLUBK
+    156  f030		       a9 5e		      lda	#LOGO_FG_COLU
+    157  f032		       85 08		      sta	COLUPF
+    158  f034
+    159  f034							; Load audio settings
+    160  f034		       a9 04		      lda	#LOGO_AUD_0_TONE
+    161  f036		       85 15		      sta	AUDC0
+    162  f038		       a9 0f		      lda	#LOGO_AUD_0_VOLUME
+    163  f03a		       85 19		      sta	AUDV0
+    164  f03c		       a9 01		      lda	#LOGO_AUD_1_TONE
+    165  f03e		       85 16		      sta	AUDC1
+    166  f040		       a9 03		      lda	#LOGO_AUD_1_VOLUME
+    167  f042		       85 1a		      sta	AUDV1
+    168  f044		       a9 00		      lda	#0
+    169  f046		       85 82		      sta	AudioFrame
+    170  f048		       85 83		      sta	AudioStep
+    171  f04a
+    172  f04a							; Play first note
+    173  f04a		       a8		      tay
+    174  f04b		       b9 2d f3 	      lda	LogoAudio0,y
+    175  f04e		       85 17		      sta	AUDF0
+    176  f050		       b9 39 f3 	      lda	LogoAudio1,y
+    177  f053		       85 18		      sta	AUDF1
+    178  f055
+    179  f055							; Load number of frames into AnimationFrame
+    180  f055		       a9 b4		      lda	#LOGO_FRAMES
+    181  f057		       85 80		      sta	AnimationFrame
+    182  f059
+    183  f059							; Initialize sub frame
+    184  f059		       a9 00		      lda	#0
+    185  f05b		       85 81		      sta	AnimationSubFrame
+    186  f05d
+    187  f05d				   LogoFrame
+    188  f05d
+    189  f05d				   .logo_audio
+    190  f05d
+    191  f05d							; Increment Audio Frame
+    192  f05d		       a6 82		      ldx	AudioFrame
+    193  f05f		       e8		      inx
+    194  f060		       86 82		      stx	AudioFrame
+    195  f062
+    196  f062							; Check if we need to play the next note
+    197  f062		       e0 08		      cpx	#LOGO_AUD_STEP
+    198  f064		       90 28		      bcc	.logo_audio_skip
+    199  f066
+    200  f066				   .logo_audio_play
+    201  f066
+    202  f066							; Reset AudioFrame
+    203  f066		       a9 00		      lda	#0
+    204  f068		       85 82		      sta	AudioFrame
+    205  f06a
+    206  f06a							; Check if we're at the end of the melody
+    207  f06a		       a4 83		      ldy	AudioStep
+    208  f06c		       c0 0b		      cpy	#LOGO_AUD_LENGTH-1
+    209  f06e		       f0 10		      beq	.logo_audio_mute
+    210  f070
+    211  f070				   .logo_audio_play_note
+    212  f070
+    213  f070							; Increment Audio position
+    214  f070		       c8		      iny
+    215  f071		       84 83		      sty	AudioStep
+    216  f073
+    217  f073							; Load note and play
+    218  f073		       b9 2d f3 	      lda	LogoAudio0,y
+    219  f076		       85 17		      sta	AUDF0
+    220  f078		       b9 39 f3 	      lda	LogoAudio1,y
+    221  f07b		       85 18		      sta	AUDF1
+    222  f07d		       4c 8e f0 	      jmp	.logo_audio_mute_skip
+    223  f080
+    224  f080				   .logo_audio_mute
+    225  f080
+    226  f080							; Mute audio
+    227  f080		       a9 00		      lda	#0
+    228  f082		       85 15		      sta	AUDC0
+    229  f084		       85 19		      sta	AUDV0
+    230  f086		       85 17		      sta	AUDF0
+    231  f088		       85 16		      sta	AUDC1
+    232  f08a		       85 1a		      sta	AUDV1
+    233  f08c		       85 18		      sta	AUDF1
+    234  f08e
+    235  f08e				   .logo_audio_mute_skip
+    236  f08e
+    237  f08e				   .logo_audio_skip
+    238  f08e
+    239  f08e				   .logo_vsync		; Start of vertical blank processing
+    240  f08e
+    241  f08e		       a9 00		      lda	#0
+    242  f090		       85 01		      sta	VBLANK
+    243  f092
+    244  f092		       a9 02		      lda	#2
+    245  f094		       85 00		      sta	VSYNC
+    246  f096
+    247  f096							; VSYNCH signal scanlines
+    248  f096					      REPEAT	#KERNEL_VSYNC
+    249  f096		       85 02		      sta	WSYNC
+    248  f096					      REPEND
+    249  f098		       85 02		      sta	WSYNC
+    248  f098					      REPEND
+    249  f09a		       85 02		      sta	WSYNC
+    250  f09c					      REPEND
+    251  f09c
+    252  f09c		       a9 00		      lda	#0
+    253  f09e		       85 00		      sta	VSYNC
+    254  f0a0
+    255  f0a0				   .logo_vblank 		; scanlines of vertical blank
+    256  f0a0
+    257  f0a0		       a2 25		      ldx	#KERNEL_VBLANK
+    258  f0a2				   .logo_vblank_loop
+    259  f0a2
+    260  f0a2		       85 02		      sta	WSYNC
+    261  f0a4		       ca		      dex
+    262  f0a5		       d0 fb		      bne	.logo_vblank_loop
+    263  f0a7
+    264  f0a7				   .logo_scanline		; Do 192 scanlines
+    265  f0a7
+    266  f0a7		       a9 00		      lda	#$00	; Clear playfields
+    267  f0a9		       85 0d		      sta	PF0
+    268  f0ab		       85 0e		      sta	PF1
+    269  f0ad		       85 0f		      sta	PF2
+    270  f0af
+    271  f0af		       a2 30		      ldx	#LOGO_START	; This counts our scanline number
+    272  f0b1				   .logo_scanline_start
+    273  f0b1
+    274  f0b1		       85 02		      sta	WSYNC
+    275  f0b3		       ca		      dex
+    276  f0b4		       d0 fb		      bne	.logo_scanline_start
+    277  f0b6
+    278  f0b6		       a2 00		      ldx	#0
+    279  f0b8				   .logo_scanline_loop
+    280  f0b8
+    281  f0b8							; Cleanup
+    282  f0b8		       85 0e		      sta	PF1
+    283  f0ba
+    284  f0ba		       8a		      txa
+    285  f0bb		       4a		      lsr		; Divide counter by 4
+    286  f0bc		       4a		      lsr
+    287  f0bd		       29 fe		      and	#%11111110	; Remove 0th bit
+    288  f0bf		       a8		      tay
+    289  f0c0
+    290  f0c0							; Check if we need to display line
+    291  f0c0		       c4 81		      cpy	AnimationSubFrame
+    292  f0c2		       b0 17		      bcs	.logo_scanline_skip
+    293  f0c4
+    294  f0c4							; Load first half of data
+    295  f0c4		       b9 1b f3 	      lda	LogoData,y
+    296  f0c7		       85 0f		      sta	PF2
+    297  f0c9
+    298  f0c9							; Load second half of data
+    299  f0c9		       c8		      iny
+    300  f0ca		       b9 1b f3 	      lda	LogoData,y
+    301  f0cd
+    302  f0cd							; Use 4 MSB bits on PF0
+    303  f0cd		       85 0d		      sta	PF0
+    304  f0cf
+    305  f0cf							; Use 4 LSB bits on PF1
+    306  f0cf					      REPEAT	4
+    307  f0cf		       0a		      asl
+    306  f0cf					      REPEND
+    307  f0d0		       0a		      asl
+    306  f0d0					      REPEND
+    307  f0d1		       0a		      asl
+    306  f0d1					      REPEND
+    307  f0d2		       0a		      asl
+    308  f0d3					      REPEND
+    309  f0d3		       85 0e		      sta	PF1
+    310  f0d5
+    311  f0d5							; Cleanup
+    312  f0d5		       a9 00		      lda	#$00
+    313  f0d7		       85 0f		      sta	PF2
+    314  f0d9		       85 0d		      sta	PF0
+    315  f0db
+    316  f0db				   .logo_scanline_skip
+    317  f0db
+    318  f0db							; Clear Playfields
+    319  f0db		       a9 00		      lda	#$00
+    320  f0dd		       85 0d		      sta	PF0
+    321  f0df		       85 0e		      sta	PF1
+    322  f0e1		       85 0f		      sta	PF2
+    323  f0e3
+    324  f0e3							; Wait for next line
+    325  f0e3		       85 02		      sta	WSYNC
+    326  f0e5
+    327  f0e5							; Check if at end of logo display
+    328  f0e5		       e8		      inx
+    329  f0e6		       e0 48		      cpx	#LOGO_SIZE*LOGO_INTERVAL
+    330  f0e8		       d0 ce		      bne	.logo_scanline_loop
+    331  f0ea
+    332  f0ea		       a2 48		      ldx	#KERNEL_SCANLINES-LOGO_START-LOGO_SIZE*LOGO_INTERVAL
+    333  f0ec				   .logo_scanline_end
+    334  f0ec
+    335  f0ec		       85 02		      sta	WSYNC
+    336  f0ee		       ca		      dex
+    337  f0ef		       d0 fb		      bne	.logo_scanline_end
+    338  f0f1
+    339  f0f1				   .logo_overscan		; 30 scanlines of overscan
+    340  f0f1
+    341  f0f1		       a9 42		      lda	#%01000010
+    342  f0f3		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    343  f0f5
+    344  f0f5		       a2 1e		      ldx	#KERNEL_OVERSCAN
+    345  f0f7				   .logo_overscan_loop
+    346  f0f7
+    347  f0f7		       85 02		      sta	WSYNC
+    348  f0f9		       ca		      dex
+    349  f0fa		       d0 fb		      bne	.logo_overscan_loop
+    350  f0fc
+    351  f0fc		       a6 80		      ldx	AnimationFrame
+    352  f0fe
+    353  f0fe							; Divide inverted AnimationFrame by 4 and put in AnimationSubFrame
+    354  f0fe		       a9 b4		      lda	#LOGO_FRAMES
+    355  f100		       e5 80		      sbc	AnimationFrame
+    356  f102		       4a		      lsr
+    357  f103		       4a		      lsr
+    358  f104		       85 81		      sta	AnimationSubFrame
+    359  f106
+    360  f106							; Decrement AnimationFrame
+    361  f106		       ca		      dex
+    362  f107		       86 80		      stx	AnimationFrame
+    363  f109
+    364  f109							; Check if we're at the end of the animation
+    365  f109		       f0 03		      beq	TitleScreen
+    366  f10b		       4c 5d f0 	      jmp	LogoFrame
+    367  f10e
+    368  f10e				   TitleScreen
+    369  f10e
+    370  f10e							; Clear playfields
+    371  f10e		       a9 00		      lda	#$00
+    372  f110		       85 0d		      sta	PF0
+    373  f112		       85 0e		      sta	PF1
+    374  f114		       85 0f		      sta	PF2
+    375  f116
+    376  f116							; Background Color
+    377  f116		       a9 70		      lda	#TITLE_BG_COLU
+    378  f118		       85 09		      sta	COLUBK
+    379  f11a
+    380  f11a							; Border Color
+    381  f11a		       a9 7e		      lda	#TITLE_BD_COLU
+    382  f11c		       85 08		      sta	COLUPF
+    383  f11e
+    384  f11e							; Load audio settings
+    385  f11e
+    386  f11e							; Melody Line
+    387  f11e		       a9 04		      lda	#TITLE_AUD_0_TONE
+    388  f120		       85 15		      sta	AUDC0
+    389  f122		       a9 04		      lda	#TITLE_AUD_0_VOLUME
+    390  f124		       85 19		      sta	AUDV0
+    391  f126
+    392  f126							; Drums and Bass
+    393  f126		       a9 00		      lda	#0
+    394  f128		       85 16		      sta	AUDC1
+    395  f12a		       85 1a		      sta	AUDV1
+    396  f12c
+    397  f12c							; Make it so that we play the first note immediately
+    398  f12c		       a9 08		      lda	#TITLE_AUD_STEP-1
+    399  f12e		       85 82		      sta	AudioFrame
+    400  f130		       a9 0f		      lda	#TITLE_AUD_LENGTH-1
+    401  f132		       85 83		      sta	AudioStep
+    402  f134
+    403  f134				   TitleFrame
+    404  f134
+    405  f134				   .title_audio
+    406  f134
+    407  f134							; Increment Audio Frame
+    408  f134		       a6 82		      ldx	AudioFrame
+    409  f136		       e8		      inx
+    410  f137		       86 82		      stx	AudioFrame
+    411  f139
+    412  f139							; Check if we need to play the next note
+    413  f139		       e0 09		      cpx	#TITLE_AUD_STEP
+    414  f13b		       90 31		      bcc	.title_audio_skip
+    415  f13d
+    416  f13d				   .title_audio_play
+    417  f13d
+    418  f13d							; Reset AudioFrame
+    419  f13d		       a9 00		      lda	#0
+    420  f13f		       85 82		      sta	AudioFrame
+    421  f141
+    422  f141							; Increment melody position
+    423  f141		       a4 83		      ldy	AudioStep
+    424  f143		       c8		      iny
+    425  f144
+    426  f144							; Check if we're at the end of the melody
+    427  f144		       c0 10		      cpy	#TITLE_AUD_LENGTH
+    428  f146		       d0 02		      bne	.title_audio_play_note
+    429  f148
+    430  f148							; Loop our audio step
+    431  f148		       a0 00		      ldy	#0
+    432  f14a
+    433  f14a				   .title_audio_play_note
+    434  f14a
+    435  f14a							; Save current position
+    436  f14a		       84 83		      sty	AudioStep
+    437  f14c
+    438  f14c							; Basic Melody Line
+    439  f14c		       b9 75 f3 	      lda	TitleAudio0,y
+    440  f14f		       85 17		      sta	AUDF0
+    441  f151
+    442  f151							; Drums and Bass
+    443  f151		       b9 85 f3 	      lda	TitleTone1,y
+    444  f154		       c9 ff		      cmp	#$FF
+    445  f156		       f0 0e		      beq	.title_audio_play_note_1_mute
+    446  f158
+    447  f158		       85 16		      sta	AUDC1
+    448  f15a		       b9 95 f3 	      lda	TitleAudio1,y
+    449  f15d		       85 18		      sta	AUDF1
+    450  f15f		       a9 07		      lda	#TITLE_AUD_1_VOLUME
+    451  f161		       85 1a		      sta	AUDV1
+    452  f163
+    453  f163		       4c 6e f1 	      jmp	.title_audio_skip
+    454  f166
+    455  f166				   .title_audio_play_note_1_mute
+    456  f166
+    457  f166		       a9 00		      lda	#0
+    458  f168		       85 18		      sta	AUDF1
+    459  f16a		       85 16		      sta	AUDC1
+    460  f16c		       85 1a		      sta	AUDV1
+    461  f16e
+    462  f16e				   .title_audio_skip
+    463  f16e
+    464  f16e				   .title_vsync 		; Start of vertical blank processing
+    465  f16e
+    466  f16e		       a9 00		      lda	#0
+    467  f170		       85 01		      sta	VBLANK
+    468  f172
+    469  f172		       a9 02		      lda	#2
+    470  f174		       85 00		      sta	VSYNC
+    471  f176
+    472  f176							; VSYNCH signal scanlines
+    473  f176					      REPEAT	#KERNEL_VSYNC
+    474  f176		       85 02		      sta	WSYNC
+    473  f176					      REPEND
+    474  f178		       85 02		      sta	WSYNC
+    473  f178					      REPEND
+    474  f17a		       85 02		      sta	WSYNC
+    475  f17c					      REPEND
+    476  f17c
+    477  f17c		       a9 00		      lda	#0
+    478  f17e		       85 00		      sta	VSYNC
+    479  f180
+    480  f180				   .title_vblank		; scanlines of vertical blank
+    481  f180
+    482  f180		       a2 25		      ldx	#KERNEL_VBLANK
+    483  f182				   .title_vblank_loop
+    484  f182
+    485  f182		       85 02		      sta	WSYNC
+    486  f184		       ca		      dex
+    487  f185		       d0 fb		      bne	.title_vblank_loop
+    488  f187
+    489  f187				   .title_border_h_top
+    490  f187
+    491  f187							; Number of Scanlines
+    492  f187		       a2 08		      ldx	#TITLE_BORDER*TITLE_LINE_SIZE
+    493  f189
+    494  f189							; Draw Playfield
+    495  f189		       a9 ff		      lda	#$FF
+    496  f18b		       85 0d		      sta	PF0
+    497  f18d		       85 0e		      sta	PF1
+    498  f18f		       85 0f		      sta	PF2
+    499  f191
+    500  f191				   .title_border_h_top_loop
+    501  f191
+    502  f191		       85 02		      sta	WSYNC
+    503  f193		       ca		      dex
+    504  f194		       d0 fb		      bne	.title_border_h_top_loop
+    505  f196
+    506  f196				   .title_border_v_top
+    507  f196
+    508  f196							; Number of Scanlines
+    509  f196		       a2 20		      ldx	#TITLE_PAD*TITLE_LINE_SIZE
+    510  f198
+    511  f198							; Mirror playfield
+    512  f198		       a9 01		      lda	#%00000001
+    513  f19a		       85 0a		      sta	CTRLPF
+    514  f19c
+    515  f19c							; Draw Playfield
+    516  f19c		       a9 10		      lda	#%00010000
+    517  f19e		       85 0d		      sta	PF0
+    518  f1a0
+    519  f1a0		       a9 00		      lda	#$00
+    520  f1a2		       85 0e		      sta	PF1
+    521  f1a4		       85 0f		      sta	PF2
+    522  f1a6
+    523  f1a6				   .title_border_v_top_loop
+    524  f1a6
+    525  f1a6		       85 02		      sta	WSYNC
+    526  f1a8		       ca		      dex
+    527  f1a9		       d0 fb		      bne	.title_border_v_top_loop
+    528  f1ab
+    529  f1ab				   .title_image_top
+    530  f1ab
+    531  f1ab		       a0 00		      ldy	#$00	; Current Image Index
+    532  f1ad		       a2 08		      ldx	#TITLE_LINE_SIZE	; Current scanline
+    533  f1af
+    534  f1af		       4c ba f1 	      jmp	.title_image_top_loop
+    535  f1b2
+    536  f1b2				   .title_image_top_loop_wait
+    537  f1b2
+    538  f1b2							; Wait until new line is ready to draw
+    539  f1b2		       85 02		      sta	WSYNC
       0  f1b4					      sleep	11
       1  f1b4				   .CYCLES    SET	11
       2  f1b4
@@ -937,24 +945,24 @@
      17  f1b8					      REPEND
      18  f1b9		       ea		      nop
      19  f1ba					      REPEND
-    533  f1ba
-    534  f1ba				   .title_image_top_loop
-    535  f1ba
-    536  f1ba							; Draw Image
-    537  f1ba		       b9 ea f2 	      lda	TitleImageTop,y
-    538  f1bd		       85 0e		      sta	PF1
-    539  f1bf		       c8		      iny
-    540  f1c0
-    541  f1c0							; Set Image Color
-    542  f1c0		       a9 0e		      lda	#TITLE_FG_COLU
-    543  f1c2		       85 08		      sta	COLUPF
-    544  f1c4
-    545  f1c4							; Finish Drawing Image
-    546  f1c4		       b9 ea f2 	      lda	TitleImageTop,y
-    547  f1c7		       85 0f		      sta	PF2
-    548  f1c9		       c8		      iny
-    549  f1ca		       b9 ea f2 	      lda	TitleImageTop,y
-    550  f1cd		       c8		      iny
+    541  f1ba
+    542  f1ba				   .title_image_top_loop
+    543  f1ba
+    544  f1ba							; Draw Image
+    545  f1ba		       b9 45 f3 	      lda	TitleImageTop,y
+    546  f1bd		       85 0e		      sta	PF1
+    547  f1bf		       c8		      iny
+    548  f1c0
+    549  f1c0							; Set Image Color
+    550  f1c0		       a9 0e		      lda	#TITLE_FG_COLU
+    551  f1c2		       85 08		      sta	COLUPF
+    552  f1c4
+    553  f1c4							; Finish Drawing Image
+    554  f1c4		       b9 45 f3 	      lda	TitleImageTop,y
+    555  f1c7		       85 0f		      sta	PF2
+    556  f1c9		       c8		      iny
+    557  f1ca		       b9 45 f3 	      lda	TitleImageTop,y
+    558  f1cd		       c8		      iny
       0  f1ce					      sleep	5
       1  f1ce				   .CYCLES    SET	5
       2  f1ce
@@ -975,16 +983,16 @@
      17  f1d0					      REPEAT	.CYCLES / 2
      18  f1d0		       ea		      nop
      19  f1d1					      REPEND
-    552  f1d1		       85 0f		      sta	PF2
-    553  f1d3		       b9 ea f2 	      lda	TitleImageTop,y
-    554  f1d6		       85 0e		      sta	PF1
-    555  f1d8
-    556  f1d8							; Clear bottom of index
-    557  f1d8		       98		      tya
-    558  f1d9		       29 fc		      and	#%11111100
-    559  f1db		       a8		      tay
-    560  f1dc
-    561  f1dc							; Restore border color
+    560  f1d1		       85 0f		      sta	PF2
+    561  f1d3		       b9 45 f3 	      lda	TitleImageTop,y
+    562  f1d6		       85 0e		      sta	PF1
+    563  f1d8
+    564  f1d8							; Clear bottom of index
+    565  f1d8		       98		      tya
+    566  f1d9		       29 fc		      and	#%11111100
+    567  f1db		       a8		      tay
+    568  f1dc
+    569  f1dc							; Restore border color
       0  f1dc					      sleep	2
       1  f1dc				   .CYCLES    SET	2
       2  f1dc
@@ -1005,62 +1013,62 @@
      17  f1dc					      REPEAT	.CYCLES / 2
      18  f1dc		       ea		      nop
      19  f1dd					      REPEND
-    563  f1dd		       a9 7e		      lda	#TITLE_BD_COLU
-    564  f1df		       85 08		      sta	COLUPF
-    565  f1e1
-    566  f1e1		       ca		      dex
-    567  f1e2		       d0 ce		      bne	.title_image_top_loop_wait
-    568  f1e4
-    569  f1e4							; Add 4 to the image index to skip to next line
-    570  f1e4					      REPEAT	4
-    571  f1e4		       c8		      iny
-    570  f1e4					      REPEND
-    571  f1e5		       c8		      iny
-    570  f1e5					      REPEND
-    571  f1e6		       c8		      iny
-    570  f1e6					      REPEND
-    571  f1e7		       c8		      iny
-    572  f1e8					      REPEND
-    573  f1e8
-    574  f1e8		       a2 08		      ldx	#TITLE_LINE_SIZE	; Current scanline
-    575  f1ea
-    576  f1ea		       c0 18		      cpy	#TITLE_IMAGE*TITLE_DATA_SIZE
-    577  f1ec		       d0 cc		      bne	.title_image_top_loop
-    578  f1ee
-    579  f1ee				   .title_gap
-    580  f1ee
-    581  f1ee							; Number of Scanlines
-    582  f1ee		       a2 10		      ldx	#TITLE_GAP*TITLE_LINE_SIZE
-    583  f1f0
-    584  f1f0							; Mirror playfield
-    585  f1f0		       a9 01		      lda	#%00000001
-    586  f1f2		       85 0a		      sta	CTRLPF
-    587  f1f4
-    588  f1f4							; Draw Playfield
-    589  f1f4		       a9 10		      lda	#%00010000
-    590  f1f6		       85 0d		      sta	PF0
-    591  f1f8
-    592  f1f8		       a9 00		      lda	#$00
-    593  f1fa		       85 0e		      sta	PF1
-    594  f1fc		       85 0f		      sta	PF2
-    595  f1fe
-    596  f1fe				   .title_gap_loop
-    597  f1fe
-    598  f1fe		       85 02		      sta	WSYNC
-    599  f200		       ca		      dex
-    600  f201		       d0 fb		      bne	.title_gap_loop
-    601  f203
-    602  f203				   .title_image_bottom
-    603  f203
-    604  f203		       a0 00		      ldy	#$00	; Current Image Index
-    605  f205		       a2 08		      ldx	#TITLE_LINE_SIZE
-    606  f207
-    607  f207		       4c 12 f2 	      jmp	.title_image_bottom_loop
-    608  f20a
-    609  f20a				   .title_image_bottom_loop_wait
-    610  f20a
-    611  f20a							; Wait until new line is ready to draw
-    612  f20a		       85 02		      sta	WSYNC
+    571  f1dd		       a9 7e		      lda	#TITLE_BD_COLU
+    572  f1df		       85 08		      sta	COLUPF
+    573  f1e1
+    574  f1e1		       ca		      dex
+    575  f1e2		       d0 ce		      bne	.title_image_top_loop_wait
+    576  f1e4
+    577  f1e4							; Add 4 to the image index to skip to next line
+    578  f1e4					      REPEAT	4
+    579  f1e4		       c8		      iny
+    578  f1e4					      REPEND
+    579  f1e5		       c8		      iny
+    578  f1e5					      REPEND
+    579  f1e6		       c8		      iny
+    578  f1e6					      REPEND
+    579  f1e7		       c8		      iny
+    580  f1e8					      REPEND
+    581  f1e8
+    582  f1e8		       a2 08		      ldx	#TITLE_LINE_SIZE	; Current scanline
+    583  f1ea
+    584  f1ea		       c0 18		      cpy	#TITLE_IMAGE*TITLE_DATA_SIZE
+    585  f1ec		       d0 cc		      bne	.title_image_top_loop
+    586  f1ee
+    587  f1ee				   .title_gap
+    588  f1ee
+    589  f1ee							; Number of Scanlines
+    590  f1ee		       a2 10		      ldx	#TITLE_GAP*TITLE_LINE_SIZE
+    591  f1f0
+    592  f1f0							; Mirror playfield
+    593  f1f0		       a9 01		      lda	#%00000001
+    594  f1f2		       85 0a		      sta	CTRLPF
+    595  f1f4
+    596  f1f4							; Draw Playfield
+    597  f1f4		       a9 10		      lda	#%00010000
+    598  f1f6		       85 0d		      sta	PF0
+    599  f1f8
+    600  f1f8		       a9 00		      lda	#$00
+    601  f1fa		       85 0e		      sta	PF1
+    602  f1fc		       85 0f		      sta	PF2
+    603  f1fe
+    604  f1fe				   .title_gap_loop
+    605  f1fe
+    606  f1fe		       85 02		      sta	WSYNC
+    607  f200		       ca		      dex
+    608  f201		       d0 fb		      bne	.title_gap_loop
+    609  f203
+    610  f203				   .title_image_bottom
+    611  f203
+    612  f203		       a0 00		      ldy	#$00	; Current Image Index
+    613  f205		       a2 08		      ldx	#TITLE_LINE_SIZE
+    614  f207
+    615  f207		       4c 12 f2 	      jmp	.title_image_bottom_loop
+    616  f20a
+    617  f20a				   .title_image_bottom_loop_wait
+    618  f20a
+    619  f20a							; Wait until new line is ready to draw
+    620  f20a		       85 02		      sta	WSYNC
       0  f20c					      sleep	11
       1  f20c				   .CYCLES    SET	11
       2  f20c
@@ -1087,24 +1095,24 @@
      17  f210					      REPEND
      18  f211		       ea		      nop
      19  f212					      REPEND
-    614  f212
-    615  f212				   .title_image_bottom_loop
-    616  f212
-    617  f212							; Draw Image
-    618  f212		       b9 02 f3 	      lda	TitleImageBottom,y
-    619  f215		       85 0e		      sta	PF1
-    620  f217		       c8		      iny
-    621  f218
-    622  f218							; Set Image Color
-    623  f218		       a9 0e		      lda	#TITLE_FG_COLU
-    624  f21a		       85 08		      sta	COLUPF
-    625  f21c
-    626  f21c							; Finish Drawing Image
-    627  f21c		       b9 02 f3 	      lda	TitleImageBottom,y
-    628  f21f		       85 0f		      sta	PF2
-    629  f221		       c8		      iny
-    630  f222		       b9 02 f3 	      lda	TitleImageBottom,y
-    631  f225		       c8		      iny
+    622  f212
+    623  f212				   .title_image_bottom_loop
+    624  f212
+    625  f212							; Draw Image
+    626  f212		       b9 5d f3 	      lda	TitleImageBottom,y
+    627  f215		       85 0e		      sta	PF1
+    628  f217		       c8		      iny
+    629  f218
+    630  f218							; Set Image Color
+    631  f218		       a9 0e		      lda	#TITLE_FG_COLU
+    632  f21a		       85 08		      sta	COLUPF
+    633  f21c
+    634  f21c							; Finish Drawing Image
+    635  f21c		       b9 5d f3 	      lda	TitleImageBottom,y
+    636  f21f		       85 0f		      sta	PF2
+    637  f221		       c8		      iny
+    638  f222		       b9 5d f3 	      lda	TitleImageBottom,y
+    639  f225		       c8		      iny
       0  f226					      sleep	5
       1  f226				   .CYCLES    SET	5
       2  f226
@@ -1125,16 +1133,16 @@
      17  f228					      REPEAT	.CYCLES / 2
      18  f228		       ea		      nop
      19  f229					      REPEND
-    633  f229		       85 0f		      sta	PF2
-    634  f22b		       b9 02 f3 	      lda	TitleImageBottom,y
-    635  f22e		       85 0e		      sta	PF1
-    636  f230
-    637  f230							; Clear bottom of index
-    638  f230		       98		      tya
-    639  f231		       29 fc		      and	#%11111100
-    640  f233		       a8		      tay
-    641  f234
-    642  f234							; Restore border color
+    641  f229		       85 0f		      sta	PF2
+    642  f22b		       b9 5d f3 	      lda	TitleImageBottom,y
+    643  f22e		       85 0e		      sta	PF1
+    644  f230
+    645  f230							; Clear bottom of index
+    646  f230		       98		      tya
+    647  f231		       29 fc		      and	#%11111100
+    648  f233		       a8		      tay
+    649  f234
+    650  f234							; Restore border color
       0  f234					      sleep	2
       1  f234				   .CYCLES    SET	2
       2  f234
@@ -1155,343 +1163,504 @@
      17  f234					      REPEAT	.CYCLES / 2
      18  f234		       ea		      nop
      19  f235					      REPEND
-    644  f235		       a9 7e		      lda	#TITLE_BD_COLU
-    645  f237		       85 08		      sta	COLUPF
-    646  f239
-    647  f239		       ca		      dex
-    648  f23a		       d0 ce		      bne	.title_image_bottom_loop_wait
-    649  f23c
-    650  f23c							; Add 4 to image index to skip to next line
-    651  f23c					      REPEAT	4
-    652  f23c		       c8		      iny
-    651  f23c					      REPEND
-    652  f23d		       c8		      iny
-    651  f23d					      REPEND
-    652  f23e		       c8		      iny
-    651  f23e					      REPEND
-    652  f23f		       c8		      iny
-    653  f240					      REPEND
-    654  f240
-    655  f240		       a2 08		      ldx	#TITLE_LINE_SIZE	; Current scanline
-    656  f242
-    657  f242		       c0 18		      cpy	#TITLE_IMAGE*TITLE_DATA_SIZE
-    658  f244		       d0 cc		      bne	.title_image_bottom_loop
-    659  f246
-    660  f246				   .title_border_v_bottom
-    661  f246
-    662  f246							; Number of Scanlines
-    663  f246		       a2 20		      ldx	#TITLE_PAD*TITLE_LINE_SIZE
-    664  f248
-    665  f248							; Mirror playfield
-    666  f248		       a9 01		      lda	#%00000001
-    667  f24a		       85 0a		      sta	CTRLPF
-    668  f24c
-    669  f24c							; Draw Playfield
-    670  f24c		       a9 10		      lda	#%00010000
-    671  f24e		       85 0d		      sta	PF0
-    672  f250
-    673  f250		       a9 00		      lda	#$00
-    674  f252		       85 0e		      sta	PF1
-    675  f254		       85 0f		      sta	PF2
-    676  f256
-    677  f256				   .title_border_v_bottom_loop
-    678  f256
-    679  f256		       85 02		      sta	WSYNC
-    680  f258		       ca		      dex
-    681  f259		       d0 fb		      bne	.title_border_v_bottom_loop
-    682  f25b
-    683  f25b				   .title_border_h_bottom
-    684  f25b
-    685  f25b							; Number of Scanlines
-    686  f25b		       a2 08		      ldx	#TITLE_BORDER*TITLE_LINE_SIZE
-    687  f25d
-    688  f25d							; Draw Playfield
-    689  f25d		       a9 ff		      lda	#$FF
-    690  f25f		       85 0d		      sta	PF0
-    691  f261		       85 0e		      sta	PF1
-    692  f263		       85 0f		      sta	PF2
-    693  f265
-    694  f265				   .title_border_h_bottom_loop
-    695  f265
-    696  f265		       85 02		      sta	WSYNC
-    697  f267		       ca		      dex
-    698  f268		       d0 fb		      bne	.title_border_h_bottom_loop
-    699  f26a
-    700  f26a				   .title_overscan		; 30 scanlines of overscan
-    701  f26a
-    702  f26a		       a9 42		      lda	#%01000010
-    703  f26c		       85 01		      sta	VBLANK	; end of screen - enter blanking
-    704  f26e
-    705  f26e		       a2 1e		      ldx	#KERNEL_OVERSCAN
-    706  f270				   .title_overscan_loop
-    707  f270
-    708  f270		       85 02		      sta	WSYNC
-    709  f272		       ca		      dex
-    710  f273		       d0 fb		      bne	.title_overscan_loop
-    711  f275
-    712  f275							; Check if Fire Button on controller 1 is pressed
-    713  f275		       a5 0c		      lda	INPT4
-    714  f277		       10 03		      bpl	StartScreen
-    715  f279		       4c 34 f1 	      jmp	TitleFrame
-    716  f27c
-    717  f27c				   StartScreen
-    718  f27c
-    719  f27c							; Mute Audio
-    720  f27c		       a9 00		      lda	#0
-    721  f27e		       85 15		      sta	AUDC0
-    722  f280		       85 19		      sta	AUDV0
-    723  f282		       85 17		      sta	AUDF0
-    724  f284		       85 16		      sta	AUDC1
-    725  f286		       85 1a		      sta	AUDV1
-    726  f288		       85 18		      sta	AUDF1
-    727  f28a
-    728  f28a				   StartFrame
-    729  f28a
-    730  f28a				   .start_vsync 		; Start of vertical blank processing
-    731  f28a
-    732  f28a		       a9 00		      lda	#0
-    733  f28c		       85 01		      sta	VBLANK
-    734  f28e
-    735  f28e		       a9 02		      lda	#2
-    736  f290		       85 00		      sta	VSYNC
-    737  f292
-    738  f292							; VSYNCH signal scanlines
-    739  f292					      REPEAT	#KERNEL_VSYNC
-    740  f292		       85 02		      sta	WSYNC
-    739  f292					      REPEND
-    740  f294		       85 02		      sta	WSYNC
-    739  f294					      REPEND
-    740  f296		       85 02		      sta	WSYNC
-    741  f298					      REPEND
-    742  f298
-    743  f298		       a9 00		      lda	#0
-    744  f29a		       85 00		      sta	VSYNC
-    745  f29c
-    746  f29c				   .start_vblank		; scanlines of vertical blank
-    747  f29c
-    748  f29c		       a2 25		      ldx	#KERNEL_VBLANK
-    749  f29e				   .start_vblank_loop
-    750  f29e
-    751  f29e		       85 02		      sta	WSYNC
-    752  f2a0		       ca		      dex
-    753  f2a1		       d0 fb		      bne	.start_vblank_loop
-    754  f2a3
-    755  f2a3				   .start_scanline		; Do 192 scanlines
-    756  f2a3
-    757  f2a3		       a9 08		      lda	#$08	; Clear playfields (with temp design)
-    758  f2a5		       85 0d		      sta	PF0
-    759  f2a7		       85 0e		      sta	PF1
-    760  f2a9		       85 0f		      sta	PF2
-    761  f2ab
-    762  f2ab		       a2 c0		      ldx	#KERNEL_SCANLINES	; Iterate through all scanlines
-    763  f2ad				   .start_scanline_loop
-    764  f2ad
-    765  f2ad		       85 02		      sta	WSYNC
-    766  f2af		       ca		      dex
-    767  f2b0		       d0 fb		      bne	.start_scanline_loop
-    768  f2b2
-    769  f2b2				   .start_overscan		; 30 scanlines of overscan
-    770  f2b2
-    771  f2b2		       a9 42		      lda	#%01000010
-    772  f2b4		       85 01		      sta	VBLANK	; end of screen - enter blanking
-    773  f2b6
-    774  f2b6		       a2 1e		      ldx	#KERNEL_OVERSCAN
-    775  f2b8				   .start_overscan_loop
-    776  f2b8
-    777  f2b8		       85 02		      sta	WSYNC
-    778  f2ba		       ca		      dex
-    779  f2bb		       d0 fb		      bne	.start_overscan_loop
-    780  f2bd
-    781  f2bd		       4c 8a f2 	      jmp	StartFrame
-    782  f2c0
-    783  f2c0				   LogoData		; 6 bytes over 8 lines each, total of 48 lines
-    784  f2c0
-    785  f2c0		       46		      .BYTE.b	%01000110	; Reversed
-    786  f2c1		       60		      .BYTE.b	%01100000	; First 4 bits reversed
-    787  f2c2
-    788  f2c2		       aa		      .BYTE.b	%10101010
-    789  f2c3		       a0		      .BYTE.b	%10100000
-    790  f2c4
-    791  f2c4		       2a		      .BYTE.b	%00101010
-    792  f2c5		       a0		      .BYTE.b	%10100000
-    793  f2c6
-    794  f2c6		       aa		      .BYTE.b	%10101010
-    795  f2c7		       a0		      .BYTE.b	%10100000
-    796  f2c8
-    797  f2c8		       46		      .BYTE.b	%01000110
-    798  f2c9		       60		      .BYTE.b	%01100000
-    799  f2ca
-    800  f2ca		       00		      .BYTE.b	%00000000
-    801  f2cb		       00		      .BYTE.b	%00000000
-    802  f2cc
-    803  f2cc		       88		      .BYTE.b	%10001000
-    804  f2cd		       80		      .BYTE.b	%10000000
-    805  f2ce
-    806  f2ce		       54		      .BYTE.b	%01010100
-    807  f2cf		       50		      .BYTE.b	%01010000
-    808  f2d0
-    809  f2d0		       22		      .BYTE.b	%00100010
-    810  f2d1		       20		      .BYTE.b	%00100000
-    811  f2d2
-    812  f2d2				   LogoAudio0
-    813  f2d2
-    814  f2d2		       1d		      .BYTE.b	#29	; C
-    815  f2d3		       17		      .BYTE.b	#23	; E
-    816  f2d4		       13		      .BYTE.b	#19	; G
-    817  f2d5		       0f		      .BYTE.b	#15	; A
-    818  f2d6		       17		      .BYTE.b	#23	; E
-    819  f2d7		       13		      .BYTE.b	#19	; G
-    820  f2d8		       0f		      .BYTE.b	#15	; B
-    821  f2d9		       0e		      .BYTE.b	#14	; C
-    822  f2da		       0b		      .BYTE.b	#11	; E
-    823  f2db		       0b		      .BYTE.b	#11
-    824  f2dc		       0b		      .BYTE.b	#11
-    825  f2dd		       0b		      .BYTE.b	#11
-    826  f2de
-    827  f2de				   LogoAudio1
-    828  f2de
-    829  f2de		       1f		      .BYTE.b	#31	; C
-    830  f2df		       1f		      .BYTE.b	#31
-    831  f2e0		       1f		      .BYTE.b	#31
-    832  f2e1		       1f		      .BYTE.b	#31
-    833  f2e2		       19		      .BYTE.b	#25	; E
-    834  f2e3		       19		      .BYTE.b	#25
-    835  f2e4		       19		      .BYTE.b	#25
-    836  f2e5		       19		      .BYTE.b	#25
-    837  f2e6		       14		      .BYTE.b	#20	; G
-    838  f2e7		       14		      .BYTE.b	#20
-    839  f2e8		       14		      .BYTE.b	#20
-    840  f2e9		       14		      .BYTE.b	#20
-    841  f2ea
-    842  f2ea				   TitleImageTop		; Spider
-    843  f2ea
-    844  f2ea		       1e		      .BYTE.b	%00011110	; Normal
-    845  f2eb		       77		      .BYTE.b	%01110111	; Reversed
-    846  f2ec		       e7		      .BYTE.b	%11100111	; Normal
-    847  f2ed		       0e		      .BYTE.b	%00001110	; Reversed
-    848  f2ee
-    849  f2ee		       10		      .BYTE.b	%00010000
-    850  f2ef		       25		      .BYTE.b	%00100101
-    851  f2f0		       94		      .BYTE.b	%10010100
-    852  f2f1		       12		      .BYTE.b	%00010010
-    853  f2f2
-    854  f2f2		       10		      .BYTE.b	%00010000
-    855  f2f3		       27		      .BYTE.b	%00100111
-    856  f2f4		       96		      .BYTE.b	%10010110
-    857  f2f5		       12		      .BYTE.b	%00010010
-    858  f2f6
-    859  f2f6		       1c		      .BYTE.b	%00011100
-    860  f2f7		       21		      .BYTE.b	%00100001
-    861  f2f8		       94		      .BYTE.b	%10010100
-    862  f2f9		       0e		      .BYTE.b	%00001110
-    863  f2fa
-    864  f2fa		       04		      .BYTE.b	%00000100
-    865  f2fb		       21		      .BYTE.b	%00100001
-    866  f2fc		       94		      .BYTE.b	%10010100
-    867  f2fd		       12		      .BYTE.b	%00010010
-    868  f2fe
-    869  f2fe		       1c		      .BYTE.b	%00011100
-    870  f2ff		       71		      .BYTE.b	%01110001
-    871  f300		       e7		      .BYTE.b	%11100111
-    872  f301		       12		      .BYTE.b	%00010010
-    873  f302
-    874  f302				   TitleImageBottom		; Web & Art
-    875  f302
-    876  f302		       01		      .BYTE.b	%00000001	; Normal
-    877  f303		       03		      .BYTE.b	%00000011	; Reversed
-    878  f304		       8b		      .BYTE.b	%10001011	; Normal
-    879  f305		       1d		      .BYTE.b	%00011101	; Reversed
-    880  f306
-    881  f306		       0a		      .BYTE.b	%00001010
-    882  f307		       14		      .BYTE.b	%00010100
-    883  f308		       8a		      .BYTE.b	%10001010
-    884  f309		       24		      .BYTE.b	%00100100
-    885  f30a
-    886  f30a		       15		      .BYTE.b	%00010101
-    887  f30b		       2a		      .BYTE.b	%00101010
-    888  f30c		       8b		      .BYTE.b	%10001011
-    889  f30d		       1c		      .BYTE.b	%00011100
-    890  f30e
-    891  f30e		       24		      .BYTE.b	%00100100
-    892  f30f		       49		      .BYTE.b	%01001001
-    893  f310		       8a		      .BYTE.b	%10001010
-    894  f311		       24		      .BYTE.b	%00100100
-    895  f312
-    896  f312		       22		      .BYTE.b	%00100010
-    897  f313		       44		      .BYTE.b	%01000100
-    898  f314		       aa		      .BYTE.b	%10101010
-    899  f315		       24		      .BYTE.b	%00100100
-    900  f316
-    901  f316		       11		      .BYTE.b	%00010001
-    902  f317		       23		      .BYTE.b	%00100011
-    903  f318		       53		      .BYTE.b	%01010011
-    904  f319		       1d		      .BYTE.b	%00011101
-    905  f31a
-    906  f31a				   TitleAudio0
-    907  f31a
-    908  f31a		       0f		      .BYTE.b	#15	; B
-    909  f31b		       13		      .BYTE.b	#19	; G
-    910  f31c		       17		      .BYTE.b	#23	; E
-    911  f31d		       13		      .BYTE.b	#19	; G
-    912  f31e		       0e		      .BYTE.b	#14	; C
-    913  f31f		       13		      .BYTE.b	#19
-    914  f320		       17		      .BYTE.b	#23
-    915  f321		       13		      .BYTE.b	#19
-    916  f322		       0c		      .BYTE.b	#12	; D
-    917  f323		       13		      .BYTE.b	#19
-    918  f324		       17		      .BYTE.b	#23
-    919  f325		       13		      .BYTE.b	#19
-    920  f326		       0e		      .BYTE.b	#14	; C
-    921  f327		       13		      .BYTE.b	#19
-    922  f328		       17		      .BYTE.b	#23
-    923  f329		       13		      .BYTE.b	#19
-    924  f32a
-    925  f32a				   TitleTone1
-    926  f32a
-    927  f32a		       0f		      .BYTE.b	#15	; Electronic Rumble
-    928  f32b		       ff		      .BYTE.b	#$FF
-    929  f32c		       01		      .BYTE.b	#1	; Low Pure Tone
-    930  f32d		       01		      .BYTE.b	#1
-    931  f32e		       08		      .BYTE.b	#8	; White Noise
-    932  f32f		       01		      .BYTE.b	#1
-    933  f330		       01		      .BYTE.b	#1
-    934  f331		       ff		      .BYTE.b	#$FF
-    935  f332		       ff		      .BYTE.b	#$FF
-    936  f333		       0f		      .BYTE.b	#15
-    937  f334		       ff		      .BYTE.b	#$FF
-    938  f335		       ff		      .BYTE.b	#$FF
-    939  f336		       08		      .BYTE.b	#8
-    940  f337		       ff		      .BYTE.b	#$FF
-    941  f338		       01		      .BYTE.b	#1
-    942  f339		       01		      .BYTE.b	#1
-    943  f33a
-    944  f33a				   TitleAudio1
-    945  f33a
-    946  f33a		       1d		      .BYTE.b	#29	; Kick
-    947  f33b		       ff		      .BYTE.b	#$FF
-    948  f33c		       1f		      .BYTE.b	#31	; C
-    949  f33d		       1f		      .BYTE.b	#31
-    950  f33e		       07		      .BYTE.b	#7	; Snare
-    951  f33f		       1f		      .BYTE.b	#31
-    952  f340		       1f		      .BYTE.b	#31
-    953  f341		       ff		      .BYTE.b	#$FF
-    954  f342		       ff		      .BYTE.b	#$FF
-    955  f343		       1d		      .BYTE.b	#29
-    956  f344		       ff		      .BYTE.b	#$FF
-    957  f345		       ff		      .BYTE.b	#$FF
-    958  f346		       07		      .BYTE.b	#7
-    959  f347		       ff		      .BYTE.b	#$FF
-    960  f348		       17		      .BYTE.b	#23	; F
-    961  f349		       18		      .BYTE.b	#24	; E
-    962  f34a
-    963  f34a							;-------------------------------------------
-    964  f34a
-    965  fffa					      ORG	$FFFA	; End of cart area
-    966  fffa
-    967  fffa				   InterruptVectors
-    968  fffa
-    969  fffa		       00 f0		      .word.w	Reset	; NMI
-    970  fffc		       00 f0		      .word.w	Reset	; RESET
-    971  fffe		       00 f0		      .word.w	Reset	; IRQ
-    972  10000
-    973  10000					       END
+    652  f235		       a9 7e		      lda	#TITLE_BD_COLU
+    653  f237		       85 08		      sta	COLUPF
+    654  f239
+    655  f239		       ca		      dex
+    656  f23a		       d0 ce		      bne	.title_image_bottom_loop_wait
+    657  f23c
+    658  f23c							; Add 4 to image index to skip to next line
+    659  f23c					      REPEAT	4
+    660  f23c		       c8		      iny
+    659  f23c					      REPEND
+    660  f23d		       c8		      iny
+    659  f23d					      REPEND
+    660  f23e		       c8		      iny
+    659  f23e					      REPEND
+    660  f23f		       c8		      iny
+    661  f240					      REPEND
+    662  f240
+    663  f240		       a2 08		      ldx	#TITLE_LINE_SIZE	; Current scanline
+    664  f242
+    665  f242		       c0 18		      cpy	#TITLE_IMAGE*TITLE_DATA_SIZE
+    666  f244		       d0 cc		      bne	.title_image_bottom_loop
+    667  f246
+    668  f246				   .title_border_v_bottom
+    669  f246
+    670  f246							; Number of Scanlines
+    671  f246		       a2 20		      ldx	#TITLE_PAD*TITLE_LINE_SIZE
+    672  f248
+    673  f248							; Mirror playfield
+    674  f248		       a9 01		      lda	#%00000001
+    675  f24a		       85 0a		      sta	CTRLPF
+    676  f24c
+    677  f24c							; Draw Playfield
+    678  f24c		       a9 10		      lda	#%00010000
+    679  f24e		       85 0d		      sta	PF0
+    680  f250
+    681  f250		       a9 00		      lda	#$00
+    682  f252		       85 0e		      sta	PF1
+    683  f254		       85 0f		      sta	PF2
+    684  f256
+    685  f256				   .title_border_v_bottom_loop
+    686  f256
+    687  f256		       85 02		      sta	WSYNC
+    688  f258		       ca		      dex
+    689  f259		       d0 fb		      bne	.title_border_v_bottom_loop
+    690  f25b
+    691  f25b				   .title_border_h_bottom
+    692  f25b
+    693  f25b							; Number of Scanlines
+    694  f25b		       a2 08		      ldx	#TITLE_BORDER*TITLE_LINE_SIZE
+    695  f25d
+    696  f25d							; Draw Playfield
+    697  f25d		       a9 ff		      lda	#$FF
+    698  f25f		       85 0d		      sta	PF0
+    699  f261		       85 0e		      sta	PF1
+    700  f263		       85 0f		      sta	PF2
+    701  f265
+    702  f265				   .title_border_h_bottom_loop
+    703  f265
+    704  f265		       85 02		      sta	WSYNC
+    705  f267		       ca		      dex
+    706  f268		       d0 fb		      bne	.title_border_h_bottom_loop
+    707  f26a
+    708  f26a				   .title_overscan		; 30 scanlines of overscan
+    709  f26a
+    710  f26a		       a9 42		      lda	#%01000010
+    711  f26c		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    712  f26e
+    713  f26e		       a2 1e		      ldx	#KERNEL_OVERSCAN
+    714  f270				   .title_overscan_loop
+    715  f270
+    716  f270		       85 02		      sta	WSYNC
+    717  f272		       ca		      dex
+    718  f273		       d0 fb		      bne	.title_overscan_loop
+    719  f275
+    720  f275							; Check if Fire Button on controller 1 is pressed
+    721  f275		       a5 0c		      lda	INPT4
+    722  f277		       10 03		      bpl	GameScreen
+    723  f279		       4c 34 f1 	      jmp	TitleFrame
+    724  f27c
+    725  f27c				   GameScreen
+    726  f27c
+    727  f27c							; Clear playfields
+    728  f27c		       a9 00		      lda	#0
+    729  f27e		       85 0d		      sta	PF0
+    730  f280		       85 0e		      sta	PF1
+    731  f282		       85 0f		      sta	PF2
+    732  f284
+    733  f284							; Mirror playfield
+    734  f284		       a9 01		      lda	#%00000001
+    735  f286		       85 0a		      sta	CTRLPF
+    736  f288
+    737  f288							; Background Color
+    738  f288		       a9 00		      lda	#GAME_BG_COLU
+    739  f28a		       85 09		      sta	COLUBK
+    740  f28c
+    741  f28c							; Foreground Color
+    742  f28c		       a9 0c		      lda	#GAME_FG_COLU
+    743  f28e		       85 08		      sta	COLUPF
+    744  f290
+    745  f290							; Mute Audio
+    746  f290		       a9 00		      lda	#0
+    747  f292		       85 15		      sta	AUDC0
+    748  f294		       85 19		      sta	AUDV0
+    749  f296		       85 17		      sta	AUDF0
+    750  f298		       85 16		      sta	AUDC1
+    751  f29a		       85 1a		      sta	AUDV1
+    752  f29c		       85 18		      sta	AUDF1
+    753  f29e
+    754  f29e				   GameFrame
+    755  f29e
+    756  f29e				   .game_vsync		; Start of vertical blank processing
+    757  f29e
+    758  f29e		       a9 00		      lda	#0
+    759  f2a0		       85 01		      sta	VBLANK
+    760  f2a2
+    761  f2a2		       a9 02		      lda	#2
+    762  f2a4		       85 00		      sta	VSYNC
+    763  f2a6
+    764  f2a6							; VSYNCH signal scanlines
+    765  f2a6					      REPEAT	#KERNEL_VSYNC
+    766  f2a6		       85 02		      sta	WSYNC
+    765  f2a6					      REPEND
+    766  f2a8		       85 02		      sta	WSYNC
+    765  f2a8					      REPEND
+    766  f2aa		       85 02		      sta	WSYNC
+    767  f2ac					      REPEND
+    768  f2ac
+    769  f2ac		       a9 00		      lda	#0
+    770  f2ae		       85 00		      sta	VSYNC
+    771  f2b0
+    772  f2b0				   .game_vblank 		; scanlines of vertical blank
+    773  f2b0
+    774  f2b0		       a2 25		      ldx	#KERNEL_VBLANK
+    775  f2b2				   .game_vblank_loop
+    776  f2b2
+    777  f2b2		       85 02		      sta	WSYNC
+    778  f2b4		       ca		      dex
+    779  f2b5		       d0 fb		      bne	.game_vblank_loop
+    780  f2b7
+    781  f2b7				   .game_playfield_top
+    782  f2b7
+    783  f2b7		       a0 00		      ldy	#0	; Current Image Index
+    784  f2b9
+    785  f2b9				   .game_playfield_top_line
+    786  f2b9
+    787  f2b9							; Draw Image
+    788  f2b9		       b9 a5 f3 	      lda	GameImage,y
+    789  f2bc		       85 0d		      sta	PF0
+    790  f2be		       c8		      iny
+    791  f2bf		       b9 a5 f3 	      lda	GameImage,y
+    792  f2c2		       85 0e		      sta	PF1
+    793  f2c4		       c8		      iny
+    794  f2c5		       b9 a5 f3 	      lda	GameImage,y
+    795  f2c8		       85 0f		      sta	PF2
+    796  f2ca
+    797  f2ca							; Clear bottom of index
+    798  f2ca		       98		      tya
+    799  f2cb		       29 fc		      and	#%11111100
+    800  f2cd		       a8		      tay
+    801  f2ce
+    802  f2ce							; Add 4 to the image index to skip to next line
+    803  f2ce					      REPEAT	4
+    804  f2ce		       c8		      iny
+    803  f2ce					      REPEND
+    804  f2cf		       c8		      iny
+    803  f2cf					      REPEND
+    804  f2d0		       c8		      iny
+    803  f2d0					      REPEND
+    804  f2d1		       c8		      iny
+    805  f2d2					      REPEND
+    806  f2d2
+    807  f2d2		       a2 08		      ldx	#GAME_PF_LINE_SIZE	; Current scanline
+    808  f2d4				   .game_playfield_top_loop
+    809  f2d4
+    810  f2d4		       85 02		      sta	WSYNC
+    811  f2d6		       ca		      dex
+    812  f2d7		       d0 fb		      bne	.game_playfield_top_loop
+    813  f2d9
+    814  f2d9							; Reset scanlines
+    815  f2d9		       a2 08		      ldx	#GAME_PF_LINE_SIZE
+    816  f2db
+    817  f2db							; Check if we're at end of top half
+    818  f2db		       c0 30		      cpy	#GAME_PF_SIZE*GAME_PF_DATA_SIZE
+    819  f2dd		       d0 da		      bne	.game_playfield_top_line
+    820  f2df
+    821  f2df				   .game_playfield_bottom
+    822  f2df
+    823  f2df		       a0 2c		      ldy	#(GAME_PF_SIZE-1)*GAME_PF_DATA_SIZE	; Current image index
+    824  f2e1
+    825  f2e1				   .game_playfield_bottom_line
+    826  f2e1
+    827  f2e1							; Draw Image
+    828  f2e1		       b9 a5 f3 	      lda	GameImage,y
+    829  f2e4		       85 0d		      sta	PF0
+    830  f2e6		       c8		      iny
+    831  f2e7		       b9 a5 f3 	      lda	GameImage,y
+    832  f2ea		       85 0e		      sta	PF1
+    833  f2ec		       c8		      iny
+    834  f2ed		       b9 a5 f3 	      lda	GameImage,y
+    835  f2f0		       85 0f		      sta	PF2
+    836  f2f2
+    837  f2f2							; Clear bottom of index
+    838  f2f2		       98		      tya
+    839  f2f3		       29 fc		      and	#%11111100
+    840  f2f5		       a8		      tay
+    841  f2f6
+    842  f2f6							; Subtract 4 from the image index to skip to next line
+    843  f2f6					      REPEAT	4
+    844  f2f6		       88		      dey
+    843  f2f6					      REPEND
+    844  f2f7		       88		      dey
+    843  f2f7					      REPEND
+    844  f2f8		       88		      dey
+    843  f2f8					      REPEND
+    844  f2f9		       88		      dey
+    845  f2fa					      REPEND
+    846  f2fa
+    847  f2fa		       a2 08		      ldx	#GAME_PF_LINE_SIZE	; Current scanline
+    848  f2fc				   .game_playfield_bottom_loop
+    849  f2fc
+    850  f2fc		       85 02		      sta	WSYNC
+    851  f2fe		       ca		      dex
+    852  f2ff		       d0 fb		      bne	.game_playfield_bottom_loop
+    853  f301
+    854  f301							; Check if we're at the end of the bottom half
+    855  f301		       c0 fc		      cpy	#0-GAME_PF_DATA_SIZE
+    856  f303		       d0 dc		      bne	.game_playfield_bottom_line
+    857  f305
+    858  f305							; Clear Playfields
+    859  f305		       a9 00		      lda	#0
+    860  f307		       85 0d		      sta	PF0
+    861  f309		       85 0e		      sta	PF1
+    862  f30b		       85 0f		      sta	PF2
+    863  f30d
+    864  f30d				   .game_overscan		; 30 scanlines of overscan
+    865  f30d
+    866  f30d		       a9 42		      lda	#%01000010
+    867  f30f		       85 01		      sta	VBLANK	; end of screen - enter blanking
+    868  f311
+    869  f311		       a2 1e		      ldx	#KERNEL_OVERSCAN
+    870  f313				   .game_overscan_loop
+    871  f313
+    872  f313		       85 02		      sta	WSYNC
+    873  f315		       ca		      dex
+    874  f316		       d0 fb		      bne	.game_overscan_loop
+    875  f318
+    876  f318		       4c 9e f2 	      jmp	GameFrame
+    877  f31b
+    878  f31b				   LogoData		; 6 bytes over 8 lines each, total of 48 lines
+    879  f31b
+    880  f31b		       46		      .BYTE.b	%01000110	; Reversed
+    881  f31c		       60		      .BYTE.b	%01100000	; First 4 bits reversed
+    882  f31d
+    883  f31d		       aa		      .BYTE.b	%10101010
+    884  f31e		       a0		      .BYTE.b	%10100000
+    885  f31f
+    886  f31f		       2a		      .BYTE.b	%00101010
+    887  f320		       a0		      .BYTE.b	%10100000
+    888  f321
+    889  f321		       aa		      .BYTE.b	%10101010
+    890  f322		       a0		      .BYTE.b	%10100000
+    891  f323
+    892  f323		       46		      .BYTE.b	%01000110
+    893  f324		       60		      .BYTE.b	%01100000
+    894  f325
+    895  f325		       00		      .BYTE.b	%00000000
+    896  f326		       00		      .BYTE.b	%00000000
+    897  f327
+    898  f327		       88		      .BYTE.b	%10001000
+    899  f328		       80		      .BYTE.b	%10000000
+    900  f329
+    901  f329		       54		      .BYTE.b	%01010100
+    902  f32a		       50		      .BYTE.b	%01010000
+    903  f32b
+    904  f32b		       22		      .BYTE.b	%00100010
+    905  f32c		       20		      .BYTE.b	%00100000
+    906  f32d
+    907  f32d				   LogoAudio0
+    908  f32d
+    909  f32d		       1d		      .BYTE.b	#29	; C
+    910  f32e		       17		      .BYTE.b	#23	; E
+    911  f32f		       13		      .BYTE.b	#19	; G
+    912  f330		       0f		      .BYTE.b	#15	; A
+    913  f331		       17		      .BYTE.b	#23	; E
+    914  f332		       13		      .BYTE.b	#19	; G
+    915  f333		       0f		      .BYTE.b	#15	; B
+    916  f334		       0e		      .BYTE.b	#14	; C
+    917  f335		       0b		      .BYTE.b	#11	; E
+    918  f336		       0b		      .BYTE.b	#11
+    919  f337		       0b		      .BYTE.b	#11
+    920  f338		       0b		      .BYTE.b	#11
+    921  f339
+    922  f339				   LogoAudio1
+    923  f339
+    924  f339		       1f		      .BYTE.b	#31	; C
+    925  f33a		       1f		      .BYTE.b	#31
+    926  f33b		       1f		      .BYTE.b	#31
+    927  f33c		       1f		      .BYTE.b	#31
+    928  f33d		       19		      .BYTE.b	#25	; E
+    929  f33e		       19		      .BYTE.b	#25
+    930  f33f		       19		      .BYTE.b	#25
+    931  f340		       19		      .BYTE.b	#25
+    932  f341		       14		      .BYTE.b	#20	; G
+    933  f342		       14		      .BYTE.b	#20
+    934  f343		       14		      .BYTE.b	#20
+    935  f344		       14		      .BYTE.b	#20
+    936  f345
+    937  f345				   TitleImageTop		; Spider
+    938  f345
+    939  f345		       1e		      .BYTE.b	%00011110	; Normal
+    940  f346		       77		      .BYTE.b	%01110111	; Reversed
+    941  f347		       e7		      .BYTE.b	%11100111	; Normal
+    942  f348		       0e		      .BYTE.b	%00001110	; Reversed
+    943  f349
+    944  f349		       10		      .BYTE.b	%00010000
+    945  f34a		       25		      .BYTE.b	%00100101
+    946  f34b		       94		      .BYTE.b	%10010100
+    947  f34c		       12		      .BYTE.b	%00010010
+    948  f34d
+    949  f34d		       10		      .BYTE.b	%00010000
+    950  f34e		       27		      .BYTE.b	%00100111
+    951  f34f		       96		      .BYTE.b	%10010110
+    952  f350		       12		      .BYTE.b	%00010010
+    953  f351
+    954  f351		       1c		      .BYTE.b	%00011100
+    955  f352		       21		      .BYTE.b	%00100001
+    956  f353		       94		      .BYTE.b	%10010100
+    957  f354		       0e		      .BYTE.b	%00001110
+    958  f355
+    959  f355		       04		      .BYTE.b	%00000100
+    960  f356		       21		      .BYTE.b	%00100001
+    961  f357		       94		      .BYTE.b	%10010100
+    962  f358		       12		      .BYTE.b	%00010010
+    963  f359
+    964  f359		       1c		      .BYTE.b	%00011100
+    965  f35a		       71		      .BYTE.b	%01110001
+    966  f35b		       e7		      .BYTE.b	%11100111
+    967  f35c		       12		      .BYTE.b	%00010010
+    968  f35d
+    969  f35d				   TitleImageBottom		; Web & Art
+    970  f35d
+    971  f35d		       01		      .BYTE.b	%00000001	; Normal
+    972  f35e		       03		      .BYTE.b	%00000011	; Reversed
+    973  f35f		       8b		      .BYTE.b	%10001011	; Normal
+    974  f360		       1d		      .BYTE.b	%00011101	; Reversed
+    975  f361
+    976  f361		       0a		      .BYTE.b	%00001010
+    977  f362		       14		      .BYTE.b	%00010100
+    978  f363		       8a		      .BYTE.b	%10001010
+    979  f364		       24		      .BYTE.b	%00100100
+    980  f365
+    981  f365		       15		      .BYTE.b	%00010101
+    982  f366		       2a		      .BYTE.b	%00101010
+    983  f367		       8b		      .BYTE.b	%10001011
+    984  f368		       1c		      .BYTE.b	%00011100
+    985  f369
+    986  f369		       24		      .BYTE.b	%00100100
+    987  f36a		       49		      .BYTE.b	%01001001
+    988  f36b		       8a		      .BYTE.b	%10001010
+    989  f36c		       24		      .BYTE.b	%00100100
+    990  f36d
+    991  f36d		       22		      .BYTE.b	%00100010
+    992  f36e		       44		      .BYTE.b	%01000100
+    993  f36f		       aa		      .BYTE.b	%10101010
+    994  f370		       24		      .BYTE.b	%00100100
+    995  f371
+    996  f371		       11		      .BYTE.b	%00010001
+    997  f372		       23		      .BYTE.b	%00100011
+    998  f373		       53		      .BYTE.b	%01010011
+    999  f374		       1d		      .BYTE.b	%00011101
+   1000  f375
+   1001  f375				   TitleAudio0
+   1002  f375
+   1003  f375		       0f		      .BYTE.b	#15	; B
+   1004  f376		       13		      .BYTE.b	#19	; G
+   1005  f377		       17		      .BYTE.b	#23	; E
+   1006  f378		       13		      .BYTE.b	#19	; G
+   1007  f379		       0e		      .BYTE.b	#14	; C
+   1008  f37a		       13		      .BYTE.b	#19
+   1009  f37b		       17		      .BYTE.b	#23
+   1010  f37c		       13		      .BYTE.b	#19
+   1011  f37d		       0c		      .BYTE.b	#12	; D
+   1012  f37e		       13		      .BYTE.b	#19
+   1013  f37f		       17		      .BYTE.b	#23
+   1014  f380		       13		      .BYTE.b	#19
+   1015  f381		       0e		      .BYTE.b	#14	; C
+   1016  f382		       13		      .BYTE.b	#19
+   1017  f383		       17		      .BYTE.b	#23
+   1018  f384		       13		      .BYTE.b	#19
+   1019  f385
+   1020  f385				   TitleTone1
+   1021  f385
+   1022  f385		       0f		      .BYTE.b	#15	; Electronic Rumble
+   1023  f386		       ff		      .BYTE.b	#$FF
+   1024  f387		       01		      .BYTE.b	#1	; Low Pure Tone
+   1025  f388		       01		      .BYTE.b	#1
+   1026  f389		       08		      .BYTE.b	#8	; White Noise
+   1027  f38a		       01		      .BYTE.b	#1
+   1028  f38b		       01		      .BYTE.b	#1
+   1029  f38c		       ff		      .BYTE.b	#$FF
+   1030  f38d		       ff		      .BYTE.b	#$FF
+   1031  f38e		       0f		      .BYTE.b	#15
+   1032  f38f		       ff		      .BYTE.b	#$FF
+   1033  f390		       ff		      .BYTE.b	#$FF
+   1034  f391		       08		      .BYTE.b	#8
+   1035  f392		       ff		      .BYTE.b	#$FF
+   1036  f393		       01		      .BYTE.b	#1
+   1037  f394		       01		      .BYTE.b	#1
+   1038  f395
+   1039  f395				   TitleAudio1
+   1040  f395
+   1041  f395		       1d		      .BYTE.b	#29	; Kick
+   1042  f396		       ff		      .BYTE.b	#$FF
+   1043  f397		       1f		      .BYTE.b	#31	; C
+   1044  f398		       1f		      .BYTE.b	#31
+   1045  f399		       07		      .BYTE.b	#7	; Snare
+   1046  f39a		       1f		      .BYTE.b	#31
+   1047  f39b		       1f		      .BYTE.b	#31
+   1048  f39c		       ff		      .BYTE.b	#$FF
+   1049  f39d		       ff		      .BYTE.b	#$FF
+   1050  f39e		       1d		      .BYTE.b	#29
+   1051  f39f		       ff		      .BYTE.b	#$FF
+   1052  f3a0		       ff		      .BYTE.b	#$FF
+   1053  f3a1		       07		      .BYTE.b	#7
+   1054  f3a2		       ff		      .BYTE.b	#$FF
+   1055  f3a3		       17		      .BYTE.b	#23	; F
+   1056  f3a4		       18		      .BYTE.b	#24	; E
+   1057  f3a5
+   1058  f3a5				   GameImage		; Just one quadrant of web
+   1059  f3a5
+   1060  f3a5		       00		      .BYTE.b	%00000000	; First 4 bits reversed
+   1061  f3a6		       00		      .BYTE.b	%00000000	; Normal
+   1062  f3a7		       03		      .BYTE.b	%00000011	; Reversed
+   1063  f3a8		       00		      .BYTE.b	%00000000	; Empty
+   1064  f3a9
+   1065  f3a9		       00		      .BYTE.b	%00000000
+   1066  f3aa		       00		      .BYTE.b	%00000000
+   1067  f3ab		       3f		      .BYTE.b	%00111111
+   1068  f3ac		       00		      .BYTE.b	%00000000
+   1069  f3ad
+   1070  f3ad		       00		      .BYTE.b	%00000000
+   1071  f3ae		       01		      .BYTE.b	%00000001
+   1072  f3af		       c2		      .BYTE.b	%11000010
+   1073  f3b0		       00		      .BYTE.b	%00000000
+   1074  f3b1
+   1075  f3b1		       00		      .BYTE.b	%00000000
+   1076  f3b2		       01		      .BYTE.b	%00000001
+   1077  f3b3		       04		      .BYTE.b	%00000100
+   1078  f3b4		       00		      .BYTE.b	%00000000
+   1079  f3b5
+   1080  f3b5		       00		      .BYTE.b	%00000000
+   1081  f3b6		       02		      .BYTE.b	%00000010
+   1082  f3b7		       08		      .BYTE.b	%00001000
+   1083  f3b8		       00		      .BYTE.b	%00000000
+   1084  f3b9
+   1085  f3b9		       00		      .BYTE.b	%00000000
+   1086  f3ba		       0c		      .BYTE.b	%00001100
+   1087  f3bb		       08		      .BYTE.b	%00001000
+   1088  f3bc		       00		      .BYTE.b	%00000000
+   1089  f3bd
+   1090  f3bd		       30		      .BYTE.b	%00110000
+   1091  f3be		       30		      .BYTE.b	%00110000
+   1092  f3bf		       10		      .BYTE.b	%00010000
+   1093  f3c0		       00		      .BYTE.b	%00000000
+   1094  f3c1
+   1095  f3c1		       e0		      .BYTE.b	%11100000
+   1096  f3c2		       c0		      .BYTE.b	%11000000
+   1097  f3c3		       20		      .BYTE.b	%00100000
+   1098  f3c4		       00		      .BYTE.b	%00000000
+   1099  f3c5
+   1100  f3c5		       20		      .BYTE.b	%00100000
+   1101  f3c6		       38		      .BYTE.b	%00111000
+   1102  f3c7		       20		      .BYTE.b	%00100000
+   1103  f3c8		       00		      .BYTE.b	%00000000
+   1104  f3c9
+   1105  f3c9		       40		      .BYTE.b	%01000000
+   1106  f3ca		       07		      .BYTE.b	%00000111
+   1107  f3cb		       41		      .BYTE.b	%01000001
+   1108  f3cc		       00		      .BYTE.b	%00000000
+   1109  f3cd
+   1110  f3cd		       40		      .BYTE.b	%01000000
+   1111  f3ce		       00		      .BYTE.b	%00000000
+   1112  f3cf		       8e		      .BYTE.b	%10001110
+   1113  f3d0		       00		      .BYTE.b	%00000000
+   1114  f3d1
+   1115  f3d1		       80		      .BYTE.b	%10000000
+   1116  f3d2		       00		      .BYTE.b	%00000000
+   1117  f3d3		       f0		      .BYTE.b	%11110000
+   1118  f3d4		       00		      .BYTE.b	%00000000
+   1119  f3d5
+   1120  f3d5							;-------------------------------------------
+   1121  f3d5
+   1122  fffa					      ORG	$FFFA	; End of cart area
+   1123  fffa
+   1124  fffa				   InterruptVectors
+   1125  fffa
+   1126  fffa		       00 f0		      .word.w	Reset	; NMI
+   1127  fffc		       00 f0		      .word.w	Reset	; RESET
+   1128  fffe		       00 f0		      .word.w	Reset	; IRQ
+   1129  10000
+   1130  10000					       END
