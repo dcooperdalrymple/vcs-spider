@@ -1,18 +1,25 @@
 --- Symbol List (sorted by symbol)
+0.divideby15             f35b              (R )
 0.FREE_BYTES             0000                  
-0.game_overscan          f33c                  
-0.game_overscan_loop     f342              (R )
-0.game_player            f2e3                  
-0.game_player_loop       f2e7              (R )
-0.game_playfield_bottom  f30e                  
-0.game_playfield_bottom_line f310              (R )
-0.game_playfield_bottom_loop f32b              (R )
-0.game_playfield_top     f2bb                  
-0.game_playfield_top_line f2bd              (R )
-0.game_playfield_top_loop f2d8              (R )
-0.game_vblank            f2b4                  
-0.game_vblank_loop       f2b6              (R )
-0.game_vsync             f2a2                  
+0.game_control           f2a6                  
+0.game_control_check_down f2b4              (R )
+0.game_control_check_left f2b0              (R )
+0.game_control_check_right f2ad                  
+0.game_control_check_up  f2b8              (R )
+0.game_control_end       f2bc              (R )
+0.game_overscan          f348                  
+0.game_overscan_loop     f34e              (R )
+0.game_player            f301                  
+0.game_player_loop       f30a              (R )
+0.game_playfield_bottom  f31a                  
+0.game_playfield_bottom_line f31c              (R )
+0.game_playfield_bottom_loop f337              (R )
+0.game_playfield_top     f2d9                  
+0.game_playfield_top_line f2db              (R )
+0.game_playfield_top_loop f2f6              (R )
+0.game_vblank            f2d2                  
+0.game_vblank_loop       f2d4              (R )
+0.game_vsync             f2c0                  
 0.initstack              f000                  
 0.initstack_loop         f003              (R )
 0.initvars               f008                  
@@ -64,8 +71,6 @@
 4.CYCLES                 0008              (R )
 5.CYCLES                 0002              (R )
 6.CYCLES                 0002              (R )
-7.CYCLES                 0014              (R )
-8.CYCLES                 0014              (R )
 AnimationFrame           0080              (R )
 AnimationSubFrame        0081              (R )
 AUDC0                    0015              (R )
@@ -101,8 +106,8 @@ GAME_P0_SIZE             0008              (R )
 GAME_PF_DATA_SIZE        0004              (R )
 GAME_PF_LINE_SIZE        0008              (R )
 GAME_PF_SIZE             000c              (R )
-GameFrame                f2a2              (R )
-GameImage                f3d4              (R )
+GameFrame                f2a6              (R )
+GameImage                f3f4              (R )
 GameScreen               f27c              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
@@ -110,8 +115,8 @@ HMBL                     0024
 HMCLR                    002b                  
 HMM0                     0022                  
 HMM1                     0023                  
-HMOVE                    002a                  
-HMP0                     0020                  
+HMOVE                    002a              (R )
+HMP0                     0020              (R )
 HMP1                     0021                  
 INPT0                    0008                  
 INPT1                    0009                  
@@ -138,9 +143,9 @@ LOGO_FRAMES              00b4              (R )
 LOGO_INTERVAL            0008              (R )
 LOGO_SIZE                0009              (R )
 LOGO_START               0030              (R )
-LogoAudio0               f35c              (R )
-LogoAudio1               f368              (R )
-LogoData                 f34a              (R )
+LogoAudio0               f37c              (R )
+LogoAudio1               f388              (R )
+LogoData                 f36a              (R )
 LogoFrame                f05d              (R )
 LogoScreen               f02c                  
 NO_ILLEGAL_OPCODES       0000 ????         (R )
@@ -156,7 +161,9 @@ PAL_TOTAL                0138
 PF0                      000d              (R )
 PF1                      000e              (R )
 PF2                      000f              (R )
-PlayerSprite             f404              (R )
+PlayerSprite             f424              (R )
+PlayerX                  0084              (R )
+PlayerY                  0085              (R )
 REFP0                    000b                  
 REFP1                    000c                  
 RESBL                    0014                  
@@ -168,9 +175,10 @@ RESMP1                   0029
 RESP0                    0010              (R )
 RESP1                    0011                  
 RSYNC                    0003                  
+SetHorizPos              f356              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
-SWCHA                    0280                  
+SWCHA                    0280              (R )
 SWCHB                    0282                  
 SYSTEM                   0001              (R )
 T1024T                   0297                  
@@ -195,13 +203,13 @@ TITLE_GAP                0002              (R )
 TITLE_IMAGE              0006              (R )
 TITLE_LINE_SIZE          0008              (R )
 TITLE_PAD                0004              (R )
-TitleAudio0              f3a4              (R )
-TitleAudio1              f3c4              (R )
+TitleAudio0              f3c4              (R )
+TitleAudio1              f3e4              (R )
 TitleFrame               f134              (R )
-TitleImageBottom         f38c              (R )
-TitleImageTop            f374              (R )
+TitleImageBottom         f3ac              (R )
+TitleImageTop            f394              (R )
 TitleScreen              f10e              (R )
-TitleTone1               f3b4              (R )
+TitleTone1               f3d4              (R )
 VBLANK                   0001              (R )
 VDELBL                   0027                  
 VDELP0                   0025                  

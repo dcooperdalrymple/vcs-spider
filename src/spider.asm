@@ -101,6 +101,10 @@ AnimationSubFrame   ds 1 ; 1 byte to count portions of frames
 AudioFrame          ds 1
 AudioStep           ds 1
 
+; Player Controls
+PlayerX             ds 1
+PlayerY             ds 1
+
     SEG
 
     ORG $F000           ; Start of cart area
@@ -758,7 +762,40 @@ GameScreen:
     sta AUDV1
     sta AUDF1
 
+    ; Initial Player Control
+    lda #50
+    sta PlayerX
+
 GameFrame:
+
+.game_control:
+
+    ldx PlayerX
+    ldy PlayerY
+    lda SWCHA
+
+.game_control_check_right:
+    bmi .game_control_check_left
+    inx
+
+.game_control_check_left:
+    rol
+    bmi .game_control_check_down
+    dex
+
+.game_control_check_down:
+    rol
+    bmi .game_control_check_up
+    iny
+
+.game_control_check_up:
+    rol
+    bmi .game_control_end
+    dey
+
+.game_control_end:
+    stx PlayerX
+    sty PlayerY
 
 .game_vsync:                 ; Start of vertical blank processing
 
@@ -827,27 +864,25 @@ GameFrame:
 
 .game_player:
 
-    ldy #0
-    ldx #GAME_P0_SIZE
+    lda PlayerX         ; Desired Position
+    ldx #0              ; Desired Object (0-4)
+    ldy #GAME_P0_SIZE-1 ; Sprite Image index
+
+    jsr SetHorizPos
+
 .game_player_loop:
 
     lda PlayerSprite,y
-    sta GRP0
-    iny
-
-    lda #1
-    sleep 20
-    sta RESP0
-    sleep 20
-
     sta WSYNC
-    dex
+    sta GRP0
+    sta HMOVE
+
+    dey
     bne .game_player_loop
 
     ; Reset Player
     lda #0
     sta GRP0
-
 
 .game_playfield_bottom:
 
@@ -905,6 +940,23 @@ GameFrame:
     bne .game_overscan_loop
 
     jmp GameFrame
+
+; Inputs: A = desired x position, x = desired object (0-4)
+SetHorizPos:
+    sta WSYNC   ; Sync to start of scanline
+    bit 0
+    sec         ; Set the carry flag so no borrow will be applied during the division
+.divideby15:
+    sbc #15     ; Waste the necessary amount of time dividing x-pos by 15
+    bcs .divideby15
+    eor #7
+    asl
+    asl
+    asl
+    asl
+    sta RESP0,x
+    sta HMP0,x
+    rts
 
 LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
 
@@ -1148,15 +1200,15 @@ GameImage:      ; Just one quadrant of web
     .BYTE %11110000
     .BYTE %00000000
 
-PlayerSprite:
+PlayerSprite: ; Sprites are reversed in y direction
 
     ; Up
     .BYTE %10011001
     .BYTE %10111101
-    .BYTE %10011001
     .BYTE %01111110
     .BYTE %00111100
     .BYTE %01111110
+    .BYTE %10011001
     .BYTE %10111101
     .BYTE %10011001
 
