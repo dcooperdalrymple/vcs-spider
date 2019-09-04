@@ -44,6 +44,13 @@ LOGO_FRAMES         = 180
 LOGO_BG_COLU        = #$A2
 LOGO_FG_COLU        = #$5E
 
+LOGO_AUD_0_TONE     = 4
+LOGO_AUD_0_VOLUME   = 15 ; 15 is max
+LOGO_AUD_1_TONE     = 1
+LOGO_AUD_1_VOLUME   = 3
+LOGO_AUD_LENGTH     = 12
+LOGO_AUD_STEP       = 8
+
 ; Title
 TITLE_LINE_SIZE     = 8
 TITLE_DATA_SIZE     = %00000100
@@ -55,6 +62,12 @@ TITLE_GAP           = 2
 TITLE_BG_COLU       = #$70
 TITLE_BD_COLU       = #$7E
 TITLE_FG_COLU       = #$0E
+
+TITLE_AUD_0_TONE    = 4
+TITLE_AUD_0_VOLUME  = 4
+TITLE_AUD_1_VOLUME  = 7
+TITLE_AUD_LENGTH    = 16
+TITLE_AUD_STEP      = 9
 
 ;================
 ; Variables
@@ -72,11 +85,10 @@ Overlay             ds 8
 AnimationFrame      ds 1 ; 1 byte to count frames
 AnimationSubFrame   ds 1 ; 1 byte to count portions of frames
 
-    org Overlay
+; Audio System
 
-; Drawing System, etc
-
-TitleImagePtr       ds 2 ; Pointer to image data location
+AudioFrame          ds 1
+AudioStep           ds 1
 
     SEG
 
@@ -136,14 +148,85 @@ LogoScreen:
     lda #LOGO_FG_COLU
     sta COLUPF
 
+    ; Load audio settings
+    lda #LOGO_AUD_0_TONE
+    sta AUDC0
+    lda #LOGO_AUD_0_VOLUME
+    sta AUDV0
+    lda #LOGO_AUD_1_TONE
+    sta AUDC1
+    lda #LOGO_AUD_1_VOLUME
+    sta AUDV1
+    lda #0
+    sta AudioFrame
+    sta AudioStep
+
+    ; Play first note
+    tay
+    lda LogoAudio0,y
+    sta AUDF0
+    lda LogoAudio1,y
+    sta AUDF1
+
     ; Load number of frames into AnimationFrame
     lda #LOGO_FRAMES
     sta AnimationFrame
 
+    ; Initialize sub frame
     lda #0
     sta AnimationSubFrame
 
 LogoFrame:
+
+.logo_audio:
+
+    ; Increment Audio Frame
+    ldx AudioFrame
+    inx
+    stx AudioFrame
+
+    ; Check if we need to play the next note
+    cpx #LOGO_AUD_STEP
+    bcc .logo_audio_skip
+
+.logo_audio_play:
+
+    ; Reset AudioFrame
+    lda #0
+    sta AudioFrame
+
+    ; Check if we're at the end of the melody
+    ldy AudioStep
+    cpy #LOGO_AUD_LENGTH-1
+    beq .logo_audio_mute
+
+.logo_audio_play_note:
+
+    ; Increment Audio position
+    iny
+    sty AudioStep
+
+    ; Load note and play
+    lda LogoAudio0,y
+    sta AUDF0
+    lda LogoAudio1,y
+    sta AUDF1
+    jmp .logo_audio_mute_skip
+
+.logo_audio_mute:
+
+    ; Mute audio
+    lda #0
+    sta AUDC0
+    sta AUDV0
+    sta AUDF0
+    sta AUDC1
+    sta AUDV1
+    sta AUDF1
+
+.logo_audio_mute_skip:
+
+.logo_audio_skip:
 
 .logo_vsync:                 ; Start of vertical blank processing
 
@@ -271,7 +354,8 @@ LogoFrame:
     stx AnimationFrame
 
     ; Check if we're at the end of the animation
-    bne LogoFrame
+    beq TitleScreen
+    jmp LogoFrame
 
 TitleScreen:
 
@@ -289,7 +373,85 @@ TitleScreen:
     lda #TITLE_BD_COLU
     sta COLUPF
 
+    ; Load audio settings
+
+    ; Melody Line
+    lda #TITLE_AUD_0_TONE
+    sta AUDC0
+    lda #TITLE_AUD_0_VOLUME
+    sta AUDV0
+
+    ; Drums and Bass
+    lda #0
+    sta AUDC1
+    sta AUDV1
+
+    ; Make it so that we play the first note immediately
+    lda #TITLE_AUD_STEP-1
+    sta AudioFrame
+    lda #TITLE_AUD_LENGTH-1
+    sta AudioStep
+
 TitleFrame:
+
+.title_audio:
+
+    ; Increment Audio Frame
+    ldx AudioFrame
+    inx
+    stx AudioFrame
+
+    ; Check if we need to play the next note
+    cpx #TITLE_AUD_STEP
+    bcc .title_audio_skip
+
+.title_audio_play:
+
+    ; Reset AudioFrame
+    lda #0
+    sta AudioFrame
+
+    ; Increment melody position
+    ldy AudioStep
+    iny
+
+    ; Check if we're at the end of the melody
+    cpy #TITLE_AUD_LENGTH
+    bne .title_audio_play_note
+
+    ; Loop our audio step
+    ldy #0
+
+.title_audio_play_note:
+
+    ; Save current position
+    sty AudioStep
+
+    ; Basic Melody Line
+    lda TitleAudio0,y
+    sta AUDF0
+
+    ; Drums and Bass
+    lda TitleTone1,y
+    cmp #$FF
+    beq .title_audio_play_note_1_mute
+
+    sta AUDC1
+    lda TitleAudio1,y
+    sta AUDF1
+    lda #TITLE_AUD_1_VOLUME
+    sta AUDV1
+
+    jmp .title_audio_skip
+
+.title_audio_play_note_1_mute:
+
+    lda #0
+    sta AUDF1
+    sta AUDC1
+    sta AUDV1
+
+.title_audio_skip:
 
 .title_vsync:                 ; Start of vertical blank processing
 
@@ -554,7 +716,14 @@ TitleFrame:
 
 StartScreen:
 
-    ; Init variables here
+    ; Mute Audio
+    lda #0
+    sta AUDC0
+    sta AUDV0
+    sta AUDF0
+    sta AUDC1
+    sta AUDV1
+    sta AUDF1
 
 StartFrame:
 
@@ -613,32 +782,62 @@ StartFrame:
 
 LogoData:               ; 6 bytes over 8 lines each, total of 48 lines
 
-    .BYTE %00000000     ; Reversed
-    .BYTE %00010000     ; First 4 bits reversed
+    .BYTE %01000110     ; Reversed
+    .BYTE %01100000     ; First 4 bits reversed
 
+    .BYTE %10101010
+    .BYTE %10100000
+
+    .BYTE %00101010
+    .BYTE %10100000
+
+    .BYTE %10101010
+    .BYTE %10100000
+
+    .BYTE %01000110
+    .BYTE %01100000
+
+    .BYTE %00000000
+    .BYTE %00000000
+
+    .BYTE %10001000
     .BYTE %10000000
+
+    .BYTE %01010100
+    .BYTE %01010000
+
+    .BYTE %00100010
     .BYTE %00100000
 
-    .BYTE %01000000
-    .BYTE %01000000
+LogoAudio0:
 
-    .BYTE %00100000
-    .BYTE %10000000
+    .BYTE #29   ; C
+    .BYTE #23   ; E
+    .BYTE #19   ; G
+    .BYTE #15   ; A
+    .BYTE #23   ; E
+    .BYTE #19   ; G
+    .BYTE #15   ; B
+    .BYTE #14   ; C
+    .BYTE #11   ; E
+    .BYTE #11
+    .BYTE #11
+    .BYTE #11
 
-    .BYTE %00010000
-    .BYTE %00001000
+LogoAudio1:
 
-    .BYTE %00001000
-    .BYTE %00000000
-
-    .BYTE %00000100
-    .BYTE %00000000
-
-    .BYTE %00000010
-    .BYTE %00000000
-
-    .BYTE %11111111
-    .BYTE %11111111
+    .BYTE #31   ; C
+    .BYTE #31
+    .BYTE #31
+    .BYTE #31
+    .BYTE #25   ; E
+    .BYTE #25
+    .BYTE #25
+    .BYTE #25
+    .BYTE #20   ; G
+    .BYTE #20
+    .BYTE #20
+    .BYTE #20
 
 TitleImageTop:          ; Spider
 
@@ -703,6 +902,63 @@ TitleImageBottom:       ; Web & Art
     .BYTE %00100011
     .BYTE %01010011
     .BYTE %00011101
+
+TitleAudio0:
+
+    .BYTE #15   ; B
+    .BYTE #19   ; G
+    .BYTE #23   ; E
+    .BYTE #19   ; G
+    .BYTE #14   ; C
+    .BYTE #19
+    .BYTE #23
+    .BYTE #19
+    .BYTE #12   ; D
+    .BYTE #19
+    .BYTE #23
+    .BYTE #19
+    .BYTE #14   ; C
+    .BYTE #19
+    .BYTE #23
+    .BYTE #19
+
+TitleTone1:
+
+    .BYTE #15   ; Electronic Rumble
+    .BYTE #$FF
+    .BYTE #1    ; Low Pure Tone
+    .BYTE #1
+    .BYTE #8    ; White Noise
+    .BYTE #1
+    .BYTE #1
+    .BYTE #$FF
+    .BYTE #$FF
+    .BYTE #15
+    .BYTE #$FF
+    .BYTE #$FF
+    .BYTE #8
+    .BYTE #$FF
+    .BYTE #1
+    .BYTE #1
+
+TitleAudio1:
+
+    .BYTE #29   ; Kick
+    .BYTE #$FF
+    .BYTE #31   ; C
+    .BYTE #31
+    .BYTE #7    ; Snare
+    .BYTE #31
+    .BYTE #31
+    .BYTE #$FF
+    .BYTE #$FF
+    .BYTE #29
+    .BYTE #$FF
+    .BYTE #$FF
+    .BYTE #7
+    .BYTE #$FF
+    .BYTE #23   ; F
+    .BYTE #24   ; E
 
     ;-------------------------------------------
 
