@@ -77,6 +77,9 @@ GAME_PF_SIZE        = 12
 GAME_BG_COLU        = #$00
 GAME_FG_COLU        = #$0C
 
+GAME_P0_COLU        = #$56
+GAME_P0_SIZE        = 8
+
 ;================
 ; Variables
 ;================
@@ -742,6 +745,10 @@ GameScreen:
     lda #GAME_FG_COLU
     sta COLUPF
 
+    ; Player Color
+    lda #GAME_P0_COLU
+    sta COLUP0
+
     ; Mute Audio
     lda #0
     sta AUDC0
@@ -818,9 +825,33 @@ GameFrame:
     cpy #GAME_PF_SIZE*GAME_PF_DATA_SIZE
     bne .game_playfield_top_line
 
+.game_player:
+
+    ldy #0
+    ldx #GAME_P0_SIZE
+.game_player_loop:
+
+    lda PlayerSprite,y
+    sta GRP0
+    iny
+
+    lda #1
+    sleep 20
+    sta RESP0
+    sleep 20
+
+    sta WSYNC
+    dex
+    bne .game_player_loop
+
+    ; Reset Player
+    lda #0
+    sta GRP0
+
+
 .game_playfield_bottom:
 
-    ldy #(GAME_PF_SIZE-1)*GAME_PF_DATA_SIZE    ; Current image index
+    ldy #(GAME_PF_SIZE-2)*GAME_PF_DATA_SIZE    ; Current image index
 
 .game_playfield_bottom_line:
 
@@ -1116,6 +1147,48 @@ GameImage:      ; Just one quadrant of web
     .BYTE %00000000
     .BYTE %11110000
     .BYTE %00000000
+
+PlayerSprite:
+
+    ; Up
+    .BYTE %10011001
+    .BYTE %10111101
+    .BYTE %10011001
+    .BYTE %01111110
+    .BYTE %00111100
+    .BYTE %01111110
+    .BYTE %10111101
+    .BYTE %10011001
+
+    ; Right
+    .BYTE %11000111
+    .BYTE %00101000
+    .BYTE %01111010
+    .BYTE %11111111
+    .BYTE %11111111
+    .BYTE %01111010
+    .BYTE %00101000
+    .BYTE %11000111
+
+    ; Down
+    .BYTE %10011001
+    .BYTE %10111101
+    .BYTE %01111110
+    .BYTE %00111100
+    .BYTE %01111110
+    .BYTE %10011001
+    .BYTE %10111101
+    .BYTE %10011001
+
+    ; Left
+    .BYTE %11100011
+    .BYTE %00010100
+    .BYTE %01011110
+    .BYTE %11111111
+    .BYTE %11111111
+    .BYTE %01011110
+    .BYTE %00010100
+    .BYTE %11100011
 
     ;-------------------------------------------
 

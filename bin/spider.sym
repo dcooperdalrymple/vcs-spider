@@ -1,16 +1,18 @@
 --- Symbol List (sorted by symbol)
 0.FREE_BYTES             0000                  
-0.game_overscan          f30d                  
-0.game_overscan_loop     f313              (R )
-0.game_playfield_bottom  f2df                  
-0.game_playfield_bottom_line f2e1              (R )
-0.game_playfield_bottom_loop f2fc              (R )
-0.game_playfield_top     f2b7                  
-0.game_playfield_top_line f2b9              (R )
-0.game_playfield_top_loop f2d4              (R )
-0.game_vblank            f2b0                  
-0.game_vblank_loop       f2b2              (R )
-0.game_vsync             f29e                  
+0.game_overscan          f33c                  
+0.game_overscan_loop     f342              (R )
+0.game_player            f2e3                  
+0.game_player_loop       f2e7              (R )
+0.game_playfield_bottom  f30e                  
+0.game_playfield_bottom_line f310              (R )
+0.game_playfield_bottom_loop f32b              (R )
+0.game_playfield_top     f2bb                  
+0.game_playfield_top_line f2bd              (R )
+0.game_playfield_top_loop f2d8              (R )
+0.game_vblank            f2b4                  
+0.game_vblank_loop       f2b6              (R )
+0.game_vsync             f2a2                  
 0.initstack              f000                  
 0.initstack_loop         f003              (R )
 0.initvars               f008                  
@@ -62,6 +64,8 @@
 4.CYCLES                 0008              (R )
 5.CYCLES                 0002              (R )
 6.CYCLES                 0002              (R )
+7.CYCLES                 0014              (R )
+8.CYCLES                 0014              (R )
 AnimationFrame           0080              (R )
 AnimationSubFrame        0081              (R )
 AUDC0                    0015              (R )
@@ -92,11 +96,13 @@ ENAM0                    001d              (R )
 ENAM1                    001e              (R )
 GAME_BG_COLU             0000              (R )
 GAME_FG_COLU             000c              (R )
+GAME_P0_COLU             0056              (R )
+GAME_P0_SIZE             0008              (R )
 GAME_PF_DATA_SIZE        0004              (R )
 GAME_PF_LINE_SIZE        0008              (R )
 GAME_PF_SIZE             000c              (R )
-GameFrame                f29e              (R )
-GameImage                f3a5              (R )
+GameFrame                f2a2              (R )
+GameImage                f3d4              (R )
 GameScreen               f27c              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
@@ -132,9 +138,9 @@ LOGO_FRAMES              00b4              (R )
 LOGO_INTERVAL            0008              (R )
 LOGO_SIZE                0009              (R )
 LOGO_START               0030              (R )
-LogoAudio0               f32d              (R )
-LogoAudio1               f339              (R )
-LogoData                 f31b              (R )
+LogoAudio0               f35c              (R )
+LogoAudio1               f368              (R )
+LogoData                 f34a              (R )
 LogoFrame                f05d              (R )
 LogoScreen               f02c                  
 NO_ILLEGAL_OPCODES       0000 ????         (R )
@@ -150,6 +156,7 @@ PAL_TOTAL                0138
 PF0                      000d              (R )
 PF1                      000e              (R )
 PF2                      000f              (R )
+PlayerSprite             f404              (R )
 REFP0                    000b                  
 REFP1                    000c                  
 RESBL                    0014                  
@@ -158,7 +165,7 @@ RESM0                    0012
 RESM1                    0013                  
 RESMP0                   0028                  
 RESMP1                   0029                  
-RESP0                    0010                  
+RESP0                    0010              (R )
 RESP1                    0011                  
 RSYNC                    0003                  
 SWACNT                   0281                  
@@ -188,13 +195,13 @@ TITLE_GAP                0002              (R )
 TITLE_IMAGE              0006              (R )
 TITLE_LINE_SIZE          0008              (R )
 TITLE_PAD                0004              (R )
-TitleAudio0              f375              (R )
-TitleAudio1              f395              (R )
+TitleAudio0              f3a4              (R )
+TitleAudio1              f3c4              (R )
 TitleFrame               f134              (R )
-TitleImageBottom         f35d              (R )
-TitleImageTop            f345              (R )
+TitleImageBottom         f38c              (R )
+TitleImageTop            f374              (R )
 TitleScreen              f10e              (R )
-TitleTone1               f385              (R )
+TitleTone1               f3b4              (R )
 VBLANK                   0001              (R )
 VDELBL                   0027                  
 VDELP0                   0025                  
