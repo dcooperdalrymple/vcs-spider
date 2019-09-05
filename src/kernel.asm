@@ -1,7 +1,7 @@
-    ; 8 Legs of Love game for Atari VCS/2600
+    ; Spider Web game for Atari VCS/2600
     ; Created by D Cooper Dalrymple 2018 - dcdalrymple.com
     ; Licensed under GNU LGPL V3.0
-    ; Last revision: August 28th, 2018
+    ; Last revision: September 5th, 2019
 
     processor 6502
     include "vcs.h"

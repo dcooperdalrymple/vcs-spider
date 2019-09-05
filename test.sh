@@ -1,2 +1,2 @@
 #!/bin/bash
-stella ./bin/spider.bin
+stella ./bin/rom.bin

@@ -1,8 +1,8 @@
-------- FILE spider.asm LEVEL 1 PASS 2
-      1  10000 ????						; 8 Legs of Love game for Atari VCS/2600
+------- FILE kernel.asm LEVEL 1 PASS 2
+      1  10000 ????						; Spider Web game for Atari VCS/2600
       2  10000 ????						; Created by D Cooper Dalrymple 2018 - dcdalrymple.com
       3  10000 ????						; Licensed under GNU LGPL V3.0
-      4  10000 ????						; Last revision: August 28th, 2018
+      4  10000 ????						; Last revision: September 5th, 2019
       5  10000 ????
       6  10000 ????				       processor	6502
 ------- FILE vcs.h LEVEL 2 PASS 2
@@ -207,7 +207,7 @@
     198  10000 ????				       SEG
     199  10000 ????
     200  10000 ????						; EOF
-------- FILE spider.asm
+------- FILE kernel.asm
 ------- FILE macro.h LEVEL 2 PASS 2
       0  10000 ????				       include	"macro.h"
       1  10000 ????						; MACRO.H
@@ -373,7 +373,7 @@
     161  10000 ????
     162  10000 ????
     163  10000 ????						; EOF
-------- FILE spider.asm
+------- FILE kernel.asm
       9  10000 ????
      10  10000 ????						;================
      11  10000 ????						; Constants
@@ -970,7 +970,7 @@
     261  f1e7		       14		      .BYTE.b	#20
     262  f1e8		       14		      .BYTE.b	#20
     263  f1e9		       14		      .BYTE.b	#20
-------- FILE spider.asm
+------- FILE kernel.asm
 ------- FILE title.asm LEVEL 2 PASS 2
       0  f1ea					      include	"title.asm"
       1  f1ea							;================
@@ -1116,9 +1116,9 @@
     133  f261
     134  f261				   TitleImage
     135  f261
-    136  f261		       00		      .BYTE.b	%00000000	; First 4 bits reversed
+    136  f261		       00		      .BYTE.b	%00000000	; Reversed
     137  f262		       00		      .BYTE.b	%00000000	; Normal
-    138  f263		       00		      .BYTE.b	%00000000	; Reversed
+    138  f263		       00		      .BYTE.b	%00000000	; First 4 bits reversed
     139  f264
     140  f264		       00		      .BYTE.b	%00000000
     141  f265		       00		      .BYTE.b	%00000000
@@ -1268,7 +1268,7 @@
     285  f2d6		       ff		      .BYTE.b	#$FF
     286  f2d7		       17		      .BYTE.b	#23	; F
     287  f2d8		       18		      .BYTE.b	#24	; E
-------- FILE spider.asm
+------- FILE kernel.asm
 ------- FILE game.asm LEVEL 2 PASS 2
       0  f2d9					      include	"game.asm"
       1  f2d9							;================
@@ -1380,21 +1380,21 @@
      99  f33c
     100  f33c				   GameImage		; Web
     101  f33c
-    102  f33c		       03		      .BYTE.b	%00000011	; Reversed
+    102  f33c		       00		      .BYTE.b	%00000000	; Reversed
     103  f33d		       00		      .BYTE.b	%00000000	; Normal
-    104  f33e		       00		      .BYTE.b	%00000000	; First 4 bits reversed
+    104  f33e		       03		      .BYTE.b	%00000011	; First 4 bits reversed
     105  f33f
-    106  f33f		       3f		      .BYTE.b	%00111111
+    106  f33f		       00		      .BYTE.b	%00000000
     107  f340		       00		      .BYTE.b	%00000000
-    108  f341		       00		      .BYTE.b	%00000000
+    108  f341		       3f		      .BYTE.b	%00111111
     109  f342
-    110  f342		       c2		      .BYTE.b	%11000010
+    110  f342		       00		      .BYTE.b	%00000000
     111  f343		       01		      .BYTE.b	%00000001
-    112  f344		       00		      .BYTE.b	%00000000
+    112  f344		       c2		      .BYTE.b	%11000010
     113  f345
-    114  f345		       04		      .BYTE.b	%00000100
+    114  f345		       00		      .BYTE.b	%00000000
     115  f346		       01		      .BYTE.b	%00000001
-    116  f347		       00		      .BYTE.b	%00000000
+    116  f347		       04		      .BYTE.b	%00000100
     117  f348
     118  f348		       00		      .BYTE.b	%00000000
     119  f349		       02		      .BYTE.b	%00000010
@@ -1517,7 +1517,7 @@
     236  f3a1		       5e		      .BYTE.b	%01011110
     237  f3a2		       14		      .BYTE.b	%00010100
     238  f3a3		       e3		      .BYTE.b	%11100011
-------- FILE spider.asm
+------- FILE kernel.asm
     314  f3a4
     315  f3a4							;================
     316  f3a4							; End of cart
