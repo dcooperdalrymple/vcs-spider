@@ -1,60 +1,111 @@
 --- Symbol List (sorted by symbol)
 0.FREE_BYTES             0000                  
-0.game_control_check_down f323              (R )
-0.game_control_check_left f31f              (R )
-0.game_control_check_right f31c                  
-0.game_control_check_up  f327              (R )
-0.game_control_return    f32b              (R )
-0.game_objects_player    f330                  
+0.game_control_boundary  f460              (R )
+0.game_control_boundary_bottom f46c              (R )
+0.game_control_boundary_left f460                  
+0.game_control_boundary_right f466              (R )
+0.game_control_boundary_top f466                  
+0.game_control_check_down f438              (R )
+0.game_control_check_left f434              (R )
+0.game_control_check_right f431                  
+0.game_control_check_up  f43c              (R )
+0.game_control_return    f4ef              (R )
+0.game_control_sprite    f440              (R )
+0.game_control_sprite_assign f476                  
+0.game_control_sprite_assign_bottom f4a7              (R )
+0.game_control_sprite_assign_bottom_left f4d4              (R )
+0.game_control_sprite_assign_bottom_right f4c5              (R )
+0.game_control_sprite_assign_left f47a                  
+0.game_control_sprite_assign_right f489              (R )
+0.game_control_sprite_assign_top f498              (R )
+0.game_control_sprite_assign_top_left f4e3              (R )
+0.game_control_sprite_assign_top_right f4b6              (R )
+0.game_control_sprite_down f459              (R )
+0.game_control_sprite_left f44a              (R )
+0.game_control_sprite_right f44f              (R )
+0.game_control_sprite_up f45e              (R )
+0.game_control_sprite_x  f442                  
+0.game_control_sprite_y  f451              (R )
+0.game_control_store     f472              (R )
+0.game_objects_player    f4f0                  
 0.init_clean             f013                  
 0.init_game              f042                  
 0.init_tia               f01e                  
-0.kernel_image           f09f                  
-0.kernel_image_line      f0a1              (R )
-0.kernel_image_line_blank f0b6              (R )
-0.kernel_image_line_skip f0c0              (R )
-0.kernel_image_loop      f0c2              (R )
-0.kernel_return          f0ca                  
-0.logo_animation_return  f150              (R )
-0.logo_audio_mute        f16d              (R )
-0.logo_audio_mute_skip   f17b              (R )
-0.logo_audio_play        f157                  
-0.logo_audio_play_note   f15d                  
-0.logo_audio_return      f17b              (R )
-0.logo_state_return      f189              (R )
-0.overscan_logic         f0d4                  
-0.overscan_logic_default f0f0              (R )
-0.overscan_logic_game    f0f0              (R )
-0.overscan_logic_logo    f0e4              (R )
-0.overscan_logic_title   f0ea              (R )
-0.overscan_loop          f0f3              (R )
-0.overscan_return        f0fa                  
+0.kernel_full_image      f0b1              (R )
+0.kernel_full_image_clean f0e2                  
+0.kernel_full_image_index f0d4                  
+0.kernel_full_image_index_next f0d7                  
+0.kernel_full_image_load f0b3                  
+0.kernel_full_image_return f0ec                  
+0.kernel_game            f101              (R )
+0.kernel_game_clean      f132                  
+0.kernel_game_image      f11b                  
+0.kernel_game_image_load f120                  
+0.kernel_game_line       f12f              (R )
+0.kernel_game_player     f101                  
+0.kernel_game_player_blank f10a                  
+0.kernel_game_player_draw f111              (R )
+0.kernel_game_player_restore f117              (R )
+0.kernel_game_return     f13e                  
+0.logo_animation_return  f1cc              (R )
+0.logo_audio_mute        f1e9              (R )
+0.logo_audio_mute_skip   f1f7              (R )
+0.logo_audio_play        f1d3                  
+0.logo_audio_play_note   f1d9                  
+0.logo_audio_return      f1f7              (R )
+0.logo_state_return      f201              (R )
+0.overscan_logic         f148                  
+0.overscan_logic_default f164              (R )
+0.overscan_logic_game    f164              (R )
+0.overscan_logic_logo    f158              (R )
+0.overscan_logic_title   f15e              (R )
+0.overscan_loop          f167              (R )
+0.overscan_return        f16e                  
 0.posobject_divide_loop  f003              (R )
-0.title_audio_play       f227                  
-0.title_audio_play_note  f230              (R )
-0.title_audio_play_note_1_mute f24c              (R )
-0.title_audio_return     f254              (R )
-0.title_state_return     f260              (R )
-0.vblank_logic           f074                  
-0.vblank_logic_default   f090              (R )
-0.vblank_logic_game      f090              (R )
-0.vblank_logic_logo      f084              (R )
-0.vblank_logic_title     f08a              (R )
-0.vblank_loop            f093              (R )
-0.vblank_return          f09a                  
-0.vsync_return           f06e                  
+0.title_audio_play       f2ef                  
+0.title_audio_play_note  f2f8              (R )
+0.title_audio_play_note_1_mute f314              (R )
+0.title_audio_return     f31c              (R )
+0.title_state_return     f324              (R )
+0.vblank_logic           f070                  
+0.vblank_logic_default   f08c              (R )
+0.vblank_logic_game      f08c              (R )
+0.vblank_logic_logo      f080              (R )
+0.vblank_logic_title     f086              (R )
+0.vblank_loop            f08f              (R )
+0.vblank_return          f096                  
+0.vsync_return           f06a                  
 1.CLEAR_STACK            f019              (R )
-2.ADDRESS                f18a              (R )
-2.POINTER                0086              (R )
-3.ADDRESS                f261              (R )
-3.POINTER                0086              (R )
-4.ADDRESS                f33c              (R )
-4.POINTER                0086              (R )
+10.ADDRESS               f564              (R )
+10.POINTER               0088              (R )
+11.ADDRESS               f54c              (R )
+11.POINTER               0088              (R )
+12.ADDRESS               f55c              (R )
+12.POINTER               0088              (R )
+13.ADDRESS               f56c              (R )
+13.POINTER               0088              (R )
+14.ADDRESS               f57c              (R )
+14.POINTER               0088              (R )
+2.CYCLES                 0006              (R )
+3.ADDRESS                f202              (R )
+3.POINTER                0084              (R )
+4.ADDRESS                f325              (R )
+4.POINTER                0084              (R )
+5.ADDRESS                f544              (R )
+5.POINTER                0088              (R )
+6.ADDRESS                f4fc              (R )
+6.POINTER                0084              (R )
+7.ADDRESS                f574              (R )
+7.POINTER                0088              (R )
+8.ADDRESS                f554              (R )
+8.POINTER                0088              (R )
+9.ADDRESS                f544              (R )
+9.POINTER                0088              (R )
 AUDC0                    0015              (R )
 AUDC1                    0016              (R )
 AUDF0                    0017              (R )
 AUDF1                    0018              (R )
-AudioStep                0083              (R )
+AudioStep                0087              (R )
 AUDV0                    0019              (R )
 AUDV1                    001a              (R )
 COLOR_NTSC               0001                  
@@ -75,18 +126,20 @@ CXPPMM                   0007
 ENABL                    001f              (R )
 ENAM0                    001d              (R )
 ENAM1                    001e              (R )
-Frame                    0081              (R )
-FrameTimer               0082              (R )
+Frame                    0082              (R )
+FrameTimer               0083              (R )
 GAME_BG_COLOR            0000              (R )
 GAME_FG_COLOR            000c              (R )
+GAME_P0_BOUNDARY         0008              (R )
 GAME_P0_COLOR            0056              (R )
-GAME_P0_SIZE             0008                  
-GameControl              f315              (R )
-GameImage                f33c              (R )
-GameInit                 f2d9              (R )
-GameObjects              f330              (R )
-GameOverScan             f314              (R )
-GameVerticalBlank        f30d              (R )
+GAME_P0_SIZE             0008              (R )
+GameControl              f42a              (R )
+GameImage                f4fc              (R )
+GameInit                 f3e5              (R )
+GameObjects              f4f0              (R )
+GameOverScan             f429              (R )
+GamePlayerSprite         f544              (R )
+GameVerticalBlank        f422              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
@@ -96,8 +149,8 @@ HMM1                     0023
 HMOVE                    002a              (R )
 HMP0                     0020              (R )
 HMP1                     0021                  
-ImagePtr                 0086              (R )
-ImageVisible             0088              (R )
+ImagePtr                 0084              (R )
+ImageVisible             0086              (R )
 InitSystem               f013              (R )
 INPT0                    0008                  
 INPT1                    0009                  
@@ -107,15 +160,23 @@ INPT4                    000c              (R )
 INPT5                    000d                  
 InterruptVectors         fffa                  
 INTIM                    0284              (R )
-Kernel                   f09b              (R )
-KERNEL_IMAGE_DATA        0003              (R )
+Kernel                   f097              (R )
+KERNEL_FULL_IMAGE        0000              (R )
+KERNEL_GAME              0001              (R )
+KERNEL_IMAGE_FULL_DATA   0006              (R )
 KERNEL_IMAGE_LINE        0008              (R )
+KERNEL_IMAGE_MIRROR_DATA 0003                  
 KERNEL_IMAGE_SIZE        0018              (R )
 KERNEL_OVERSCAN          001e                  
-KERNEL_SCANLINES         00c0                  
+KERNEL_SCANLINES         00c0              (R )
 KERNEL_TOTAL             0106                  
 KERNEL_VBLANK            0025                  
 KERNEL_VSYNC             0003              (R )
+KERNEL_WIDTH             0140                  
+KernelDefault            f0a3              (R )
+KernelFullImage          f0a3              (R )
+KernelGame               f0ed              (R )
+KernelType               0081              (R )
 LOGO_AUDIO_0_TONE        0004              (R )
 LOGO_AUDIO_0_VOLUME      000f              (R )
 LOGO_AUDIO_1_TONE        0001              (R )
@@ -125,30 +186,32 @@ LOGO_AUDIO_STEP          0008
 LOGO_BG_COLOR            00a2              (R )
 LOGO_FG_COLOR            005e              (R )
 LOGO_FRAMES              00b4              (R )
-LogoAnimation            f141              (R )
-LogoAudio                f151              (R )
-LogoAudio0               f1d2              (R )
-LogoAudio1               f1de              (R )
-LogoImage                f18a              (R )
-LogoInit                 f0fb              (R )
-LogoOverScan             f13a              (R )
-LogoState                f17c              (R )
-LogoVerticalBlank        f136              (R )
-Main                     f049              (R )
+LogoAnimation            f1bd              (R )
+LogoAudio                f1cd              (R )
+LogoAudio0               f292              (R )
+LogoAudio1               f29e              (R )
+LogoImage                f202              (R )
+LogoInit                 f16f              (R )
+LogoOverScan             f1b6              (R )
+LogoState                f1f8              (R )
+LogoVerticalBlank        f1b2              (R )
+Main                     f045              (R )
+NO_ILLEGAL_OPCODES       0000 ????         (R )
 NTSC                     0001              (R )
 NTSC_SCANLINES           00c0              (R )
 NTSC_TOTAL               0106              (R )
-NUSIZ0                   0004                  
+NUSIZ0                   0004              (R )
 NUSIZ1                   0005                  
-OverScan                 f0cb              (R )
+OverScan                 f13f              (R )
 PAL                      0000              (R )
 PAL_SCANLINES            00f2                  
 PAL_TOTAL                0138                  
 PF0                      000d              (R )
 PF1                      000e              (R )
 PF2                      000f              (R )
-PlayerPosition           0084              (R )
-PlayerSprite             f384              (R )
+PlayerCounter            008c                  
+PlayerPosition           008a              (R )
+PlayerPtr                0088              (R )
 PosObject                f000              (R )
 REFP0                    000b                  
 REFP1                    000c                  
@@ -191,23 +254,23 @@ TITLE_GAP                0002
 TITLE_IMAGE              0006                  
 TITLE_LINE_SIZE          0008                  
 TITLE_PAD                0004                  
-TitleAudio               f21d              (R )
-TitleAudio0              f2a9              (R )
-TitleAudio1              f2c9              (R )
-TitleImage               f261              (R )
-TitleInit                f1ea              (R )
-TitleOverScan            f216              (R )
-TitleState               f255              (R )
-TitleTone1               f2b9              (R )
-TitleVerticalBlank       f215              (R )
+TitleAudio               f2e5              (R )
+TitleAudio0              f3b5              (R )
+TitleAudio1              f3d5              (R )
+TitleImage               f325              (R )
+TitleInit                f2aa              (R )
+TitleOverScan            f2de              (R )
+TitleState               f31d              (R )
+TitleTone1               f3c5              (R )
+TitleVerticalBlank       f2dd              (R )
 VBLANK                   0001              (R )
 VDELBL                   0027                  
 VDELP0                   0025                  
 VDELP1                   0026                  
 VERSION_MACRO            006a                  
 VERSION_VCS              0069                  
-VerticalBlank            f06f              (R )
-VerticalSync             f058              (R )
+VerticalBlank            f06b              (R )
+VerticalSync             f054              (R )
 VSYNC                    0000              (R )
 WSYNC                    0002              (R )
 --- End of Symbol List.

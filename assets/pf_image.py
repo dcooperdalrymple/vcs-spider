@@ -185,7 +185,7 @@ if len(sys.argv) == 9 and sys.argv[1] == '-type' and sys.argv[3] == '-name' and 
         print "Invalid conversion type. Must be \"mirror\" or \"full\"."
         raise SystemExit
 
-    pf_data = reverse_data(pf_data, group_size)
+    #pf_data = reverse_data(pf_data, group_size)
     pf_output = compose_output(pf_data, group_size, address_name)
 
     output = open(out_file, "w")

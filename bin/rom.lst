@@ -402,74 +402,88 @@
      34  10000 ????		00 03	    KERNEL_VSYNC =	3
      35  10000 ????		00 25	    KERNEL_VBLANK =	37
      36  10000 ????		00 1e	    KERNEL_OVERSCAN =	30
-     37  10000 ????		00 08	    KERNEL_IMAGE_LINE =	8
-     38  10000 ????		00 03	    KERNEL_IMAGE_DATA =	3
-     39  10000 ????		00 18	    KERNEL_IMAGE_SIZE =	24
-     40  10000 ????
-     41  10000 ????						; Game States
-     42  10000 ????		00 00	    STATE_LOGO =	#0
-     43  10000 ????		00 01	    STATE_TITLE =	#1
-     44  10000 ????		00 02	    STATE_GAME =	#2
-     45  10000 ????
-     46  10000 ????						;================
-     47  10000 ????						; Variables
-     48  10000 ????						;================
-     49  10000 ????
-     50 U0089 ????				      SEG.U	vars
-     51 U0080					      org	$80
-     52 U0080
-     53 U0080		       00	   State      ds	1
-     54 U0081		       00	   Frame      ds	1
-     55 U0082		       00	   FrameTimer ds	1
-     56 U0083		       00	   AudioStep  ds	1
-     57 U0084		       00 00	   PlayerPosition ds	2
-     58 U0086		       00 00	   ImagePtr   ds	2
-     59 U0088		       00	   ImageVisible ds	1
-     60 U0089
-     61  10000 ????				       SEG
-     62  10000 ????
-     63  f000					      ORG	$F000	; Start of cart area
-     64  f000
-     65  f000							;=======================================
-     66  f000							; Global Kernel Subroutines
-     67  f000							;=======================================
-     68  f000
-     69  f000							;=======================================
-     70  f000							; PosObject
-     71  f000							; ---------
-     72  f000							; A - holds the X position of the object
-     73  f000							; X - holds which object to position
-     74  f000							;   0 = player0
-     75  f000							;   1 = player1
-     76  f000							;   2 = missile0
-     77  f000							;   3 = missile1
-     78  f000							;   4 = Ball
+     37  10000 ????		01 40	    KERNEL_WIDTH =	40*8
+     38  10000 ????
+     39  10000 ????		00 03	    KERNEL_IMAGE_MIRROR_DATA =	#3
+     40  10000 ????		00 06	    KERNEL_IMAGE_FULL_DATA =	#6
+     41  10000 ????		00 08	    KERNEL_IMAGE_LINE =	#8
+     42  10000 ????		00 18	    KERNEL_IMAGE_SIZE =	#24	; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
+     43  10000 ????
+     44  10000 ????						; Game States
+     45  10000 ????		00 00	    STATE_LOGO =	#0
+     46  10000 ????		00 01	    STATE_TITLE =	#1
+     47  10000 ????		00 02	    STATE_GAME =	#2
+     48  10000 ????
+     49  10000 ????						; Kernel Types
+     50  10000 ????		00 00	    KERNEL_FULL_IMAGE =	#0
+     51  10000 ????		00 01	    KERNEL_GAME =	#1
+     52  10000 ????
+     53  10000 ????						;================
+     54  10000 ????						; Variables
+     55  10000 ????						;================
+     56  10000 ????
+     57 U008d ????				      SEG.U	vars
+     58 U0080					      org	$80
+     59 U0080
+     60 U0080		       00	   State      ds	1
+     61 U0081		       00	   KernelType ds	1
+     62 U0082
+     63 U0082		       00	   Frame      ds	1
+     64 U0083		       00	   FrameTimer ds	1
+     65 U0084
+     66 U0084		       00 00	   ImagePtr   ds	2
+     67 U0086		       00	   ImageVisible ds	1
+     68 U0087
+     69 U0087		       00	   AudioStep  ds	1
+     70 U0088
+     71 U0088		       00 00	   PlayerPtr  ds	2
+     72 U008a		       00 00	   PlayerPosition ds	2
+     73 U008c		       00	   PlayerCounter ds	1
+     74 U008d
+     75  10000 ????				       SEG
+     76  10000 ????
+     77  f000					      ORG	$F000	; Start of cart area
+     78  f000
      79  f000							;=======================================
-     80  f000
-     81  f000				   PosObject
-     82  f000		       38		      sec
-     83  f001		       85 02		      sta	WSYNC
-     84  f003				   .posobject_divide_loop
-     85  f003		       e9 0f		      sbc	#15
-     86  f005		       b0 fc		      bcs	.posobject_divide_loop
-     87  f007		       49 07		      eor	#7
-     88  f009					      REPEAT	4
-     89  f009		       0a		      asl
-     88  f009					      REPEND
-     89  f00a		       0a		      asl
-     88  f00a					      REPEND
-     89  f00b		       0a		      asl
-     88  f00b					      REPEND
-     89  f00c		       0a		      asl
-     90  f00d					      REPEND
-     91  f00d		       9d 20 00 	      sta.wx	HMP0,x
-     92  f010		       95 10		      sta	RESP0,x
-     93  f012		       60		      rts
-     94  f013
-     95  f013				   InitSystem
-     96  f013
-     97  f013				   .init_clean
-     98  f013							; Resets RAM, TIA registers, and CPU registers
+     80  f000							; Global Kernel Subroutines
+     81  f000							;=======================================
+     82  f000
+     83  f000							;=======================================
+     84  f000							; PosObject
+     85  f000							; ---------
+     86  f000							; A - holds the X position of the object
+     87  f000							; X - holds which object to position
+     88  f000							;   0 = player0
+     89  f000							;   1 = player1
+     90  f000							;   2 = missile0
+     91  f000							;   3 = missile1
+     92  f000							;   4 = Ball
+     93  f000							;=======================================
+     94  f000
+     95  f000				   PosObject
+     96  f000		       38		      sec
+     97  f001		       85 02		      sta	WSYNC
+     98  f003				   .posobject_divide_loop
+     99  f003		       e9 0f		      sbc	#15
+    100  f005		       b0 fc		      bcs	.posobject_divide_loop
+    101  f007		       49 07		      eor	#7
+    102  f009					      REPEAT	4
+    103  f009		       0a		      asl
+    102  f009					      REPEND
+    103  f00a		       0a		      asl
+    102  f00a					      REPEND
+    103  f00b		       0a		      asl
+    102  f00b					      REPEND
+    103  f00c		       0a		      asl
+    104  f00d					      REPEND
+    105  f00d		       9d 20 00 	      sta.wx	HMP0,x
+    106  f010		       95 10		      sta	RESP0,x
+    107  f012		       60		      rts
+    108  f013
+    109  f013				   InitSystem
+    110  f013
+    111  f013				   .init_clean
+    112  f013							; Resets RAM, TIA registers, and CPU registers
       0  f013					      CLEAN_START
       1  f013		       78		      sei
       2  f014		       d8		      cld
@@ -482,1053 +496,1580 @@
       9  f01b		       48		      pha
      10  f01c		       d0 fb		      bne	.CLEAR_STACK
      11  f01e
-    100  f01e
-    101  f01e				   .init_tia
-    102  f01e							; Define default TIA register values
-    103  f01e
-    104  f01e							; Set background color
-    105  f01e		       a9 00		      lda	#$00	; Black
-    106  f020		       85 09		      sta	COLUBK
-    107  f022
-    108  f022							; Set the playfield and player color
-    109  f022		       a9 0e		      lda	#$0E	; White
-    110  f024		       85 08		      sta	COLUPF
-    111  f026		       85 06		      sta	COLUP0
-    112  f028		       85 07		      sta	COLUP1
-    113  f02a
-    114  f02a							; Playfield Control
-    115  f02a		       a9 01		      lda	#%00000001	; 1 for mirroring
-    116  f02c		       85 0a		      sta	CTRLPF
-    117  f02e
-    118  f02e							; Disable Game Elements
-    119  f02e		       a9 00		      lda	#$00
-    120  f030		       85 1f		      sta	ENABL	; Turn off ball
-    121  f032		       85 1d		      sta	ENAM0	; Turn off player 1 missile
-    122  f034		       85 1e		      sta	ENAM1	; Turn off player 2 missile
-    123  f036		       85 1b		      sta	GRP0	; Turn off player 1
-    124  f038		       85 1c		      sta	GRP1	; Turn off player 2
-    125  f03a
-    126  f03a							; Empty playfield
-    127  f03a		       a9 00		      lda	#%00000000
-    128  f03c		       85 0d		      sta	PF0
-    129  f03e		       85 0e		      sta	PF1
-    130  f040		       85 0f		      sta	PF2
-    131  f042
-    132  f042				   .init_game
-    133  f042							; Initial state
-    134  f042		       a9 00		      lda	#STATE_LOGO
-    135  f044		       85 80		      sta	State
-    136  f046		       20 fb f0 	      jsr	LogoInit
-    137  f049
-    138  f049							;=======================================
-    139  f049							; Game Kernel
-    140  f049							;=======================================
-    141  f049
-    142  f049				   Main
-    143  f049
-    144  f049		       20 58 f0 	      jsr	VerticalSync
-    145  f04c		       20 6f f0 	      jsr	VerticalBlank
-    146  f04f		       20 9b f0 	      jsr	Kernel
-    147  f052		       20 cb f0 	      jsr	OverScan
-    148  f055		       4c 49 f0 	      jmp	Main
-    149  f058
-    150  f058				   VerticalSync
-    151  f058
-    152  f058		       a9 00		      lda	#0
-    153  f05a		       85 01		      sta	VBLANK
-    154  f05c
-    155  f05c							; Turn on Vertical Sync signal and setup timer
-    156  f05c		       a9 02		      lda	#2
-    157  f05e		       85 00		      sta	VSYNC
-    158  f060
-    159  f060							; Increment frame count and reduce frame counter
-    160  f060		       e6 81		      inc	Frame
-    161  f062		       c6 82		      dec	FrameTimer
-    162  f064
-    163  f064							; VSYNCH signal scanlines
-    164  f064					      REPEAT	#KERNEL_VSYNC
-    165  f064		       85 02		      sta	WSYNC
-    164  f064					      REPEND
-    165  f066		       85 02		      sta	WSYNC
-    164  f066					      REPEND
-    165  f068		       85 02		      sta	WSYNC
-    166  f06a					      REPEND
-    167  f06a
-    168  f06a							; Turn off Vertical Sync signal
-    169  f06a		       a9 00		      lda	#0
-    170  f06c		       85 00		      sta	VSYNC
-    171  f06e
-    172  f06e				   .vsync_return
-    173  f06e		       60		      rts
-    174  f06f
-    175  f06f				   VerticalBlank
-    176  f06f							; Setup Timer
-    177  f06f		       a9 2c		      lda	#44	; #KERNEL_VBLANK*76/64
-    178  f071		       8d 96 02 	      sta	TIM64T
-    179  f074
-    180  f074				   .vblank_logic
-    181  f074							; Perform Game Logic
-    182  f074		       a5 80		      lda	State
-    183  f076		       c9 00		      cmp	#STATE_LOGO
-    184  f078		       f0 0a		      beq	.vblank_logic_logo
-    185  f07a		       c9 01		      cmp	#STATE_TITLE
-    186  f07c		       f0 0c		      beq	.vblank_logic_title
-    187  f07e		       c9 02		      cmp	#STATE_GAME
-    188  f080		       f0 0e		      beq	.vblank_logic_game
-    189  f082		       d0 0c		      bne	.vblank_logic_default
-    190  f084
-    191  f084				   .vblank_logic_logo
-    192  f084		       20 36 f1 	      jsr	LogoVerticalBlank
-    193  f087		       4c 93 f0 	      jmp	.vblank_loop
-    194  f08a
-    195  f08a				   .vblank_logic_title
-    196  f08a		       20 15 f2 	      jsr	TitleVerticalBlank
-    197  f08d		       4c 93 f0 	      jmp	.vblank_loop
-    198  f090
-    199  f090				   .vblank_logic_game
-    200  f090				   .vblank_logic_default
-    201  f090		       20 0d f3 	      jsr	GameVerticalBlank
-    202  f093
-    203  f093				   .vblank_loop
-    204  f093							; WSYNC until Timer is complete
-    205  f093		       85 02		      sta	WSYNC
-    206  f095		       ad 84 02 	      lda	INTIM
-    207  f098		       d0 f9		      bne	.vblank_loop
-    208  f09a
-    209  f09a				   .vblank_return
-    210  f09a		       60		      rts
-    211  f09b
-    212  f09b				   Kernel
-    213  f09b
-    214  f09b							; Turn on display
-    215  f09b		       a9 00		      lda	#0
-    216  f09d		       85 01		      sta	VBLANK
-    217  f09f
-    218  f09f				   .kernel_image
-    219  f09f		       a0 48		      ldy	#KERNEL_IMAGE_DATA*KERNEL_IMAGE_SIZE
-    220  f0a1
-    221  f0a1				   .kernel_image_line
-    222  f0a1
-    223  f0a1							; Write empty line if not visible
-    224  f0a1		       c4 88		      cpy	ImageVisible
-    225  f0a3		       90 11		      bcc	.kernel_image_line_blank
-    226  f0a5
-    227  f0a5							; Draw Image
-    228  f0a5		       b1 86		      lda	(ImagePtr),y
-    229  f0a7		       85 0d		      sta	PF0
-    230  f0a9		       88		      dey
-    231  f0aa		       b1 86		      lda	(ImagePtr),y
-    232  f0ac		       85 0e		      sta	PF1
-    233  f0ae		       88		      dey
-    234  f0af		       b1 86		      lda	(ImagePtr),y
-    235  f0b1		       85 0f		      sta	PF2
-    236  f0b3
-    237  f0b3		       4c c0 f0 	      jmp	.kernel_image_line_skip
-    238  f0b6
-    239  f0b6				   .kernel_image_line_blank
-    240  f0b6
-    241  f0b6							; Write blank playfield
-    242  f0b6		       a9 00		      lda	#0
-    243  f0b8		       85 0d		      sta	PF0
-    244  f0ba		       85 0e		      sta	PF1
-    245  f0bc		       85 0f		      sta	PF2
-    246  f0be
-    247  f0be		       88		      dey
-    248  f0bf		       88		      dey
-    249  f0c0
-    250  f0c0				   .kernel_image_line_skip
-    251  f0c0
-    252  f0c0		       a2 08		      ldx	#KERNEL_IMAGE_LINE
-    253  f0c2				   .kernel_image_loop
-    254  f0c2		       85 02		      sta	WSYNC
-    255  f0c4		       ca		      dex
-    256  f0c5		       d0 fb		      bne	.kernel_image_loop
-    257  f0c7
-    258  f0c7		       88		      dey
-    259  f0c8		       d0 d7		      bne	.kernel_image_line
-    260  f0ca
-    261  f0ca				   .kernel_return
-    262  f0ca		       60		      rts
-    263  f0cb
-    264  f0cb				   OverScan
-    265  f0cb
-    266  f0cb							; End of screen, enter blanking
-    267  f0cb		       a9 42		      lda	#%01000010
-    268  f0cd		       85 01		      sta	VBLANK
-    269  f0cf
-    270  f0cf							; Setup Timer
-    271  f0cf		       a9 24		      lda	#36	; #KERNEL_OVERSCAN*76/64
-    272  f0d1		       8d 96 02 	      sta	TIM64T
-    273  f0d4
-    274  f0d4				   .overscan_logic
-    275  f0d4		       a5 80		      lda	State
-    276  f0d6		       c9 00		      cmp	#STATE_LOGO
-    277  f0d8		       f0 0a		      beq	.overscan_logic_logo
-    278  f0da		       c9 01		      cmp	#STATE_TITLE
-    279  f0dc		       f0 0c		      beq	.overscan_logic_title
-    280  f0de		       c9 02		      cmp	#STATE_GAME
-    281  f0e0		       f0 0e		      beq	.overscan_logic_game
-    282  f0e2		       d0 0c		      bne	.overscan_logic_default
-    283  f0e4
-    284  f0e4				   .overscan_logic_logo
-    285  f0e4		       20 3a f1 	      jsr	LogoOverScan
-    286  f0e7		       4c f3 f0 	      jmp	.overscan_loop
-    287  f0ea
-    288  f0ea				   .overscan_logic_title
-    289  f0ea		       20 16 f2 	      jsr	TitleOverScan
-    290  f0ed		       4c f3 f0 	      jmp	.overscan_loop
-    291  f0f0
-    292  f0f0				   .overscan_logic_game
-    293  f0f0				   .overscan_logic_default
-    294  f0f0		       20 14 f3 	      jsr	GameOverScan
-    295  f0f3
-    296  f0f3				   .overscan_loop
-    297  f0f3							; WSYNC until Timer is complete
-    298  f0f3		       85 02		      sta	WSYNC
-    299  f0f5		       ad 84 02 	      lda	INTIM
-    300  f0f8		       d0 f9		      bne	.overscan_loop
-    301  f0fa
-    302  f0fa				   .overscan_return
-    303  f0fa		       60		      rts
-    304  f0fb
-    305  f0fb
-    306  f0fb							;================
-    307  f0fb							; State Code
-    308  f0fb							;================
-    309  f0fb
-    310  f0fb							; Game state logic
+    114  f01e
+    115  f01e				   .init_tia
+    116  f01e							; Define default TIA register values
+    117  f01e
+    118  f01e							; Set background color
+    119  f01e		       a9 00		      lda	#$00	; Black
+    120  f020		       85 09		      sta	COLUBK
+    121  f022
+    122  f022							; Set the playfield and player color
+    123  f022		       a9 0e		      lda	#$0E	; White
+    124  f024		       85 08		      sta	COLUPF
+    125  f026		       85 06		      sta	COLUP0
+    126  f028		       85 07		      sta	COLUP1
+    127  f02a
+    128  f02a							; Playfield Control
+    129  f02a		       a9 01		      lda	#%00000001	; 1 for mirroring
+    130  f02c		       85 0a		      sta	CTRLPF
+    131  f02e
+    132  f02e							; Disable Game Elements
+    133  f02e		       a9 00		      lda	#$00
+    134  f030		       85 1f		      sta	ENABL	; Turn off ball
+    135  f032		       85 1d		      sta	ENAM0	; Turn off player 1 missile
+    136  f034		       85 1e		      sta	ENAM1	; Turn off player 2 missile
+    137  f036		       85 1b		      sta	GRP0	; Turn off player 1
+    138  f038		       85 1c		      sta	GRP1	; Turn off player 2
+    139  f03a
+    140  f03a							; Empty playfield
+    141  f03a		       a9 00		      lda	#%00000000
+    142  f03c		       85 0d		      sta	PF0
+    143  f03e		       85 0e		      sta	PF1
+    144  f040		       85 0f		      sta	PF2
+    145  f042
+    146  f042				   .init_game
+    147  f042
+    148  f042		       20 6f f1 	      jsr	LogoInit
+    149  f045							;jsr GameInit
+    150  f045
+    151  f045							;=======================================
+    152  f045							; Game Kernel
+    153  f045							;=======================================
+    154  f045
+    155  f045				   Main
+    156  f045
+    157  f045		       20 54 f0 	      jsr	VerticalSync
+    158  f048		       20 6b f0 	      jsr	VerticalBlank
+    159  f04b		       20 97 f0 	      jsr	Kernel
+    160  f04e		       20 3f f1 	      jsr	OverScan
+    161  f051		       4c 45 f0 	      jmp	Main
+    162  f054
+    163  f054				   VerticalSync
+    164  f054
+    165  f054		       a9 00		      lda	#0
+    166  f056		       85 01		      sta	VBLANK
+    167  f058
+    168  f058							; Turn on Vertical Sync signal and setup timer
+    169  f058		       a9 02		      lda	#2
+    170  f05a		       85 00		      sta	VSYNC
+    171  f05c
+    172  f05c							; Increment frame count and reduce frame counter
+    173  f05c		       e6 82		      inc	Frame
+    174  f05e		       c6 83		      dec	FrameTimer
+    175  f060
+    176  f060							; VSYNCH signal scanlines
+    177  f060					      REPEAT	#KERNEL_VSYNC
+    178  f060		       85 02		      sta	WSYNC
+    177  f060					      REPEND
+    178  f062		       85 02		      sta	WSYNC
+    177  f062					      REPEND
+    178  f064		       85 02		      sta	WSYNC
+    179  f066					      REPEND
+    180  f066
+    181  f066							; Turn off Vertical Sync signal
+    182  f066		       a9 00		      lda	#0
+    183  f068		       85 00		      sta	VSYNC
+    184  f06a
+    185  f06a				   .vsync_return
+    186  f06a		       60		      rts
+    187  f06b
+    188  f06b				   VerticalBlank
+    189  f06b							; Setup Timer
+    190  f06b		       a9 2c		      lda	#44	; #KERNEL_VBLANK*76/64
+    191  f06d		       8d 96 02 	      sta	TIM64T
+    192  f070
+    193  f070				   .vblank_logic
+    194  f070							; Perform Game Logic
+    195  f070		       a5 80		      lda	State
+    196  f072		       c9 00		      cmp	#STATE_LOGO
+    197  f074		       f0 0a		      beq	.vblank_logic_logo
+    198  f076		       c9 01		      cmp	#STATE_TITLE
+    199  f078		       f0 0c		      beq	.vblank_logic_title
+    200  f07a		       c9 02		      cmp	#STATE_GAME
+    201  f07c		       f0 0e		      beq	.vblank_logic_game
+    202  f07e		       d0 0c		      bne	.vblank_logic_default
+    203  f080
+    204  f080				   .vblank_logic_logo
+    205  f080		       20 b2 f1 	      jsr	LogoVerticalBlank
+    206  f083		       4c 8f f0 	      jmp	.vblank_loop
+    207  f086
+    208  f086				   .vblank_logic_title
+    209  f086		       20 dd f2 	      jsr	TitleVerticalBlank
+    210  f089		       4c 8f f0 	      jmp	.vblank_loop
+    211  f08c
+    212  f08c				   .vblank_logic_game
+    213  f08c				   .vblank_logic_default
+    214  f08c		       20 22 f4 	      jsr	GameVerticalBlank
+    215  f08f
+    216  f08f				   .vblank_loop
+    217  f08f							; WSYNC until Timer is complete
+    218  f08f		       85 02		      sta	WSYNC
+    219  f091		       ad 84 02 	      lda	INTIM
+    220  f094		       d0 f9		      bne	.vblank_loop
+    221  f096
+    222  f096				   .vblank_return
+    223  f096		       60		      rts
+    224  f097
+    225  f097				   Kernel
+    226  f097
+    227  f097							; Check which kernel is selected
+    228  f097		       a5 81		      lda	KernelType
+    229  f099		       c9 01		      cmp	#KERNEL_GAME
+    230  f09b		       f0 50		      beq	KernelGame
+    231  f09d		       c9 00		      cmp	#KERNEL_FULL_IMAGE
+    232  f09f		       f0 02		      beq	KernelFullImage
+    233  f0a1		       d0 00		      bne	KernelDefault
+    234  f0a3
+    235  f0a3				   KernelDefault
+    236  f0a3				   KernelFullImage
+    237  f0a3
+    238  f0a3							; Playfield Control
+    239  f0a3		       a9 00		      lda	#%00000000	; No mirroring
+    240  f0a5		       85 0a		      sta	CTRLPF
+    241  f0a7
+    242  f0a7							; Start Counters
+    243  f0a7		       a2 08		      ldx	#KERNEL_IMAGE_LINE	; Scanline Counter
+    244  f0a9		       a0 00		      ldy	#0	; Image Counter
+    245  f0ab
+    246  f0ab							; Turn on display
+    247  f0ab		       a9 00		      lda	#0
+    248  f0ad		       85 01		      sta	VBLANK
+    249  f0af
+    250  f0af		       85 02		      sta	WSYNC
+    251  f0b1
+    252  f0b1				   .kernel_full_image
+    253  f0b1
+    254  f0b1							; 76 machine cycles per scanline
+    255  f0b1		       85 02		      sta	WSYNC
+    256  f0b3
+    257  f0b3				   .kernel_full_image_load		; 66 cycles
+    258  f0b3
+    259  f0b3							; First half of image
+    260  f0b3		       b9 25 f3 	      lda	TitleImage,y	; 5
+    261  f0b6		       85 0d		      sta	PF0	; 4
+    262  f0b8		       b9 26 f3 	      lda	TitleImage+1,y	; 5
+    263  f0bb		       85 0e		      sta	PF1	; 4
+    264  f0bd		       b9 27 f3 	      lda	TitleImage+2,y	; 5
+    265  f0c0		       85 0f		      sta	PF2	; 4
+    266  f0c2
+      0  f0c2					      sleep	6
+      1  f0c2				   .CYCLES    SET	6
+      2  f0c2
+      3  f0c2				  -	      IF	.CYCLES < 2
+      4  f0c2				  -	      ECHO	"MACRO ERROR: 'SLEEP': Duration must be > 1"
+      5  f0c2				  -	      ERR
+      6  f0c2					      ENDIF
+      7  f0c2
+      8  f0c2				  -	      IF	.CYCLES & 1
+      9  f0c2				  -	      IFNCONST	NO_ILLEGAL_OPCODES
+     10  f0c2				  -	      nop	0
+     11  f0c2				  -	      ELSE
+     12  f0c2				  -	      bit	VSYNC
+     13  f0c2				  -	      ENDIF
+     14  f0c2				  -.CYCLES    SET	.CYCLES - 3
+     15  f0c2					      ENDIF
+     16  f0c2
+     17  f0c2					      REPEAT	.CYCLES / 2
+     18  f0c2		       ea		      nop
+     17  f0c2					      REPEND
+     18  f0c3		       ea		      nop
+     17  f0c3					      REPEND
+     18  f0c4		       ea		      nop
+     19  f0c5					      REPEND
+    268  f0c5
+    269  f0c5							; Second half of image
+    270  f0c5							;lda (ImagePtr+#3),y ; 5 ; Need to figure out indirect addressing with index adjustment
+    271  f0c5		       b9 28 f3 	      lda	TitleImage+3,y	; 5
+    272  f0c8		       85 0d		      sta	PF0	; 4
+    273  f0ca		       b9 29 f3 	      lda	TitleImage+4,y	; 5
+    274  f0cd		       85 0e		      sta	PF1	; 4
+    275  f0cf		       b9 2a f3 	      lda	TitleImage+5,y	; 5
+    276  f0d2		       85 0f		      sta	PF2	; 4
+    277  f0d4
+    278  f0d4				   .kernel_full_image_index		; 4 cycles
+    279  f0d4
+    280  f0d4		       ca		      dex		; 2
+    281  f0d5		       d0 da		      bne	.kernel_full_image	; 2
+    282  f0d7
+    283  f0d7				   .kernel_full_image_index_next		; 6 cycles
+    284  f0d7
+    285  f0d7		       a2 08		      ldx	#KERNEL_IMAGE_LINE	; 2
+    286  f0d9		       98		      tya		; 2
+    287  f0da		       18		      clc		; 2
+    288  f0db		       69 06		      adc	#KERNEL_IMAGE_FULL_DATA	; 2
+    289  f0dd		       a8		      tay		; 2
+    290  f0de		       c0 90		      cpy	#KERNEL_IMAGE_SIZE*KERNEL_IMAGE_FULL_DATA
+    291  f0e0		       d0 cf		      bne	.kernel_full_image	; 2
+    292  f0e2
+    293  f0e2				   .kernel_full_image_clean
+    294  f0e2		       85 02		      sta	WSYNC
+    295  f0e4
+    296  f0e4							; Clear out playfield
+    297  f0e4		       a9 00		      lda	#0
+    298  f0e6		       85 0d		      sta	PF0
+    299  f0e8		       85 0e		      sta	PF1
+    300  f0ea		       85 0f		      sta	PF2
+    301  f0ec
+    302  f0ec				   .kernel_full_image_return
+    303  f0ec		       60		      rts
+    304  f0ed
+    305  f0ed				   KernelGame
+    306  f0ed
+    307  f0ed							; Playfield Control
+    308  f0ed		       a9 01		      lda	#%00000001	; Mirrored
+    309  f0ef		       85 0a		      sta	CTRLPF
+    310  f0f1
+    311  f0f1							; Set player 0 to be double size
+    312  f0f1		       a5 04		      lda	NUSIZ0
+    313  f0f3		       29 f8		      and	#%11111000
+    314  f0f5		       09 05		      ora	#%00000101
+    315  f0f7		       85 04		      sta	NUSIZ0
+    316  f0f9
+    317  f0f9							; Turn on display
+    318  f0f9		       a9 00		      lda	#0
+    319  f0fb		       85 01		      sta	VBLANK
+    320  f0fd
+    321  f0fd							; Start Counters
+    322  f0fd		       a2 c0		      ldx	#KERNEL_SCANLINES	; Scanline Counter
+    323  f0ff		       a0 00		      ldy	#0	; Image Counter
+    324  f101
+    325  f101				   .kernel_game
+    326  f101
+    327  f101				   .kernel_game_player
+    328  f101
+    329  f101							; Store image position in stack
+    330  f101		       98		      tya
+    331  f102		       48		      pha
+    332  f103
+    333  f103		       8a		      txa
+    334  f104		       e5 8b		      sbc	PlayerPosition+1
+    335  f106		       c9 10		      cmp	#GAME_P0_SIZE*2
+    336  f108		       90 07		      bcc	.kernel_game_player_draw
+    337  f10a
+    338  f10a				   .kernel_game_player_blank
+    339  f10a
+    340  f10a							; Draw empty sprite
+    341  f10a		       a9 00		      lda	#0
+    342  f10c		       85 1b		      sta	GRP0
+    343  f10e		       4c 17 f1 	      jmp	.kernel_game_player_restore
+    344  f111
+    345  f111				   .kernel_game_player_draw
+    346  f111
+    347  f111							; Load sprite line
+    348  f111		       4a		      lsr		; Divide by 2
+    349  f112		       a8		      tay
+    350  f113		       b1 88		      lda	(PlayerPtr),y
+    351  f115		       85 1b		      sta	GRP0
+    352  f117
+    353  f117				   .kernel_game_player_restore
+    354  f117
+    355  f117							; Restore image position from stack
+    356  f117		       68		      pla
+    357  f118		       a8		      tay
+    358  f119
+    359  f119							; Sync up to horizontal line
+    360  f119		       85 02		      sta	WSYNC
+    361  f11b
+    362  f11b				   .kernel_game_image
+    363  f11b
+    364  f11b							; Check to see if new playfield needs to be loaded
+    365  f11b		       8a		      txa
+    366  f11c		       29 07		      and	#%00000111
+    367  f11e		       d0 0f		      bne	.kernel_game_line
+    368  f120
+    369  f120				   .kernel_game_image_load
+    370  f120
+    371  f120							; Draw Image
+    372  f120		       b1 84		      lda	(ImagePtr),y	; 3
+    373  f122		       85 0d		      sta	PF0	; 1
+    374  f124		       c8		      iny		; 2
+    375  f125		       b1 84		      lda	(ImagePtr),y	; 3
+    376  f127		       85 0e		      sta	PF1	; 1
+    377  f129		       c8		      iny		; 2
+    378  f12a		       b1 84		      lda	(ImagePtr),y	; 3
+    379  f12c		       85 0f		      sta	PF2	; 1
+    380  f12e		       c8		      iny		; 2
+    381  f12f
+    382  f12f				   .kernel_game_line
+    383  f12f		       ca		      dex
+    384  f130		       d0 cf		      bne	.kernel_game
+    385  f132
+    386  f132				   .kernel_game_clean
+    387  f132		       85 02		      sta	WSYNC
+    388  f134
+    389  f134							; Clear out playfield
+    390  f134		       a9 00		      lda	#0
+    391  f136		       85 0d		      sta	PF0
+    392  f138		       85 0e		      sta	PF1
+    393  f13a		       85 0f		      sta	PF2
+    394  f13c
+    395  f13c							; Clear out Player sprite
+    396  f13c		       85 1b		      sta	GRP0
+    397  f13e
+    398  f13e				   .kernel_game_return
+    399  f13e		       60		      rts
+    400  f13f
+    401  f13f				   OverScan
+    402  f13f
+    403  f13f							; End of screen, enter blanking
+    404  f13f		       a9 42		      lda	#%01000010
+    405  f141		       85 01		      sta	VBLANK
+    406  f143
+    407  f143							; Setup Timer
+    408  f143		       a9 24		      lda	#36	; #KERNEL_OVERSCAN*76/64
+    409  f145		       8d 96 02 	      sta	TIM64T
+    410  f148
+    411  f148				   .overscan_logic
+    412  f148		       a5 80		      lda	State
+    413  f14a		       c9 00		      cmp	#STATE_LOGO
+    414  f14c		       f0 0a		      beq	.overscan_logic_logo
+    415  f14e		       c9 01		      cmp	#STATE_TITLE
+    416  f150		       f0 0c		      beq	.overscan_logic_title
+    417  f152		       c9 02		      cmp	#STATE_GAME
+    418  f154		       f0 0e		      beq	.overscan_logic_game
+    419  f156		       d0 0c		      bne	.overscan_logic_default
+    420  f158
+    421  f158				   .overscan_logic_logo
+    422  f158		       20 b6 f1 	      jsr	LogoOverScan
+    423  f15b		       4c 67 f1 	      jmp	.overscan_loop
+    424  f15e
+    425  f15e				   .overscan_logic_title
+    426  f15e		       20 de f2 	      jsr	TitleOverScan
+    427  f161		       4c 67 f1 	      jmp	.overscan_loop
+    428  f164
+    429  f164				   .overscan_logic_game
+    430  f164				   .overscan_logic_default
+    431  f164		       20 29 f4 	      jsr	GameOverScan
+    432  f167
+    433  f167				   .overscan_loop
+    434  f167							; WSYNC until Timer is complete
+    435  f167		       85 02		      sta	WSYNC
+    436  f169		       ad 84 02 	      lda	INTIM
+    437  f16c		       d0 f9		      bne	.overscan_loop
+    438  f16e
+    439  f16e				   .overscan_return
+    440  f16e		       60		      rts
+    441  f16f
+    442  f16f
+    443  f16f							;================
+    444  f16f							; State Code
+    445  f16f							;================
+    446  f16f
+    447  f16f							; Game state logic
 ------- FILE logo.asm LEVEL 2 PASS 2
-      0  f0fb					      include	"logo.asm"
-      1  f0fb							;================
-      2  f0fb							; Constants
-      3  f0fb							;================
-      4  f0fb
-      5  f0fb		       00 b4	   LOGO_FRAMES =	180
-      6  f0fb
-      7  f0fb		       00 a2	   LOGO_BG_COLOR =	#$A2
-      8  f0fb		       00 5e	   LOGO_FG_COLOR =	#$5E
-      9  f0fb
-     10  f0fb		       00 04	   LOGO_AUDIO_0_TONE =	4
-     11  f0fb		       00 0f	   LOGO_AUDIO_0_VOLUME =	15	; 15 is max
-     12  f0fb		       00 01	   LOGO_AUDIO_1_TONE =	1
-     13  f0fb		       00 03	   LOGO_AUDIO_1_VOLUME =	3
-     14  f0fb		       00 0c	   LOGO_AUDIO_LENGTH =	12
-     15  f0fb		       00 08	   LOGO_AUDIO_STEP =	8
-     16  f0fb
-     17  f0fb				   LogoInit
-     18  f0fb
-     19  f0fb							; Load Colors
-     20  f0fb		       a9 a2		      lda	#LOGO_BG_COLOR
-     21  f0fd		       85 09		      sta	COLUBK
-     22  f0ff		       a9 5e		      lda	#LOGO_FG_COLOR
-     23  f101		       85 08		      sta	COLUPF
-     24  f103
-     25  f103							; Load audio settings
-     26  f103		       a9 04		      lda	#LOGO_AUDIO_0_TONE
-     27  f105		       85 15		      sta	AUDC0
-     28  f107		       a9 0f		      lda	#LOGO_AUDIO_0_VOLUME
-     29  f109		       85 19		      sta	AUDV0
-     30  f10b		       a9 01		      lda	#LOGO_AUDIO_1_TONE
-     31  f10d		       85 16		      sta	AUDC1
-     32  f10f		       a9 03		      lda	#LOGO_AUDIO_1_VOLUME
-     33  f111		       85 1a		      sta	AUDV1
-     34  f113		       a9 00		      lda	#0
-     35  f115		       85 83		      sta	AudioStep
-     36  f117
-     37  f117							; Play first note
-     38  f117		       ad d2 f1 	      lda	LogoAudio0,AudioStep
-     39  f11a		       85 17		      sta	AUDF0
-     40  f11c		       ad de f1 	      lda	LogoAudio1,AudioStep
-     41  f11f		       85 18		      sta	AUDF1
-     42  f121
-     43  f121							; Setup frame counters
-     44  f121		       a9 00		      lda	#0
-     45  f123		       85 81		      sta	Frame
-     46  f125		       a9 b4		      lda	#LOGO_FRAMES
-     47  f127		       85 82		      sta	FrameTimer
-     48  f129
-     49  f129							; Setup Image Pointer
-      0  f129					      SET_POINTER	ImagePtr, LogoImage
-      1  f129				   .POINTER   SET	ImagePtr
-      2  f129				   .ADDRESS   SET	LogoImage
-      3  f129
-      4  f129		       a9 8a		      LDA	#<.ADDRESS
-      5  f12b		       85 86		      STA	.POINTER
-      6  f12d		       a9 f1		      LDA	#>.ADDRESS
-      7  f12f		       85 87		      STA	.POINTER+1
-      8  f131
-     51  f131
-     52  f131							; Setup Image Animation
-     53  f131		       a9 18		      lda	#KERNEL_IMAGE_SIZE
-     54  f133		       85 88		      sta	ImageVisible
-     55  f135
-     56  f135		       60		      rts
-     57  f136
-     58  f136				   LogoVerticalBlank
-     59  f136		       20 41 f1 	      jsr	LogoAnimation
-     60  f139		       60		      rts
-     61  f13a
-     62  f13a				   LogoOverScan
-     63  f13a		       20 51 f1 	      jsr	LogoAudio
-     64  f13d		       20 7c f1 	      jsr	LogoState
-     65  f140		       60		      rts
-     66  f141
-     67  f141				   LogoAnimation
-     68  f141		       a5 81		      lda	Frame
-     69  f143		       29 03		      and	#%00000011	; Every 4 when bits are 00
-     70  f145		       d0 09		      bne	.logo_animation_return
-     71  f147
-     72  f147		       a6 88		      ldx	ImageVisible
-     73  f149		       e0 00		      cpx	#0
-     74  f14b		       f0 03		      beq	.logo_animation_return
-     75  f14d
-     76  f14d							; Add another visible line
-     77  f14d		       ca		      dex
-     78  f14e		       86 88		      stx	ImageVisible
-     79  f150
-     80  f150				   .logo_animation_return
-     81  f150		       60		      rts
-     82  f151
-     83  f151				   LogoAudio
-     84  f151
-     85  f151		       a5 81		      lda	Frame
-     86  f153		       29 07		      and	#%00000111	; Every 8 when bits are 000
-     87  f155		       d0 24		      bne	.logo_audio_return
-     88  f157
-     89  f157				   .logo_audio_play
-     90  f157
-     91  f157							; Check if we're at the end of the melody
-     92  f157		       a4 83		      ldy	AudioStep
-     93  f159		       c0 0b		      cpy	#LOGO_AUDIO_LENGTH-1
-     94  f15b		       f0 10		      beq	.logo_audio_mute
-     95  f15d
-     96  f15d				   .logo_audio_play_note
-     97  f15d							; Increment audio position
-     98  f15d		       c8		      iny
-     99  f15e		       84 83		      sty	AudioStep
-    100  f160
-    101  f160							; Logo note and play
-    102  f160		       b9 d2 f1 	      lda	LogoAudio0,y
-    103  f163		       85 17		      sta	AUDF0
-    104  f165		       b9 de f1 	      lda	LogoAudio1,y
-    105  f168		       85 18		      sta	AUDF1
-    106  f16a		       4c 7b f1 	      jmp	.logo_audio_mute_skip
-    107  f16d
-    108  f16d				   .logo_audio_mute
-    109  f16d
-    110  f16d							; Mute audio
-    111  f16d		       a9 00		      lda	#0
-    112  f16f		       85 15		      sta	AUDC0
-    113  f171		       85 19		      sta	AUDV0
-    114  f173		       85 17		      sta	AUDF0
-    115  f175		       85 16		      sta	AUDC1
-    116  f177		       85 1a		      sta	AUDV1
-    117  f179		       85 18		      sta	AUDF1
-    118  f17b
-    119  f17b				   .logo_audio_mute_skip
-    120  f17b				   .logo_audio_return
-    121  f17b		       60		      rts
-    122  f17c
-    123  f17c				   LogoState
-    124  f17c		       a5 82		      lda	FrameTimer
-    125  f17e		       c9 00		      cmp	#0
-    126  f180		       d0 07		      bne	.logo_state_return
-    127  f182
-    128  f182		       a9 01		      lda	#STATE_TITLE
-    129  f184		       85 80		      sta	State
-    130  f186		       20 ea f1 	      jsr	TitleInit
-    131  f189
-    132  f189				   .logo_state_return
-    133  f189		       60		      rts
-    134  f18a
-    135  f18a							; Assets
-    136  f18a
-    137  f18a				   LogoImage		; 6 bytes over 8 lines each, total of 48 lines
-    138  f18a
-    139  f18a		       00		      .BYTE.b	%00000000	; First 4 bits reversed
-    140  f18b		       00		      .BYTE.b	%00000000	; Normal
-    141  f18c		       00		      .BYTE.b	%00000000	; Reversed
-    142  f18d
-    143  f18d		       00		      .BYTE.b	%00000000
-    144  f18e		       00		      .BYTE.b	%00000000
-    145  f18f		       00		      .BYTE.b	%00000000
-    146  f190
-    147  f190		       00		      .BYTE.b	%00000000
-    148  f191		       00		      .BYTE.b	%00000000
-    149  f192		       00		      .BYTE.b	%00000000
-    150  f193
-    151  f193		       00		      .BYTE.b	%00000000
-    152  f194		       00		      .BYTE.b	%00000000
-    153  f195		       00		      .BYTE.b	%00000000
-    154  f196
-    155  f196		       00		      .BYTE.b	%00000000
-    156  f197		       00		      .BYTE.b	%00000000
-    157  f198		       00		      .BYTE.b	%00000000
-    158  f199
-    159  f199		       00		      .BYTE.b	%00000000
-    160  f19a		       00		      .BYTE.b	%00000000
-    161  f19b		       00		      .BYTE.b	%00000000
-    162  f19c
-    163  f19c		       00		      .BYTE.b	%00000000
-    164  f19d		       00		      .BYTE.b	%00000000
-    165  f19e		       00		      .BYTE.b	%00000000
-    166  f19f
-    167  f19f		       00		      .BYTE.b	%00000000
-    168  f1a0		       00		      .BYTE.b	%00000000
-    169  f1a1		       00		      .BYTE.b	%00000000
-    170  f1a2
-    171  f1a2		       00		      .BYTE.b	%00000000
-    172  f1a3		       00		      .BYTE.b	%00000000
-    173  f1a4		       00		      .BYTE.b	%00000000
-    174  f1a5
-    175  f1a5		       00		      .BYTE.b	%00000000
-    176  f1a6		       00		      .BYTE.b	%00000000
-    177  f1a7		       00		      .BYTE.b	%00000000
-    178  f1a8
-    179  f1a8		       00		      .BYTE.b	%00000000
-    180  f1a9		       00		      .BYTE.b	%00000000
-    181  f1aa		       00		      .BYTE.b	%00000000
-    182  f1ab
-    183  f1ab		       00		      .BYTE.b	%00000000
-    184  f1ac		       18		      .BYTE.b	%00011000
-    185  f1ad		       00		      .BYTE.b	%00000000
-    186  f1ae
-    187  f1ae		       00		      .BYTE.b	%00000000
-    188  f1af		       0c		      .BYTE.b	%00001100
-    189  f1b0		       00		      .BYTE.b	%00000000
-    190  f1b1
-    191  f1b1		       00		      .BYTE.b	%00000000
-    192  f1b2		       00		      .BYTE.b	%00000000
-    193  f1b3		       00		      .BYTE.b	%00000000
-    194  f1b4
-    195  f1b4		       00		      .BYTE.b	%00000000
-    196  f1b5		       00		      .BYTE.b	%00000000
-    197  f1b6		       00		      .BYTE.b	%00000000
-    198  f1b7
-    199  f1b7		       00		      .BYTE.b	%00000000
-    200  f1b8		       00		      .BYTE.b	%00000000
-    201  f1b9		       00		      .BYTE.b	%00000000
-    202  f1ba
-    203  f1ba		       00		      .BYTE.b	%00000000
-    204  f1bb		       00		      .BYTE.b	%00000000
-    205  f1bc		       00		      .BYTE.b	%00000000
-    206  f1bd
-    207  f1bd		       00		      .BYTE.b	%00000000
-    208  f1be		       00		      .BYTE.b	%00000000
-    209  f1bf		       00		      .BYTE.b	%00000000
-    210  f1c0
-    211  f1c0		       00		      .BYTE.b	%00000000
-    212  f1c1		       00		      .BYTE.b	%00000000
-    213  f1c2		       00		      .BYTE.b	%00000000
-    214  f1c3
-    215  f1c3		       00		      .BYTE.b	%00000000
-    216  f1c4		       00		      .BYTE.b	%00000000
-    217  f1c5		       00		      .BYTE.b	%00000000
-    218  f1c6
-    219  f1c6		       00		      .BYTE.b	%00000000
-    220  f1c7		       00		      .BYTE.b	%00000000
-    221  f1c8		       00		      .BYTE.b	%00000000
-    222  f1c9
-    223  f1c9		       00		      .BYTE.b	%00000000
-    224  f1ca		       00		      .BYTE.b	%00000000
-    225  f1cb		       00		      .BYTE.b	%00000000
-    226  f1cc
-    227  f1cc		       00		      .BYTE.b	%00000000
-    228  f1cd		       00		      .BYTE.b	%00000000
-    229  f1ce		       00		      .BYTE.b	%00000000
-    230  f1cf
-    231  f1cf		       00		      .BYTE.b	%00000000
-    232  f1d0		       00		      .BYTE.b	%00000000
-    233  f1d1		       00		      .BYTE.b	%00000000
-    234  f1d2
-    235  f1d2				   LogoAudio0
-    236  f1d2
-    237  f1d2		       1d		      .BYTE.b	#29	; C
-    238  f1d3		       17		      .BYTE.b	#23	; E
-    239  f1d4		       13		      .BYTE.b	#19	; G
-    240  f1d5		       0f		      .BYTE.b	#15	; A
-    241  f1d6		       17		      .BYTE.b	#23	; E
-    242  f1d7		       13		      .BYTE.b	#19	; G
-    243  f1d8		       0f		      .BYTE.b	#15	; B
-    244  f1d9		       0e		      .BYTE.b	#14	; C
-    245  f1da		       0b		      .BYTE.b	#11	; E
-    246  f1db		       0b		      .BYTE.b	#11
-    247  f1dc		       0b		      .BYTE.b	#11
-    248  f1dd		       0b		      .BYTE.b	#11
-    249  f1de
-    250  f1de				   LogoAudio1
-    251  f1de
-    252  f1de		       1f		      .BYTE.b	#31	; C
-    253  f1df		       1f		      .BYTE.b	#31
-    254  f1e0		       1f		      .BYTE.b	#31
-    255  f1e1		       1f		      .BYTE.b	#31
-    256  f1e2		       19		      .BYTE.b	#25	; E
-    257  f1e3		       19		      .BYTE.b	#25
-    258  f1e4		       19		      .BYTE.b	#25
-    259  f1e5		       19		      .BYTE.b	#25
-    260  f1e6		       14		      .BYTE.b	#20	; G
-    261  f1e7		       14		      .BYTE.b	#20
-    262  f1e8		       14		      .BYTE.b	#20
-    263  f1e9		       14		      .BYTE.b	#20
+      0  f16f					      include	"logo.asm"
+      1  f16f							;================
+      2  f16f							; Constants
+      3  f16f							;================
+      4  f16f
+      5  f16f		       00 b4	   LOGO_FRAMES =	180
+      6  f16f
+      7  f16f		       00 a2	   LOGO_BG_COLOR =	#$A2
+      8  f16f		       00 5e	   LOGO_FG_COLOR =	#$5E
+      9  f16f
+     10  f16f		       00 04	   LOGO_AUDIO_0_TONE =	4
+     11  f16f		       00 0f	   LOGO_AUDIO_0_VOLUME =	15	; 15 is max
+     12  f16f		       00 01	   LOGO_AUDIO_1_TONE =	1
+     13  f16f		       00 03	   LOGO_AUDIO_1_VOLUME =	3
+     14  f16f		       00 0c	   LOGO_AUDIO_LENGTH =	12
+     15  f16f		       00 08	   LOGO_AUDIO_STEP =	8
+     16  f16f
+     17  f16f				   LogoInit
+     18  f16f
+     19  f16f							; Setup state and kernel
+     20  f16f		       a9 00		      lda	#STATE_LOGO
+     21  f171		       85 80		      sta	State
+     22  f173
+     23  f173		       a9 00		      lda	#KERNEL_FULL_IMAGE
+     24  f175		       85 81		      sta	KernelType
+     25  f177
+     26  f177							; Load Colors
+     27  f177		       a9 a2		      lda	#LOGO_BG_COLOR
+     28  f179		       85 09		      sta	COLUBK
+     29  f17b		       a9 5e		      lda	#LOGO_FG_COLOR
+     30  f17d		       85 08		      sta	COLUPF
+     31  f17f
+     32  f17f							; Load audio settings
+     33  f17f		       a9 04		      lda	#LOGO_AUDIO_0_TONE
+     34  f181		       85 15		      sta	AUDC0
+     35  f183		       a9 0f		      lda	#LOGO_AUDIO_0_VOLUME
+     36  f185		       85 19		      sta	AUDV0
+     37  f187		       a9 01		      lda	#LOGO_AUDIO_1_TONE
+     38  f189		       85 16		      sta	AUDC1
+     39  f18b		       a9 03		      lda	#LOGO_AUDIO_1_VOLUME
+     40  f18d		       85 1a		      sta	AUDV1
+     41  f18f		       a9 00		      lda	#0
+     42  f191		       85 87		      sta	AudioStep
+     43  f193
+     44  f193							; Play first note
+     45  f193		       ad 92 f2 	      lda	LogoAudio0,AudioStep
+     46  f196		       85 17		      sta	AUDF0
+     47  f198		       ad 9e f2 	      lda	LogoAudio1,AudioStep
+     48  f19b		       85 18		      sta	AUDF1
+     49  f19d
+     50  f19d							; Setup frame counters
+     51  f19d		       a9 00		      lda	#0
+     52  f19f		       85 82		      sta	Frame
+     53  f1a1		       a9 b4		      lda	#LOGO_FRAMES
+     54  f1a3		       85 83		      sta	FrameTimer
+     55  f1a5
+     56  f1a5							; Setup Image Pointer
+      0  f1a5					      SET_POINTER	ImagePtr, LogoImage
+      1  f1a5				   .POINTER   SET	ImagePtr
+      2  f1a5				   .ADDRESS   SET	LogoImage
+      3  f1a5
+      4  f1a5		       a9 02		      LDA	#<.ADDRESS
+      5  f1a7		       85 84		      STA	.POINTER
+      6  f1a9		       a9 f2		      LDA	#>.ADDRESS
+      7  f1ab		       85 85		      STA	.POINTER+1
+      8  f1ad
+     58  f1ad
+     59  f1ad							; Setup Image Animation
+     60  f1ad		       a9 18		      lda	#KERNEL_IMAGE_SIZE
+     61  f1af		       85 86		      sta	ImageVisible
+     62  f1b1
+     63  f1b1		       60		      rts
+     64  f1b2
+     65  f1b2				   LogoVerticalBlank
+     66  f1b2		       20 bd f1 	      jsr	LogoAnimation
+     67  f1b5		       60		      rts
+     68  f1b6
+     69  f1b6				   LogoOverScan
+     70  f1b6		       20 cd f1 	      jsr	LogoAudio
+     71  f1b9		       20 f8 f1 	      jsr	LogoState
+     72  f1bc		       60		      rts
+     73  f1bd
+     74  f1bd				   LogoAnimation
+     75  f1bd		       a5 82		      lda	Frame
+     76  f1bf		       29 03		      and	#%00000011	; Every 4 when bits are 00
+     77  f1c1		       d0 09		      bne	.logo_animation_return
+     78  f1c3
+     79  f1c3		       a6 86		      ldx	ImageVisible
+     80  f1c5		       e0 00		      cpx	#0
+     81  f1c7		       f0 03		      beq	.logo_animation_return
+     82  f1c9
+     83  f1c9							; Add another visible line
+     84  f1c9		       ca		      dex
+     85  f1ca		       86 86		      stx	ImageVisible
+     86  f1cc
+     87  f1cc				   .logo_animation_return
+     88  f1cc		       60		      rts
+     89  f1cd
+     90  f1cd				   LogoAudio
+     91  f1cd
+     92  f1cd		       a5 82		      lda	Frame
+     93  f1cf		       29 07		      and	#%00000111	; Every 8 when bits are 000
+     94  f1d1		       d0 24		      bne	.logo_audio_return
+     95  f1d3
+     96  f1d3				   .logo_audio_play
+     97  f1d3
+     98  f1d3							; Check if we're at the end of the melody
+     99  f1d3		       a4 87		      ldy	AudioStep
+    100  f1d5		       c0 0b		      cpy	#LOGO_AUDIO_LENGTH-1
+    101  f1d7		       f0 10		      beq	.logo_audio_mute
+    102  f1d9
+    103  f1d9				   .logo_audio_play_note
+    104  f1d9							; Increment audio position
+    105  f1d9		       c8		      iny
+    106  f1da		       84 87		      sty	AudioStep
+    107  f1dc
+    108  f1dc							; Logo note and play
+    109  f1dc		       b9 92 f2 	      lda	LogoAudio0,y
+    110  f1df		       85 17		      sta	AUDF0
+    111  f1e1		       b9 9e f2 	      lda	LogoAudio1,y
+    112  f1e4		       85 18		      sta	AUDF1
+    113  f1e6		       4c f7 f1 	      jmp	.logo_audio_mute_skip
+    114  f1e9
+    115  f1e9				   .logo_audio_mute
+    116  f1e9
+    117  f1e9							; Mute audio
+    118  f1e9		       a9 00		      lda	#0
+    119  f1eb		       85 15		      sta	AUDC0
+    120  f1ed		       85 19		      sta	AUDV0
+    121  f1ef		       85 17		      sta	AUDF0
+    122  f1f1		       85 16		      sta	AUDC1
+    123  f1f3		       85 1a		      sta	AUDV1
+    124  f1f5		       85 18		      sta	AUDF1
+    125  f1f7
+    126  f1f7				   .logo_audio_mute_skip
+    127  f1f7				   .logo_audio_return
+    128  f1f7		       60		      rts
+    129  f1f8
+    130  f1f8				   LogoState
+    131  f1f8		       a5 83		      lda	FrameTimer
+    132  f1fa		       c9 00		      cmp	#0
+    133  f1fc		       d0 03		      bne	.logo_state_return
+    134  f1fe
+    135  f1fe		       20 aa f2 	      jsr	TitleInit
+    136  f201
+    137  f201				   .logo_state_return
+    138  f201		       60		      rts
+    139  f202
+    140  f202							; Assets
+------- FILE logo_image.asm LEVEL 3 PASS 2
+      0  f202					      include	"logo_image.asm"
+      1  f202				   LogoImage
+      2  f202
+      3  f202		       00		      .BYTE.b	%00000000
+      4  f203		       00		      .BYTE.b	%00000000
+      5  f204		       00		      .BYTE.b	%00000000
+      6  f205		       00		      .BYTE.b	%00000000
+      7  f206		       00		      .BYTE.b	%00000000
+      8  f207		       00		      .BYTE.b	%00000000
+      9  f208
+     10  f208		       00		      .BYTE.b	%00000000
+     11  f209		       00		      .BYTE.b	%00000000
+     12  f20a		       00		      .BYTE.b	%00000000
+     13  f20b		       00		      .BYTE.b	%00000000
+     14  f20c		       00		      .BYTE.b	%00000000
+     15  f20d		       00		      .BYTE.b	%00000000
+     16  f20e
+     17  f20e		       00		      .BYTE.b	%00000000
+     18  f20f		       00		      .BYTE.b	%00000000
+     19  f210		       00		      .BYTE.b	%00000000
+     20  f211		       00		      .BYTE.b	%00000000
+     21  f212		       00		      .BYTE.b	%00000000
+     22  f213		       00		      .BYTE.b	%00000000
+     23  f214
+     24  f214		       00		      .BYTE.b	%00000000
+     25  f215		       00		      .BYTE.b	%00000000
+     26  f216		       00		      .BYTE.b	%00000000
+     27  f217		       00		      .BYTE.b	%00000000
+     28  f218		       00		      .BYTE.b	%00000000
+     29  f219		       00		      .BYTE.b	%00000000
+     30  f21a
+     31  f21a		       00		      .BYTE.b	%00000000
+     32  f21b		       00		      .BYTE.b	%00000000
+     33  f21c		       00		      .BYTE.b	%00000000
+     34  f21d		       00		      .BYTE.b	%00000000
+     35  f21e		       00		      .BYTE.b	%00000000
+     36  f21f		       00		      .BYTE.b	%00000000
+     37  f220
+     38  f220		       00		      .BYTE.b	%00000000
+     39  f221		       00		      .BYTE.b	%00000000
+     40  f222		       00		      .BYTE.b	%00000000
+     41  f223		       00		      .BYTE.b	%00000000
+     42  f224		       00		      .BYTE.b	%00000000
+     43  f225		       00		      .BYTE.b	%00000000
+     44  f226
+     45  f226		       00		      .BYTE.b	%00000000
+     46  f227		       00		      .BYTE.b	%00000000
+     47  f228		       00		      .BYTE.b	%00000000
+     48  f229		       00		      .BYTE.b	%00000000
+     49  f22a		       00		      .BYTE.b	%00000000
+     50  f22b		       00		      .BYTE.b	%00000000
+     51  f22c
+     52  f22c		       00		      .BYTE.b	%00000000
+     53  f22d		       00		      .BYTE.b	%00000000
+     54  f22e		       8c		      .BYTE.b	%10001100
+     55  f22f		       c0		      .BYTE.b	%11000000
+     56  f230		       00		      .BYTE.b	%00000000
+     57  f231		       00		      .BYTE.b	%00000000
+     58  f232
+     59  f232		       00		      .BYTE.b	%00000000
+     60  f233		       00		      .BYTE.b	%00000000
+     61  f234		       54		      .BYTE.b	%01010100
+     62  f235		       50		      .BYTE.b	%01010000
+     63  f236		       80		      .BYTE.b	%10000000
+     64  f237		       00		      .BYTE.b	%00000000
+     65  f238
+     66  f238		       00		      .BYTE.b	%00000000
+     67  f239		       00		      .BYTE.b	%00000000
+     68  f23a		       54		      .BYTE.b	%01010100
+     69  f23b		       40		      .BYTE.b	%01000000
+     70  f23c		       80		      .BYTE.b	%10000000
+     71  f23d		       00		      .BYTE.b	%00000000
+     72  f23e
+     73  f23e		       00		      .BYTE.b	%00000000
+     74  f23f		       00		      .BYTE.b	%00000000
+     75  f240		       54		      .BYTE.b	%01010100
+     76  f241		       50		      .BYTE.b	%01010000
+     77  f242		       80		      .BYTE.b	%10000000
+     78  f243		       00		      .BYTE.b	%00000000
+     79  f244
+     80  f244		       00		      .BYTE.b	%00000000
+     81  f245		       00		      .BYTE.b	%00000000
+     82  f246		       8c		      .BYTE.b	%10001100
+     83  f247		       c0		      .BYTE.b	%11000000
+     84  f248		       00		      .BYTE.b	%00000000
+     85  f249		       00		      .BYTE.b	%00000000
+     86  f24a
+     87  f24a		       00		      .BYTE.b	%00000000
+     88  f24b		       00		      .BYTE.b	%00000000
+     89  f24c		       00		      .BYTE.b	%00000000
+     90  f24d		       00		      .BYTE.b	%00000000
+     91  f24e		       00		      .BYTE.b	%00000000
+     92  f24f		       00		      .BYTE.b	%00000000
+     93  f250
+     94  f250		       00		      .BYTE.b	%00000000
+     95  f251		       00		      .BYTE.b	%00000000
+     96  f252		       10		      .BYTE.b	%00010000
+     97  f253		       10		      .BYTE.b	%00010000
+     98  f254		       80		      .BYTE.b	%10000000
+     99  f255		       00		      .BYTE.b	%00000000
+    100  f256
+    101  f256		       00		      .BYTE.b	%00000000
+    102  f257		       00		      .BYTE.b	%00000000
+    103  f258		       a8		      .BYTE.b	%10101000
+    104  f259		       a0		      .BYTE.b	%10100000
+    105  f25a		       00		      .BYTE.b	%00000000
+    106  f25b		       00		      .BYTE.b	%00000000
+    107  f25c
+    108  f25c		       00		      .BYTE.b	%00000000
+    109  f25d		       00		      .BYTE.b	%00000000
+    110  f25e		       44		      .BYTE.b	%01000100
+    111  f25f		       40		      .BYTE.b	%01000000
+    112  f260		       00		      .BYTE.b	%00000000
+    113  f261		       00		      .BYTE.b	%00000000
+    114  f262
+    115  f262		       00		      .BYTE.b	%00000000
+    116  f263		       00		      .BYTE.b	%00000000
+    117  f264		       00		      .BYTE.b	%00000000
+    118  f265		       00		      .BYTE.b	%00000000
+    119  f266		       00		      .BYTE.b	%00000000
+    120  f267		       00		      .BYTE.b	%00000000
+    121  f268
+    122  f268		       00		      .BYTE.b	%00000000
+    123  f269		       00		      .BYTE.b	%00000000
+    124  f26a		       00		      .BYTE.b	%00000000
+    125  f26b		       00		      .BYTE.b	%00000000
+    126  f26c		       00		      .BYTE.b	%00000000
+    127  f26d		       00		      .BYTE.b	%00000000
+    128  f26e
+    129  f26e		       00		      .BYTE.b	%00000000
+    130  f26f		       00		      .BYTE.b	%00000000
+    131  f270		       00		      .BYTE.b	%00000000
+    132  f271		       00		      .BYTE.b	%00000000
+    133  f272		       00		      .BYTE.b	%00000000
+    134  f273		       00		      .BYTE.b	%00000000
+    135  f274
+    136  f274		       00		      .BYTE.b	%00000000
+    137  f275		       00		      .BYTE.b	%00000000
+    138  f276		       00		      .BYTE.b	%00000000
+    139  f277		       00		      .BYTE.b	%00000000
+    140  f278		       00		      .BYTE.b	%00000000
+    141  f279		       00		      .BYTE.b	%00000000
+    142  f27a
+    143  f27a		       00		      .BYTE.b	%00000000
+    144  f27b		       00		      .BYTE.b	%00000000
+    145  f27c		       00		      .BYTE.b	%00000000
+    146  f27d		       00		      .BYTE.b	%00000000
+    147  f27e		       00		      .BYTE.b	%00000000
+    148  f27f		       00		      .BYTE.b	%00000000
+    149  f280
+    150  f280		       00		      .BYTE.b	%00000000
+    151  f281		       00		      .BYTE.b	%00000000
+    152  f282		       00		      .BYTE.b	%00000000
+    153  f283		       00		      .BYTE.b	%00000000
+    154  f284		       00		      .BYTE.b	%00000000
+    155  f285		       00		      .BYTE.b	%00000000
+    156  f286
+    157  f286		       00		      .BYTE.b	%00000000
+    158  f287		       00		      .BYTE.b	%00000000
+    159  f288		       00		      .BYTE.b	%00000000
+    160  f289		       00		      .BYTE.b	%00000000
+    161  f28a		       00		      .BYTE.b	%00000000
+    162  f28b		       00		      .BYTE.b	%00000000
+    163  f28c
+    164  f28c		       00		      .BYTE.b	%00000000
+    165  f28d		       00		      .BYTE.b	%00000000
+    166  f28e		       00		      .BYTE.b	%00000000
+    167  f28f		       00		      .BYTE.b	%00000000
+    168  f290		       00		      .BYTE.b	%00000000
+    169  f291		       00		      .BYTE.b	%00000000
+------- FILE logo.asm
+    142  f292
+    143  f292				   LogoAudio0
+    144  f292
+    145  f292		       1d		      .BYTE.b	#29	; C
+    146  f293		       17		      .BYTE.b	#23	; E
+    147  f294		       13		      .BYTE.b	#19	; G
+    148  f295		       0f		      .BYTE.b	#15	; A
+    149  f296		       17		      .BYTE.b	#23	; E
+    150  f297		       13		      .BYTE.b	#19	; G
+    151  f298		       0f		      .BYTE.b	#15	; B
+    152  f299		       0e		      .BYTE.b	#14	; C
+    153  f29a		       0b		      .BYTE.b	#11	; E
+    154  f29b		       0b		      .BYTE.b	#11
+    155  f29c		       0b		      .BYTE.b	#11
+    156  f29d		       0b		      .BYTE.b	#11
+    157  f29e
+    158  f29e				   LogoAudio1
+    159  f29e
+    160  f29e		       1f		      .BYTE.b	#31	; C
+    161  f29f		       1f		      .BYTE.b	#31
+    162  f2a0		       1f		      .BYTE.b	#31
+    163  f2a1		       1f		      .BYTE.b	#31
+    164  f2a2		       19		      .BYTE.b	#25	; E
+    165  f2a3		       19		      .BYTE.b	#25
+    166  f2a4		       19		      .BYTE.b	#25
+    167  f2a5		       19		      .BYTE.b	#25
+    168  f2a6		       14		      .BYTE.b	#20	; G
+    169  f2a7		       14		      .BYTE.b	#20
+    170  f2a8		       14		      .BYTE.b	#20
+    171  f2a9		       14		      .BYTE.b	#20
 ------- FILE kernel.asm
 ------- FILE title.asm LEVEL 2 PASS 2
-      0  f1ea					      include	"title.asm"
-      1  f1ea							;================
-      2  f1ea							; Constants
-      3  f1ea							;================
-      4  f1ea
-      5  f1ea		       00 08	   TITLE_LINE_SIZE =	8
-      6  f1ea		       00 04	   TITLE_DATA_SIZE =	%00000100
-      7  f1ea		       00 01	   TITLE_BORDER =	1
-      8  f1ea		       00 04	   TITLE_PAD  =	4
-      9  f1ea		       00 06	   TITLE_IMAGE =	6
-     10  f1ea		       00 02	   TITLE_GAP  =	2
-     11  f1ea
-     12  f1ea		       00 70	   TITLE_BG_COLOR =	#$70
-     13  f1ea		       00 7e	   TITLE_BD_COLOR =	#$7E
-     14  f1ea		       00 0e	   TITLE_FG_COLOR =	#$0E
-     15  f1ea
-     16  f1ea		       00 04	   TITLE_AUDIO_0_TONE =	4
-     17  f1ea		       00 04	   TITLE_AUDIO_0_VOLUME =	4
-     18  f1ea		       00 07	   TITLE_AUDIO_1_VOLUME =	7
-     19  f1ea		       00 10	   TITLE_AUDIO_LENGTH =	16
-     20  f1ea		       00 09	   TITLE_AUDIO_STEP =	9
-     21  f1ea
-     22  f1ea				   TitleInit
-     23  f1ea
-     24  f1ea							; Load Colors
-     25  f1ea		       a9 70		      lda	#TITLE_BG_COLOR
-     26  f1ec		       85 09		      sta	COLUBK
-     27  f1ee		       a9 0e		      lda	#TITLE_FG_COLOR
-     28  f1f0		       85 08		      sta	COLUPF
-     29  f1f2
-     30  f1f2							; Load audio settings
-     31  f1f2
-     32  f1f2							; Melody Line
-     33  f1f2		       a9 04		      lda	#TITLE_AUDIO_0_TONE
-     34  f1f4		       85 15		      sta	AUDC0
-     35  f1f6		       a9 04		      lda	#TITLE_AUDIO_0_VOLUME
-     36  f1f8		       85 19		      sta	AUDV0
-     37  f1fa
-     38  f1fa							; Drums and Bass
-     39  f1fa		       a9 00		      lda	#0
-     40  f1fc		       85 16		      sta	AUDC1
-     41  f1fe		       85 1a		      sta	AUDV1
-     42  f200
-     43  f200							; Make it so that we play the first note immediately
-     44  f200		       a9 0f		      lda	#TITLE_AUDIO_LENGTH-1
-     45  f202		       85 83		      sta	AudioStep
-     46  f204		       a9 01		      lda	#1
-     47  f206		       85 82		      sta	FrameTimer
-     48  f208
-     49  f208							; Setup Image Pointer
-      0  f208					      SET_POINTER	ImagePtr, TitleImage
-      1  f208				   .POINTER   SET	ImagePtr
-      2  f208				   .ADDRESS   SET	TitleImage
-      3  f208
-      4  f208		       a9 61		      LDA	#<.ADDRESS
-      5  f20a		       85 86		      STA	.POINTER
-      6  f20c		       a9 f2		      LDA	#>.ADDRESS
-      7  f20e		       85 87		      STA	.POINTER+1
-      8  f210
-     51  f210
-     52  f210		       a9 00		      lda	#0
-     53  f212		       85 88		      sta	ImageVisible
-     54  f214
-     55  f214		       60		      rts
-     56  f215
-     57  f215				   TitleVerticalBlank
-     58  f215		       60		      rts
-     59  f216
-     60  f216				   TitleOverScan
-     61  f216		       20 1d f2 	      jsr	TitleAudio
-     62  f219		       20 55 f2 	      jsr	TitleState
-     63  f21c		       60		      rts
-     64  f21d
-     65  f21d				   TitleAudio
-     66  f21d
-     67  f21d		       a6 82		      ldx	FrameTimer
-     68  f21f		       e0 00		      cpx	#0
-     69  f221		       d0 31		      bne	.title_audio_return
-     70  f223
-     71  f223							; Reset Timer
-     72  f223		       a2 09		      ldx	#TITLE_AUDIO_STEP
-     73  f225		       86 82		      stx	FrameTimer
-     74  f227
-     75  f227				   .title_audio_play
-     76  f227
-     77  f227							; Increment melody position
-     78  f227		       a4 83		      ldy	AudioStep
-     79  f229		       c8		      iny
-     80  f22a
-     81  f22a							; Check if we're at the end of the melody
-     82  f22a		       c0 10		      cpy	#TITLE_AUDIO_LENGTH
-     83  f22c		       d0 02		      bne	.title_audio_play_note
-     84  f22e
-     85  f22e							; Loop our audio step
-     86  f22e		       a0 00		      ldy	#0
-     87  f230
-     88  f230				   .title_audio_play_note
-     89  f230
-     90  f230							; Save current position
-     91  f230		       84 83		      sty	AudioStep
-     92  f232
-     93  f232							; Basic Melody Line
-     94  f232		       b9 a9 f2 	      lda	TitleAudio0,y
-     95  f235		       85 17		      sta	AUDF0
-     96  f237
-     97  f237							; Drums and Bass
-     98  f237		       b9 b9 f2 	      lda	TitleTone1,y
-     99  f23a		       c9 ff		      cmp	#$FF
-    100  f23c		       f0 0e		      beq	.title_audio_play_note_1_mute
-    101  f23e
-    102  f23e		       85 16		      sta	AUDC1
-    103  f240		       b9 c9 f2 	      lda	TitleAudio1,y
-    104  f243		       85 18		      sta	AUDF1
-    105  f245		       a9 07		      lda	#TITLE_AUDIO_1_VOLUME
-    106  f247		       85 1a		      sta	AUDV1
-    107  f249
-    108  f249		       4c 54 f2 	      jmp	.title_audio_return
-    109  f24c
-    110  f24c				   .title_audio_play_note_1_mute
-    111  f24c
-    112  f24c		       a9 00		      lda	#0
-    113  f24e		       85 18		      sta	AUDF1
-    114  f250		       85 16		      sta	AUDC1
-    115  f252		       85 1a		      sta	AUDV1
-    116  f254
-    117  f254				   .title_audio_return
-    118  f254		       60		      rts
-    119  f255
-    120  f255				   TitleState
-    121  f255							; Check if Fire Button on controller 1 is pressed
-    122  f255		       a5 0c		      lda	INPT4
-    123  f257		       30 07		      bmi	.title_state_return
-    124  f259
-    125  f259		       a9 02		      lda	#STATE_GAME
-    126  f25b		       85 80		      sta	State
-    127  f25d		       20 d9 f2 	      jsr	GameInit
-    128  f260
-    129  f260				   .title_state_return
-    130  f260		       60		      rts
-    131  f261
-    132  f261							; Assets
-    133  f261
-    134  f261				   TitleImage
-    135  f261
-    136  f261		       00		      .BYTE.b	%00000000	; Reversed
-    137  f262		       00		      .BYTE.b	%00000000	; Normal
-    138  f263		       00		      .BYTE.b	%00000000	; First 4 bits reversed
-    139  f264
-    140  f264		       00		      .BYTE.b	%00000000
-    141  f265		       00		      .BYTE.b	%00000000
-    142  f266		       00		      .BYTE.b	%00000000
-    143  f267
-    144  f267		       00		      .BYTE.b	%00000000
-    145  f268		       00		      .BYTE.b	%00000000
-    146  f269		       00		      .BYTE.b	%00000000
-    147  f26a
-    148  f26a		       00		      .BYTE.b	%00000000
-    149  f26b		       00		      .BYTE.b	%00000000
-    150  f26c		       00		      .BYTE.b	%00000000
-    151  f26d
-    152  f26d		       00		      .BYTE.b	%00000000
-    153  f26e		       00		      .BYTE.b	%00000000
-    154  f26f		       00		      .BYTE.b	%00000000
-    155  f270
-    156  f270		       00		      .BYTE.b	%00000000
-    157  f271		       00		      .BYTE.b	%00000000
-    158  f272		       00		      .BYTE.b	%00000000
-    159  f273
-    160  f273		       00		      .BYTE.b	%00000000
-    161  f274		       00		      .BYTE.b	%00000000
-    162  f275		       00		      .BYTE.b	%00000000
-    163  f276
-    164  f276		       00		      .BYTE.b	%00000000
-    165  f277		       00		      .BYTE.b	%00000000
-    166  f278		       00		      .BYTE.b	%00000000
-    167  f279
-    168  f279		       00		      .BYTE.b	%00000000
-    169  f27a		       00		      .BYTE.b	%00000000
-    170  f27b		       00		      .BYTE.b	%00000000
-    171  f27c
-    172  f27c		       00		      .BYTE.b	%00000000
-    173  f27d		       00		      .BYTE.b	%00000000
-    174  f27e		       00		      .BYTE.b	%00000000
-    175  f27f
-    176  f27f		       00		      .BYTE.b	%00000000
-    177  f280		       00		      .BYTE.b	%00000000
-    178  f281		       00		      .BYTE.b	%00000000
-    179  f282
-    180  f282		       00		      .BYTE.b	%00000000
-    181  f283		       00		      .BYTE.b	%00000000
-    182  f284		       00		      .BYTE.b	%00000000
-    183  f285
-    184  f285		       00		      .BYTE.b	%00000000
-    185  f286		       00		      .BYTE.b	%00000000
-    186  f287		       00		      .BYTE.b	%00000000
-    187  f288
-    188  f288		       00		      .BYTE.b	%00000000
-    189  f289		       00		      .BYTE.b	%00000000
-    190  f28a		       00		      .BYTE.b	%00000000
-    191  f28b
-    192  f28b		       00		      .BYTE.b	%00000000
-    193  f28c		       00		      .BYTE.b	%00000000
-    194  f28d		       00		      .BYTE.b	%00000000
-    195  f28e
-    196  f28e		       00		      .BYTE.b	%00000000
-    197  f28f		       00		      .BYTE.b	%00000000
-    198  f290		       00		      .BYTE.b	%00000000
-    199  f291
-    200  f291		       00		      .BYTE.b	%00000000
-    201  f292		       00		      .BYTE.b	%00000000
-    202  f293		       00		      .BYTE.b	%00000000
-    203  f294
-    204  f294		       00		      .BYTE.b	%00000000
-    205  f295		       00		      .BYTE.b	%00000000
-    206  f296		       00		      .BYTE.b	%00000000
-    207  f297
-    208  f297		       00		      .BYTE.b	%00000000
-    209  f298		       00		      .BYTE.b	%00000000
-    210  f299		       00		      .BYTE.b	%00000000
-    211  f29a
-    212  f29a		       00		      .BYTE.b	%00000000
-    213  f29b		       00		      .BYTE.b	%00000000
-    214  f29c		       00		      .BYTE.b	%00000000
-    215  f29d
-    216  f29d		       00		      .BYTE.b	%00000000
-    217  f29e		       00		      .BYTE.b	%00000000
-    218  f29f		       00		      .BYTE.b	%00000000
-    219  f2a0
-    220  f2a0		       00		      .BYTE.b	%00000000
-    221  f2a1		       00		      .BYTE.b	%00000000
-    222  f2a2		       00		      .BYTE.b	%00000000
-    223  f2a3
-    224  f2a3		       00		      .BYTE.b	%00000000
-    225  f2a4		       00		      .BYTE.b	%00000000
-    226  f2a5		       00		      .BYTE.b	%00000000
-    227  f2a6
-    228  f2a6		       00		      .BYTE.b	%00000000
-    229  f2a7		       00		      .BYTE.b	%00000000
-    230  f2a8		       00		      .BYTE.b	%00000000
-    231  f2a9
-    232  f2a9				   TitleAudio0
-    233  f2a9
-    234  f2a9		       0f		      .BYTE.b	#15	; B
-    235  f2aa		       13		      .BYTE.b	#19	; G
-    236  f2ab		       17		      .BYTE.b	#23	; E
-    237  f2ac		       13		      .BYTE.b	#19	; G
-    238  f2ad		       0e		      .BYTE.b	#14	; C
-    239  f2ae		       13		      .BYTE.b	#19
-    240  f2af		       17		      .BYTE.b	#23
-    241  f2b0		       13		      .BYTE.b	#19
-    242  f2b1		       0c		      .BYTE.b	#12	; D
-    243  f2b2		       13		      .BYTE.b	#19
-    244  f2b3		       17		      .BYTE.b	#23
-    245  f2b4		       13		      .BYTE.b	#19
-    246  f2b5		       0e		      .BYTE.b	#14	; C
-    247  f2b6		       13		      .BYTE.b	#19
-    248  f2b7		       17		      .BYTE.b	#23
-    249  f2b8		       13		      .BYTE.b	#19
-    250  f2b9
-    251  f2b9				   TitleTone1
-    252  f2b9
-    253  f2b9		       0f		      .BYTE.b	#15	; Electronic Rumble
-    254  f2ba		       ff		      .BYTE.b	#$FF
-    255  f2bb		       01		      .BYTE.b	#1	; Low Pure Tone
-    256  f2bc		       01		      .BYTE.b	#1
-    257  f2bd		       08		      .BYTE.b	#8	; White Noise
-    258  f2be		       01		      .BYTE.b	#1
-    259  f2bf		       01		      .BYTE.b	#1
-    260  f2c0		       ff		      .BYTE.b	#$FF
-    261  f2c1		       ff		      .BYTE.b	#$FF
-    262  f2c2		       0f		      .BYTE.b	#15
-    263  f2c3		       ff		      .BYTE.b	#$FF
-    264  f2c4		       ff		      .BYTE.b	#$FF
-    265  f2c5		       08		      .BYTE.b	#8
-    266  f2c6		       ff		      .BYTE.b	#$FF
-    267  f2c7		       01		      .BYTE.b	#1
-    268  f2c8		       01		      .BYTE.b	#1
-    269  f2c9
-    270  f2c9				   TitleAudio1
-    271  f2c9
-    272  f2c9		       1d		      .BYTE.b	#29	; Kick
-    273  f2ca		       ff		      .BYTE.b	#$FF
-    274  f2cb		       1f		      .BYTE.b	#31	; C
-    275  f2cc		       1f		      .BYTE.b	#31
-    276  f2cd		       07		      .BYTE.b	#7	; Snare
-    277  f2ce		       1f		      .BYTE.b	#31
-    278  f2cf		       1f		      .BYTE.b	#31
-    279  f2d0		       ff		      .BYTE.b	#$FF
-    280  f2d1		       ff		      .BYTE.b	#$FF
-    281  f2d2		       1d		      .BYTE.b	#29
-    282  f2d3		       ff		      .BYTE.b	#$FF
-    283  f2d4		       ff		      .BYTE.b	#$FF
-    284  f2d5		       07		      .BYTE.b	#7
-    285  f2d6		       ff		      .BYTE.b	#$FF
-    286  f2d7		       17		      .BYTE.b	#23	; F
-    287  f2d8		       18		      .BYTE.b	#24	; E
+      0  f2aa					      include	"title.asm"
+      1  f2aa							;================
+      2  f2aa							; Constants
+      3  f2aa							;================
+      4  f2aa
+      5  f2aa		       00 08	   TITLE_LINE_SIZE =	8
+      6  f2aa		       00 04	   TITLE_DATA_SIZE =	%00000100
+      7  f2aa		       00 01	   TITLE_BORDER =	1
+      8  f2aa		       00 04	   TITLE_PAD  =	4
+      9  f2aa		       00 06	   TITLE_IMAGE =	6
+     10  f2aa		       00 02	   TITLE_GAP  =	2
+     11  f2aa
+     12  f2aa		       00 70	   TITLE_BG_COLOR =	#$70
+     13  f2aa		       00 7e	   TITLE_BD_COLOR =	#$7E
+     14  f2aa		       00 0e	   TITLE_FG_COLOR =	#$0E
+     15  f2aa
+     16  f2aa		       00 04	   TITLE_AUDIO_0_TONE =	4
+     17  f2aa		       00 04	   TITLE_AUDIO_0_VOLUME =	4
+     18  f2aa		       00 07	   TITLE_AUDIO_1_VOLUME =	7
+     19  f2aa		       00 10	   TITLE_AUDIO_LENGTH =	16
+     20  f2aa		       00 09	   TITLE_AUDIO_STEP =	9
+     21  f2aa
+     22  f2aa				   TitleInit
+     23  f2aa
+     24  f2aa							; Setup state and kernel
+     25  f2aa		       a9 01		      lda	#STATE_TITLE
+     26  f2ac		       85 80		      sta	State
+     27  f2ae
+     28  f2ae		       a9 00		      lda	#KERNEL_FULL_IMAGE
+     29  f2b0		       85 81		      sta	KernelType
+     30  f2b2
+     31  f2b2							; Load Colors
+     32  f2b2		       a9 70		      lda	#TITLE_BG_COLOR
+     33  f2b4		       85 09		      sta	COLUBK
+     34  f2b6		       a9 0e		      lda	#TITLE_FG_COLOR
+     35  f2b8		       85 08		      sta	COLUPF
+     36  f2ba
+     37  f2ba							; Load audio settings
+     38  f2ba
+     39  f2ba							; Melody Line
+     40  f2ba		       a9 04		      lda	#TITLE_AUDIO_0_TONE
+     41  f2bc		       85 15		      sta	AUDC0
+     42  f2be		       a9 04		      lda	#TITLE_AUDIO_0_VOLUME
+     43  f2c0		       85 19		      sta	AUDV0
+     44  f2c2
+     45  f2c2							; Drums and Bass
+     46  f2c2		       a9 00		      lda	#0
+     47  f2c4		       85 16		      sta	AUDC1
+     48  f2c6		       85 1a		      sta	AUDV1
+     49  f2c8
+     50  f2c8							; Make it so that we play the first note immediately
+     51  f2c8		       a9 0f		      lda	#TITLE_AUDIO_LENGTH-1
+     52  f2ca		       85 87		      sta	AudioStep
+     53  f2cc		       a9 01		      lda	#1
+     54  f2ce		       85 83		      sta	FrameTimer
+     55  f2d0
+     56  f2d0							; Setup Image Pointer
+      0  f2d0					      SET_POINTER	ImagePtr, TitleImage
+      1  f2d0				   .POINTER   SET	ImagePtr
+      2  f2d0				   .ADDRESS   SET	TitleImage
+      3  f2d0
+      4  f2d0		       a9 25		      LDA	#<.ADDRESS
+      5  f2d2		       85 84		      STA	.POINTER
+      6  f2d4		       a9 f3		      LDA	#>.ADDRESS
+      7  f2d6		       85 85		      STA	.POINTER+1
+      8  f2d8
+     58  f2d8
+     59  f2d8		       a9 00		      lda	#0
+     60  f2da		       85 86		      sta	ImageVisible
+     61  f2dc
+     62  f2dc		       60		      rts
+     63  f2dd
+     64  f2dd				   TitleVerticalBlank
+     65  f2dd		       60		      rts
+     66  f2de
+     67  f2de				   TitleOverScan
+     68  f2de		       20 e5 f2 	      jsr	TitleAudio
+     69  f2e1		       20 1d f3 	      jsr	TitleState
+     70  f2e4		       60		      rts
+     71  f2e5
+     72  f2e5				   TitleAudio
+     73  f2e5
+     74  f2e5		       a6 83		      ldx	FrameTimer
+     75  f2e7		       e0 00		      cpx	#0
+     76  f2e9		       d0 31		      bne	.title_audio_return
+     77  f2eb
+     78  f2eb							; Reset Timer
+     79  f2eb		       a2 09		      ldx	#TITLE_AUDIO_STEP
+     80  f2ed		       86 83		      stx	FrameTimer
+     81  f2ef
+     82  f2ef				   .title_audio_play
+     83  f2ef
+     84  f2ef							; Increment melody position
+     85  f2ef		       a4 87		      ldy	AudioStep
+     86  f2f1		       c8		      iny
+     87  f2f2
+     88  f2f2							; Check if we're at the end of the melody
+     89  f2f2		       c0 10		      cpy	#TITLE_AUDIO_LENGTH
+     90  f2f4		       d0 02		      bne	.title_audio_play_note
+     91  f2f6
+     92  f2f6							; Loop our audio step
+     93  f2f6		       a0 00		      ldy	#0
+     94  f2f8
+     95  f2f8				   .title_audio_play_note
+     96  f2f8
+     97  f2f8							; Save current position
+     98  f2f8		       84 87		      sty	AudioStep
+     99  f2fa
+    100  f2fa							; Basic Melody Line
+    101  f2fa		       b9 b5 f3 	      lda	TitleAudio0,y
+    102  f2fd		       85 17		      sta	AUDF0
+    103  f2ff
+    104  f2ff							; Drums and Bass
+    105  f2ff		       b9 c5 f3 	      lda	TitleTone1,y
+    106  f302		       c9 ff		      cmp	#$FF
+    107  f304		       f0 0e		      beq	.title_audio_play_note_1_mute
+    108  f306
+    109  f306		       85 16		      sta	AUDC1
+    110  f308		       b9 d5 f3 	      lda	TitleAudio1,y
+    111  f30b		       85 18		      sta	AUDF1
+    112  f30d		       a9 07		      lda	#TITLE_AUDIO_1_VOLUME
+    113  f30f		       85 1a		      sta	AUDV1
+    114  f311
+    115  f311		       4c 1c f3 	      jmp	.title_audio_return
+    116  f314
+    117  f314				   .title_audio_play_note_1_mute
+    118  f314
+    119  f314		       a9 00		      lda	#0
+    120  f316		       85 18		      sta	AUDF1
+    121  f318		       85 16		      sta	AUDC1
+    122  f31a		       85 1a		      sta	AUDV1
+    123  f31c
+    124  f31c				   .title_audio_return
+    125  f31c		       60		      rts
+    126  f31d
+    127  f31d				   TitleState
+    128  f31d							; Check if Fire Button on controller 1 is pressed
+    129  f31d		       a5 0c		      lda	INPT4
+    130  f31f		       30 03		      bmi	.title_state_return
+    131  f321
+    132  f321		       20 e5 f3 	      jsr	GameInit
+    133  f324
+    134  f324				   .title_state_return
+    135  f324		       60		      rts
+    136  f325
+    137  f325							; Assets
+------- FILE title_image.asm LEVEL 3 PASS 2
+      0  f325					      include	"title_image.asm"
+      1  f325				   TitleImage
+      2  f325
+      3  f325		       f0		      .BYTE.b	%11110000
+      4  f326		       ff		      .BYTE.b	%11111111
+      5  f327		       ff		      .BYTE.b	%11111111
+      6  f328		       f0		      .BYTE.b	%11110000
+      7  f329		       ff		      .BYTE.b	%11111111
+      8  f32a		       ff		      .BYTE.b	%11111111
+      9  f32b
+     10  f32b		       10		      .BYTE.b	%00010000
+     11  f32c		       00		      .BYTE.b	%00000000
+     12  f32d		       00		      .BYTE.b	%00000000
+     13  f32e		       00		      .BYTE.b	%00000000
+     14  f32f		       00		      .BYTE.b	%00000000
+     15  f330		       80		      .BYTE.b	%10000000
+     16  f331
+     17  f331		       10		      .BYTE.b	%00010000
+     18  f332		       00		      .BYTE.b	%00000000
+     19  f333		       00		      .BYTE.b	%00000000
+     20  f334		       00		      .BYTE.b	%00000000
+     21  f335		       00		      .BYTE.b	%00000000
+     22  f336		       80		      .BYTE.b	%10000000
+     23  f337
+     24  f337		       10		      .BYTE.b	%00010000
+     25  f338		       00		      .BYTE.b	%00000000
+     26  f339		       00		      .BYTE.b	%00000000
+     27  f33a		       00		      .BYTE.b	%00000000
+     28  f33b		       00		      .BYTE.b	%00000000
+     29  f33c		       80		      .BYTE.b	%10000000
+     30  f33d
+     31  f33d		       10		      .BYTE.b	%00010000
+     32  f33e		       00		      .BYTE.b	%00000000
+     33  f33f		       00		      .BYTE.b	%00000000
+     34  f340		       00		      .BYTE.b	%00000000
+     35  f341		       00		      .BYTE.b	%00000000
+     36  f342		       80		      .BYTE.b	%10000000
+     37  f343
+     38  f343		       10		      .BYTE.b	%00010000
+     39  f344		       77		      .BYTE.b	%01110111
+     40  f345		       ee		      .BYTE.b	%11101110
+     41  f346		       c0		      .BYTE.b	%11000000
+     42  f347		       b8		      .BYTE.b	%10111000
+     43  f348		       80		      .BYTE.b	%10000000
+     44  f349
+     45  f349		       10		      .BYTE.b	%00010000
+     46  f34a		       45		      .BYTE.b	%01000101
+     47  f34b		       24		      .BYTE.b	%00100100
+     48  f34c		       50		      .BYTE.b	%01010000
+     49  f34d		       24		      .BYTE.b	%00100100
+     50  f34e		       80		      .BYTE.b	%10000000
+     51  f34f
+     52  f34f		       10		      .BYTE.b	%00010000
+     53  f350		       47		      .BYTE.b	%01000111
+     54  f351		       24		      .BYTE.b	%00100100
+     55  f352		       d0		      .BYTE.b	%11010000
+     56  f353		       24		      .BYTE.b	%00100100
+     57  f354		       80		      .BYTE.b	%10000000
+     58  f355
+     59  f355		       10		      .BYTE.b	%00010000
+     60  f356		       74		      .BYTE.b	%01110100
+     61  f357		       24		      .BYTE.b	%00100100
+     62  f358		       50		      .BYTE.b	%01010000
+     63  f359		       38		      .BYTE.b	%00111000
+     64  f35a		       80		      .BYTE.b	%10000000
+     65  f35b
+     66  f35b		       10		      .BYTE.b	%00010000
+     67  f35c		       14		      .BYTE.b	%00010100
+     68  f35d		       24		      .BYTE.b	%00100100
+     69  f35e		       50		      .BYTE.b	%01010000
+     70  f35f		       24		      .BYTE.b	%00100100
+     71  f360		       80		      .BYTE.b	%10000000
+     72  f361
+     73  f361		       10		      .BYTE.b	%00010000
+     74  f362		       74		      .BYTE.b	%01110100
+     75  f363		       ee		      .BYTE.b	%11101110
+     76  f364		       c0		      .BYTE.b	%11000000
+     77  f365		       a4		      .BYTE.b	%10100100
+     78  f366		       80		      .BYTE.b	%10000000
+     79  f367
+     80  f367		       10		      .BYTE.b	%00010000
+     81  f368		       00		      .BYTE.b	%00000000
+     82  f369		       00		      .BYTE.b	%00000000
+     83  f36a		       00		      .BYTE.b	%00000000
+     84  f36b		       00		      .BYTE.b	%00000000
+     85  f36c		       80		      .BYTE.b	%10000000
+     86  f36d
+     87  f36d		       10		      .BYTE.b	%00010000
+     88  f36e		       00		      .BYTE.b	%00000000
+     89  f36f		       00		      .BYTE.b	%00000000
+     90  f370		       00		      .BYTE.b	%00000000
+     91  f371		       00		      .BYTE.b	%00000000
+     92  f372		       80		      .BYTE.b	%10000000
+     93  f373
+     94  f373		       10		      .BYTE.b	%00010000
+     95  f374		       01		      .BYTE.b	%00000001
+     96  f375		       03		      .BYTE.b	%00000011
+     97  f376		       20		      .BYTE.b	%00100000
+     98  f377		       5d		      .BYTE.b	%01011101
+     99  f378		       83		      .BYTE.b	%10000011
+    100  f379
+    101  f379		       10		      .BYTE.b	%00010000
+    102  f37a		       0a		      .BYTE.b	%00001010
+    103  f37b		       14		      .BYTE.b	%00010100
+    104  f37c		       20		      .BYTE.b	%00100000
+    105  f37d		       51		      .BYTE.b	%01010001
+    106  f37e		       84		      .BYTE.b	%10000100
+    107  f37f
+    108  f37f		       10		      .BYTE.b	%00010000
+    109  f380		       15		      .BYTE.b	%00010101
+    110  f381		       2a		      .BYTE.b	%00101010
+    111  f382		       20		      .BYTE.b	%00100000
+    112  f383		       59		      .BYTE.b	%01011001
+    113  f384		       83		      .BYTE.b	%10000011
+    114  f385
+    115  f385		       10		      .BYTE.b	%00010000
+    116  f386		       24		      .BYTE.b	%00100100
+    117  f387		       49		      .BYTE.b	%01001001
+    118  f388		       20		      .BYTE.b	%00100000
+    119  f389		       51		      .BYTE.b	%01010001
+    120  f38a		       84		      .BYTE.b	%10000100
+    121  f38b
+    122  f38b		       10		      .BYTE.b	%00010000
+    123  f38c		       22		      .BYTE.b	%00100010
+    124  f38d		       44		      .BYTE.b	%01000100
+    125  f38e		       a0		      .BYTE.b	%10100000
+    126  f38f		       51		      .BYTE.b	%01010001
+    127  f390		       84		      .BYTE.b	%10000100
+    128  f391
+    129  f391		       10		      .BYTE.b	%00010000
+    130  f392		       11		      .BYTE.b	%00010001
+    131  f393		       23		      .BYTE.b	%00100011
+    132  f394		       40		      .BYTE.b	%01000000
+    133  f395		       9d		      .BYTE.b	%10011101
+    134  f396		       83		      .BYTE.b	%10000011
+    135  f397
+    136  f397		       10		      .BYTE.b	%00010000
+    137  f398		       00		      .BYTE.b	%00000000
+    138  f399		       00		      .BYTE.b	%00000000
+    139  f39a		       00		      .BYTE.b	%00000000
+    140  f39b		       00		      .BYTE.b	%00000000
+    141  f39c		       80		      .BYTE.b	%10000000
+    142  f39d
+    143  f39d		       10		      .BYTE.b	%00010000
+    144  f39e		       00		      .BYTE.b	%00000000
+    145  f39f		       00		      .BYTE.b	%00000000
+    146  f3a0		       00		      .BYTE.b	%00000000
+    147  f3a1		       00		      .BYTE.b	%00000000
+    148  f3a2		       80		      .BYTE.b	%10000000
+    149  f3a3
+    150  f3a3		       10		      .BYTE.b	%00010000
+    151  f3a4		       00		      .BYTE.b	%00000000
+    152  f3a5		       00		      .BYTE.b	%00000000
+    153  f3a6		       00		      .BYTE.b	%00000000
+    154  f3a7		       00		      .BYTE.b	%00000000
+    155  f3a8		       80		      .BYTE.b	%10000000
+    156  f3a9
+    157  f3a9		       10		      .BYTE.b	%00010000
+    158  f3aa		       00		      .BYTE.b	%00000000
+    159  f3ab		       00		      .BYTE.b	%00000000
+    160  f3ac		       00		      .BYTE.b	%00000000
+    161  f3ad		       00		      .BYTE.b	%00000000
+    162  f3ae		       80		      .BYTE.b	%10000000
+    163  f3af
+    164  f3af		       f0		      .BYTE.b	%11110000
+    165  f3b0		       ff		      .BYTE.b	%11111111
+    166  f3b1		       ff		      .BYTE.b	%11111111
+    167  f3b2		       f0		      .BYTE.b	%11110000
+    168  f3b3		       ff		      .BYTE.b	%11111111
+    169  f3b4		       ff		      .BYTE.b	%11111111
+------- FILE title.asm
+    139  f3b5
+    140  f3b5				   TitleAudio0
+    141  f3b5
+    142  f3b5		       0f		      .BYTE.b	#15	; B
+    143  f3b6		       13		      .BYTE.b	#19	; G
+    144  f3b7		       17		      .BYTE.b	#23	; E
+    145  f3b8		       13		      .BYTE.b	#19	; G
+    146  f3b9		       0e		      .BYTE.b	#14	; C
+    147  f3ba		       13		      .BYTE.b	#19
+    148  f3bb		       17		      .BYTE.b	#23
+    149  f3bc		       13		      .BYTE.b	#19
+    150  f3bd		       0c		      .BYTE.b	#12	; D
+    151  f3be		       13		      .BYTE.b	#19
+    152  f3bf		       17		      .BYTE.b	#23
+    153  f3c0		       13		      .BYTE.b	#19
+    154  f3c1		       0e		      .BYTE.b	#14	; C
+    155  f3c2		       13		      .BYTE.b	#19
+    156  f3c3		       17		      .BYTE.b	#23
+    157  f3c4		       13		      .BYTE.b	#19
+    158  f3c5
+    159  f3c5				   TitleTone1
+    160  f3c5
+    161  f3c5		       0f		      .BYTE.b	#15	; Electronic Rumble
+    162  f3c6		       ff		      .BYTE.b	#$FF
+    163  f3c7		       01		      .BYTE.b	#1	; Low Pure Tone
+    164  f3c8		       01		      .BYTE.b	#1
+    165  f3c9		       08		      .BYTE.b	#8	; White Noise
+    166  f3ca		       01		      .BYTE.b	#1
+    167  f3cb		       01		      .BYTE.b	#1
+    168  f3cc		       ff		      .BYTE.b	#$FF
+    169  f3cd		       ff		      .BYTE.b	#$FF
+    170  f3ce		       0f		      .BYTE.b	#15
+    171  f3cf		       ff		      .BYTE.b	#$FF
+    172  f3d0		       ff		      .BYTE.b	#$FF
+    173  f3d1		       08		      .BYTE.b	#8
+    174  f3d2		       ff		      .BYTE.b	#$FF
+    175  f3d3		       01		      .BYTE.b	#1
+    176  f3d4		       01		      .BYTE.b	#1
+    177  f3d5
+    178  f3d5				   TitleAudio1
+    179  f3d5
+    180  f3d5		       1d		      .BYTE.b	#29	; Kick
+    181  f3d6		       ff		      .BYTE.b	#$FF
+    182  f3d7		       1f		      .BYTE.b	#31	; C
+    183  f3d8		       1f		      .BYTE.b	#31
+    184  f3d9		       07		      .BYTE.b	#7	; Snare
+    185  f3da		       1f		      .BYTE.b	#31
+    186  f3db		       1f		      .BYTE.b	#31
+    187  f3dc		       ff		      .BYTE.b	#$FF
+    188  f3dd		       ff		      .BYTE.b	#$FF
+    189  f3de		       1d		      .BYTE.b	#29
+    190  f3df		       ff		      .BYTE.b	#$FF
+    191  f3e0		       ff		      .BYTE.b	#$FF
+    192  f3e1		       07		      .BYTE.b	#7
+    193  f3e2		       ff		      .BYTE.b	#$FF
+    194  f3e3		       17		      .BYTE.b	#23	; F
+    195  f3e4		       18		      .BYTE.b	#24	; E
 ------- FILE kernel.asm
 ------- FILE game.asm LEVEL 2 PASS 2
-      0  f2d9					      include	"game.asm"
-      1  f2d9							;================
-      2  f2d9							; Constants
-      3  f2d9							;================
-      4  f2d9
-      5  f2d9		       00 00	   GAME_BG_COLOR =	#$00
-      6  f2d9		       00 0c	   GAME_FG_COLOR =	#$0C
-      7  f2d9
-      8  f2d9		       00 56	   GAME_P0_COLOR =	#$56
-      9  f2d9		       00 08	   GAME_P0_SIZE =	8
-     10  f2d9
-     11  f2d9				   GameInit
-     12  f2d9
-     13  f2d9							; Load Colors
-     14  f2d9		       a9 00		      lda	#GAME_BG_COLOR
-     15  f2db		       85 09		      sta	COLUBK
-     16  f2dd		       a9 0c		      lda	#GAME_FG_COLOR
-     17  f2df		       85 08		      sta	COLUPF
-     18  f2e1		       a9 56		      lda	#GAME_P0_COLOR
-     19  f2e3		       85 06		      sta	COLUP0
-     20  f2e5
-     21  f2e5							; Mute Audio
-     22  f2e5		       a9 00		      lda	#0
-     23  f2e7		       85 15		      sta	AUDC0
-     24  f2e9		       85 19		      sta	AUDV0
-     25  f2eb		       85 17		      sta	AUDF0
-     26  f2ed		       85 16		      sta	AUDC1
-     27  f2ef		       85 1a		      sta	AUDV1
-     28  f2f1		       85 18		      sta	AUDF1
-     29  f2f3
-     30  f2f3							; Initial Player Control
-     31  f2f3		       a9 32		      lda	#50
-     32  f2f5		       85 84		      sta	PlayerPosition
-     33  f2f7		       85 85		      sta	PlayerPosition+1
-     34  f2f9
-     35  f2f9		       a0 00		      ldy	#0
-     36  f2fb		       b9 84 f3 	      lda	PlayerSprite,y
-     37  f2fe		       85 1b		      sta	GRP0
-     38  f300
-     39  f300							; Setup Image
-      0  f300					      SET_POINTER	ImagePtr, GameImage
-      1  f300				   .POINTER   SET	ImagePtr
-      2  f300				   .ADDRESS   SET	GameImage
-      3  f300
-      4  f300		       a9 3c		      LDA	#<.ADDRESS
-      5  f302		       85 86		      STA	.POINTER
-      6  f304		       a9 f3		      LDA	#>.ADDRESS
-      7  f306		       85 87		      STA	.POINTER+1
-      8  f308
-     41  f308		       a9 00		      lda	#0
-     42  f30a		       85 88		      sta	ImageVisible
-     43  f30c
-     44  f30c		       60		      rts
-     45  f30d
-     46  f30d				   GameVerticalBlank
-     47  f30d		       20 15 f3 	      jsr	GameControl
-     48  f310		       20 30 f3 	      jsr	GameObjects
-     49  f313		       60		      rts
-     50  f314
-     51  f314				   GameOverScan
-     52  f314		       60		      rts
-     53  f315
-     54  f315				   GameControl
-     55  f315		       a6 84		      ldx	PlayerPosition
-     56  f317		       a4 85		      ldy	PlayerPosition+1
-     57  f319		       ad 80 02 	      lda	SWCHA
-     58  f31c
-     59  f31c				   .game_control_check_right
-     60  f31c		       30 01		      bmi	.game_control_check_left
-     61  f31e		       e8		      inx
-     62  f31f
-     63  f31f				   .game_control_check_left
-     64  f31f		       2a		      rol
-     65  f320		       30 01		      bmi	.game_control_check_down
-     66  f322		       ca		      dex
-     67  f323
-     68  f323				   .game_control_check_down
-     69  f323		       2a		      rol
-     70  f324		       30 01		      bmi	.game_control_check_up
-     71  f326		       c8		      iny
-     72  f327
-     73  f327				   .game_control_check_up
-     74  f327		       2a		      rol
-     75  f328		       30 01		      bmi	.game_control_return
-     76  f32a		       88		      dey
-     77  f32b
-     78  f32b				   .game_control_return
-     79  f32b
-     80  f32b							; Store new position
-     81  f32b		       86 84		      stx	PlayerPosition
-     82  f32d		       84 85		      sty	PlayerPosition+1
-     83  f32f
-     84  f32f		       60		      rts
-     85  f330
-     86  f330				   GameObjects
-     87  f330
-     88  f330				   .game_objects_player
-     89  f330
-     90  f330		       a2 00		      ldx	#0	; Object (player0)
-     91  f332		       a5 84		      lda	PlayerPosition	; X Position
-     92  f334		       20 00 f0 	      jsr	PosObject
-     93  f337
-     94  f337							; Set final x position
-     95  f337		       85 02		      sta	WSYNC
-     96  f339		       85 2a		      sta	HMOVE
-     97  f33b
-     98  f33b		       60		      rts
-     99  f33c
-    100  f33c				   GameImage		; Web
-    101  f33c
-    102  f33c		       00		      .BYTE.b	%00000000	; Reversed
-    103  f33d		       00		      .BYTE.b	%00000000	; Normal
-    104  f33e		       03		      .BYTE.b	%00000011	; First 4 bits reversed
-    105  f33f
-    106  f33f		       00		      .BYTE.b	%00000000
-    107  f340		       00		      .BYTE.b	%00000000
-    108  f341		       3f		      .BYTE.b	%00111111
-    109  f342
-    110  f342		       00		      .BYTE.b	%00000000
-    111  f343		       01		      .BYTE.b	%00000001
-    112  f344		       c2		      .BYTE.b	%11000010
-    113  f345
-    114  f345		       00		      .BYTE.b	%00000000
-    115  f346		       01		      .BYTE.b	%00000001
-    116  f347		       04		      .BYTE.b	%00000100
-    117  f348
-    118  f348		       00		      .BYTE.b	%00000000
-    119  f349		       02		      .BYTE.b	%00000010
-    120  f34a		       08		      .BYTE.b	%00001000
-    121  f34b
-    122  f34b		       00		      .BYTE.b	%00000000
-    123  f34c		       0c		      .BYTE.b	%00001100
-    124  f34d		       08		      .BYTE.b	%00001000
-    125  f34e
-    126  f34e		       30		      .BYTE.b	%00110000
-    127  f34f		       30		      .BYTE.b	%00110000
-    128  f350		       10		      .BYTE.b	%00010000
-    129  f351
-    130  f351		       e0		      .BYTE.b	%11100000
-    131  f352		       c0		      .BYTE.b	%11000000
-    132  f353		       20		      .BYTE.b	%00100000
-    133  f354
-    134  f354		       20		      .BYTE.b	%00100000
-    135  f355		       38		      .BYTE.b	%00111000
-    136  f356		       20		      .BYTE.b	%00100000
-    137  f357
-    138  f357		       40		      .BYTE.b	%01000000
-    139  f358		       07		      .BYTE.b	%00000111
-    140  f359		       41		      .BYTE.b	%01000001
-    141  f35a
-    142  f35a		       40		      .BYTE.b	%01000000
-    143  f35b		       00		      .BYTE.b	%00000000
-    144  f35c		       8e		      .BYTE.b	%10001110
-    145  f35d
-    146  f35d		       80		      .BYTE.b	%10000000
-    147  f35e		       00		      .BYTE.b	%00000000
-    148  f35f		       f0		      .BYTE.b	%11110000
-    149  f360
-    150  f360		       00		      .BYTE.b	%00000000
-    151  f361		       00		      .BYTE.b	%00000000
-    152  f362		       03		      .BYTE.b	%00000011
-    153  f363
-    154  f363		       00		      .BYTE.b	%00000000
-    155  f364		       00		      .BYTE.b	%00000000
-    156  f365		       3f		      .BYTE.b	%00111111
-    157  f366
-    158  f366		       00		      .BYTE.b	%00000000
-    159  f367		       01		      .BYTE.b	%00000001
-    160  f368		       c2		      .BYTE.b	%11000010
-    161  f369
-    162  f369		       00		      .BYTE.b	%00000000
-    163  f36a		       01		      .BYTE.b	%00000001
-    164  f36b		       04		      .BYTE.b	%00000100
-    165  f36c
-    166  f36c		       00		      .BYTE.b	%00000000
-    167  f36d		       02		      .BYTE.b	%00000010
-    168  f36e		       08		      .BYTE.b	%00001000
-    169  f36f
-    170  f36f		       00		      .BYTE.b	%00000000
-    171  f370		       0c		      .BYTE.b	%00001100
-    172  f371		       08		      .BYTE.b	%00001000
-    173  f372
-    174  f372		       30		      .BYTE.b	%00110000
-    175  f373		       30		      .BYTE.b	%00110000
-    176  f374		       10		      .BYTE.b	%00010000
-    177  f375
-    178  f375		       e0		      .BYTE.b	%11100000
-    179  f376		       c0		      .BYTE.b	%11000000
-    180  f377		       20		      .BYTE.b	%00100000
-    181  f378
-    182  f378		       20		      .BYTE.b	%00100000
-    183  f379		       38		      .BYTE.b	%00111000
-    184  f37a		       20		      .BYTE.b	%00100000
-    185  f37b
-    186  f37b		       40		      .BYTE.b	%01000000
-    187  f37c		       07		      .BYTE.b	%00000111
-    188  f37d		       41		      .BYTE.b	%01000001
-    189  f37e
-    190  f37e		       40		      .BYTE.b	%01000000
-    191  f37f		       00		      .BYTE.b	%00000000
-    192  f380		       8e		      .BYTE.b	%10001110
-    193  f381
-    194  f381		       80		      .BYTE.b	%10000000
-    195  f382		       00		      .BYTE.b	%00000000
-    196  f383		       f0		      .BYTE.b	%11110000
-    197  f384
-    198  f384				   PlayerSprite 		; Sprites are reversed in y direction
-    199  f384
-    200  f384							; Up
-    201  f384		       99		      .BYTE.b	%10011001
-    202  f385		       bd		      .BYTE.b	%10111101
-    203  f386		       7e		      .BYTE.b	%01111110
-    204  f387		       3c		      .BYTE.b	%00111100
-    205  f388		       7e		      .BYTE.b	%01111110
-    206  f389		       99		      .BYTE.b	%10011001
-    207  f38a		       bd		      .BYTE.b	%10111101
-    208  f38b		       99		      .BYTE.b	%10011001
-    209  f38c
-    210  f38c							; Right
-    211  f38c		       c7		      .BYTE.b	%11000111
-    212  f38d		       28		      .BYTE.b	%00101000
-    213  f38e		       7a		      .BYTE.b	%01111010
-    214  f38f		       ff		      .BYTE.b	%11111111
-    215  f390		       ff		      .BYTE.b	%11111111
-    216  f391		       7a		      .BYTE.b	%01111010
-    217  f392		       28		      .BYTE.b	%00101000
-    218  f393		       c7		      .BYTE.b	%11000111
-    219  f394
-    220  f394							; Down
-    221  f394		       99		      .BYTE.b	%10011001
-    222  f395		       bd		      .BYTE.b	%10111101
-    223  f396		       7e		      .BYTE.b	%01111110
-    224  f397		       3c		      .BYTE.b	%00111100
-    225  f398		       7e		      .BYTE.b	%01111110
-    226  f399		       99		      .BYTE.b	%10011001
-    227  f39a		       bd		      .BYTE.b	%10111101
-    228  f39b		       99		      .BYTE.b	%10011001
-    229  f39c
-    230  f39c							; Left
-    231  f39c		       e3		      .BYTE.b	%11100011
-    232  f39d		       14		      .BYTE.b	%00010100
-    233  f39e		       5e		      .BYTE.b	%01011110
-    234  f39f		       ff		      .BYTE.b	%11111111
-    235  f3a0		       ff		      .BYTE.b	%11111111
-    236  f3a1		       5e		      .BYTE.b	%01011110
-    237  f3a2		       14		      .BYTE.b	%00010100
-    238  f3a3		       e3		      .BYTE.b	%11100011
+      0  f3e5					      include	"game.asm"
+      1  f3e5							;================
+      2  f3e5							; Constants
+      3  f3e5							;================
+      4  f3e5
+      5  f3e5		       00 00	   GAME_BG_COLOR =	#$00
+      6  f3e5		       00 0c	   GAME_FG_COLOR =	#$0C
+      7  f3e5
+      8  f3e5		       00 56	   GAME_P0_COLOR =	#$56
+      9  f3e5		       00 08	   GAME_P0_SIZE =	8
+     10  f3e5		       00 08	   GAME_P0_BOUNDARY =	GAME_P0_SIZE
+     11  f3e5
+     12  f3e5				   GameInit
+     13  f3e5
+     14  f3e5							; Setup state and kernel
+     15  f3e5		       a9 02		      lda	#STATE_GAME
+     16  f3e7		       85 80		      sta	State
+     17  f3e9
+     18  f3e9		       a9 01		      lda	#KERNEL_GAME
+     19  f3eb		       85 81		      sta	KernelType
+     20  f3ed
+     21  f3ed							; Load Colors
+     22  f3ed		       a9 00		      lda	#GAME_BG_COLOR
+     23  f3ef		       85 09		      sta	COLUBK
+     24  f3f1		       a9 0c		      lda	#GAME_FG_COLOR
+     25  f3f3		       85 08		      sta	COLUPF
+     26  f3f5		       a9 56		      lda	#GAME_P0_COLOR
+     27  f3f7		       85 06		      sta	COLUP0
+     28  f3f9
+     29  f3f9							; Mute Audio
+     30  f3f9		       a9 00		      lda	#0
+     31  f3fb		       85 15		      sta	AUDC0
+     32  f3fd		       85 19		      sta	AUDV0
+     33  f3ff		       85 17		      sta	AUDF0
+     34  f401		       85 16		      sta	AUDC1
+     35  f403		       85 1a		      sta	AUDV1
+     36  f405		       85 18		      sta	AUDF1
+     37  f407
+     38  f407							; Initial Player Control
+     39  f407		       a9 32		      lda	#50
+     40  f409		       85 8a		      sta	PlayerPosition
+     41  f40b		       85 8b		      sta	PlayerPosition+1
+     42  f40d
+     43  f40d							; Setup Player Sprite
+      0  f40d					      SET_POINTER	PlayerPtr, GamePlayerSprite
+      1  f40d				   .POINTER   SET	PlayerPtr
+      2  f40d				   .ADDRESS   SET	GamePlayerSprite
+      3  f40d
+      4  f40d		       a9 44		      LDA	#<.ADDRESS
+      5  f40f		       85 88		      STA	.POINTER
+      6  f411		       a9 f5		      LDA	#>.ADDRESS
+      7  f413		       85 89		      STA	.POINTER+1
+      8  f415
+     45  f415
+     46  f415							; Setup Image
+      0  f415					      SET_POINTER	ImagePtr, GameImage
+      1  f415				   .POINTER   SET	ImagePtr
+      2  f415				   .ADDRESS   SET	GameImage
+      3  f415
+      4  f415		       a9 fc		      LDA	#<.ADDRESS
+      5  f417		       85 84		      STA	.POINTER
+      6  f419		       a9 f4		      LDA	#>.ADDRESS
+      7  f41b		       85 85		      STA	.POINTER+1
+      8  f41d
+     48  f41d		       a9 00		      lda	#0
+     49  f41f		       85 86		      sta	ImageVisible
+     50  f421
+     51  f421		       60		      rts
+     52  f422
+     53  f422				   GameVerticalBlank
+     54  f422		       20 2a f4 	      jsr	GameControl
+     55  f425		       20 f0 f4 	      jsr	GameObjects
+     56  f428		       60		      rts
+     57  f429
+     58  f429				   GameOverScan
+     59  f429		       60		      rts
+     60  f42a
+     61  f42a				   GameControl
+     62  f42a		       a6 8a		      ldx	PlayerPosition
+     63  f42c		       a4 8b		      ldy	PlayerPosition+1
+     64  f42e		       ad 80 02 	      lda	SWCHA
+     65  f431
+     66  f431				   .game_control_check_right
+     67  f431		       30 01		      bmi	.game_control_check_left
+     68  f433		       e8		      inx
+     69  f434
+     70  f434				   .game_control_check_left
+     71  f434		       2a		      rol
+     72  f435		       30 01		      bmi	.game_control_check_down
+     73  f437		       ca		      dex
+     74  f438
+     75  f438				   .game_control_check_down
+     76  f438		       2a		      rol
+     77  f439		       30 01		      bmi	.game_control_check_up
+     78  f43b		       88		      dey
+     79  f43c
+     80  f43c				   .game_control_check_up
+     81  f43c		       2a		      rol
+     82  f43d		       30 01		      bmi	.game_control_sprite
+     83  f43f		       c8		      iny
+     84  f440
+     85  f440				   .game_control_sprite
+     86  f440		       a9 00		      lda	#%00000000	; First 2 bits are left or right, second 2 bits are up or down
+     87  f442
+     88  f442				   .game_control_sprite_x
+     89  f442		       e4 8a		      cpx	PlayerPosition
+     90  f444		       90 04		      bcc	.game_control_sprite_left
+     91  f446		       f0 09		      beq	.game_control_sprite_y
+     92  f448		       b0 05		      bcs	.game_control_sprite_right
+     93  f44a
+     94  f44a				   .game_control_sprite_left
+     95  f44a		       09 80		      ora	#%10000000
+     96  f44c		       4c 51 f4 	      jmp	.game_control_sprite_y
+     97  f44f
+     98  f44f				   .game_control_sprite_right
+     99  f44f		       09 40		      ora	#%01000000
+    100  f451
+    101  f451				   .game_control_sprite_y
+    102  f451		       c4 8b		      cpy	PlayerPosition+1
+    103  f453		       90 04		      bcc	.game_control_sprite_down
+    104  f455		       f0 09		      beq	.game_control_boundary
+    105  f457		       b0 05		      bcs	.game_control_sprite_up
+    106  f459
+    107  f459				   .game_control_sprite_down
+    108  f459		       09 10		      ora	#%00010000
+    109  f45b		       4c 60 f4 	      jmp	.game_control_boundary
+    110  f45e
+    111  f45e				   .game_control_sprite_up
+    112  f45e		       09 20		      ora	#%00100000
+    113  f460
+    114  f460				   .game_control_boundary
+    115  f460							; Check Playfield Boundaries
+    116  f460
+    117  f460				   .game_control_boundary_left
+    118  f460		       e0 08		      cpx	#GAME_P0_BOUNDARY
+    119  f462		       b0 02		      bcs	.game_control_boundary_right
+    120  f464		       a2 08		      ldx	#GAME_P0_BOUNDARY
+    121  f466
+    122  f466				   .game_control_boundary_right
+    123  f466							;cpx #KERNEL_WIDTH-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    124  f466							;bcc .game_control_boundary_top
+    125  f466							;ldx #KERNEL_WIDTH-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    126  f466
+    127  f466				   .game_control_boundary_top
+    128  f466		       c0 08		      cpy	#GAME_P0_BOUNDARY
+    129  f468		       b0 02		      bcs	.game_control_boundary_bottom
+    130  f46a		       a0 08		      ldy	#GAME_P0_BOUNDARY
+    131  f46c
+    132  f46c				   .game_control_boundary_bottom
+    133  f46c		       c0 b0		      cpy	#KERNEL_SCANLINES-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    134  f46e		       90 02		      bcc	.game_control_store
+    135  f470		       a0 b0		      ldy	#KERNEL_SCANLINES-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    136  f472
+    137  f472				   .game_control_store
+    138  f472							; Store new position
+    139  f472		       86 8a		      stx	PlayerPosition
+    140  f474		       84 8b		      sty	PlayerPosition+1
+    141  f476
+    142  f476				   .game_control_sprite_assign
+    143  f476							; Skip if no change
+    144  f476		       c9 00		      cmp	#%00000000
+    145  f478		       f0 75		      beq	.game_control_return
+    146  f47a
+    147  f47a				   .game_control_sprite_assign_left
+    148  f47a		       c9 80		      cmp	#%10000000
+    149  f47c		       d0 0b		      bne	.game_control_sprite_assign_right
+      0  f47e					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*6
+      1  f47e				   .POINTER   SET	PlayerPtr
+      2  f47e				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*6
+      3  f47e
+      4  f47e		       a9 74		      LDA	#<.ADDRESS
+      5  f480		       85 88		      STA	.POINTER
+      6  f482		       a9 f5		      LDA	#>.ADDRESS
+      7  f484		       85 89		      STA	.POINTER+1
+      8  f486
+    151  f486		       4c ef f4 	      jmp	.game_control_return
+    152  f489
+    153  f489				   .game_control_sprite_assign_right
+    154  f489		       c9 40		      cmp	#%01000000
+    155  f48b		       d0 0b		      bne	.game_control_sprite_assign_top
+      0  f48d					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*2
+      1  f48d				   .POINTER   SET	PlayerPtr
+      2  f48d				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*2
+      3  f48d
+      4  f48d		       a9 54		      LDA	#<.ADDRESS
+      5  f48f		       85 88		      STA	.POINTER
+      6  f491		       a9 f5		      LDA	#>.ADDRESS
+      7  f493		       85 89		      STA	.POINTER+1
+      8  f495
+    157  f495		       4c ef f4 	      jmp	.game_control_return
+    158  f498
+    159  f498				   .game_control_sprite_assign_top
+    160  f498		       c9 20		      cmp	#%00100000
+    161  f49a		       d0 0b		      bne	.game_control_sprite_assign_bottom
+      0  f49c					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*0
+      1  f49c				   .POINTER   SET	PlayerPtr
+      2  f49c				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*0
+      3  f49c
+      4  f49c		       a9 44		      LDA	#<.ADDRESS
+      5  f49e		       85 88		      STA	.POINTER
+      6  f4a0		       a9 f5		      LDA	#>.ADDRESS
+      7  f4a2		       85 89		      STA	.POINTER+1
+      8  f4a4
+    163  f4a4		       4c ef f4 	      jmp	.game_control_return
+    164  f4a7
+    165  f4a7				   .game_control_sprite_assign_bottom
+    166  f4a7		       c9 10		      cmp	#%00010000
+    167  f4a9		       d0 0b		      bne	.game_control_sprite_assign_top_right
+      0  f4ab					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*4
+      1  f4ab				   .POINTER   SET	PlayerPtr
+      2  f4ab				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*4
+      3  f4ab
+      4  f4ab		       a9 64		      LDA	#<.ADDRESS
+      5  f4ad		       85 88		      STA	.POINTER
+      6  f4af		       a9 f5		      LDA	#>.ADDRESS
+      7  f4b1		       85 89		      STA	.POINTER+1
+      8  f4b3
+    169  f4b3		       4c ef f4 	      jmp	.game_control_return
+    170  f4b6
+    171  f4b6				   .game_control_sprite_assign_top_right
+    172  f4b6		       c9 60		      cmp	#%01100000
+    173  f4b8		       d0 0b		      bne	.game_control_sprite_assign_bottom_right
+      0  f4ba					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*1
+      1  f4ba				   .POINTER   SET	PlayerPtr
+      2  f4ba				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*1
+      3  f4ba
+      4  f4ba		       a9 4c		      LDA	#<.ADDRESS
+      5  f4bc		       85 88		      STA	.POINTER
+      6  f4be		       a9 f5		      LDA	#>.ADDRESS
+      7  f4c0		       85 89		      STA	.POINTER+1
+      8  f4c2
+    175  f4c2		       4c ef f4 	      jmp	.game_control_return
+    176  f4c5
+    177  f4c5				   .game_control_sprite_assign_bottom_right
+    178  f4c5		       c9 50		      cmp	#%01010000
+    179  f4c7		       d0 0b		      bne	.game_control_sprite_assign_bottom_left
+      0  f4c9					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*3
+      1  f4c9				   .POINTER   SET	PlayerPtr
+      2  f4c9				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*3
+      3  f4c9
+      4  f4c9		       a9 5c		      LDA	#<.ADDRESS
+      5  f4cb		       85 88		      STA	.POINTER
+      6  f4cd		       a9 f5		      LDA	#>.ADDRESS
+      7  f4cf		       85 89		      STA	.POINTER+1
+      8  f4d1
+    181  f4d1		       4c ef f4 	      jmp	.game_control_return
+    182  f4d4
+    183  f4d4				   .game_control_sprite_assign_bottom_left
+    184  f4d4		       c9 90		      cmp	#%10010000
+    185  f4d6		       d0 0b		      bne	.game_control_sprite_assign_top_left
+      0  f4d8					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*5
+      1  f4d8				   .POINTER   SET	PlayerPtr
+      2  f4d8				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*5
+      3  f4d8
+      4  f4d8		       a9 6c		      LDA	#<.ADDRESS
+      5  f4da		       85 88		      STA	.POINTER
+      6  f4dc		       a9 f5		      LDA	#>.ADDRESS
+      7  f4de		       85 89		      STA	.POINTER+1
+      8  f4e0
+    187  f4e0		       4c ef f4 	      jmp	.game_control_return
+    188  f4e3
+    189  f4e3				   .game_control_sprite_assign_top_left
+    190  f4e3		       c9 a0		      cmp	#%10100000
+    191  f4e5		       d0 08		      bne	.game_control_return
+      0  f4e7					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*7
+      1  f4e7				   .POINTER   SET	PlayerPtr
+      2  f4e7				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*7
+      3  f4e7
+      4  f4e7		       a9 7c		      LDA	#<.ADDRESS
+      5  f4e9		       85 88		      STA	.POINTER
+      6  f4eb		       a9 f5		      LDA	#>.ADDRESS
+      7  f4ed		       85 89		      STA	.POINTER+1
+      8  f4ef
+    193  f4ef
+    194  f4ef				   .game_control_return
+    195  f4ef		       60		      rts
+    196  f4f0
+    197  f4f0				   GameObjects
+    198  f4f0
+    199  f4f0				   .game_objects_player
+    200  f4f0
+    201  f4f0		       a2 00		      ldx	#0	; Object (player0)
+    202  f4f2		       a5 8a		      lda	PlayerPosition	; X Position
+    203  f4f4		       20 00 f0 	      jsr	PosObject
+    204  f4f7
+    205  f4f7							; Set final x position
+    206  f4f7		       85 02		      sta	WSYNC
+    207  f4f9		       85 2a		      sta	HMOVE
+    208  f4fb
+    209  f4fb		       60		      rts
+    210  f4fc
+    211  f4fc							; Game Background
+------- FILE game_image.asm LEVEL 3 PASS 2
+      0  f4fc					      include	"game_image.asm"
+      1  f4fc				   GameImage
+      2  f4fc
+      3  f4fc		       00		      .BYTE.b	%00000000
+      4  f4fd		       00		      .BYTE.b	%00000000
+      5  f4fe		       03		      .BYTE.b	%00000011
+      6  f4ff
+      7  f4ff		       00		      .BYTE.b	%00000000
+      8  f500		       00		      .BYTE.b	%00000000
+      9  f501		       3f		      .BYTE.b	%00111111
+     10  f502
+     11  f502		       00		      .BYTE.b	%00000000
+     12  f503		       01		      .BYTE.b	%00000001
+     13  f504		       c2		      .BYTE.b	%11000010
+     14  f505
+     15  f505		       00		      .BYTE.b	%00000000
+     16  f506		       01		      .BYTE.b	%00000001
+     17  f507		       04		      .BYTE.b	%00000100
+     18  f508
+     19  f508		       00		      .BYTE.b	%00000000
+     20  f509		       02		      .BYTE.b	%00000010
+     21  f50a		       08		      .BYTE.b	%00001000
+     22  f50b
+     23  f50b		       00		      .BYTE.b	%00000000
+     24  f50c		       0c		      .BYTE.b	%00001100
+     25  f50d		       08		      .BYTE.b	%00001000
+     26  f50e
+     27  f50e		       30		      .BYTE.b	%00110000
+     28  f50f		       30		      .BYTE.b	%00110000
+     29  f510		       10		      .BYTE.b	%00010000
+     30  f511
+     31  f511		       e0		      .BYTE.b	%11100000
+     32  f512		       c0		      .BYTE.b	%11000000
+     33  f513		       20		      .BYTE.b	%00100000
+     34  f514
+     35  f514		       20		      .BYTE.b	%00100000
+     36  f515		       38		      .BYTE.b	%00111000
+     37  f516		       20		      .BYTE.b	%00100000
+     38  f517
+     39  f517		       40		      .BYTE.b	%01000000
+     40  f518		       07		      .BYTE.b	%00000111
+     41  f519		       41		      .BYTE.b	%01000001
+     42  f51a
+     43  f51a		       40		      .BYTE.b	%01000000
+     44  f51b		       00		      .BYTE.b	%00000000
+     45  f51c		       8e		      .BYTE.b	%10001110
+     46  f51d
+     47  f51d		       80		      .BYTE.b	%10000000
+     48  f51e		       00		      .BYTE.b	%00000000
+     49  f51f		       f0		      .BYTE.b	%11110000
+     50  f520
+     51  f520		       80		      .BYTE.b	%10000000
+     52  f521		       00		      .BYTE.b	%00000000
+     53  f522		       f0		      .BYTE.b	%11110000
+     54  f523
+     55  f523		       40		      .BYTE.b	%01000000
+     56  f524		       00		      .BYTE.b	%00000000
+     57  f525		       8e		      .BYTE.b	%10001110
+     58  f526
+     59  f526		       40		      .BYTE.b	%01000000
+     60  f527		       07		      .BYTE.b	%00000111
+     61  f528		       41		      .BYTE.b	%01000001
+     62  f529
+     63  f529		       20		      .BYTE.b	%00100000
+     64  f52a		       38		      .BYTE.b	%00111000
+     65  f52b		       20		      .BYTE.b	%00100000
+     66  f52c
+     67  f52c		       e0		      .BYTE.b	%11100000
+     68  f52d		       c0		      .BYTE.b	%11000000
+     69  f52e		       20		      .BYTE.b	%00100000
+     70  f52f
+     71  f52f		       30		      .BYTE.b	%00110000
+     72  f530		       30		      .BYTE.b	%00110000
+     73  f531		       10		      .BYTE.b	%00010000
+     74  f532
+     75  f532		       00		      .BYTE.b	%00000000
+     76  f533		       0c		      .BYTE.b	%00001100
+     77  f534		       08		      .BYTE.b	%00001000
+     78  f535
+     79  f535		       00		      .BYTE.b	%00000000
+     80  f536		       02		      .BYTE.b	%00000010
+     81  f537		       08		      .BYTE.b	%00001000
+     82  f538
+     83  f538		       00		      .BYTE.b	%00000000
+     84  f539		       01		      .BYTE.b	%00000001
+     85  f53a		       04		      .BYTE.b	%00000100
+     86  f53b
+     87  f53b		       00		      .BYTE.b	%00000000
+     88  f53c		       01		      .BYTE.b	%00000001
+     89  f53d		       c2		      .BYTE.b	%11000010
+     90  f53e
+     91  f53e		       00		      .BYTE.b	%00000000
+     92  f53f		       00		      .BYTE.b	%00000000
+     93  f540		       3f		      .BYTE.b	%00111111
+     94  f541
+     95  f541		       00		      .BYTE.b	%00000000
+     96  f542		       00		      .BYTE.b	%00000000
+     97  f543		       03		      .BYTE.b	%00000011
+------- FILE game.asm
+    213  f544
+    214  f544							; Game Player Sprites
+------- FILE game_player.asm LEVEL 3 PASS 2
+      0  f544					      include	"game_player.asm"
+      1  f544				   GamePlayerSprite
+      2  f544
+      3  f544		       99		      .BYTE.b	%10011001
+      4  f545		       bd		      .BYTE.b	%10111101
+      5  f546		       7e		      .BYTE.b	%01111110
+      6  f547		       3c		      .BYTE.b	%00111100
+      7  f548		       7e		      .BYTE.b	%01111110
+      8  f549		       99		      .BYTE.b	%10011001
+      9  f54a		       bd		      .BYTE.b	%10111101
+     10  f54b		       99		      .BYTE.b	%10011001
+     11  f54c
+     12  f54c		       30		      .BYTE.b	%00110000
+     13  f54d		       10		      .BYTE.b	%00010000
+     14  f54e		       b8		      .BYTE.b	%10111000
+     15  f54f		       f6		      .BYTE.b	%11110110
+     16  f550		       2d		      .BYTE.b	%00101101
+     17  f551		       1c		      .BYTE.b	%00011100
+     18  f552		       13		      .BYTE.b	%00010011
+     19  f553		       0b		      .BYTE.b	%00001011
+     20  f554
+     21  f554		       c7		      .BYTE.b	%11000111
+     22  f555		       28		      .BYTE.b	%00101000
+     23  f556		       7a		      .BYTE.b	%01111010
+     24  f557		       ff		      .BYTE.b	%11111111
+     25  f558		       ff		      .BYTE.b	%11111111
+     26  f559		       7a		      .BYTE.b	%01111010
+     27  f55a		       28		      .BYTE.b	%00101000
+     28  f55b		       c7		      .BYTE.b	%11000111
+     29  f55c
+     30  f55c		       0b		      .BYTE.b	%00001011
+     31  f55d		       13		      .BYTE.b	%00010011
+     32  f55e		       1c		      .BYTE.b	%00011100
+     33  f55f		       2d		      .BYTE.b	%00101101
+     34  f560		       f6		      .BYTE.b	%11110110
+     35  f561		       b8		      .BYTE.b	%10111000
+     36  f562		       10		      .BYTE.b	%00010000
+     37  f563		       30		      .BYTE.b	%00110000
+     38  f564
+     39  f564		       99		      .BYTE.b	%10011001
+     40  f565		       bd		      .BYTE.b	%10111101
+     41  f566		       99		      .BYTE.b	%10011001
+     42  f567		       7e		      .BYTE.b	%01111110
+     43  f568		       3c		      .BYTE.b	%00111100
+     44  f569		       7e		      .BYTE.b	%01111110
+     45  f56a		       bd		      .BYTE.b	%10111101
+     46  f56b		       99		      .BYTE.b	%10011001
+     47  f56c
+     48  f56c		       d0		      .BYTE.b	%11010000
+     49  f56d		       c8		      .BYTE.b	%11001000
+     50  f56e		       38		      .BYTE.b	%00111000
+     51  f56f		       b4		      .BYTE.b	%10110100
+     52  f570		       6f		      .BYTE.b	%01101111
+     53  f571		       1d		      .BYTE.b	%00011101
+     54  f572		       08		      .BYTE.b	%00001000
+     55  f573		       0c		      .BYTE.b	%00001100
+     56  f574
+     57  f574		       e3		      .BYTE.b	%11100011
+     58  f575		       14		      .BYTE.b	%00010100
+     59  f576		       5e		      .BYTE.b	%01011110
+     60  f577		       ff		      .BYTE.b	%11111111
+     61  f578		       ff		      .BYTE.b	%11111111
+     62  f579		       5e		      .BYTE.b	%01011110
+     63  f57a		       14		      .BYTE.b	%00010100
+     64  f57b		       e3		      .BYTE.b	%11100011
+     65  f57c
+     66  f57c		       0c		      .BYTE.b	%00001100
+     67  f57d		       08		      .BYTE.b	%00001000
+     68  f57e		       1d		      .BYTE.b	%00011101
+     69  f57f		       6f		      .BYTE.b	%01101111
+     70  f580		       b4		      .BYTE.b	%10110100
+     71  f581		       38		      .BYTE.b	%00111000
+     72  f582		       c8		      .BYTE.b	%11001000
+     73  f583		       d0		      .BYTE.b	%11010000
+------- FILE game.asm
 ------- FILE kernel.asm
-    314  f3a4
-    315  f3a4							;================
-    316  f3a4							; End of cart
-    317  f3a4							;================
-    318  f3a4
-    319  fffa					      ORG	$FFFA
-    320  fffa
-    321  fffa				   InterruptVectors
-    322  fffa
-    323  fffa		       13 f0		      .word.w	InitSystem	; NMI
-    324  fffc		       13 f0		      .word.w	InitSystem	; RESET
-    325  fffe		       13 f0		      .word.w	InitSystem	; IRQ
-    326  10000
-    327  10000					       END
+    451  f584
+    452  f584							;================
+    453  f584							; End of cart
+    454  f584							;================
+    455  f584
+    456  fffa					      ORG	$FFFA
+    457  fffa
+    458  fffa				   InterruptVectors
+    459  fffa
+    460  fffa		       13 f0		      .word.w	InitSystem	; NMI
+    461  fffc		       13 f0		      .word.w	InitSystem	; RESET
+    462  fffe		       13 f0		      .word.w	InitSystem	; IRQ
+    463  10000
+    464  10000					       END

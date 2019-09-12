@@ -34,14 +34,21 @@ KERNEL_TOTAL        = PAL_TOTAL
 KERNEL_VSYNC        = 3
 KERNEL_VBLANK       = 37
 KERNEL_OVERSCAN     = 30
-KERNEL_IMAGE_LINE   = 8
-KERNEL_IMAGE_DATA   = 3
-KERNEL_IMAGE_SIZE   = 24
+KERNEL_WIDTH        = 40*8
+
+KERNEL_IMAGE_MIRROR_DATA   = #3
+KERNEL_IMAGE_FULL_DATA = #6
+KERNEL_IMAGE_LINE   = #8
+KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
 
 ; Game States
 STATE_LOGO          = #0
 STATE_TITLE         = #1
 STATE_GAME          = #2
+
+; Kernel Types
+KERNEL_FULL_IMAGE   = #0
+KERNEL_GAME         = #1
 
 ;================
 ; Variables
@@ -51,12 +58,19 @@ STATE_GAME          = #2
     org $80
 
 State               ds 1
+KernelType          ds 1
+
 Frame               ds 1
 FrameTimer          ds 1
-AudioStep           ds 1
-PlayerPosition      ds 2
+
 ImagePtr            ds 2
 ImageVisible        ds 1
+
+AudioStep           ds 1
+
+PlayerPtr           ds 2
+PlayerPosition      ds 2
+PlayerCounter       ds 1
 
     SEG
 
@@ -130,10 +144,9 @@ InitSystem:
     sta PF2
 
 .init_game:
-    ; Initial state
-    lda #STATE_LOGO
-    sta State
+
     jsr LogoInit
+    ;jsr GameInit
 
 ;=======================================
 ; Game Kernel
@@ -211,54 +224,178 @@ VerticalBlank:
 
 Kernel:
 
+    ; Check which kernel is selected
+    lda KernelType
+    cmp #KERNEL_GAME
+    beq KernelGame
+    cmp #KERNEL_FULL_IMAGE
+    beq KernelFullImage
+    bne KernelDefault
+
+KernelDefault:
+KernelFullImage:
+
+    ; Playfield Control
+    lda #%00000000 ; No mirroring
+    sta CTRLPF
+
+    ; Start Counters
+    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
+    ldy #0 ; Image Counter
+
     ; Turn on display
     lda #0
     sta VBLANK
 
-.kernel_image:
-    ldy #KERNEL_IMAGE_DATA*KERNEL_IMAGE_SIZE
+    sta WSYNC
 
-.kernel_image_line:
+.kernel_full_image:
 
-    ; Write empty line if not visible
-    cpy ImageVisible
-    bcc .kernel_image_line_blank
+    ; 76 machine cycles per scanline
+    sta WSYNC
 
-    ; Draw Image
-    lda (ImagePtr),y
-    sta PF0
-    dey
-    lda (ImagePtr),y
-    sta PF1
-    dey
-    lda (ImagePtr),y
-    sta PF2
+.kernel_full_image_load: ; 66 cycles
 
-    jmp .kernel_image_line_skip
+    ; First half of image
+    lda TitleImage,y ; 5
+    sta PF0 ; 4
+    lda TitleImage+1,y ; 5
+    sta PF1 ; 4
+    lda TitleImage+2,y ; 5
+    sta PF2 ; 4
 
-.kernel_image_line_blank:
+    sleep 6
 
-    ; Write blank playfield
+    ; Second half of image
+    ;lda (ImagePtr+#3),y ; 5 ; Need to figure out indirect addressing with index adjustment
+    lda TitleImage+3,y ; 5
+    sta PF0 ; 4
+    lda TitleImage+4,y ; 5
+    sta PF1 ; 4
+    lda TitleImage+5,y ; 5
+    sta PF2 ; 4
+
+.kernel_full_image_index: ; 4 cycles
+
+    dex ; 2
+    bne .kernel_full_image ; 2
+
+.kernel_full_image_index_next: ; 6 cycles
+
+    ldx #KERNEL_IMAGE_LINE ; 2
+    tya ; 2
+    clc ; 2
+    adc #KERNEL_IMAGE_FULL_DATA ; 2
+    tay ; 2
+    cpy #KERNEL_IMAGE_SIZE*KERNEL_IMAGE_FULL_DATA
+    bne .kernel_full_image ; 2
+
+.kernel_full_image_clean:
+    sta WSYNC
+
+    ; Clear out playfield
     lda #0
     sta PF0
     sta PF1
     sta PF2
 
-    dey
-    dey
+.kernel_full_image_return:
+    rts
 
-.kernel_image_line_skip:
+KernelGame:
 
-    ldx #KERNEL_IMAGE_LINE
-.kernel_image_loop:
+    ; Playfield Control
+    lda #%00000001 ; Mirrored
+    sta CTRLPF
+
+    ; Set player 0 to be double size
+    lda NUSIZ0
+    and #%11111000
+    ora #%00000101
+    sta NUSIZ0
+
+    ; Turn on display
+    lda #0
+    sta VBLANK
+
+    ; Start Counters
+    ldx #KERNEL_SCANLINES ; Scanline Counter
+    ldy #0 ; Image Counter
+
+.kernel_game:
+
+.kernel_game_player:
+
+    ; Store image position in stack
+    tya
+    pha
+
+    txa
+    sbc PlayerPosition+1
+    cmp #GAME_P0_SIZE*2
+    bcc .kernel_game_player_draw
+
+.kernel_game_player_blank:
+
+    ; Draw empty sprite
+    lda #0
+    sta GRP0
+    jmp .kernel_game_player_restore
+
+.kernel_game_player_draw:
+
+    ; Load sprite line
+    lsr ; Divide by 2
+    tay
+    lda (PlayerPtr),y
+    sta GRP0
+
+.kernel_game_player_restore:
+
+    ; Restore image position from stack
+    pla
+    tay
+
+    ; Sync up to horizontal line
     sta WSYNC
+
+.kernel_game_image:
+
+    ; Check to see if new playfield needs to be loaded
+    txa
+    and #%00000111
+    bne .kernel_game_line
+
+.kernel_game_image_load:
+
+    ; Draw Image
+    lda (ImagePtr),y ; 3
+    sta PF0 ; 1
+    iny ; 2
+    lda (ImagePtr),y ; 3
+    sta PF1 ; 1
+    iny ; 2
+    lda (ImagePtr),y ; 3
+    sta PF2 ; 1
+    iny ; 2
+
+.kernel_game_line:
     dex
-    bne .kernel_image_loop
+    bne .kernel_game
 
-    dey
-    bne .kernel_image_line
+.kernel_game_clean:
+    sta WSYNC
 
-.kernel_return:
+    ; Clear out playfield
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+    ; Clear out Player sprite
+    sta GRP0
+
+.kernel_game_return:
     rts
 
 OverScan:

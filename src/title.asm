@@ -21,6 +21,13 @@ TITLE_AUDIO_STEP      = 9
 
 TitleInit:
 
+    ; Setup state and kernel
+    lda #STATE_TITLE
+    sta State
+
+    lda #KERNEL_FULL_IMAGE
+    sta KernelType
+
     ; Load Colors
     lda #TITLE_BG_COLOR
     sta COLUBK
@@ -122,112 +129,13 @@ TitleState:
     lda INPT4
     bmi .title_state_return
 
-    lda #STATE_GAME
-    sta State
     jsr GameInit
 
 .title_state_return:
     rts
 
-; Assets
-
-TitleImage:
-
-    .BYTE %00000000     ; Reversed
-    .BYTE %00000000     ; Normal
-    .BYTE %00000000     ; First 4 bits reversed
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
+    ; Assets
+    include "title_image.asm"
 
 TitleAudio0:
 

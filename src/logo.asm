@@ -16,6 +16,13 @@ LOGO_AUDIO_STEP     = 8
 
 LogoInit:
 
+    ; Setup state and kernel
+    lda #STATE_LOGO
+    sta State
+
+    lda #KERNEL_FULL_IMAGE
+    sta KernelType
+
     ; Load Colors
     lda #LOGO_BG_COLOR
     sta COLUBK
@@ -125,112 +132,13 @@ LogoState:
     cmp #0
     bne .logo_state_return
 
-    lda #STATE_TITLE
-    sta State
     jsr TitleInit
 
 .logo_state_return:
     rts
 
-; Assets
-
-LogoImage:              ; 6 bytes over 8 lines each, total of 48 lines
-
-    .BYTE %00000000     ; First 4 bits reversed
-    .BYTE %00000000     ; Normal
-    .BYTE %00000000     ; Reversed
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00011000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00001100
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
-
-    .BYTE %00000000
-    .BYTE %00000000
-    .BYTE %00000000
+    ; Assets
+    include "logo_image.asm"
 
 LogoAudio0:
 
