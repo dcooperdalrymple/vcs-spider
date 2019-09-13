@@ -16,12 +16,10 @@ LOGO_AUDIO_STEP     = 8
 
 LogoInit:
 
-    ; Setup state and kernel
-    lda #STATE_LOGO
-    sta State
-
-    lda #KERNEL_FULL_IMAGE
-    sta KernelType
+    ; Setup logic and kernel
+    SET_POINTER VBlankPtr, LogoVerticalBlank
+    SET_POINTER KernelPtr, LogoKernel
+    SET_POINTER OverScanPtr, LogoOverScan
 
     ; Load Colors
     lda #LOGO_BG_COLOR
@@ -53,17 +51,14 @@ LogoInit:
     lda #LOGO_FRAMES
     sta FrameTimer
 
-    ; Setup Image Pointer
-    SET_POINTER ImagePtr, LogoImage
-
     ; Setup Image Animation
-    lda #KERNEL_IMAGE_SIZE
-    sta ImageVisible
+    ;lda #KERNEL_IMAGE_SIZE
+    ;sta ImageVisible
 
     rts
 
 LogoVerticalBlank:
-    jsr LogoAnimation
+    ;jsr LogoAnimation
     rts
 
 LogoOverScan:
@@ -76,13 +71,13 @@ LogoAnimation:
     and #%00000011 ; Every 4 when bits are 00
     bne .logo_animation_return
 
-    ldx ImageVisible
-    cpx #0
-    beq .logo_animation_return
+    ;ldx ImageVisible
+    ;cpx #0
+    ;beq .logo_animation_return
 
     ; Add another visible line
-    dex
-    stx ImageVisible
+    ;dex
+    ;stx ImageVisible
 
 .logo_animation_return:
     rts
@@ -136,6 +131,77 @@ LogoState:
 
 .logo_state_return:
     rts
+
+LogoKernel:
+
+    ; Playfield Control
+    lda #%00000000 ; No mirroring
+    sta CTRLPF
+
+    ; Start Counters
+    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
+    ldy #0 ; Image Counter
+
+    ; Turn on display
+    lda #0
+    sta VBLANK
+
+    sta WSYNC
+
+.logo_kernel_image:
+
+    ; 76 machine cycles per scanline
+    sta WSYNC
+
+.logo_kernel_image_load: ; 66 cycles
+
+    ; First half of image
+    lda LogoImage,y ; 5
+    sta PF0 ; 4
+    lda LogoImage+1,y ; 5
+    sta PF1 ; 4
+    lda LogoImage+2,y ; 5
+    sta PF2 ; 4
+
+    sleep 6
+
+    ; Second half of image
+    lda LogoImage+3,y ; 5
+    sta PF0 ; 4
+    lda LogoImage+4,y ; 5
+    sta PF1 ; 4
+    lda LogoImage+5,y ; 5
+    sta PF2 ; 4
+
+.logo_kernel_image_index: ; 4 cycles
+
+    dex ; 2
+    bne .logo_kernel_image ; 2
+
+.logo_kernel_image_index_next: ; 6 cycles
+
+    ; Restore scanline counter
+    ldx #KERNEL_IMAGE_LINE ; 2
+
+    tya ; 2
+    clc ; 2
+    adc #KERNEL_IMAGE_FULL_DATA ; 2
+    tay ; 2
+    cpy #KERNEL_IMAGE_SIZE*KERNEL_IMAGE_FULL_DATA
+    bne .logo_kernel_image ; 2
+
+.logo_kernel_image_clean:
+
+    ; Clear out playfield
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+.logo_kernel_image_return:
+    rts
+
+LogoAssets:
 
     ; Assets
     include "logo_image.asm"

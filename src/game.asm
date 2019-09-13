@@ -11,12 +11,10 @@ GAME_P0_BOUNDARY    = GAME_P0_SIZE
 
 GameInit:
 
-    ; Setup state and kernel
-    lda #STATE_GAME
-    sta State
-
-    lda #KERNEL_GAME
-    sta KernelType
+    ; Setup logic and kernel
+    SET_POINTER VBlankPtr, GameVerticalBlank
+    SET_POINTER KernelPtr, GameKernel
+    SET_POINTER OverScanPtr, GameOverScan
 
     ; Load Colors
     lda #GAME_BG_COLOR
@@ -42,11 +40,6 @@ GameInit:
 
     ; Setup Player Sprite
     SET_POINTER PlayerPtr, GamePlayerSprite
-
-    ; Setup Image
-    SET_POINTER ImagePtr, GameImage
-    lda #0
-    sta ImageVisible
 
     rts
 
@@ -207,6 +200,105 @@ GameObjects:
     sta HMOVE
 
     rts
+
+GameKernel:
+
+    ; Playfield Control
+    lda #%00000001 ; Mirrored
+    sta CTRLPF
+
+    ; Set player 0 to be double size
+    lda NUSIZ0
+    and #%11111000
+    ora #%00000101
+    sta NUSIZ0
+
+    ; Turn on display
+    lda #0
+    sta VBLANK
+
+    ; Start Counters
+    ldx #KERNEL_SCANLINES ; Scanline Counter
+    ldy #0 ; Image Counter
+
+.game_kernel:
+
+.game_kernel_player:
+
+    ; Store image position in stack
+    tya
+    pha
+
+    txa
+    sbc PlayerPosition+1
+
+    ; Sync up to horizontal line
+    sta WSYNC
+
+    cmp #GAME_P0_SIZE*2
+    bcc .game_kernel_player_draw
+
+.game_kernel_player_blank:
+
+    ; Draw empty sprite
+    lda #0
+    sta GRP0
+    jmp .game_kernel_player_restore
+
+.game_kernel_player_draw:
+
+    ; Load sprite line
+    lsr ; Divide by 2
+    tay
+    lda (PlayerPtr),y
+    sta GRP0
+
+.game_kernel_player_restore:
+
+    ; Restore image position from stack
+    pla
+    tay
+
+.game_kernel_image:
+
+    ; Check to see if new playfield needs to be loaded
+    txa
+    and #%00000111
+    bne .game_kernel_line
+
+.game_kernel_image_load:
+
+    ; Draw Image
+    lda GameImage,y ; 3
+    sta PF0 ; 1
+    iny ; 2
+    lda GameImage,y ; 3
+    sta PF1 ; 1
+    iny ; 2
+    lda GameImage,y ; 3
+    sta PF2 ; 1
+    iny ; 2
+
+.game_kernel_line:
+    dex
+    bne .game_kernel
+
+.game_kernel_clean:
+    sta WSYNC
+
+    ; Clear out playfield
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+    ; Clear out Player sprite
+    sta GRP0
+
+.game_kernel_return:
+    rts
+
+GameAssets:
 
     ; Game Background
     include "game_image.asm"

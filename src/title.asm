@@ -21,12 +21,10 @@ TITLE_AUDIO_STEP      = 9
 
 TitleInit:
 
-    ; Setup state and kernel
-    lda #STATE_TITLE
-    sta State
-
-    lda #KERNEL_FULL_IMAGE
-    sta KernelType
+    ; Setup logic and kernel
+    SET_POINTER VBlankPtr, TitleVerticalBlank
+    SET_POINTER KernelPtr, TitleKernel
+    SET_POINTER OverScanPtr, TitleOverScan
 
     ; Load Colors
     lda #TITLE_BG_COLOR
@@ -52,12 +50,6 @@ TitleInit:
     sta AudioStep
     lda #1
     sta FrameTimer
-
-    ; Setup Image Pointer
-    SET_POINTER ImagePtr, TitleImage
-
-    lda #0
-    sta ImageVisible
 
     rts
 
@@ -133,6 +125,77 @@ TitleState:
 
 .title_state_return:
     rts
+
+TitleKernel:
+
+    ; Playfield Control
+    lda #%00000000 ; No mirroring
+    sta CTRLPF
+
+    ; Start Counters
+    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
+    ldy #0 ; Image Counter
+
+    ; Turn on display
+    lda #0
+    sta VBLANK
+
+    sta WSYNC
+
+.title_kernel_image:
+
+    ; 76 machine cycles per scanline
+    sta WSYNC
+
+.title_kernel_image_load: ; 66 cycles
+
+    ; First half of image
+    lda TitleImage,y ; 5
+    sta PF0 ; 4
+    lda TitleImage+1,y ; 5
+    sta PF1 ; 4
+    lda TitleImage+2,y ; 5
+    sta PF2 ; 4
+
+    sleep 6
+
+    ; Second half of image
+    lda TitleImage+3,y ; 5
+    sta PF0 ; 4
+    lda TitleImage+4,y ; 5
+    sta PF1 ; 4
+    lda TitleImage+5,y ; 5
+    sta PF2 ; 4
+
+.title_kernel_image_index: ; 4 cycles
+
+    dex ; 2
+    bne .title_kernel_image ; 2
+
+.title_kernel_image_index_next: ; 6 cycles
+
+    ; Restore scanline counter
+    ldx #KERNEL_IMAGE_LINE ; 2
+
+    tya ; 2
+    clc ; 2
+    adc #KERNEL_IMAGE_FULL_DATA ; 2
+    tay ; 2
+    cpy #KERNEL_IMAGE_SIZE*KERNEL_IMAGE_FULL_DATA
+    bne .title_kernel_image ; 2
+
+.title_kernel_image_clean:
+
+    ; Clear out playfield
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+.title_kernel_image_return:
+    rts
+
+TitleAssets:
 
     ; Assets
     include "title_image.asm"
