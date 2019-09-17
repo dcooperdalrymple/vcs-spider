@@ -57,9 +57,10 @@ FrameTimer          ds 1
 
 AudioStep           ds 1
 
+ImageIndex          ds 1
+
 PlayerPtr           ds 2
 PlayerPosition      ds 2
-PlayerCounter       ds 1
 
     SEG
 

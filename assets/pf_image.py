@@ -18,6 +18,8 @@ PF_HEIGHT = 192 / 8
 PF_MIRROR_WIDTH = 4 + 8 + 8
 PF_FULL_WIDTH = PF_MIRROR_WIDTH * 2
 OUTPUT_TAB_LENGTH = 4
+PF_MIRROR_GROUP = 3
+PF_FULL_GROUP = 6
 
 def load_image(filename):
     image = Image.open(filename)
@@ -139,14 +141,27 @@ def reverse_data(data, group_size):
 
     return rev_data
 
-def compose_output(data, group_size, address_name):
+def compose_output(data, group_size, address_name, group_index):
     output = address_name + ":\n"
 
     groups = int(math.floor(len(data) / float(group_size)))
     for x in range(0, groups):
-        output += "\n"
-        for y in range(0, group_size):
-            output += " " * OUTPUT_TAB_LENGTH + ".BYTE %" + get_bin(data[x * group_size + y]) + "\n"
+        if group_index >= 0:
+            output += " " * OUTPUT_TAB_LENGTH + ".BYTE %" + get_bin(data[x * group_size + group_index]) + "\n"
+        else:
+            output += "\n"
+            for y in range(0, group_size):
+                output += " " * OUTPUT_TAB_LENGTH + ".BYTE %" + get_bin(data[x * group_size + y]) + "\n"
+
+    return output
+
+def compose_merge(strs):
+    output = ""
+
+    for x in range(0, len(strs)):
+        if output != "":
+            output += "\n"
+        output += strs[x]
 
     return output
 
@@ -160,33 +175,42 @@ if len(sys.argv) < 2:
 # Help message
 elif sys.argv[1] == "-h" or sys.argv[1] == "-help" or sys.argv[1] == "--help":
     print "Convert mirrored monochromatic image to playfield bytes:"
-    print "  pf_image.py -type mirror -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
+    print "  pf_image.py -type mirror -split 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
     print "Convert fullscreen monochromatic image to playfield bytes:"
-    print "  pf_image.py -type full -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
-    print "\nAccepts png/jpg input and .asm output is preferred."
+    print "  pf_image.py -type full -split 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
+    print "\nSetting split to 1 will separate playfield bytes into different address positions."
+    print "Accepts png/jpg input and .asm output is preferred.\n"
     raise SystemExit
 
-if len(sys.argv) == 9 and sys.argv[1] == '-type' and sys.argv[3] == '-name' and sys.argv[5] == '-in' and sys.argv[7] == '-out':
+if len(sys.argv) == 11 and sys.argv[1] == '-type' and sys.argv[3] == '-split' and sys.argv[5] == '-name' and sys.argv[7] == '-in' and sys.argv[9] == '-out':
     type = sys.argv[2]
-    address_name = sys.argv[4]
-    in_file = sys.argv[6]
-    out_file = sys.argv[8]
+    split = sys.argv[4]
+    address_name = sys.argv[6]
+    in_file = sys.argv[8]
+    out_file = sys.argv[10]
 
     image = load_image(in_file)
     image_data = read_image(image)
 
     if type == 'mirror':
         pf_data = convert_mirror(image_data)
-        group_size = 3
+        group_size = PF_MIRROR_GROUP
     elif type == 'full':
         pf_data = convert_full(image_data)
-        group_size = 6
+        group_size = PF_FULL_GROUP
     else:
         print "Invalid conversion type. Must be \"mirror\" or \"full\"."
         raise SystemExit
 
-    #pf_data = reverse_data(pf_data, group_size)
-    pf_output = compose_output(pf_data, group_size, address_name)
+    if split == '1':
+        # Force group size to 3. Full image alternates.
+        pf0_output = compose_output(pf_data, PF_MIRROR_GROUP, address_name + "PF0", 0)
+        pf1_output = compose_output(pf_data, PF_MIRROR_GROUP, address_name + "PF1", 1)
+        pf2_output = compose_output(pf_data, PF_MIRROR_GROUP, address_name + "PF2", 2)
+        pf_output = compose_merge([pf0_output, pf1_output, pf2_output])
+    else:
+        #pf_data = reverse_data(pf_data, group_size)
+        pf_output = compose_output(pf_data, group_size, address_name, -1)
 
     output = open(out_file, "w")
     output.write(pf_output)
@@ -195,4 +219,4 @@ if len(sys.argv) == 9 and sys.argv[1] == '-type' and sys.argv[3] == '-name' and 
     print "Successfully converted image to playfield data.\n"
     raise SystemExit
 
-print "Invalid arguments. Run with -h for a list of options."
+print "Invalid arguments. Run with -h for a list of options.\n"

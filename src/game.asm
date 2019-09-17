@@ -217,17 +217,17 @@ GameKernel:
     lda #0
     sta VBLANK
 
+    ; Setup Image Index
+    lda #0
+    sta ImageIndex
+
     ; Start Counters
     ldx #KERNEL_SCANLINES ; Scanline Counter
-    ldy #0 ; Image Counter
+;    ldy #0 ; Image Counter
 
 .game_kernel:
 
 .game_kernel_player:
-
-    ; Store image position in stack
-    tya
-    pha
 
     txa
     sbc PlayerPosition+1
@@ -243,21 +243,16 @@ GameKernel:
     ; Draw empty sprite
     lda #0
     sta GRP0
-    jmp .game_kernel_player_restore
+    jmp .game_kernel_image
 
 .game_kernel_player_draw:
 
     ; Load sprite line
+    and #%11111110
     lsr ; Divide by 2
     tay
     lda (PlayerPtr),y
     sta GRP0
-
-.game_kernel_player_restore:
-
-    ; Restore image position from stack
-    pla
-    tay
 
 .game_kernel_image:
 
@@ -268,16 +263,18 @@ GameKernel:
 
 .game_kernel_image_load:
 
+    ldy ImageIndex
+
     ; Draw Image
-    lda GameImage,y ; 3
+    lda GameImagePF0,y ; 3
     sta PF0 ; 1
-    iny ; 2
-    lda GameImage,y ; 3
+    lda GameImagePF1,y ; 3
     sta PF1 ; 1
-    iny ; 2
-    lda GameImage,y ; 3
+    lda GameImagePF2,y ; 3
     sta PF2 ; 1
+
     iny ; 2
+    sty ImageIndex
 
 .game_kernel_line:
     dex

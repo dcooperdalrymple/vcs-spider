@@ -27,16 +27,15 @@
 0.game_control_sprite_x  f3ff                  
 0.game_control_sprite_y  f40e              (R )
 0.game_control_store     f42f              (R )
-0.game_kernel            f4cd              (R )
-0.game_kernel_clean      f501                  
-0.game_kernel_image      f4e7                  
+0.game_kernel            f4cf              (R )
+0.game_kernel_clean      f503                  
+0.game_kernel_image      f4e5              (R )
 0.game_kernel_image_load f4ec                  
-0.game_kernel_line       f4fe              (R )
-0.game_kernel_player     f4cd                  
-0.game_kernel_player_blank f4d8                  
-0.game_kernel_player_draw f4df              (R )
-0.game_kernel_player_restore f4e5              (R )
-0.game_kernel_return     f50d                  
+0.game_kernel_line       f500              (R )
+0.game_kernel_player     f4cf                  
+0.game_kernel_player_blank f4d6                  
+0.game_kernel_player_draw f4dd              (R )
+0.game_kernel_return     f50f                  
 0.game_objects_player    f4ad                  
 0.init_clean             f013                  
 0.init_game              f042                  
@@ -83,26 +82,26 @@
 11.POINTER               0082              (R )
 12.ADDRESS               f3e6              (R )
 12.POINTER               0084              (R )
-13.ADDRESS               f556              (R )
-13.POINTER               0089              (R )
-14.ADDRESS               f586              (R )
-14.POINTER               0089              (R )
-15.ADDRESS               f566              (R )
-15.POINTER               0089              (R )
-16.ADDRESS               f556              (R )
-16.POINTER               0089              (R )
-17.ADDRESS               f576              (R )
-17.POINTER               0089              (R )
-18.ADDRESS               f55e              (R )
-18.POINTER               0089              (R )
-19.ADDRESS               f56e              (R )
-19.POINTER               0089              (R )
+13.ADDRESS               f558              (R )
+13.POINTER               008a              (R )
+14.ADDRESS               f588              (R )
+14.POINTER               008a              (R )
+15.ADDRESS               f568              (R )
+15.POINTER               008a              (R )
+16.ADDRESS               f558              (R )
+16.POINTER               008a              (R )
+17.ADDRESS               f578              (R )
+17.POINTER               008a              (R )
+18.ADDRESS               f560              (R )
+18.POINTER               008a              (R )
+19.ADDRESS               f570              (R )
+19.POINTER               008a              (R )
 2.ADDRESS                f0e3              (R )
 2.POINTER                0080              (R )
-20.ADDRESS               f57e              (R )
-20.POINTER               0089              (R )
-21.ADDRESS               f58e              (R )
-21.POINTER               0089              (R )
+20.ADDRESS               f580              (R )
+20.POINTER               008a              (R )
+21.ADDRESS               f590              (R )
+21.POINTER               008a              (R )
 3.ADDRESS                f127              (R )
 3.POINTER                0082              (R )
 4.ADDRESS                f0e4              (R )
@@ -147,14 +146,16 @@ GAME_FG_COLOR            000c              (R )
 GAME_P0_BOUNDARY         0008              (R )
 GAME_P0_COLOR            0056              (R )
 GAME_P0_SIZE             0008              (R )
-GameAssets               f50e                  
+GameAssets               f510                  
 GameControl              f3e7              (R )
-GameImage                f50e              (R )
+GameImagePF0             f510              (R )
+GameImagePF1             f528              (R )
+GameImagePF2             f540              (R )
 GameInit                 f39e              (R )
 GameKernel               f4b9              (R )
 GameObjects              f4ad              (R )
 GameOverScan             f3e6              (R )
-GamePlayerSprite         f556              (R )
+GamePlayerSprite         f558              (R )
 GameVerticalBlank        f3df              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
@@ -165,6 +166,7 @@ HMM1                     0023
 HMOVE                    002a              (R )
 HMP0                     0020              (R )
 HMP1                     0021                  
+ImageIndex               0089              (R )
 InitSystem               f013              (R )
 INPT0                    0008                  
 INPT1                    0009                  
@@ -221,9 +223,8 @@ PAL_TOTAL                0138
 PF0                      000d              (R )
 PF1                      000e              (R )
 PF2                      000f              (R )
-PlayerCounter            008d                  
-PlayerPosition           008b              (R )
-PlayerPtr                0089              (R )
+PlayerPosition           008c              (R )
+PlayerPtr                008a              (R )
 PosObject                f000              (R )
 REFP0                    000b                  
 REFP1                    000c                  
