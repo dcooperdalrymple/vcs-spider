@@ -29,12 +29,12 @@
 0.game_control_store     f42f              (R )
 0.game_kernel            f4cf              (R )
 0.game_kernel_clean      f503                  
-0.game_kernel_image      f4e5              (R )
+0.game_kernel_image      f4e7              (R )
 0.game_kernel_image_load f4ec                  
 0.game_kernel_line       f500              (R )
 0.game_kernel_player     f4cf                  
-0.game_kernel_player_blank f4d6                  
-0.game_kernel_player_draw f4dd              (R )
+0.game_kernel_player_blank f4d8                  
+0.game_kernel_player_draw f4df              (R )
 0.game_kernel_return     f50f                  
 0.game_objects_player    f4ad                  
 0.init_clean             f013                  
@@ -174,7 +174,7 @@ INPT2                    000a
 INPT3                    000b                  
 INPT4                    000c              (R )
 INPT5                    000d                  
-InterruptVectors         fffa                  
+InterruptVectors         f7fa                  
 INTIM                    0284              (R )
 Kernel                   f07e              (R )
 KERNEL_IMAGE_FULL_DATA   0006              (R )

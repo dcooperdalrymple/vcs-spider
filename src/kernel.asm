@@ -246,7 +246,7 @@ OverScan:
 ; End of cart
 ;================
 
-    ORG $FFFA
+    ORG $F7FA ; 2k = $F7FA, 4k = $FFFA
 
 InterruptVectors:
 
