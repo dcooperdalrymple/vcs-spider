@@ -62,6 +62,10 @@ ImageIndex          ds 1
 PlayerPtr           ds 2
 PlayerPosition      ds 2
 
+MissileEnabled      ds 1
+MissilePosition     ds 2
+MissileVelocity     ds 2
+
     SEG
 
     ORG $F000           ; Start of cart area
@@ -94,6 +98,20 @@ PosObject:
     REPEND
     sta.wx HMP0,x
     sta RESP0,x
+    rts
+
+PosMissile:
+    sec
+    sta WSYNC
+.posmissle_divide_loop:
+    sbc #15
+    bcs .posmissle_divide_loop
+    eor #7
+    REPEAT 4
+        asl
+    REPEND
+    sta.wx HMM0,x
+    sta RESM0,x
     rts
 
 InitSystem:

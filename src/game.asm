@@ -9,6 +9,9 @@ GAME_P0_COLOR       = #$56
 GAME_P0_SIZE        = 8
 GAME_P0_BOUNDARY    = GAME_P0_SIZE
 
+GAME_M1_COLOR       = #$0E
+GAME_M1_SIZE        = 2
+
 GameInit:
 
     ; Setup logic and kernel
@@ -23,6 +26,8 @@ GameInit:
     sta COLUPF
     lda #GAME_P0_COLOR
     sta COLUP0
+    lda #GAME_M1_COLOR
+    sta COLUP1
 
     ; Mute Audio
     lda #0
@@ -40,6 +45,18 @@ GameInit:
 
     ; Setup Player Sprite
     SET_POINTER PlayerPtr, GamePlayerSprite
+
+    ; Initial Missile Control
+    lda #1
+    sta MissileEnabled
+
+    lda #50
+    sta MissilePosition
+    sta MissilePosition+1
+
+    lda #1
+    sta MissileVelocity
+    sta MissileVelocity+1
 
     rts
 
@@ -191,6 +208,7 @@ GameObjects:
 
 .game_objects_player:
 
+    ; Set Player Position
     ldx #0                  ; Object (player0)
     lda PlayerPosition      ; X Position
     jsr PosObject
@@ -198,6 +216,29 @@ GameObjects:
     ; Set final x position
     sta WSYNC
     sta HMOVE
+
+.game_objects_missile:
+
+    ; Apply Velocity
+    clc
+    lda MissilePosition     ; x
+    adc MissileVelocity
+    sta MissilePosition
+
+    clc
+    lda MissilePosition+1   ; y
+    adc MissileVelocity+1
+    sta MissilePosition+1
+
+    ; Set Missile Position
+    ldx #1                  ; Object (missile1)
+    lda MissilePosition     ; X Position
+    jsr PosMissile
+
+    sta WSYNC
+    sta HMOVE
+
+.game_objects_return:
 
     rts
 
@@ -207,11 +248,17 @@ GameKernel:
     lda #%00000001 ; Mirrored
     sta CTRLPF
 
-    ; Set player 0 to be double size
+    ; Set player 0 to be double size and missile 0 to be 2 clock size (4/5 bits)
     lda NUSIZ0
     and #%11111000
     ora #%00000101
     sta NUSIZ0
+
+    ; Set missile 0 to be 2 clock size (4/5 bits)
+    lda NUSIZ1
+    and #%11001111
+    ora #%00010101
+    sta NUSIZ1
 
     ; Turn on display
     lda #0
@@ -259,7 +306,7 @@ GameKernel:
     ; Check to see if new playfield needs to be loaded
     txa
     and #%00000111
-    bne .game_kernel_line
+    bne .game_kernel_missile
 
 .game_kernel_image_load:
 
@@ -275,6 +322,29 @@ GameKernel:
 
     iny ; 2
     sty ImageIndex
+
+.game_kernel_missile:
+
+    ; Check if visible
+    lda MissileEnabled
+    cmp #1
+    bne .game_kernel_missile_off
+
+    ; Check y position
+    txa
+    sbc MissilePosition+1
+    cmp #GAME_M1_SIZE*2
+    bcc .game_kernel_missile_on
+
+.game_kernel_missile_off:
+    lda #%00000000
+    jmp .game_kernel_missile_write
+
+.game_kernel_missile_on:
+    lda #%00000010
+
+.game_kernel_missile_write:
+    sta ENAM1
 
 .game_kernel_line:
     dex
