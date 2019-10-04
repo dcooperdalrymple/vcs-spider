@@ -3,7 +3,7 @@
 ;================
 
 GAME_BG_COLOR       = #$00
-GAME_FG_COLOR       = #$0C
+GAME_FG_COLOR       = #$06
 
 GAME_P0_COLOR       = #$56
 GAME_P0_SIZE        = 8
@@ -11,6 +11,9 @@ GAME_P0_BOUNDARY    = GAME_P0_SIZE
 
 GAME_M1_COLOR       = #$0E
 GAME_M1_SIZE        = 2
+GAME_M1_DISTANCE    = 64    ; Distance from player
+GAME_M1_VEL_X       = 2
+GAME_M1_VEL_Y       = 3
 
 GameInit:
 
@@ -47,16 +50,15 @@ GameInit:
     SET_POINTER PlayerPtr, GamePlayerSprite
 
     ; Initial Missile Control
-    lda #1
-    sta MissileEnabled
 
-    lda #50
+    lda #0
+    sta MissileEnabled
     sta MissilePosition
     sta MissilePosition+1
-
-    lda #1
     sta MissileVelocity
     sta MissileVelocity+1
+    sta MissileStartPos
+    sta MissileStartPos+1
 
     rts
 
@@ -111,15 +113,20 @@ GameControl:
 .game_control_sprite_y:
     cpy PlayerPosition+1
     bcc .game_control_sprite_down
-    beq .game_control_boundary
+    beq .game_control_sprite_store
     bcs .game_control_sprite_up
 
 .game_control_sprite_down:
     ora #%00010000
-    jmp .game_control_boundary
+    jmp .game_control_sprite_store
 
 .game_control_sprite_up:
     ora #%00100000
+
+.game_control_sprite_store:
+    cmp #%00000000
+    beq .game_control_boundary
+    sta PlayerControl
 
 .game_control_boundary:
     ; Check Playfield Boundaries
@@ -130,9 +137,9 @@ GameControl:
     ldx #GAME_P0_BOUNDARY
 
 .game_control_boundary_right:
-    ;cpx #KERNEL_WIDTH-GAME_P0_BOUNDARY-GAME_P0_SIZE
-    ;bcc .game_control_boundary_top
-    ;ldx #KERNEL_WIDTH-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    cpx #151-GAME_P0_BOUNDARY-GAME_P0_SIZE ; #KERNEL_WIDTH/2-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    bcc .game_control_boundary_top
+    ldx #151-GAME_P0_BOUNDARY-GAME_P0_SIZE
 
 .game_control_boundary_top:
     cpy #GAME_P0_BOUNDARY
@@ -152,59 +159,207 @@ GameControl:
 .game_control_sprite_assign:
     ; Skip if no change
     cmp #%00000000
-    beq .game_control_return
+    beq .game_control_missile
 
 .game_control_sprite_assign_left:
     cmp #%10000000
     bne .game_control_sprite_assign_right
     SET_POINTER PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*6
-    jmp .game_control_return
+    jmp .game_control_missile
 
 .game_control_sprite_assign_right:
     cmp #%01000000
     bne .game_control_sprite_assign_top
     SET_POINTER PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*2
-    jmp .game_control_return
+    jmp .game_control_missile
 
 .game_control_sprite_assign_top:
     cmp #%00100000
     bne .game_control_sprite_assign_bottom
     SET_POINTER PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*0
-    jmp .game_control_return
+    jmp .game_control_missile
 
 .game_control_sprite_assign_bottom:
     cmp #%00010000
     bne .game_control_sprite_assign_top_right
     SET_POINTER PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*4
-    jmp .game_control_return
+    jmp .game_control_missile
 
 .game_control_sprite_assign_top_right:
     cmp #%01100000
     bne .game_control_sprite_assign_bottom_right
     SET_POINTER PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*1
-    jmp .game_control_return
+    jmp .game_control_missile
 
 .game_control_sprite_assign_bottom_right:
     cmp #%01010000
     bne .game_control_sprite_assign_bottom_left
     SET_POINTER PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*3
-    jmp .game_control_return
+    jmp .game_control_missile
 
 .game_control_sprite_assign_bottom_left:
     cmp #%10010000
     bne .game_control_sprite_assign_top_left
     SET_POINTER PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*5
-    jmp .game_control_return
+    jmp .game_control_missile
 
 .game_control_sprite_assign_top_left:
     cmp #%10100000
-    bne .game_control_return
+    bne .game_control_missile
     SET_POINTER PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*7
+
+.game_control_missile:
+
+    ; Check if Fire Button on controller 1 is pressed
+    lda INPT4
+    bmi .game_control_missile_skip
+
+    lda MissileEnabled
+    cmp #1
+    beq .game_control_missile_skip
+
+    lda PlayerControl
+    cmp #0
+    bne .game_control_missile_fire
+
+.game_control_missile_skip:
+    jmp .game_control_return
+
+.game_control_missile_fire:
+    lda #1
+    sta MissileEnabled
+
+.game_control_missile_x:
+    lda PlayerControl
+    and #%11000000
+    beq .game_control_missile_x_none
+.game_control_missile_x_left:
+    cmp #%10000000
+    bne .game_control_missile_x_right
+
+    lda #-GAME_M1_VEL_X
+    jmp .game_control_missile_x_store
+.game_control_missile_x_right:
+    lda #GAME_M1_VEL_X
+    jmp .game_control_missile_x_store
+.game_control_missile_x_none:
+    lda #0
+.game_control_missile_x_store:
+    sta MissileVelocity
+
+.game_control_missile_y:
+    lda PlayerControl
+    and #%00110000
+    beq .game_control_missile_y_none
+.game_control_missile_y_up:
+    cmp #%00100000
+    bne .game_control_missile_y_down
+
+    lda #GAME_M1_VEL_Y
+    jmp .game_control_missile_y_store
+.game_control_missile_y_down:
+    lda #-GAME_M1_VEL_Y
+    jmp .game_control_missile_y_store
+.game_control_missile_y_none:
+    lda #0
+.game_control_missile_y_store:
+    sta MissileVelocity+1
+
+.game_control_missile_position:
+
+    ldx #0 ; offsetX
+    ldy #0 ; offsetY
+
+    lda PlayerControl
+    and #%11110000
+
+.game_control_missile_position_left:
+    cmp #%10000000
+    bne .game_control_missile_position_right
+
+    ldx #GAME_M1_SIZE
+    ldy #GAME_P0_SIZE
+    jmp .game_control_missile_position_store
+
+.game_control_missile_position_right:
+    cmp #%01000000
+    bne .game_control_missile_position_top
+
+    ldx #GAME_P0_SIZE*2
+    ldy #GAME_P0_SIZE
+    jmp .game_control_missile_position_store
+
+.game_control_missile_position_top:
+    cmp #%00100000
+    bne .game_control_missile_position_bottom
+
+    ldx #GAME_P0_SIZE+GAME_M1_SIZE/2
+    ldy #GAME_P0_SIZE*2
+    jmp .game_control_missile_position_store
+
+.game_control_missile_position_bottom:
+    cmp #%00010000
+    bne .game_control_missile_position_top_right
+
+    ldx #GAME_P0_SIZE+GAME_M1_SIZE/2
+    jmp .game_control_missile_position_store
+
+.game_control_missile_position_top_right:
+    cmp #%01100000
+    bne .game_control_missile_position_bottom_right
+
+    ldx #GAME_P0_SIZE*2
+    ldy #GAME_P0_SIZE*2
+    jmp .game_control_missile_position_store
+
+.game_control_missile_position_bottom_right:
+    cmp #%01010000
+    bne .game_control_missile_position_bottom_left
+
+    ldx #GAME_P0_SIZE*2
+    jmp .game_control_missile_position_store
+
+.game_control_missile_position_bottom_left:
+    cmp #%10010000
+    bne .game_control_missile_position_top_left
+
+    ; No Offset
+    jmp .game_control_missile_position_store
+
+.game_control_missile_position_top_left:
+    cmp #%10100000
+    bne .game_control_missile_position_store
+
+    ldx #GAME_M1_SIZE
+    ldy #GAME_P0_SIZE*2
+
+.game_control_missile_position_store:
+
+    ; Apply offsetX to playerX
+    lda PlayerPosition
+    stx Temp
+    clc
+    adc Temp
+    tax
+
+    ; Apply offsetY to playerY
+    lda PlayerPosition+1
+    sty Temp
+    clc
+    adc Temp
+    tay
+
+    stx MissilePosition
+    sty MissilePosition+1
+    stx MissileStartPos
+    sty MissileStartPos+1
 
 .game_control_return:
     rts
 
 GameObjects:
+
+    sta HMCLR
 
 .game_objects_player:
 
@@ -213,20 +368,67 @@ GameObjects:
     lda PlayerPosition      ; X Position
     jsr PosObject
 
-    ; Set final x position
-    sta WSYNC
-    sta HMOVE
-
 .game_objects_missile:
 
-    ; Apply Velocity
+    ; Check if missile is enabled
+    lda MissileEnabled
+    cmp #1
+    bne .game_objects_return
+
+    ; Load position
+    ldx MissilePosition
+    ldy MissilePosition+1
+
+.game_objects_missile_distance:
+
+    ; Check distance from player with absolute value differences
+
+.game_objects_missile_distance_x:
+    txa
     clc
-    lda MissilePosition     ; x
+    sbc MissileStartPos
+    bcs .game_objects_missile_distance_x_check
+    eor #$FF    ; C flag is clear here
+    adc #$01    ; form two's complement
+.game_objects_missile_distance_x_check: ; Jumps to if positive
+    cmp #GAME_M1_DISTANCE
+    bcs .game_objects_missile_disable
+
+.game_objects_missile_distance_y:
+    tya
+    clc
+    sbc MissileStartPos+1
+    bcs .game_objects_missile_distance_y_check
+    eor #$FF    ; C flag is clear here
+    adc #$01    ; form two's complement
+.game_objects_missile_distance_y_check: ; Jumps to if positive
+    cmp #GAME_M1_DISTANCE
+    bcs .game_objects_missile_disable
+
+.game_objects_missile_boundary:
+.game_objects_missile_boundary_left:
+    cpx #GAME_M1_VEL_X
+    bcc .game_objects_missile_disable
+.game_objects_missile_boundary_right:
+    cpx #160-GAME_M1_VEL_X
+    bcs .game_objects_missile_disable
+.game_objects_missile_boundary_bottom:
+    cpy #GAME_M1_VEL_Y
+    bcc .game_objects_missile_disable
+.game_objects_missile_boundary_top:
+    cpy #KERNEL_SCANLINES-GAME_M1_VEL_Y
+    bcs .game_objects_missile_disable
+
+.game_objects_missile_velocity:
+
+    ; Apply Velocity
+    txa
+    clc
     adc MissileVelocity
     sta MissilePosition
 
+    tya
     clc
-    lda MissilePosition+1   ; y
     adc MissileVelocity+1
     sta MissilePosition+1
 
@@ -235,10 +437,17 @@ GameObjects:
     lda MissilePosition     ; X Position
     jsr PosMissile
 
-    sta WSYNC
-    sta HMOVE
+    jmp .game_objects_return
+
+.game_objects_missile_disable:
+    lda #0
+    sta MissileEnabled
 
 .game_objects_return:
+
+    ; Set final x position
+    sta WSYNC
+    sta HMOVE
 
     rts
 
@@ -274,6 +483,10 @@ GameKernel:
 
 .game_kernel:
 
+;=======================================
+; Player
+;=======================================
+
 .game_kernel_player:
 
     txa
@@ -290,7 +503,7 @@ GameKernel:
     ; Draw empty sprite
     lda #0
     sta GRP0
-    jmp .game_kernel_image
+    jmp .game_kernel_player_skip
 
 .game_kernel_player_draw:
 
@@ -301,27 +514,11 @@ GameKernel:
     lda (PlayerPtr),y
     sta GRP0
 
-.game_kernel_image:
+.game_kernel_player_skip:
 
-    ; Check to see if new playfield needs to be loaded
-    txa
-    and #%00000111
-    bne .game_kernel_missile
-
-.game_kernel_image_load:
-
-    ldy ImageIndex
-
-    ; Draw Image
-    lda GameImagePF0,y ; 3
-    sta PF0 ; 1
-    lda GameImagePF1,y ; 3
-    sta PF1 ; 1
-    lda GameImagePF2,y ; 3
-    sta PF2 ; 1
-
-    iny ; 2
-    sty ImageIndex
+;=======================================
+; Missile
+;=======================================
 
 .game_kernel_missile:
 
@@ -346,12 +543,39 @@ GameKernel:
 .game_kernel_missile_write:
     sta ENAM1
 
+;=======================================
+; Playfield Image
+;=======================================
+
+.game_kernel_image:
+
+    ; Check to see if new playfield needs to be loaded
+    txa
+    and #%00000111
+    bne .game_kernel_image_skip
+
+.game_kernel_image_load:
+
+    ldy ImageIndex
+
+    ; Draw Image
+    lda GameImagePF0,y ; 3
+    sta PF0 ; 1
+    lda GameImagePF1,y ; 3
+    sta PF1 ; 1
+    lda GameImagePF2,y ; 3
+    sta PF2 ; 1
+
+    iny ; 2
+    sty ImageIndex
+
+.game_kernel_image_skip:
+
 .game_kernel_line:
     dex
     bne .game_kernel
 
 .game_kernel_clean:
-    sta WSYNC
 
     ; Clear out playfield
     lda #0
@@ -361,6 +585,11 @@ GameKernel:
 
     ; Clear out Player sprite
     sta GRP0
+
+    ; Clear out Missile
+    sta ENAM1
+
+    sta WSYNC
 
 .game_kernel_return:
     rts

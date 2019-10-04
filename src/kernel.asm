@@ -35,6 +35,7 @@ KERNEL_VSYNC        = 3
 KERNEL_VBLANK       = 37
 KERNEL_OVERSCAN     = 30
 KERNEL_WIDTH        = 40*8
+KERNEL_HBLANK       = 68
 
 KERNEL_IMAGE_MIRROR_DATA   = #3
 KERNEL_IMAGE_FULL_DATA = #6
@@ -52,6 +53,8 @@ VBlankPtr           ds 2
 KernelPtr           ds 2
 OverScanPtr         ds 2
 
+Temp                ds 1
+
 Frame               ds 1
 FrameTimer          ds 1
 
@@ -61,10 +64,12 @@ ImageIndex          ds 1
 
 PlayerPtr           ds 2
 PlayerPosition      ds 2
+PlayerControl       ds 1
 
 MissileEnabled      ds 1
 MissilePosition     ds 2
 MissileVelocity     ds 2
+MissileStartPos     ds 2
 
     SEG
 

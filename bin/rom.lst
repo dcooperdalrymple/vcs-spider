@@ -403,101 +403,106 @@
      35  f800 ????	       00 25	   KERNEL_VBLANK =	37
      36  f800 ????	       00 1e	   KERNEL_OVERSCAN =	30
      37  f800 ????	       01 40	   KERNEL_WIDTH =	40*8
-     38  f800 ????
-     39  f800 ????	       00 03	   KERNEL_IMAGE_MIRROR_DATA =	#3
-     40  f800 ????	       00 06	   KERNEL_IMAGE_FULL_DATA =	#6
-     41  f800 ????	       00 08	   KERNEL_IMAGE_LINE =	#8
-     42  f800 ????	       00 18	   KERNEL_IMAGE_SIZE =	#24	; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
-     43  f800 ????
-     44  f800 ????						;================
-     45  f800 ????						; Variables
-     46  f800 ????						;================
-     47  f800 ????
-     48 U0093 ????				      SEG.U	vars
-     49 U0080					      org	$80
-     50 U0080
-     51 U0080		       00 00	   VBlankPtr  ds	2
-     52 U0082		       00 00	   KernelPtr  ds	2
-     53 U0084		       00 00	   OverScanPtr ds	2
-     54 U0086
-     55 U0086		       00	   Frame      ds	1
-     56 U0087		       00	   FrameTimer ds	1
-     57 U0088
-     58 U0088		       00	   AudioStep  ds	1
-     59 U0089
-     60 U0089		       00	   ImageIndex ds	1
-     61 U008a
-     62 U008a		       00 00	   PlayerPtr  ds	2
-     63 U008c		       00 00	   PlayerPosition ds	2
-     64 U008e
-     65 U008e		       00	   MissileEnabled ds	1
-     66 U008f		       00 00	   MissilePosition ds	2
-     67 U0091		       00 00	   MissileVelocity ds	2
-     68 U0093
-     69  f800 ????				      SEG
-     70  f800 ????
-     71  f000					      ORG	$F000	; Start of cart area
-     72  f000
-     73  f000							;=======================================
-     74  f000							; Global Kernel Subroutines
-     75  f000							;=======================================
-     76  f000
-     77  f000							;=======================================
-     78  f000							; PosObject
-     79  f000							; ---------
-     80  f000							; A - holds the X position of the object
-     81  f000							; X - holds which object to position
-     82  f000							;   0 = player0
-     83  f000							;   1 = player1
-     84  f000							;   2 = missile0
-     85  f000							;   3 = missile1
-     86  f000							;   4 = Ball
-     87  f000							;=======================================
-     88  f000
-     89  f000				   PosObject
-     90  f000		       38		      sec
-     91  f001		       85 02		      sta	WSYNC
-     92  f003				   .posobject_divide_loop
-     93  f003		       e9 0f		      sbc	#15
-     94  f005		       b0 fc		      bcs	.posobject_divide_loop
-     95  f007		       49 07		      eor	#7
-     96  f009					      REPEAT	4
-     97  f009		       0a		      asl
-     96  f009					      REPEND
-     97  f00a		       0a		      asl
-     96  f00a					      REPEND
-     97  f00b		       0a		      asl
-     96  f00b					      REPEND
-     97  f00c		       0a		      asl
-     98  f00d					      REPEND
-     99  f00d		       9d 20 00 	      sta.wx	HMP0,x
-    100  f010		       95 10		      sta	RESP0,x
-    101  f012		       60		      rts
-    102  f013
-    103  f013				   PosMissile
-    104  f013		       38		      sec
-    105  f014		       85 02		      sta	WSYNC
-    106  f016				   .posmissle_divide_loop
-    107  f016		       e9 0f		      sbc	#15
-    108  f018		       b0 fc		      bcs	.posmissle_divide_loop
-    109  f01a		       49 07		      eor	#7
-    110  f01c					      REPEAT	4
-    111  f01c		       0a		      asl
-    110  f01c					      REPEND
-    111  f01d		       0a		      asl
-    110  f01d					      REPEND
-    111  f01e		       0a		      asl
-    110  f01e					      REPEND
-    111  f01f		       0a		      asl
-    112  f020					      REPEND
-    113  f020		       9d 22 00 	      sta.wx	HMM0,x
-    114  f023		       95 12		      sta	RESM0,x
-    115  f025		       60		      rts
-    116  f026
-    117  f026				   InitSystem
-    118  f026
-    119  f026				   .init_clean
-    120  f026							; Resets RAM, TIA registers, and CPU registers
+     38  f800 ????	       00 44	   KERNEL_HBLANK =	68
+     39  f800 ????
+     40  f800 ????	       00 03	   KERNEL_IMAGE_MIRROR_DATA =	#3
+     41  f800 ????	       00 06	   KERNEL_IMAGE_FULL_DATA =	#6
+     42  f800 ????	       00 08	   KERNEL_IMAGE_LINE =	#8
+     43  f800 ????	       00 18	   KERNEL_IMAGE_SIZE =	#24	; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
+     44  f800 ????
+     45  f800 ????						;================
+     46  f800 ????						; Variables
+     47  f800 ????						;================
+     48  f800 ????
+     49 U0097 ????				      SEG.U	vars
+     50 U0080					      org	$80
+     51 U0080
+     52 U0080		       00 00	   VBlankPtr  ds	2
+     53 U0082		       00 00	   KernelPtr  ds	2
+     54 U0084		       00 00	   OverScanPtr ds	2
+     55 U0086
+     56 U0086		       00	   Temp       ds	1
+     57 U0087
+     58 U0087		       00	   Frame      ds	1
+     59 U0088		       00	   FrameTimer ds	1
+     60 U0089
+     61 U0089		       00	   AudioStep  ds	1
+     62 U008a
+     63 U008a		       00	   ImageIndex ds	1
+     64 U008b
+     65 U008b		       00 00	   PlayerPtr  ds	2
+     66 U008d		       00 00	   PlayerPosition ds	2
+     67 U008f		       00	   PlayerControl ds	1
+     68 U0090
+     69 U0090		       00	   MissileEnabled ds	1
+     70 U0091		       00 00	   MissilePosition ds	2
+     71 U0093		       00 00	   MissileVelocity ds	2
+     72 U0095		       00 00	   MissileStartPos ds	2
+     73 U0097
+     74  f800 ????				      SEG
+     75  f800 ????
+     76  f000					      ORG	$F000	; Start of cart area
+     77  f000
+     78  f000							;=======================================
+     79  f000							; Global Kernel Subroutines
+     80  f000							;=======================================
+     81  f000
+     82  f000							;=======================================
+     83  f000							; PosObject
+     84  f000							; ---------
+     85  f000							; A - holds the X position of the object
+     86  f000							; X - holds which object to position
+     87  f000							;   0 = player0
+     88  f000							;   1 = player1
+     89  f000							;   2 = missile0
+     90  f000							;   3 = missile1
+     91  f000							;   4 = Ball
+     92  f000							;=======================================
+     93  f000
+     94  f000				   PosObject
+     95  f000		       38		      sec
+     96  f001		       85 02		      sta	WSYNC
+     97  f003				   .posobject_divide_loop
+     98  f003		       e9 0f		      sbc	#15
+     99  f005		       b0 fc		      bcs	.posobject_divide_loop
+    100  f007		       49 07		      eor	#7
+    101  f009					      REPEAT	4
+    102  f009		       0a		      asl
+    101  f009					      REPEND
+    102  f00a		       0a		      asl
+    101  f00a					      REPEND
+    102  f00b		       0a		      asl
+    101  f00b					      REPEND
+    102  f00c		       0a		      asl
+    103  f00d					      REPEND
+    104  f00d		       9d 20 00 	      sta.wx	HMP0,x
+    105  f010		       95 10		      sta	RESP0,x
+    106  f012		       60		      rts
+    107  f013
+    108  f013				   PosMissile
+    109  f013		       38		      sec
+    110  f014		       85 02		      sta	WSYNC
+    111  f016				   .posmissle_divide_loop
+    112  f016		       e9 0f		      sbc	#15
+    113  f018		       b0 fc		      bcs	.posmissle_divide_loop
+    114  f01a		       49 07		      eor	#7
+    115  f01c					      REPEAT	4
+    116  f01c		       0a		      asl
+    115  f01c					      REPEND
+    116  f01d		       0a		      asl
+    115  f01d					      REPEND
+    116  f01e		       0a		      asl
+    115  f01e					      REPEND
+    116  f01f		       0a		      asl
+    117  f020					      REPEND
+    118  f020		       9d 22 00 	      sta.wx	HMM0,x
+    119  f023		       95 12		      sta	RESM0,x
+    120  f025		       60		      rts
+    121  f026
+    122  f026				   InitSystem
+    123  f026
+    124  f026				   .init_clean
+    125  f026							; Resets RAM, TIA registers, and CPU registers
       0  f026					      CLEAN_START
       1  f026		       78		      sei
       2  f027		       d8		      cld
@@ -510,147 +515,147 @@
       9  f02e		       48		      pha
      10  f02f		       d0 fb		      bne	.CLEAR_STACK
      11  f031
-    122  f031
-    123  f031				   .init_tia
-    124  f031							; Define default TIA register values
-    125  f031
-    126  f031							; Set background color
-    127  f031		       a9 00		      lda	#$00	; Black
-    128  f033		       85 09		      sta	COLUBK
-    129  f035
-    130  f035							; Set the playfield and player color
-    131  f035		       a9 0e		      lda	#$0E	; White
-    132  f037		       85 08		      sta	COLUPF
-    133  f039		       85 06		      sta	COLUP0
-    134  f03b		       85 07		      sta	COLUP1
-    135  f03d
-    136  f03d							; Playfield Control
-    137  f03d		       a9 01		      lda	#%00000001	; 1 for mirroring
-    138  f03f		       85 0a		      sta	CTRLPF
-    139  f041
-    140  f041							; Disable Game Elements
-    141  f041		       a9 00		      lda	#$00
-    142  f043		       85 1f		      sta	ENABL	; Turn off ball
-    143  f045		       85 1d		      sta	ENAM0	; Turn off player 1 missile
-    144  f047		       85 1e		      sta	ENAM1	; Turn off player 2 missile
-    145  f049		       85 1b		      sta	GRP0	; Turn off player 1
-    146  f04b		       85 1c		      sta	GRP1	; Turn off player 2
-    147  f04d
-    148  f04d							; Empty playfield
-    149  f04d		       a9 00		      lda	#%00000000
-    150  f04f		       85 0d		      sta	PF0
-    151  f051		       85 0e		      sta	PF1
-    152  f053		       85 0f		      sta	PF2
-    153  f055
-    154  f055				   .init_game
-    155  f055
-    156  f055		       20 af f0 	      jsr	LogoInit
-    157  f058							;jsr GameInit
-    158  f058
-    159  f058							;=======================================
-    160  f058							; Game Kernel
-    161  f058							;=======================================
-    162  f058
-    163  f058				   Main
-    164  f058
-    165  f058		       20 67 f0 	      jsr	VerticalSync
-    166  f05b		       20 7e f0 	      jsr	VerticalBlank
-    167  f05e		       20 91 f0 	      jsr	Kernel
-    168  f061		       20 98 f0 	      jsr	OverScan
-    169  f064		       4c 58 f0 	      jmp	Main
-    170  f067
-    171  f067				   VerticalSync
-    172  f067
-    173  f067		       a9 00		      lda	#0
-    174  f069		       85 01		      sta	VBLANK
-    175  f06b
-    176  f06b							; Turn on Vertical Sync signal and setup timer
-    177  f06b		       a9 02		      lda	#2
-    178  f06d		       85 00		      sta	VSYNC
-    179  f06f
-    180  f06f							; Increment frame count and reduce frame counter
-    181  f06f		       e6 86		      inc	Frame
-    182  f071		       c6 87		      dec	FrameTimer
-    183  f073
-    184  f073							; VSYNCH signal scanlines
-    185  f073					      REPEAT	#KERNEL_VSYNC
-    186  f073		       85 02		      sta	WSYNC
-    185  f073					      REPEND
-    186  f075		       85 02		      sta	WSYNC
-    185  f075					      REPEND
-    186  f077		       85 02		      sta	WSYNC
-    187  f079					      REPEND
-    188  f079
-    189  f079							; Turn off Vertical Sync signal
-    190  f079		       a9 00		      lda	#0
-    191  f07b		       85 00		      sta	VSYNC
-    192  f07d
-    193  f07d				   .vsync_return
-    194  f07d		       60		      rts
-    195  f07e
-    196  f07e				   VerticalBlank
-    197  f07e							; Setup Timer
-    198  f07e		       a9 2c		      lda	#44	; #KERNEL_VBLANK*76/64
-    199  f080		       8d 96 02 	      sta	TIM64T
-    200  f083
-    201  f083				   .vblank_logic
-    202  f083							; Perform Game Logic
-    203  f083							;jsr (VBlankPtr)
-    204  f083		       20 8e f0 	      jsr	.vblank_logic_call_ptr
-    205  f086
-    206  f086				   .vblank_loop
-    207  f086							; WSYNC until Timer is complete
-    208  f086		       85 02		      sta	WSYNC
-    209  f088		       ad 84 02 	      lda	INTIM
-    210  f08b		       d0 f9		      bne	.vblank_loop
-    211  f08d
-    212  f08d				   .vblank_return
-    213  f08d		       60		      rts
-    214  f08e
-    215  f08e				   .vblank_logic_call_ptr
-    216  f08e		       6c 80 00 	      jmp	(VBlankPtr)
-    217  f091
-    218  f091				   Kernel
-    219  f091
-    220  f091							; Perform Selected Kernel
-    221  f091							;jsr (KernelPtr)
-    222  f091		       20 95 f0 	      jsr	.kernel_call_ptr
-    223  f094		       60		      rts
-    224  f095
-    225  f095				   .kernel_call_ptr
-    226  f095		       6c 82 00 	      jmp	(KernelPtr)
-    227  f098
-    228  f098				   OverScan
-    229  f098
-    230  f098							; End of screen, enter blanking
-    231  f098		       a9 42		      lda	#%01000010
-    232  f09a		       85 01		      sta	VBLANK
-    233  f09c
-    234  f09c							; Setup Timer
-    235  f09c		       a9 24		      lda	#36	; #KERNEL_OVERSCAN*76/64
-    236  f09e		       8d 96 02 	      sta	TIM64T
-    237  f0a1
-    238  f0a1				   .overscan_logic
-    239  f0a1							; Perform OverScan Logic
-    240  f0a1							;jsr (OverScanPtr)
-    241  f0a1		       20 ac f0 	      jsr	.overscan_logic_call_ptr
-    242  f0a4
-    243  f0a4				   .overscan_loop
-    244  f0a4							; WSYNC until Timer is complete
-    245  f0a4		       85 02		      sta	WSYNC
-    246  f0a6		       ad 84 02 	      lda	INTIM
-    247  f0a9		       d0 f9		      bne	.overscan_loop
-    248  f0ab
-    249  f0ab				   .overscan_return
-    250  f0ab		       60		      rts
-    251  f0ac
-    252  f0ac				   .overscan_logic_call_ptr
-    253  f0ac		       6c 84 00 	      jmp	(OverScanPtr)
-    254  f0af
-    255  f0af							;================
-    256  f0af							; State Code
-    257  f0af							;================
-    258  f0af
+    127  f031
+    128  f031				   .init_tia
+    129  f031							; Define default TIA register values
+    130  f031
+    131  f031							; Set background color
+    132  f031		       a9 00		      lda	#$00	; Black
+    133  f033		       85 09		      sta	COLUBK
+    134  f035
+    135  f035							; Set the playfield and player color
+    136  f035		       a9 0e		      lda	#$0E	; White
+    137  f037		       85 08		      sta	COLUPF
+    138  f039		       85 06		      sta	COLUP0
+    139  f03b		       85 07		      sta	COLUP1
+    140  f03d
+    141  f03d							; Playfield Control
+    142  f03d		       a9 01		      lda	#%00000001	; 1 for mirroring
+    143  f03f		       85 0a		      sta	CTRLPF
+    144  f041
+    145  f041							; Disable Game Elements
+    146  f041		       a9 00		      lda	#$00
+    147  f043		       85 1f		      sta	ENABL	; Turn off ball
+    148  f045		       85 1d		      sta	ENAM0	; Turn off player 1 missile
+    149  f047		       85 1e		      sta	ENAM1	; Turn off player 2 missile
+    150  f049		       85 1b		      sta	GRP0	; Turn off player 1
+    151  f04b		       85 1c		      sta	GRP1	; Turn off player 2
+    152  f04d
+    153  f04d							; Empty playfield
+    154  f04d		       a9 00		      lda	#%00000000
+    155  f04f		       85 0d		      sta	PF0
+    156  f051		       85 0e		      sta	PF1
+    157  f053		       85 0f		      sta	PF2
+    158  f055
+    159  f055				   .init_game
+    160  f055
+    161  f055		       20 af f0 	      jsr	LogoInit
+    162  f058							;jsr GameInit
+    163  f058
+    164  f058							;=======================================
+    165  f058							; Game Kernel
+    166  f058							;=======================================
+    167  f058
+    168  f058				   Main
+    169  f058
+    170  f058		       20 67 f0 	      jsr	VerticalSync
+    171  f05b		       20 7e f0 	      jsr	VerticalBlank
+    172  f05e		       20 91 f0 	      jsr	Kernel
+    173  f061		       20 98 f0 	      jsr	OverScan
+    174  f064		       4c 58 f0 	      jmp	Main
+    175  f067
+    176  f067				   VerticalSync
+    177  f067
+    178  f067		       a9 00		      lda	#0
+    179  f069		       85 01		      sta	VBLANK
+    180  f06b
+    181  f06b							; Turn on Vertical Sync signal and setup timer
+    182  f06b		       a9 02		      lda	#2
+    183  f06d		       85 00		      sta	VSYNC
+    184  f06f
+    185  f06f							; Increment frame count and reduce frame counter
+    186  f06f		       e6 87		      inc	Frame
+    187  f071		       c6 88		      dec	FrameTimer
+    188  f073
+    189  f073							; VSYNCH signal scanlines
+    190  f073					      REPEAT	#KERNEL_VSYNC
+    191  f073		       85 02		      sta	WSYNC
+    190  f073					      REPEND
+    191  f075		       85 02		      sta	WSYNC
+    190  f075					      REPEND
+    191  f077		       85 02		      sta	WSYNC
+    192  f079					      REPEND
+    193  f079
+    194  f079							; Turn off Vertical Sync signal
+    195  f079		       a9 00		      lda	#0
+    196  f07b		       85 00		      sta	VSYNC
+    197  f07d
+    198  f07d				   .vsync_return
+    199  f07d		       60		      rts
+    200  f07e
+    201  f07e				   VerticalBlank
+    202  f07e							; Setup Timer
+    203  f07e		       a9 2c		      lda	#44	; #KERNEL_VBLANK*76/64
+    204  f080		       8d 96 02 	      sta	TIM64T
+    205  f083
+    206  f083				   .vblank_logic
+    207  f083							; Perform Game Logic
+    208  f083							;jsr (VBlankPtr)
+    209  f083		       20 8e f0 	      jsr	.vblank_logic_call_ptr
+    210  f086
+    211  f086				   .vblank_loop
+    212  f086							; WSYNC until Timer is complete
+    213  f086		       85 02		      sta	WSYNC
+    214  f088		       ad 84 02 	      lda	INTIM
+    215  f08b		       d0 f9		      bne	.vblank_loop
+    216  f08d
+    217  f08d				   .vblank_return
+    218  f08d		       60		      rts
+    219  f08e
+    220  f08e				   .vblank_logic_call_ptr
+    221  f08e		       6c 80 00 	      jmp	(VBlankPtr)
+    222  f091
+    223  f091				   Kernel
+    224  f091
+    225  f091							; Perform Selected Kernel
+    226  f091							;jsr (KernelPtr)
+    227  f091		       20 95 f0 	      jsr	.kernel_call_ptr
+    228  f094		       60		      rts
+    229  f095
+    230  f095				   .kernel_call_ptr
+    231  f095		       6c 82 00 	      jmp	(KernelPtr)
+    232  f098
+    233  f098				   OverScan
+    234  f098
+    235  f098							; End of screen, enter blanking
+    236  f098		       a9 42		      lda	#%01000010
+    237  f09a		       85 01		      sta	VBLANK
+    238  f09c
+    239  f09c							; Setup Timer
+    240  f09c		       a9 24		      lda	#36	; #KERNEL_OVERSCAN*76/64
+    241  f09e		       8d 96 02 	      sta	TIM64T
+    242  f0a1
+    243  f0a1				   .overscan_logic
+    244  f0a1							; Perform OverScan Logic
+    245  f0a1							;jsr (OverScanPtr)
+    246  f0a1		       20 ac f0 	      jsr	.overscan_logic_call_ptr
+    247  f0a4
+    248  f0a4				   .overscan_loop
+    249  f0a4							; WSYNC until Timer is complete
+    250  f0a4		       85 02		      sta	WSYNC
+    251  f0a6		       ad 84 02 	      lda	INTIM
+    252  f0a9		       d0 f9		      bne	.overscan_loop
+    253  f0ab
+    254  f0ab				   .overscan_return
+    255  f0ab		       60		      rts
+    256  f0ac
+    257  f0ac				   .overscan_logic_call_ptr
+    258  f0ac		       6c 84 00 	      jmp	(OverScanPtr)
+    259  f0af
+    260  f0af							;================
+    261  f0af							; State Code
+    262  f0af							;================
+    263  f0af
 ------- FILE logo.asm LEVEL 2 PASS 2
       0  f0af					      include	"logo.asm"
       1  f0af							;================
@@ -716,7 +721,7 @@
      37  f0db		       a9 03		      lda	#LOGO_AUDIO_1_VOLUME
      38  f0dd		       85 1a		      sta	AUDV1
      39  f0df		       a9 00		      lda	#0
-     40  f0e1		       85 88		      sta	AudioStep
+     40  f0e1		       85 89		      sta	AudioStep
      41  f0e3
      42  f0e3							; Play first note
      43  f0e3		       ad 12 f2 	      lda	LogoAudio0,AudioStep
@@ -726,9 +731,9 @@
      47  f0ed
      48  f0ed							; Setup frame counters
      49  f0ed		       a9 00		      lda	#0
-     50  f0ef		       85 86		      sta	Frame
+     50  f0ef		       85 87		      sta	Frame
      51  f0f1		       a9 b4		      lda	#LOGO_FRAMES
-     52  f0f3		       85 87		      sta	FrameTimer
+     52  f0f3		       85 88		      sta	FrameTimer
      53  f0f5
      54  f0f5							; Setup Image Animation
      55  f0f5							;lda #KERNEL_IMAGE_SIZE
@@ -746,7 +751,7 @@
      67  f0fd		       60		      rts
      68  f0fe
      69  f0fe				   LogoAnimation
-     70  f0fe		       a5 86		      lda	Frame
+     70  f0fe		       a5 87		      lda	Frame
      71  f100		       29 03		      and	#%00000011	; Every 4 when bits are 00
      72  f102		       d0 00		      bne	.logo_animation_return
      73  f104
@@ -763,21 +768,21 @@
      84  f105
      85  f105				   LogoAudio
      86  f105
-     87  f105		       a5 86		      lda	Frame
+     87  f105		       a5 87		      lda	Frame
      88  f107		       29 07		      and	#%00000111	; Every 8 when bits are 000
      89  f109		       d0 24		      bne	.logo_audio_return
      90  f10b
      91  f10b				   .logo_audio_play
      92  f10b
      93  f10b							; Check if we're at the end of the melody
-     94  f10b		       a4 88		      ldy	AudioStep
+     94  f10b		       a4 89		      ldy	AudioStep
      95  f10d		       c0 0b		      cpy	#LOGO_AUDIO_LENGTH-1
      96  f10f		       f0 10		      beq	.logo_audio_mute
      97  f111
      98  f111				   .logo_audio_play_note
      99  f111							; Increment audio position
     100  f111		       c8		      iny
-    101  f112		       84 88		      sty	AudioStep
+    101  f112		       84 89		      sty	AudioStep
     102  f114
     103  f114							; Logo note and play
     104  f114		       b9 12 f2 	      lda	LogoAudio0,y
@@ -802,7 +807,7 @@
     123  f12f		       60		      rts
     124  f130
     125  f130				   LogoState
-    126  f130		       a5 87		      lda	FrameTimer
+    126  f130		       a5 88		      lda	FrameTimer
     127  f132		       c9 00		      cmp	#0
     128  f134		       d0 03		      bne	.logo_state_return
     129  f136
@@ -1184,9 +1189,9 @@
      47  f258
      48  f258							; Make it so that we play the first note immediately
      49  f258		       a9 0f		      lda	#TITLE_AUDIO_LENGTH-1
-     50  f25a		       85 88		      sta	AudioStep
+     50  f25a		       85 89		      sta	AudioStep
      51  f25c		       a9 01		      lda	#1
-     52  f25e		       85 87		      sta	FrameTimer
+     52  f25e		       85 88		      sta	FrameTimer
      53  f260
      54  f260		       60		      rts
      55  f261
@@ -1200,18 +1205,18 @@
      63  f269
      64  f269				   TitleAudio
      65  f269
-     66  f269		       a6 87		      ldx	FrameTimer
+     66  f269		       a6 88		      ldx	FrameTimer
      67  f26b		       e0 00		      cpx	#0
      68  f26d		       d0 31		      bne	.title_audio_return
      69  f26f
      70  f26f							; Reset Timer
      71  f26f		       a2 09		      ldx	#TITLE_AUDIO_STEP
-     72  f271		       86 87		      stx	FrameTimer
+     72  f271		       86 88		      stx	FrameTimer
      73  f273
      74  f273				   .title_audio_play
      75  f273
      76  f273							; Increment melody position
-     77  f273		       a4 88		      ldy	AudioStep
+     77  f273		       a4 89		      ldy	AudioStep
      78  f275		       c8		      iny
      79  f276
      80  f276							; Check if we're at the end of the melody
@@ -1224,7 +1229,7 @@
      87  f27c				   .title_audio_play_note
      88  f27c
      89  f27c							; Save current position
-     90  f27c		       84 88		      sty	AudioStep
+     90  f27c		       84 89		      sty	AudioStep
      91  f27e
      92  f27e							; Basic Melody Line
      93  f27e		       b9 81 f3 	      lda	TitleAudio0,y
@@ -1595,7 +1600,7 @@
       3  f3b1							;================
       4  f3b1
       5  f3b1		       00 00	   GAME_BG_COLOR =	#$00
-      6  f3b1		       00 0c	   GAME_FG_COLOR =	#$0C
+      6  f3b1		       00 06	   GAME_FG_COLOR =	#$06
       7  f3b1
       8  f3b1		       00 56	   GAME_P0_COLOR =	#$56
       9  f3b1		       00 08	   GAME_P0_SIZE =	8
@@ -1603,10 +1608,13 @@
      11  f3b1
      12  f3b1		       00 0e	   GAME_M1_COLOR =	#$0E
      13  f3b1		       00 02	   GAME_M1_SIZE =	2
-     14  f3b1
-     15  f3b1				   GameInit
-     16  f3b1
-     17  f3b1							; Setup logic and kernel
+     14  f3b1		       00 40	   GAME_M1_DISTANCE =	64	; Distance from player
+     15  f3b1		       00 02	   GAME_M1_VEL_X =	2
+     16  f3b1		       00 03	   GAME_M1_VEL_Y =	3
+     17  f3b1
+     18  f3b1				   GameInit
+     19  f3b1
+     20  f3b1							; Setup logic and kernel
       0  f3b1					      SET_POINTER	VBlankPtr, GameVerticalBlank
       1  f3b1				   .POINTER   SET	VBlankPtr
       2  f3b1				   .ADDRESS   SET	GameVerticalBlank
@@ -1620,9 +1628,9 @@
       1  f3b9				   .POINTER   SET	KernelPtr
       2  f3b9				   .ADDRESS   SET	GameKernel
       3  f3b9
-      4  f3b9		       a9 f9		      LDA	#<.ADDRESS
+      4  f3b9		       a9 f2		      LDA	#<.ADDRESS
       5  f3bb		       85 82		      STA	.POINTER
-      6  f3bd		       a9 f4		      LDA	#>.ADDRESS
+      6  f3bd		       a9 f5		      LDA	#>.ADDRESS
       7  f3bf		       85 83		      STA	.POINTER+1
       8  f3c1
       0  f3c1					      SET_POINTER	OverScanPtr, GameOverScan
@@ -1634,598 +1642,824 @@
       6  f3c5		       a9 f4		      LDA	#>.ADDRESS
       7  f3c7		       85 85		      STA	.POINTER+1
       8  f3c9
-     21  f3c9
-     22  f3c9							; Load Colors
-     23  f3c9		       a9 00		      lda	#GAME_BG_COLOR
-     24  f3cb		       85 09		      sta	COLUBK
-     25  f3cd		       a9 0c		      lda	#GAME_FG_COLOR
-     26  f3cf		       85 08		      sta	COLUPF
-     27  f3d1		       a9 56		      lda	#GAME_P0_COLOR
-     28  f3d3		       85 06		      sta	COLUP0
-     29  f3d5		       a9 0e		      lda	#GAME_M1_COLOR
-     30  f3d7		       85 07		      sta	COLUP1
-     31  f3d9
-     32  f3d9							; Mute Audio
-     33  f3d9		       a9 00		      lda	#0
-     34  f3db		       85 15		      sta	AUDC0
-     35  f3dd		       85 19		      sta	AUDV0
-     36  f3df		       85 17		      sta	AUDF0
-     37  f3e1		       85 16		      sta	AUDC1
-     38  f3e3		       85 1a		      sta	AUDV1
-     39  f3e5		       85 18		      sta	AUDF1
-     40  f3e7
-     41  f3e7							; Initial Player Control
-     42  f3e7		       a9 32		      lda	#50
-     43  f3e9		       85 8c		      sta	PlayerPosition
-     44  f3eb		       85 8d		      sta	PlayerPosition+1
-     45  f3ed
-     46  f3ed							; Setup Player Sprite
+     24  f3c9
+     25  f3c9							; Load Colors
+     26  f3c9		       a9 00		      lda	#GAME_BG_COLOR
+     27  f3cb		       85 09		      sta	COLUBK
+     28  f3cd		       a9 06		      lda	#GAME_FG_COLOR
+     29  f3cf		       85 08		      sta	COLUPF
+     30  f3d1		       a9 56		      lda	#GAME_P0_COLOR
+     31  f3d3		       85 06		      sta	COLUP0
+     32  f3d5		       a9 0e		      lda	#GAME_M1_COLOR
+     33  f3d7		       85 07		      sta	COLUP1
+     34  f3d9
+     35  f3d9							; Mute Audio
+     36  f3d9		       a9 00		      lda	#0
+     37  f3db		       85 15		      sta	AUDC0
+     38  f3dd		       85 19		      sta	AUDV0
+     39  f3df		       85 17		      sta	AUDF0
+     40  f3e1		       85 16		      sta	AUDC1
+     41  f3e3		       85 1a		      sta	AUDV1
+     42  f3e5		       85 18		      sta	AUDF1
+     43  f3e7
+     44  f3e7							; Initial Player Control
+     45  f3e7		       a9 32		      lda	#50
+     46  f3e9		       85 8d		      sta	PlayerPosition
+     47  f3eb		       85 8e		      sta	PlayerPosition+1
+     48  f3ed
+     49  f3ed							; Setup Player Sprite
       0  f3ed					      SET_POINTER	PlayerPtr, GamePlayerSprite
       1  f3ed				   .POINTER   SET	PlayerPtr
       2  f3ed				   .ADDRESS   SET	GamePlayerSprite
       3  f3ed
-      4  f3ed		       a9 b6		      LDA	#<.ADDRESS
-      5  f3ef		       85 8a		      STA	.POINTER
-      6  f3f1		       a9 f5		      LDA	#>.ADDRESS
-      7  f3f3		       85 8b		      STA	.POINTER+1
+      4  f3ed		       a9 b1		      LDA	#<.ADDRESS
+      5  f3ef		       85 8b		      STA	.POINTER
+      6  f3f1		       a9 f6		      LDA	#>.ADDRESS
+      7  f3f3		       85 8c		      STA	.POINTER+1
       8  f3f5
-     48  f3f5
-     49  f3f5							; Initial Missile Control
-     50  f3f5		       a9 01		      lda	#1
-     51  f3f7		       85 8e		      sta	MissileEnabled
-     52  f3f9
-     53  f3f9		       a9 32		      lda	#50
-     54  f3fb		       85 8f		      sta	MissilePosition
-     55  f3fd		       85 90		      sta	MissilePosition+1
-     56  f3ff
-     57  f3ff		       a9 01		      lda	#1
-     58  f401		       85 91		      sta	MissileVelocity
-     59  f403		       85 92		      sta	MissileVelocity+1
-     60  f405
-     61  f405		       60		      rts
-     62  f406
-     63  f406				   GameVerticalBlank
-     64  f406		       20 0e f4 	      jsr	GameControl
-     65  f409		       20 d4 f4 	      jsr	GameObjects
-     66  f40c		       60		      rts
-     67  f40d
-     68  f40d				   GameOverScan
-     69  f40d		       60		      rts
-     70  f40e
-     71  f40e				   GameControl
-     72  f40e		       a6 8c		      ldx	PlayerPosition
-     73  f410		       a4 8d		      ldy	PlayerPosition+1
-     74  f412		       ad 80 02 	      lda	SWCHA
-     75  f415
-     76  f415				   .game_control_check_right
-     77  f415		       30 01		      bmi	.game_control_check_left
-     78  f417		       e8		      inx
-     79  f418
-     80  f418				   .game_control_check_left
-     81  f418		       2a		      rol
-     82  f419		       30 01		      bmi	.game_control_check_down
-     83  f41b		       ca		      dex
-     84  f41c
-     85  f41c				   .game_control_check_down
-     86  f41c		       2a		      rol
-     87  f41d		       30 01		      bmi	.game_control_check_up
-     88  f41f		       88		      dey
-     89  f420
-     90  f420				   .game_control_check_up
-     91  f420		       2a		      rol
-     92  f421		       30 01		      bmi	.game_control_sprite
-     93  f423		       c8		      iny
-     94  f424
-     95  f424				   .game_control_sprite
-     96  f424		       a9 00		      lda	#%00000000	; First 2 bits are left or right, second 2 bits are up or down
-     97  f426
-     98  f426				   .game_control_sprite_x
-     99  f426		       e4 8c		      cpx	PlayerPosition
-    100  f428		       90 04		      bcc	.game_control_sprite_left
-    101  f42a		       f0 09		      beq	.game_control_sprite_y
-    102  f42c		       b0 05		      bcs	.game_control_sprite_right
-    103  f42e
-    104  f42e				   .game_control_sprite_left
-    105  f42e		       09 80		      ora	#%10000000
-    106  f430		       4c 35 f4 	      jmp	.game_control_sprite_y
-    107  f433
-    108  f433				   .game_control_sprite_right
-    109  f433		       09 40		      ora	#%01000000
-    110  f435
-    111  f435				   .game_control_sprite_y
-    112  f435		       c4 8d		      cpy	PlayerPosition+1
-    113  f437		       90 04		      bcc	.game_control_sprite_down
-    114  f439		       f0 09		      beq	.game_control_boundary
-    115  f43b		       b0 05		      bcs	.game_control_sprite_up
-    116  f43d
-    117  f43d				   .game_control_sprite_down
-    118  f43d		       09 10		      ora	#%00010000
-    119  f43f		       4c 44 f4 	      jmp	.game_control_boundary
-    120  f442
-    121  f442				   .game_control_sprite_up
-    122  f442		       09 20		      ora	#%00100000
-    123  f444
-    124  f444				   .game_control_boundary
-    125  f444							; Check Playfield Boundaries
-    126  f444
-    127  f444				   .game_control_boundary_left
-    128  f444		       e0 08		      cpx	#GAME_P0_BOUNDARY
-    129  f446		       b0 02		      bcs	.game_control_boundary_right
-    130  f448		       a2 08		      ldx	#GAME_P0_BOUNDARY
-    131  f44a
-    132  f44a				   .game_control_boundary_right
-    133  f44a							;cpx #KERNEL_WIDTH-GAME_P0_BOUNDARY-GAME_P0_SIZE
-    134  f44a							;bcc .game_control_boundary_top
-    135  f44a							;ldx #KERNEL_WIDTH-GAME_P0_BOUNDARY-GAME_P0_SIZE
-    136  f44a
-    137  f44a				   .game_control_boundary_top
-    138  f44a		       c0 08		      cpy	#GAME_P0_BOUNDARY
-    139  f44c		       b0 02		      bcs	.game_control_boundary_bottom
-    140  f44e		       a0 08		      ldy	#GAME_P0_BOUNDARY
-    141  f450
-    142  f450				   .game_control_boundary_bottom
-    143  f450		       c0 b0		      cpy	#KERNEL_SCANLINES-GAME_P0_BOUNDARY-GAME_P0_SIZE
-    144  f452		       90 02		      bcc	.game_control_store
-    145  f454		       a0 b0		      ldy	#KERNEL_SCANLINES-GAME_P0_BOUNDARY-GAME_P0_SIZE
-    146  f456
-    147  f456				   .game_control_store
-    148  f456							; Store new position
-    149  f456		       86 8c		      stx	PlayerPosition
-    150  f458		       84 8d		      sty	PlayerPosition+1
-    151  f45a
-    152  f45a				   .game_control_sprite_assign
-    153  f45a							; Skip if no change
-    154  f45a		       c9 00		      cmp	#%00000000
-    155  f45c		       f0 75		      beq	.game_control_return
-    156  f45e
-    157  f45e				   .game_control_sprite_assign_left
-    158  f45e		       c9 80		      cmp	#%10000000
-    159  f460		       d0 0b		      bne	.game_control_sprite_assign_right
-      0  f462					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*6
-      1  f462				   .POINTER   SET	PlayerPtr
-      2  f462				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*6
-      3  f462
-      4  f462		       a9 e6		      LDA	#<.ADDRESS
-      5  f464		       85 8a		      STA	.POINTER
-      6  f466		       a9 f5		      LDA	#>.ADDRESS
-      7  f468		       85 8b		      STA	.POINTER+1
-      8  f46a
-    161  f46a		       4c d3 f4 	      jmp	.game_control_return
-    162  f46d
-    163  f46d				   .game_control_sprite_assign_right
-    164  f46d		       c9 40		      cmp	#%01000000
-    165  f46f		       d0 0b		      bne	.game_control_sprite_assign_top
-      0  f471					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*2
-      1  f471				   .POINTER   SET	PlayerPtr
-      2  f471				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*2
-      3  f471
-      4  f471		       a9 c6		      LDA	#<.ADDRESS
-      5  f473		       85 8a		      STA	.POINTER
-      6  f475		       a9 f5		      LDA	#>.ADDRESS
-      7  f477		       85 8b		      STA	.POINTER+1
-      8  f479
-    167  f479		       4c d3 f4 	      jmp	.game_control_return
-    168  f47c
-    169  f47c				   .game_control_sprite_assign_top
-    170  f47c		       c9 20		      cmp	#%00100000
-    171  f47e		       d0 0b		      bne	.game_control_sprite_assign_bottom
-      0  f480					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*0
-      1  f480				   .POINTER   SET	PlayerPtr
-      2  f480				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*0
-      3  f480
-      4  f480		       a9 b6		      LDA	#<.ADDRESS
-      5  f482		       85 8a		      STA	.POINTER
-      6  f484		       a9 f5		      LDA	#>.ADDRESS
-      7  f486		       85 8b		      STA	.POINTER+1
-      8  f488
-    173  f488		       4c d3 f4 	      jmp	.game_control_return
-    174  f48b
-    175  f48b				   .game_control_sprite_assign_bottom
-    176  f48b		       c9 10		      cmp	#%00010000
-    177  f48d		       d0 0b		      bne	.game_control_sprite_assign_top_right
-      0  f48f					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*4
-      1  f48f				   .POINTER   SET	PlayerPtr
-      2  f48f				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*4
-      3  f48f
-      4  f48f		       a9 d6		      LDA	#<.ADDRESS
-      5  f491		       85 8a		      STA	.POINTER
-      6  f493		       a9 f5		      LDA	#>.ADDRESS
-      7  f495		       85 8b		      STA	.POINTER+1
-      8  f497
-    179  f497		       4c d3 f4 	      jmp	.game_control_return
-    180  f49a
-    181  f49a				   .game_control_sprite_assign_top_right
-    182  f49a		       c9 60		      cmp	#%01100000
-    183  f49c		       d0 0b		      bne	.game_control_sprite_assign_bottom_right
-      0  f49e					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*1
-      1  f49e				   .POINTER   SET	PlayerPtr
-      2  f49e				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*1
-      3  f49e
-      4  f49e		       a9 be		      LDA	#<.ADDRESS
-      5  f4a0		       85 8a		      STA	.POINTER
-      6  f4a2		       a9 f5		      LDA	#>.ADDRESS
-      7  f4a4		       85 8b		      STA	.POINTER+1
-      8  f4a6
-    185  f4a6		       4c d3 f4 	      jmp	.game_control_return
-    186  f4a9
-    187  f4a9				   .game_control_sprite_assign_bottom_right
-    188  f4a9		       c9 50		      cmp	#%01010000
-    189  f4ab		       d0 0b		      bne	.game_control_sprite_assign_bottom_left
-      0  f4ad					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*3
-      1  f4ad				   .POINTER   SET	PlayerPtr
-      2  f4ad				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*3
-      3  f4ad
-      4  f4ad		       a9 ce		      LDA	#<.ADDRESS
-      5  f4af		       85 8a		      STA	.POINTER
-      6  f4b1		       a9 f5		      LDA	#>.ADDRESS
-      7  f4b3		       85 8b		      STA	.POINTER+1
-      8  f4b5
-    191  f4b5		       4c d3 f4 	      jmp	.game_control_return
-    192  f4b8
-    193  f4b8				   .game_control_sprite_assign_bottom_left
-    194  f4b8		       c9 90		      cmp	#%10010000
-    195  f4ba		       d0 0b		      bne	.game_control_sprite_assign_top_left
-      0  f4bc					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*5
-      1  f4bc				   .POINTER   SET	PlayerPtr
-      2  f4bc				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*5
-      3  f4bc
-      4  f4bc		       a9 de		      LDA	#<.ADDRESS
-      5  f4be		       85 8a		      STA	.POINTER
-      6  f4c0		       a9 f5		      LDA	#>.ADDRESS
-      7  f4c2		       85 8b		      STA	.POINTER+1
-      8  f4c4
-    197  f4c4		       4c d3 f4 	      jmp	.game_control_return
-    198  f4c7
-    199  f4c7				   .game_control_sprite_assign_top_left
-    200  f4c7		       c9 a0		      cmp	#%10100000
-    201  f4c9		       d0 08		      bne	.game_control_return
-      0  f4cb					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*7
-      1  f4cb				   .POINTER   SET	PlayerPtr
-      2  f4cb				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*7
-      3  f4cb
-      4  f4cb		       a9 ee		      LDA	#<.ADDRESS
-      5  f4cd		       85 8a		      STA	.POINTER
-      6  f4cf		       a9 f5		      LDA	#>.ADDRESS
-      7  f4d1		       85 8b		      STA	.POINTER+1
-      8  f4d3
-    203  f4d3
-    204  f4d3				   .game_control_return
-    205  f4d3		       60		      rts
-    206  f4d4
-    207  f4d4				   GameObjects
-    208  f4d4
-    209  f4d4				   .game_objects_player
-    210  f4d4
-    211  f4d4							; Set Player Position
-    212  f4d4		       a2 00		      ldx	#0	; Object (player0)
-    213  f4d6		       a5 8c		      lda	PlayerPosition	; X Position
-    214  f4d8		       20 00 f0 	      jsr	PosObject
-    215  f4db
-    216  f4db							; Set final x position
-    217  f4db		       85 02		      sta	WSYNC
-    218  f4dd		       85 2a		      sta	HMOVE
-    219  f4df
-    220  f4df				   .game_objects_missile
-    221  f4df
-    222  f4df							; Apply Velocity
-    223  f4df		       18		      clc
-    224  f4e0		       a5 8f		      lda	MissilePosition	; x
-    225  f4e2		       65 91		      adc	MissileVelocity
-    226  f4e4		       85 8f		      sta	MissilePosition
-    227  f4e6
-    228  f4e6		       18		      clc
-    229  f4e7		       a5 90		      lda	MissilePosition+1	; y
-    230  f4e9		       65 92		      adc	MissileVelocity+1
-    231  f4eb		       85 90		      sta	MissilePosition+1
-    232  f4ed
-    233  f4ed							; Set Missile Position
-    234  f4ed		       a2 01		      ldx	#1	; Object (missile1)
-    235  f4ef		       a5 8f		      lda	MissilePosition	; X Position
-    236  f4f1		       20 13 f0 	      jsr	PosMissile
-    237  f4f4
-    238  f4f4		       85 02		      sta	WSYNC
-    239  f4f6		       85 2a		      sta	HMOVE
-    240  f4f8
-    241  f4f8				   .game_objects_return
-    242  f4f8
-    243  f4f8		       60		      rts
-    244  f4f9
-    245  f4f9				   GameKernel
-    246  f4f9
-    247  f4f9							; Playfield Control
-    248  f4f9		       a9 01		      lda	#%00000001	; Mirrored
-    249  f4fb		       85 0a		      sta	CTRLPF
-    250  f4fd
-    251  f4fd							; Set player 0 to be double size and missile 0 to be 2 clock size (4/5 bits)
-    252  f4fd		       a5 04		      lda	NUSIZ0
-    253  f4ff		       29 f8		      and	#%11111000
-    254  f501		       09 05		      ora	#%00000101
-    255  f503		       85 04		      sta	NUSIZ0
-    256  f505
-    257  f505							; Set missile 0 to be 2 clock size (4/5 bits)
-    258  f505		       a5 05		      lda	NUSIZ1
-    259  f507		       29 cf		      and	#%11001111
-    260  f509		       09 15		      ora	#%00010101
-    261  f50b		       85 05		      sta	NUSIZ1
-    262  f50d
-    263  f50d							; Turn on display
-    264  f50d		       a9 00		      lda	#0
-    265  f50f		       85 01		      sta	VBLANK
-    266  f511
-    267  f511							; Setup Image Index
-    268  f511		       a9 00		      lda	#0
-    269  f513		       85 89		      sta	ImageIndex
-    270  f515
-    271  f515							; Start Counters
-    272  f515		       a2 c0		      ldx	#KERNEL_SCANLINES	; Scanline Counter
-    273  f517							;    ldy #0 ; Image Counter
-    274  f517
-    275  f517				   .game_kernel
-    276  f517
-    277  f517				   .game_kernel_player
-    278  f517
-    279  f517		       8a		      txa
-    280  f518		       e5 8d		      sbc	PlayerPosition+1
-    281  f51a
-    282  f51a							; Sync up to horizontal line
-    283  f51a		       85 02		      sta	WSYNC
-    284  f51c
-    285  f51c		       c9 10		      cmp	#GAME_P0_SIZE*2
-    286  f51e		       90 07		      bcc	.game_kernel_player_draw
-    287  f520
-    288  f520				   .game_kernel_player_blank
-    289  f520
-    290  f520							; Draw empty sprite
-    291  f520		       a9 00		      lda	#0
-    292  f522		       85 1b		      sta	GRP0
-    293  f524		       4c 2f f5 	      jmp	.game_kernel_image
-    294  f527
-    295  f527				   .game_kernel_player_draw
-    296  f527
-    297  f527							; Load sprite line
-    298  f527		       29 fe		      and	#%11111110
-    299  f529		       4a		      lsr		; Divide by 2
-    300  f52a		       a8		      tay
-    301  f52b		       b1 8a		      lda	(PlayerPtr),y
-    302  f52d		       85 1b		      sta	GRP0
-    303  f52f
-    304  f52f				   .game_kernel_image
-    305  f52f
-    306  f52f							; Check to see if new playfield needs to be loaded
-    307  f52f		       8a		      txa
-    308  f530		       29 07		      and	#%00000111
-    309  f532		       d0 14		      bne	.game_kernel_missile
-    310  f534
-    311  f534				   .game_kernel_image_load
-    312  f534
-    313  f534		       a4 89		      ldy	ImageIndex
-    314  f536
-    315  f536							; Draw Image
-    316  f536		       b9 6e f5 	      lda	GameImagePF0,y	; 3
-    317  f539		       85 0d		      sta	PF0	; 1
-    318  f53b		       b9 86 f5 	      lda	GameImagePF1,y	; 3
-    319  f53e		       85 0e		      sta	PF1	; 1
-    320  f540		       b9 9e f5 	      lda	GameImagePF2,y	; 3
-    321  f543		       85 0f		      sta	PF2	; 1
-    322  f545
-    323  f545		       c8		      iny		; 2
-    324  f546		       84 89		      sty	ImageIndex
-    325  f548
-    326  f548				   .game_kernel_missile
-    327  f548
-    328  f548							; Check if visible
-    329  f548		       a5 8e		      lda	MissileEnabled
-    330  f54a		       c9 01		      cmp	#1
-    331  f54c		       d0 07		      bne	.game_kernel_missile_off
-    332  f54e
-    333  f54e							; Check y position
-    334  f54e		       8a		      txa
-    335  f54f		       e5 90		      sbc	MissilePosition+1
-    336  f551		       c9 04		      cmp	#GAME_M1_SIZE*2
-    337  f553		       90 05		      bcc	.game_kernel_missile_on
-    338  f555
-    339  f555				   .game_kernel_missile_off
-    340  f555		       a9 00		      lda	#%00000000
-    341  f557		       4c 5c f5 	      jmp	.game_kernel_missile_write
-    342  f55a
-    343  f55a				   .game_kernel_missile_on
-    344  f55a		       a9 02		      lda	#%00000010
-    345  f55c
-    346  f55c				   .game_kernel_missile_write
-    347  f55c		       85 1e		      sta	ENAM1
-    348  f55e
-    349  f55e				   .game_kernel_line
-    350  f55e		       ca		      dex
-    351  f55f		       d0 b6		      bne	.game_kernel
-    352  f561
-    353  f561				   .game_kernel_clean
-    354  f561		       85 02		      sta	WSYNC
-    355  f563
-    356  f563							; Clear out playfield
-    357  f563		       a9 00		      lda	#0
-    358  f565		       85 0d		      sta	PF0
-    359  f567		       85 0e		      sta	PF1
-    360  f569		       85 0f		      sta	PF2
-    361  f56b
-    362  f56b							; Clear out Player sprite
-    363  f56b		       85 1b		      sta	GRP0
-    364  f56d
-    365  f56d				   .game_kernel_return
-    366  f56d		       60		      rts
-    367  f56e
-    368  f56e				   GameAssets
-    369  f56e
-    370  f56e							; Game Background
+     51  f3f5
+     52  f3f5							; Initial Missile Control
+     53  f3f5
+     54  f3f5		       a9 00		      lda	#0
+     55  f3f7		       85 90		      sta	MissileEnabled
+     56  f3f9		       85 91		      sta	MissilePosition
+     57  f3fb		       85 92		      sta	MissilePosition+1
+     58  f3fd		       85 93		      sta	MissileVelocity
+     59  f3ff		       85 94		      sta	MissileVelocity+1
+     60  f401		       85 95		      sta	MissileStartPos
+     61  f403		       85 96		      sta	MissileStartPos+1
+     62  f405
+     63  f405		       60		      rts
+     64  f406
+     65  f406				   GameVerticalBlank
+     66  f406		       20 0e f4 	      jsr	GameControl
+     67  f409		       20 94 f5 	      jsr	GameObjects
+     68  f40c		       60		      rts
+     69  f40d
+     70  f40d				   GameOverScan
+     71  f40d		       60		      rts
+     72  f40e
+     73  f40e				   GameControl
+     74  f40e		       a6 8d		      ldx	PlayerPosition
+     75  f410		       a4 8e		      ldy	PlayerPosition+1
+     76  f412		       ad 80 02 	      lda	SWCHA
+     77  f415
+     78  f415				   .game_control_check_right
+     79  f415		       30 01		      bmi	.game_control_check_left
+     80  f417		       e8		      inx
+     81  f418
+     82  f418				   .game_control_check_left
+     83  f418		       2a		      rol
+     84  f419		       30 01		      bmi	.game_control_check_down
+     85  f41b		       ca		      dex
+     86  f41c
+     87  f41c				   .game_control_check_down
+     88  f41c		       2a		      rol
+     89  f41d		       30 01		      bmi	.game_control_check_up
+     90  f41f		       88		      dey
+     91  f420
+     92  f420				   .game_control_check_up
+     93  f420		       2a		      rol
+     94  f421		       30 01		      bmi	.game_control_sprite
+     95  f423		       c8		      iny
+     96  f424
+     97  f424				   .game_control_sprite
+     98  f424		       a9 00		      lda	#%00000000	; First 2 bits are left or right, second 2 bits are up or down
+     99  f426
+    100  f426				   .game_control_sprite_x
+    101  f426		       e4 8d		      cpx	PlayerPosition
+    102  f428		       90 04		      bcc	.game_control_sprite_left
+    103  f42a		       f0 09		      beq	.game_control_sprite_y
+    104  f42c		       b0 05		      bcs	.game_control_sprite_right
+    105  f42e
+    106  f42e				   .game_control_sprite_left
+    107  f42e		       09 80		      ora	#%10000000
+    108  f430		       4c 35 f4 	      jmp	.game_control_sprite_y
+    109  f433
+    110  f433				   .game_control_sprite_right
+    111  f433		       09 40		      ora	#%01000000
+    112  f435
+    113  f435				   .game_control_sprite_y
+    114  f435		       c4 8e		      cpy	PlayerPosition+1
+    115  f437		       90 04		      bcc	.game_control_sprite_down
+    116  f439		       f0 09		      beq	.game_control_sprite_store
+    117  f43b		       b0 05		      bcs	.game_control_sprite_up
+    118  f43d
+    119  f43d				   .game_control_sprite_down
+    120  f43d		       09 10		      ora	#%00010000
+    121  f43f		       4c 44 f4 	      jmp	.game_control_sprite_store
+    122  f442
+    123  f442				   .game_control_sprite_up
+    124  f442		       09 20		      ora	#%00100000
+    125  f444
+    126  f444				   .game_control_sprite_store
+    127  f444		       c9 00		      cmp	#%00000000
+    128  f446		       f0 02		      beq	.game_control_boundary
+    129  f448		       85 8f		      sta	PlayerControl
+    130  f44a
+    131  f44a				   .game_control_boundary
+    132  f44a							; Check Playfield Boundaries
+    133  f44a
+    134  f44a				   .game_control_boundary_left
+    135  f44a		       e0 08		      cpx	#GAME_P0_BOUNDARY
+    136  f44c		       b0 02		      bcs	.game_control_boundary_right
+    137  f44e		       a2 08		      ldx	#GAME_P0_BOUNDARY
+    138  f450
+    139  f450				   .game_control_boundary_right
+    140  f450		       e0 87		      cpx	#151-GAME_P0_BOUNDARY-GAME_P0_SIZE	; #KERNEL_WIDTH/2-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    141  f452		       90 02		      bcc	.game_control_boundary_top
+    142  f454		       a2 87		      ldx	#151-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    143  f456
+    144  f456				   .game_control_boundary_top
+    145  f456		       c0 08		      cpy	#GAME_P0_BOUNDARY
+    146  f458		       b0 02		      bcs	.game_control_boundary_bottom
+    147  f45a		       a0 08		      ldy	#GAME_P0_BOUNDARY
+    148  f45c
+    149  f45c				   .game_control_boundary_bottom
+    150  f45c		       c0 b0		      cpy	#KERNEL_SCANLINES-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    151  f45e		       90 02		      bcc	.game_control_store
+    152  f460		       a0 b0		      ldy	#KERNEL_SCANLINES-GAME_P0_BOUNDARY-GAME_P0_SIZE
+    153  f462
+    154  f462				   .game_control_store
+    155  f462							; Store new position
+    156  f462		       86 8d		      stx	PlayerPosition
+    157  f464		       84 8e		      sty	PlayerPosition+1
+    158  f466
+    159  f466				   .game_control_sprite_assign
+    160  f466							; Skip if no change
+    161  f466		       c9 00		      cmp	#%00000000
+    162  f468		       f0 75		      beq	.game_control_missile
+    163  f46a
+    164  f46a				   .game_control_sprite_assign_left
+    165  f46a		       c9 80		      cmp	#%10000000
+    166  f46c		       d0 0b		      bne	.game_control_sprite_assign_right
+      0  f46e					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*6
+      1  f46e				   .POINTER   SET	PlayerPtr
+      2  f46e				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*6
+      3  f46e
+      4  f46e		       a9 e1		      LDA	#<.ADDRESS
+      5  f470		       85 8b		      STA	.POINTER
+      6  f472		       a9 f6		      LDA	#>.ADDRESS
+      7  f474		       85 8c		      STA	.POINTER+1
+      8  f476
+    168  f476		       4c df f4 	      jmp	.game_control_missile
+    169  f479
+    170  f479				   .game_control_sprite_assign_right
+    171  f479		       c9 40		      cmp	#%01000000
+    172  f47b		       d0 0b		      bne	.game_control_sprite_assign_top
+      0  f47d					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*2
+      1  f47d				   .POINTER   SET	PlayerPtr
+      2  f47d				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*2
+      3  f47d
+      4  f47d		       a9 c1		      LDA	#<.ADDRESS
+      5  f47f		       85 8b		      STA	.POINTER
+      6  f481		       a9 f6		      LDA	#>.ADDRESS
+      7  f483		       85 8c		      STA	.POINTER+1
+      8  f485
+    174  f485		       4c df f4 	      jmp	.game_control_missile
+    175  f488
+    176  f488				   .game_control_sprite_assign_top
+    177  f488		       c9 20		      cmp	#%00100000
+    178  f48a		       d0 0b		      bne	.game_control_sprite_assign_bottom
+      0  f48c					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*0
+      1  f48c				   .POINTER   SET	PlayerPtr
+      2  f48c				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*0
+      3  f48c
+      4  f48c		       a9 b1		      LDA	#<.ADDRESS
+      5  f48e		       85 8b		      STA	.POINTER
+      6  f490		       a9 f6		      LDA	#>.ADDRESS
+      7  f492		       85 8c		      STA	.POINTER+1
+      8  f494
+    180  f494		       4c df f4 	      jmp	.game_control_missile
+    181  f497
+    182  f497				   .game_control_sprite_assign_bottom
+    183  f497		       c9 10		      cmp	#%00010000
+    184  f499		       d0 0b		      bne	.game_control_sprite_assign_top_right
+      0  f49b					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*4
+      1  f49b				   .POINTER   SET	PlayerPtr
+      2  f49b				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*4
+      3  f49b
+      4  f49b		       a9 d1		      LDA	#<.ADDRESS
+      5  f49d		       85 8b		      STA	.POINTER
+      6  f49f		       a9 f6		      LDA	#>.ADDRESS
+      7  f4a1		       85 8c		      STA	.POINTER+1
+      8  f4a3
+    186  f4a3		       4c df f4 	      jmp	.game_control_missile
+    187  f4a6
+    188  f4a6				   .game_control_sprite_assign_top_right
+    189  f4a6		       c9 60		      cmp	#%01100000
+    190  f4a8		       d0 0b		      bne	.game_control_sprite_assign_bottom_right
+      0  f4aa					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*1
+      1  f4aa				   .POINTER   SET	PlayerPtr
+      2  f4aa				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*1
+      3  f4aa
+      4  f4aa		       a9 b9		      LDA	#<.ADDRESS
+      5  f4ac		       85 8b		      STA	.POINTER
+      6  f4ae		       a9 f6		      LDA	#>.ADDRESS
+      7  f4b0		       85 8c		      STA	.POINTER+1
+      8  f4b2
+    192  f4b2		       4c df f4 	      jmp	.game_control_missile
+    193  f4b5
+    194  f4b5				   .game_control_sprite_assign_bottom_right
+    195  f4b5		       c9 50		      cmp	#%01010000
+    196  f4b7		       d0 0b		      bne	.game_control_sprite_assign_bottom_left
+      0  f4b9					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*3
+      1  f4b9				   .POINTER   SET	PlayerPtr
+      2  f4b9				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*3
+      3  f4b9
+      4  f4b9		       a9 c9		      LDA	#<.ADDRESS
+      5  f4bb		       85 8b		      STA	.POINTER
+      6  f4bd		       a9 f6		      LDA	#>.ADDRESS
+      7  f4bf		       85 8c		      STA	.POINTER+1
+      8  f4c1
+    198  f4c1		       4c df f4 	      jmp	.game_control_missile
+    199  f4c4
+    200  f4c4				   .game_control_sprite_assign_bottom_left
+    201  f4c4		       c9 90		      cmp	#%10010000
+    202  f4c6		       d0 0b		      bne	.game_control_sprite_assign_top_left
+      0  f4c8					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*5
+      1  f4c8				   .POINTER   SET	PlayerPtr
+      2  f4c8				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*5
+      3  f4c8
+      4  f4c8		       a9 d9		      LDA	#<.ADDRESS
+      5  f4ca		       85 8b		      STA	.POINTER
+      6  f4cc		       a9 f6		      LDA	#>.ADDRESS
+      7  f4ce		       85 8c		      STA	.POINTER+1
+      8  f4d0
+    204  f4d0		       4c df f4 	      jmp	.game_control_missile
+    205  f4d3
+    206  f4d3				   .game_control_sprite_assign_top_left
+    207  f4d3		       c9 a0		      cmp	#%10100000
+    208  f4d5		       d0 08		      bne	.game_control_missile
+      0  f4d7					      SET_POINTER	PlayerPtr, GamePlayerSprite+#GAME_P0_SIZE*7
+      1  f4d7				   .POINTER   SET	PlayerPtr
+      2  f4d7				   .ADDRESS   SET	GamePlayerSprite+#GAME_P0_SIZE*7
+      3  f4d7
+      4  f4d7		       a9 e9		      LDA	#<.ADDRESS
+      5  f4d9		       85 8b		      STA	.POINTER
+      6  f4db		       a9 f6		      LDA	#>.ADDRESS
+      7  f4dd		       85 8c		      STA	.POINTER+1
+      8  f4df
+    210  f4df
+    211  f4df				   .game_control_missile
+    212  f4df
+    213  f4df							; Check if Fire Button on controller 1 is pressed
+    214  f4df		       a5 0c		      lda	INPT4
+    215  f4e1		       30 0c		      bmi	.game_control_missile_skip
+    216  f4e3
+    217  f4e3		       a5 90		      lda	MissileEnabled
+    218  f4e5		       c9 01		      cmp	#1
+    219  f4e7		       f0 06		      beq	.game_control_missile_skip
+    220  f4e9
+    221  f4e9		       a5 8f		      lda	PlayerControl
+    222  f4eb		       c9 00		      cmp	#0
+    223  f4ed		       d0 03		      bne	.game_control_missile_fire
+    224  f4ef
+    225  f4ef				   .game_control_missile_skip
+    226  f4ef		       4c 93 f5 	      jmp	.game_control_return
+    227  f4f2
+    228  f4f2				   .game_control_missile_fire
+    229  f4f2		       a9 01		      lda	#1
+    230  f4f4		       85 90		      sta	MissileEnabled
+    231  f4f6
+    232  f4f6				   .game_control_missile_x
+    233  f4f6		       a5 8f		      lda	PlayerControl
+    234  f4f8		       29 c0		      and	#%11000000
+    235  f4fa		       f0 0e		      beq	.game_control_missile_x_none
+    236  f4fc				   .game_control_missile_x_left
+    237  f4fc		       c9 80		      cmp	#%10000000
+    238  f4fe		       d0 05		      bne	.game_control_missile_x_right
+    239  f500
+    240  f500		       a9 fe		      lda	#-GAME_M1_VEL_X
+    241  f502		       4c 0c f5 	      jmp	.game_control_missile_x_store
+    242  f505				   .game_control_missile_x_right
+    243  f505		       a9 02		      lda	#GAME_M1_VEL_X
+    244  f507		       4c 0c f5 	      jmp	.game_control_missile_x_store
+    245  f50a				   .game_control_missile_x_none
+    246  f50a		       a9 00		      lda	#0
+    247  f50c				   .game_control_missile_x_store
+    248  f50c		       85 93		      sta	MissileVelocity
+    249  f50e
+    250  f50e				   .game_control_missile_y
+    251  f50e		       a5 8f		      lda	PlayerControl
+    252  f510		       29 30		      and	#%00110000
+    253  f512		       f0 0e		      beq	.game_control_missile_y_none
+    254  f514				   .game_control_missile_y_up
+    255  f514		       c9 20		      cmp	#%00100000
+    256  f516		       d0 05		      bne	.game_control_missile_y_down
+    257  f518
+    258  f518		       a9 03		      lda	#GAME_M1_VEL_Y
+    259  f51a		       4c 24 f5 	      jmp	.game_control_missile_y_store
+    260  f51d				   .game_control_missile_y_down
+    261  f51d		       a9 fd		      lda	#-GAME_M1_VEL_Y
+    262  f51f		       4c 24 f5 	      jmp	.game_control_missile_y_store
+    263  f522				   .game_control_missile_y_none
+    264  f522		       a9 00		      lda	#0
+    265  f524				   .game_control_missile_y_store
+    266  f524		       85 94		      sta	MissileVelocity+1
+    267  f526
+    268  f526				   .game_control_missile_position
+    269  f526
+    270  f526		       a2 00		      ldx	#0	; offsetX
+    271  f528		       a0 00		      ldy	#0	; offsetY
+    272  f52a
+    273  f52a		       a5 8f		      lda	PlayerControl
+    274  f52c		       29 f0		      and	#%11110000
+    275  f52e
+    276  f52e				   .game_control_missile_position_left
+    277  f52e		       c9 80		      cmp	#%10000000
+    278  f530		       d0 07		      bne	.game_control_missile_position_right
+    279  f532
+    280  f532		       a2 02		      ldx	#GAME_M1_SIZE
+    281  f534		       a0 08		      ldy	#GAME_P0_SIZE
+    282  f536		       4c 7b f5 	      jmp	.game_control_missile_position_store
+    283  f539
+    284  f539				   .game_control_missile_position_right
+    285  f539		       c9 40		      cmp	#%01000000
+    286  f53b		       d0 07		      bne	.game_control_missile_position_top
+    287  f53d
+    288  f53d		       a2 10		      ldx	#GAME_P0_SIZE*2
+    289  f53f		       a0 08		      ldy	#GAME_P0_SIZE
+    290  f541		       4c 7b f5 	      jmp	.game_control_missile_position_store
+    291  f544
+    292  f544				   .game_control_missile_position_top
+    293  f544		       c9 20		      cmp	#%00100000
+    294  f546		       d0 07		      bne	.game_control_missile_position_bottom
+    295  f548
+    296  f548		       a2 09		      ldx	#GAME_P0_SIZE+GAME_M1_SIZE/2
+    297  f54a		       a0 10		      ldy	#GAME_P0_SIZE*2
+    298  f54c		       4c 7b f5 	      jmp	.game_control_missile_position_store
+    299  f54f
+    300  f54f				   .game_control_missile_position_bottom
+    301  f54f		       c9 10		      cmp	#%00010000
+    302  f551		       d0 05		      bne	.game_control_missile_position_top_right
+    303  f553
+    304  f553		       a2 09		      ldx	#GAME_P0_SIZE+GAME_M1_SIZE/2
+    305  f555		       4c 7b f5 	      jmp	.game_control_missile_position_store
+    306  f558
+    307  f558				   .game_control_missile_position_top_right
+    308  f558		       c9 60		      cmp	#%01100000
+    309  f55a		       d0 07		      bne	.game_control_missile_position_bottom_right
+    310  f55c
+    311  f55c		       a2 10		      ldx	#GAME_P0_SIZE*2
+    312  f55e		       a0 10		      ldy	#GAME_P0_SIZE*2
+    313  f560		       4c 7b f5 	      jmp	.game_control_missile_position_store
+    314  f563
+    315  f563				   .game_control_missile_position_bottom_right
+    316  f563		       c9 50		      cmp	#%01010000
+    317  f565		       d0 05		      bne	.game_control_missile_position_bottom_left
+    318  f567
+    319  f567		       a2 10		      ldx	#GAME_P0_SIZE*2
+    320  f569		       4c 7b f5 	      jmp	.game_control_missile_position_store
+    321  f56c
+    322  f56c				   .game_control_missile_position_bottom_left
+    323  f56c		       c9 90		      cmp	#%10010000
+    324  f56e		       d0 03		      bne	.game_control_missile_position_top_left
+    325  f570
+    326  f570							; No Offset
+    327  f570		       4c 7b f5 	      jmp	.game_control_missile_position_store
+    328  f573
+    329  f573				   .game_control_missile_position_top_left
+    330  f573		       c9 a0		      cmp	#%10100000
+    331  f575		       d0 04		      bne	.game_control_missile_position_store
+    332  f577
+    333  f577		       a2 02		      ldx	#GAME_M1_SIZE
+    334  f579		       a0 10		      ldy	#GAME_P0_SIZE*2
+    335  f57b
+    336  f57b				   .game_control_missile_position_store
+    337  f57b
+    338  f57b							; Apply offsetX to playerX
+    339  f57b		       a5 8d		      lda	PlayerPosition
+    340  f57d		       86 86		      stx	Temp
+    341  f57f		       18		      clc
+    342  f580		       65 86		      adc	Temp
+    343  f582		       aa		      tax
+    344  f583
+    345  f583							; Apply offsetY to playerY
+    346  f583		       a5 8e		      lda	PlayerPosition+1
+    347  f585		       84 86		      sty	Temp
+    348  f587		       18		      clc
+    349  f588		       65 86		      adc	Temp
+    350  f58a		       a8		      tay
+    351  f58b
+    352  f58b		       86 91		      stx	MissilePosition
+    353  f58d		       84 92		      sty	MissilePosition+1
+    354  f58f		       86 95		      stx	MissileStartPos
+    355  f591		       84 96		      sty	MissileStartPos+1
+    356  f593
+    357  f593				   .game_control_return
+    358  f593		       60		      rts
+    359  f594
+    360  f594				   GameObjects
+    361  f594
+    362  f594		       85 2b		      sta	HMCLR
+    363  f596
+    364  f596				   .game_objects_player
+    365  f596
+    366  f596							; Set Player Position
+    367  f596		       a2 00		      ldx	#0	; Object (player0)
+    368  f598		       a5 8d		      lda	PlayerPosition	; X Position
+    369  f59a		       20 00 f0 	      jsr	PosObject
+    370  f59d
+    371  f59d				   .game_objects_missile
+    372  f59d
+    373  f59d							; Check if missile is enabled
+    374  f59d		       a5 90		      lda	MissileEnabled
+    375  f59f		       c9 01		      cmp	#1
+    376  f5a1		       d0 4a		      bne	.game_objects_return
+    377  f5a3
+    378  f5a3							; Load position
+    379  f5a3		       a6 91		      ldx	MissilePosition
+    380  f5a5		       a4 92		      ldy	MissilePosition+1
+    381  f5a7
+    382  f5a7				   .game_objects_missile_distance
+    383  f5a7
+    384  f5a7							; Check distance from player with absolute value differences
+    385  f5a7
+    386  f5a7				   .game_objects_missile_distance_x
+    387  f5a7		       8a		      txa
+    388  f5a8		       18		      clc
+    389  f5a9		       e5 95		      sbc	MissileStartPos
+    390  f5ab		       b0 04		      bcs	.game_objects_missile_distance_x_check
+    391  f5ad		       49 ff		      eor	#$FF	; C flag is clear here
+    392  f5af		       69 01		      adc	#$01	; form two's complement
+    393  f5b1				   .game_objects_missile_distance_x_check		; Jumps to if positive
+    394  f5b1		       c9 40		      cmp	#GAME_M1_DISTANCE
+    395  f5b3		       b0 34		      bcs	.game_objects_missile_disable
+    396  f5b5
+    397  f5b5				   .game_objects_missile_distance_y
+    398  f5b5		       98		      tya
+    399  f5b6		       18		      clc
+    400  f5b7		       e5 96		      sbc	MissileStartPos+1
+    401  f5b9		       b0 04		      bcs	.game_objects_missile_distance_y_check
+    402  f5bb		       49 ff		      eor	#$FF	; C flag is clear here
+    403  f5bd		       69 01		      adc	#$01	; form two's complement
+    404  f5bf				   .game_objects_missile_distance_y_check		; Jumps to if positive
+    405  f5bf		       c9 40		      cmp	#GAME_M1_DISTANCE
+    406  f5c1		       b0 26		      bcs	.game_objects_missile_disable
+    407  f5c3
+    408  f5c3				   .game_objects_missile_boundary
+    409  f5c3				   .game_objects_missile_boundary_left
+    410  f5c3		       e0 02		      cpx	#GAME_M1_VEL_X
+    411  f5c5		       90 22		      bcc	.game_objects_missile_disable
+    412  f5c7				   .game_objects_missile_boundary_right
+    413  f5c7		       e0 9e		      cpx	#160-GAME_M1_VEL_X
+    414  f5c9		       b0 1e		      bcs	.game_objects_missile_disable
+    415  f5cb				   .game_objects_missile_boundary_bottom
+    416  f5cb		       c0 03		      cpy	#GAME_M1_VEL_Y
+    417  f5cd		       90 1a		      bcc	.game_objects_missile_disable
+    418  f5cf				   .game_objects_missile_boundary_top
+    419  f5cf		       c0 bd		      cpy	#KERNEL_SCANLINES-GAME_M1_VEL_Y
+    420  f5d1		       b0 16		      bcs	.game_objects_missile_disable
+    421  f5d3
+    422  f5d3				   .game_objects_missile_velocity
+    423  f5d3
+    424  f5d3							; Apply Velocity
+    425  f5d3		       8a		      txa
+    426  f5d4		       18		      clc
+    427  f5d5		       65 93		      adc	MissileVelocity
+    428  f5d7		       85 91		      sta	MissilePosition
+    429  f5d9
+    430  f5d9		       98		      tya
+    431  f5da		       18		      clc
+    432  f5db		       65 94		      adc	MissileVelocity+1
+    433  f5dd		       85 92		      sta	MissilePosition+1
+    434  f5df
+    435  f5df							; Set Missile Position
+    436  f5df		       a2 01		      ldx	#1	; Object (missile1)
+    437  f5e1		       a5 91		      lda	MissilePosition	; X Position
+    438  f5e3		       20 13 f0 	      jsr	PosMissile
+    439  f5e6
+    440  f5e6		       4c ed f5 	      jmp	.game_objects_return
+    441  f5e9
+    442  f5e9				   .game_objects_missile_disable
+    443  f5e9		       a9 00		      lda	#0
+    444  f5eb		       85 90		      sta	MissileEnabled
+    445  f5ed
+    446  f5ed				   .game_objects_return
+    447  f5ed
+    448  f5ed							; Set final x position
+    449  f5ed		       85 02		      sta	WSYNC
+    450  f5ef		       85 2a		      sta	HMOVE
+    451  f5f1
+    452  f5f1		       60		      rts
+    453  f5f2
+    454  f5f2				   GameKernel
+    455  f5f2
+    456  f5f2							; Playfield Control
+    457  f5f2		       a9 01		      lda	#%00000001	; Mirrored
+    458  f5f4		       85 0a		      sta	CTRLPF
+    459  f5f6
+    460  f5f6							; Set player 0 to be double size and missile 0 to be 2 clock size (4/5 bits)
+    461  f5f6		       a5 04		      lda	NUSIZ0
+    462  f5f8		       29 f8		      and	#%11111000
+    463  f5fa		       09 05		      ora	#%00000101
+    464  f5fc		       85 04		      sta	NUSIZ0
+    465  f5fe
+    466  f5fe							; Set missile 0 to be 2 clock size (4/5 bits)
+    467  f5fe		       a5 05		      lda	NUSIZ1
+    468  f600		       29 cf		      and	#%11001111
+    469  f602		       09 15		      ora	#%00010101
+    470  f604		       85 05		      sta	NUSIZ1
+    471  f606
+    472  f606							; Turn on display
+    473  f606		       a9 00		      lda	#0
+    474  f608		       85 01		      sta	VBLANK
+    475  f60a
+    476  f60a							; Setup Image Index
+    477  f60a		       a9 00		      lda	#0
+    478  f60c		       85 8a		      sta	ImageIndex
+    479  f60e
+    480  f60e							; Start Counters
+    481  f60e		       a2 c0		      ldx	#KERNEL_SCANLINES	; Scanline Counter
+    482  f610							;    ldy #0 ; Image Counter
+    483  f610
+    484  f610				   .game_kernel
+    485  f610
+    486  f610							;=======================================
+    487  f610							; Player
+    488  f610							;=======================================
+    489  f610
+    490  f610				   .game_kernel_player
+    491  f610
+    492  f610		       8a		      txa
+    493  f611		       e5 8e		      sbc	PlayerPosition+1
+    494  f613
+    495  f613							; Sync up to horizontal line
+    496  f613		       85 02		      sta	WSYNC
+    497  f615
+    498  f615		       c9 10		      cmp	#GAME_P0_SIZE*2
+    499  f617		       90 07		      bcc	.game_kernel_player_draw
+    500  f619
+    501  f619				   .game_kernel_player_blank
+    502  f619
+    503  f619							; Draw empty sprite
+    504  f619		       a9 00		      lda	#0
+    505  f61b		       85 1b		      sta	GRP0
+    506  f61d		       4c 28 f6 	      jmp	.game_kernel_player_skip
+    507  f620
+    508  f620				   .game_kernel_player_draw
+    509  f620
+    510  f620							; Load sprite line
+    511  f620		       29 fe		      and	#%11111110
+    512  f622		       4a		      lsr		; Divide by 2
+    513  f623		       a8		      tay
+    514  f624		       b1 8b		      lda	(PlayerPtr),y
+    515  f626		       85 1b		      sta	GRP0
+    516  f628
+    517  f628				   .game_kernel_player_skip
+    518  f628
+    519  f628							;=======================================
+    520  f628							; Missile
+    521  f628							;=======================================
+    522  f628
+    523  f628				   .game_kernel_missile
+    524  f628
+    525  f628							; Check if visible
+    526  f628		       a5 90		      lda	MissileEnabled
+    527  f62a		       c9 01		      cmp	#1
+    528  f62c		       d0 07		      bne	.game_kernel_missile_off
+    529  f62e
+    530  f62e							; Check y position
+    531  f62e		       8a		      txa
+    532  f62f		       e5 92		      sbc	MissilePosition+1
+    533  f631		       c9 04		      cmp	#GAME_M1_SIZE*2
+    534  f633		       90 05		      bcc	.game_kernel_missile_on
+    535  f635
+    536  f635				   .game_kernel_missile_off
+    537  f635		       a9 00		      lda	#%00000000
+    538  f637		       4c 3c f6 	      jmp	.game_kernel_missile_write
+    539  f63a
+    540  f63a				   .game_kernel_missile_on
+    541  f63a		       a9 02		      lda	#%00000010
+    542  f63c
+    543  f63c				   .game_kernel_missile_write
+    544  f63c		       85 1e		      sta	ENAM1
+    545  f63e
+    546  f63e							;=======================================
+    547  f63e							; Playfield Image
+    548  f63e							;=======================================
+    549  f63e
+    550  f63e				   .game_kernel_image
+    551  f63e
+    552  f63e							; Check to see if new playfield needs to be loaded
+    553  f63e		       8a		      txa
+    554  f63f		       29 07		      and	#%00000111
+    555  f641		       d0 14		      bne	.game_kernel_image_skip
+    556  f643
+    557  f643				   .game_kernel_image_load
+    558  f643
+    559  f643		       a4 8a		      ldy	ImageIndex
+    560  f645
+    561  f645							; Draw Image
+    562  f645		       b9 69 f6 	      lda	GameImagePF0,y	; 3
+    563  f648		       85 0d		      sta	PF0	; 1
+    564  f64a		       b9 81 f6 	      lda	GameImagePF1,y	; 3
+    565  f64d		       85 0e		      sta	PF1	; 1
+    566  f64f		       b9 99 f6 	      lda	GameImagePF2,y	; 3
+    567  f652		       85 0f		      sta	PF2	; 1
+    568  f654
+    569  f654		       c8		      iny		; 2
+    570  f655		       84 8a		      sty	ImageIndex
+    571  f657
+    572  f657				   .game_kernel_image_skip
+    573  f657
+    574  f657				   .game_kernel_line
+    575  f657		       ca		      dex
+    576  f658		       d0 b6		      bne	.game_kernel
+    577  f65a
+    578  f65a				   .game_kernel_clean
+    579  f65a
+    580  f65a							; Clear out playfield
+    581  f65a		       a9 00		      lda	#0
+    582  f65c		       85 0d		      sta	PF0
+    583  f65e		       85 0e		      sta	PF1
+    584  f660		       85 0f		      sta	PF2
+    585  f662
+    586  f662							; Clear out Player sprite
+    587  f662		       85 1b		      sta	GRP0
+    588  f664
+    589  f664							; Clear out Missile
+    590  f664		       85 1e		      sta	ENAM1
+    591  f666
+    592  f666		       85 02		      sta	WSYNC
+    593  f668
+    594  f668				   .game_kernel_return
+    595  f668		       60		      rts
+    596  f669
+    597  f669				   GameAssets
+    598  f669
+    599  f669							; Game Background
 ------- FILE game_image.asm LEVEL 3 PASS 2
-      0  f56e					      include	"game_image.asm"
-      1  f56e				   GameImagePF0
-      2  f56e		       00		      .BYTE.b	%00000000
-      3  f56f		       00		      .BYTE.b	%00000000
-      4  f570		       00		      .BYTE.b	%00000000
-      5  f571		       00		      .BYTE.b	%00000000
-      6  f572		       00		      .BYTE.b	%00000000
-      7  f573		       00		      .BYTE.b	%00000000
-      8  f574		       30		      .BYTE.b	%00110000
-      9  f575		       e0		      .BYTE.b	%11100000
-     10  f576		       20		      .BYTE.b	%00100000
-     11  f577		       40		      .BYTE.b	%01000000
-     12  f578		       40		      .BYTE.b	%01000000
-     13  f579		       80		      .BYTE.b	%10000000
-     14  f57a		       80		      .BYTE.b	%10000000
-     15  f57b		       40		      .BYTE.b	%01000000
-     16  f57c		       40		      .BYTE.b	%01000000
-     17  f57d		       20		      .BYTE.b	%00100000
-     18  f57e		       e0		      .BYTE.b	%11100000
-     19  f57f		       30		      .BYTE.b	%00110000
-     20  f580		       00		      .BYTE.b	%00000000
-     21  f581		       00		      .BYTE.b	%00000000
-     22  f582		       00		      .BYTE.b	%00000000
-     23  f583		       00		      .BYTE.b	%00000000
-     24  f584		       00		      .BYTE.b	%00000000
-     25  f585		       00		      .BYTE.b	%00000000
-     26  f586
-     27  f586				   GameImagePF1
-     28  f586		       00		      .BYTE.b	%00000000
-     29  f587		       00		      .BYTE.b	%00000000
-     30  f588		       01		      .BYTE.b	%00000001
-     31  f589		       01		      .BYTE.b	%00000001
-     32  f58a		       02		      .BYTE.b	%00000010
-     33  f58b		       0c		      .BYTE.b	%00001100
-     34  f58c		       30		      .BYTE.b	%00110000
-     35  f58d		       c0		      .BYTE.b	%11000000
-     36  f58e		       38		      .BYTE.b	%00111000
-     37  f58f		       07		      .BYTE.b	%00000111
-     38  f590		       00		      .BYTE.b	%00000000
-     39  f591		       00		      .BYTE.b	%00000000
-     40  f592		       00		      .BYTE.b	%00000000
-     41  f593		       00		      .BYTE.b	%00000000
-     42  f594		       07		      .BYTE.b	%00000111
-     43  f595		       38		      .BYTE.b	%00111000
-     44  f596		       c0		      .BYTE.b	%11000000
-     45  f597		       30		      .BYTE.b	%00110000
-     46  f598		       0c		      .BYTE.b	%00001100
-     47  f599		       02		      .BYTE.b	%00000010
-     48  f59a		       01		      .BYTE.b	%00000001
-     49  f59b		       01		      .BYTE.b	%00000001
-     50  f59c		       00		      .BYTE.b	%00000000
-     51  f59d		       00		      .BYTE.b	%00000000
-     52  f59e
-     53  f59e				   GameImagePF2
-     54  f59e		       03		      .BYTE.b	%00000011
-     55  f59f		       3f		      .BYTE.b	%00111111
-     56  f5a0		       c2		      .BYTE.b	%11000010
-     57  f5a1		       04		      .BYTE.b	%00000100
-     58  f5a2		       08		      .BYTE.b	%00001000
-     59  f5a3		       08		      .BYTE.b	%00001000
-     60  f5a4		       10		      .BYTE.b	%00010000
-     61  f5a5		       20		      .BYTE.b	%00100000
-     62  f5a6		       20		      .BYTE.b	%00100000
-     63  f5a7		       41		      .BYTE.b	%01000001
-     64  f5a8		       8e		      .BYTE.b	%10001110
-     65  f5a9		       f0		      .BYTE.b	%11110000
-     66  f5aa		       f0		      .BYTE.b	%11110000
-     67  f5ab		       8e		      .BYTE.b	%10001110
-     68  f5ac		       41		      .BYTE.b	%01000001
-     69  f5ad		       20		      .BYTE.b	%00100000
-     70  f5ae		       20		      .BYTE.b	%00100000
-     71  f5af		       10		      .BYTE.b	%00010000
-     72  f5b0		       08		      .BYTE.b	%00001000
-     73  f5b1		       08		      .BYTE.b	%00001000
-     74  f5b2		       04		      .BYTE.b	%00000100
-     75  f5b3		       c2		      .BYTE.b	%11000010
-     76  f5b4		       3f		      .BYTE.b	%00111111
-     77  f5b5		       03		      .BYTE.b	%00000011
+      0  f669					      include	"game_image.asm"
+      1  f669				   GameImagePF0
+      2  f669		       00		      .BYTE.b	%00000000
+      3  f66a		       00		      .BYTE.b	%00000000
+      4  f66b		       00		      .BYTE.b	%00000000
+      5  f66c		       00		      .BYTE.b	%00000000
+      6  f66d		       00		      .BYTE.b	%00000000
+      7  f66e		       00		      .BYTE.b	%00000000
+      8  f66f		       30		      .BYTE.b	%00110000
+      9  f670		       e0		      .BYTE.b	%11100000
+     10  f671		       20		      .BYTE.b	%00100000
+     11  f672		       40		      .BYTE.b	%01000000
+     12  f673		       40		      .BYTE.b	%01000000
+     13  f674		       80		      .BYTE.b	%10000000
+     14  f675		       80		      .BYTE.b	%10000000
+     15  f676		       40		      .BYTE.b	%01000000
+     16  f677		       40		      .BYTE.b	%01000000
+     17  f678		       20		      .BYTE.b	%00100000
+     18  f679		       e0		      .BYTE.b	%11100000
+     19  f67a		       30		      .BYTE.b	%00110000
+     20  f67b		       00		      .BYTE.b	%00000000
+     21  f67c		       00		      .BYTE.b	%00000000
+     22  f67d		       00		      .BYTE.b	%00000000
+     23  f67e		       00		      .BYTE.b	%00000000
+     24  f67f		       00		      .BYTE.b	%00000000
+     25  f680		       00		      .BYTE.b	%00000000
+     26  f681
+     27  f681				   GameImagePF1
+     28  f681		       00		      .BYTE.b	%00000000
+     29  f682		       00		      .BYTE.b	%00000000
+     30  f683		       01		      .BYTE.b	%00000001
+     31  f684		       01		      .BYTE.b	%00000001
+     32  f685		       02		      .BYTE.b	%00000010
+     33  f686		       0c		      .BYTE.b	%00001100
+     34  f687		       30		      .BYTE.b	%00110000
+     35  f688		       c0		      .BYTE.b	%11000000
+     36  f689		       38		      .BYTE.b	%00111000
+     37  f68a		       07		      .BYTE.b	%00000111
+     38  f68b		       00		      .BYTE.b	%00000000
+     39  f68c		       00		      .BYTE.b	%00000000
+     40  f68d		       00		      .BYTE.b	%00000000
+     41  f68e		       00		      .BYTE.b	%00000000
+     42  f68f		       07		      .BYTE.b	%00000111
+     43  f690		       38		      .BYTE.b	%00111000
+     44  f691		       c0		      .BYTE.b	%11000000
+     45  f692		       30		      .BYTE.b	%00110000
+     46  f693		       0c		      .BYTE.b	%00001100
+     47  f694		       02		      .BYTE.b	%00000010
+     48  f695		       01		      .BYTE.b	%00000001
+     49  f696		       01		      .BYTE.b	%00000001
+     50  f697		       00		      .BYTE.b	%00000000
+     51  f698		       00		      .BYTE.b	%00000000
+     52  f699
+     53  f699				   GameImagePF2
+     54  f699		       03		      .BYTE.b	%00000011
+     55  f69a		       3f		      .BYTE.b	%00111111
+     56  f69b		       c2		      .BYTE.b	%11000010
+     57  f69c		       04		      .BYTE.b	%00000100
+     58  f69d		       08		      .BYTE.b	%00001000
+     59  f69e		       08		      .BYTE.b	%00001000
+     60  f69f		       10		      .BYTE.b	%00010000
+     61  f6a0		       20		      .BYTE.b	%00100000
+     62  f6a1		       20		      .BYTE.b	%00100000
+     63  f6a2		       41		      .BYTE.b	%01000001
+     64  f6a3		       8e		      .BYTE.b	%10001110
+     65  f6a4		       f0		      .BYTE.b	%11110000
+     66  f6a5		       f0		      .BYTE.b	%11110000
+     67  f6a6		       8e		      .BYTE.b	%10001110
+     68  f6a7		       41		      .BYTE.b	%01000001
+     69  f6a8		       20		      .BYTE.b	%00100000
+     70  f6a9		       20		      .BYTE.b	%00100000
+     71  f6aa		       10		      .BYTE.b	%00010000
+     72  f6ab		       08		      .BYTE.b	%00001000
+     73  f6ac		       08		      .BYTE.b	%00001000
+     74  f6ad		       04		      .BYTE.b	%00000100
+     75  f6ae		       c2		      .BYTE.b	%11000010
+     76  f6af		       3f		      .BYTE.b	%00111111
+     77  f6b0		       03		      .BYTE.b	%00000011
 ------- FILE game.asm
-    372  f5b6
-    373  f5b6							; Game Player Sprites
+    601  f6b1
+    602  f6b1							; Game Player Sprites
 ------- FILE game_player.asm LEVEL 3 PASS 2
-      0  f5b6					      include	"game_player.asm"
-      1  f5b6				   GamePlayerSprite
-      2  f5b6
-      3  f5b6		       99		      .BYTE.b	%10011001
-      4  f5b7		       bd		      .BYTE.b	%10111101
-      5  f5b8		       7e		      .BYTE.b	%01111110
-      6  f5b9		       3c		      .BYTE.b	%00111100
-      7  f5ba		       7e		      .BYTE.b	%01111110
-      8  f5bb		       99		      .BYTE.b	%10011001
-      9  f5bc		       bd		      .BYTE.b	%10111101
-     10  f5bd		       99		      .BYTE.b	%10011001
-     11  f5be
-     12  f5be		       30		      .BYTE.b	%00110000
-     13  f5bf		       10		      .BYTE.b	%00010000
-     14  f5c0		       b8		      .BYTE.b	%10111000
-     15  f5c1		       f6		      .BYTE.b	%11110110
-     16  f5c2		       2d		      .BYTE.b	%00101101
-     17  f5c3		       1c		      .BYTE.b	%00011100
-     18  f5c4		       13		      .BYTE.b	%00010011
-     19  f5c5		       0b		      .BYTE.b	%00001011
-     20  f5c6
-     21  f5c6		       c7		      .BYTE.b	%11000111
-     22  f5c7		       28		      .BYTE.b	%00101000
-     23  f5c8		       7a		      .BYTE.b	%01111010
-     24  f5c9		       ff		      .BYTE.b	%11111111
-     25  f5ca		       ff		      .BYTE.b	%11111111
-     26  f5cb		       7a		      .BYTE.b	%01111010
-     27  f5cc		       28		      .BYTE.b	%00101000
-     28  f5cd		       c7		      .BYTE.b	%11000111
-     29  f5ce
-     30  f5ce		       0b		      .BYTE.b	%00001011
-     31  f5cf		       13		      .BYTE.b	%00010011
-     32  f5d0		       1c		      .BYTE.b	%00011100
-     33  f5d1		       2d		      .BYTE.b	%00101101
-     34  f5d2		       f6		      .BYTE.b	%11110110
-     35  f5d3		       b8		      .BYTE.b	%10111000
-     36  f5d4		       10		      .BYTE.b	%00010000
-     37  f5d5		       30		      .BYTE.b	%00110000
-     38  f5d6
-     39  f5d6		       99		      .BYTE.b	%10011001
-     40  f5d7		       bd		      .BYTE.b	%10111101
-     41  f5d8		       99		      .BYTE.b	%10011001
-     42  f5d9		       7e		      .BYTE.b	%01111110
-     43  f5da		       3c		      .BYTE.b	%00111100
-     44  f5db		       7e		      .BYTE.b	%01111110
-     45  f5dc		       bd		      .BYTE.b	%10111101
-     46  f5dd		       99		      .BYTE.b	%10011001
-     47  f5de
-     48  f5de		       d0		      .BYTE.b	%11010000
-     49  f5df		       c8		      .BYTE.b	%11001000
-     50  f5e0		       38		      .BYTE.b	%00111000
-     51  f5e1		       b4		      .BYTE.b	%10110100
-     52  f5e2		       6f		      .BYTE.b	%01101111
-     53  f5e3		       1d		      .BYTE.b	%00011101
-     54  f5e4		       08		      .BYTE.b	%00001000
-     55  f5e5		       0c		      .BYTE.b	%00001100
-     56  f5e6
-     57  f5e6		       e3		      .BYTE.b	%11100011
-     58  f5e7		       14		      .BYTE.b	%00010100
-     59  f5e8		       5e		      .BYTE.b	%01011110
-     60  f5e9		       ff		      .BYTE.b	%11111111
-     61  f5ea		       ff		      .BYTE.b	%11111111
-     62  f5eb		       5e		      .BYTE.b	%01011110
-     63  f5ec		       14		      .BYTE.b	%00010100
-     64  f5ed		       e3		      .BYTE.b	%11100011
-     65  f5ee
-     66  f5ee		       0c		      .BYTE.b	%00001100
-     67  f5ef		       08		      .BYTE.b	%00001000
-     68  f5f0		       1d		      .BYTE.b	%00011101
-     69  f5f1		       6f		      .BYTE.b	%01101111
-     70  f5f2		       b4		      .BYTE.b	%10110100
-     71  f5f3		       38		      .BYTE.b	%00111000
-     72  f5f4		       c8		      .BYTE.b	%11001000
-     73  f5f5		       d0		      .BYTE.b	%11010000
+      0  f6b1					      include	"game_player.asm"
+      1  f6b1				   GamePlayerSprite
+      2  f6b1
+      3  f6b1		       99		      .BYTE.b	%10011001
+      4  f6b2		       bd		      .BYTE.b	%10111101
+      5  f6b3		       7e		      .BYTE.b	%01111110
+      6  f6b4		       3c		      .BYTE.b	%00111100
+      7  f6b5		       7e		      .BYTE.b	%01111110
+      8  f6b6		       99		      .BYTE.b	%10011001
+      9  f6b7		       bd		      .BYTE.b	%10111101
+     10  f6b8		       99		      .BYTE.b	%10011001
+     11  f6b9
+     12  f6b9		       30		      .BYTE.b	%00110000
+     13  f6ba		       10		      .BYTE.b	%00010000
+     14  f6bb		       b8		      .BYTE.b	%10111000
+     15  f6bc		       f6		      .BYTE.b	%11110110
+     16  f6bd		       2d		      .BYTE.b	%00101101
+     17  f6be		       1c		      .BYTE.b	%00011100
+     18  f6bf		       13		      .BYTE.b	%00010011
+     19  f6c0		       0b		      .BYTE.b	%00001011
+     20  f6c1
+     21  f6c1		       c7		      .BYTE.b	%11000111
+     22  f6c2		       28		      .BYTE.b	%00101000
+     23  f6c3		       7a		      .BYTE.b	%01111010
+     24  f6c4		       ff		      .BYTE.b	%11111111
+     25  f6c5		       ff		      .BYTE.b	%11111111
+     26  f6c6		       7a		      .BYTE.b	%01111010
+     27  f6c7		       28		      .BYTE.b	%00101000
+     28  f6c8		       c7		      .BYTE.b	%11000111
+     29  f6c9
+     30  f6c9		       0b		      .BYTE.b	%00001011
+     31  f6ca		       13		      .BYTE.b	%00010011
+     32  f6cb		       1c		      .BYTE.b	%00011100
+     33  f6cc		       2d		      .BYTE.b	%00101101
+     34  f6cd		       f6		      .BYTE.b	%11110110
+     35  f6ce		       b8		      .BYTE.b	%10111000
+     36  f6cf		       10		      .BYTE.b	%00010000
+     37  f6d0		       30		      .BYTE.b	%00110000
+     38  f6d1
+     39  f6d1		       99		      .BYTE.b	%10011001
+     40  f6d2		       bd		      .BYTE.b	%10111101
+     41  f6d3		       99		      .BYTE.b	%10011001
+     42  f6d4		       7e		      .BYTE.b	%01111110
+     43  f6d5		       3c		      .BYTE.b	%00111100
+     44  f6d6		       7e		      .BYTE.b	%01111110
+     45  f6d7		       bd		      .BYTE.b	%10111101
+     46  f6d8		       99		      .BYTE.b	%10011001
+     47  f6d9
+     48  f6d9		       d0		      .BYTE.b	%11010000
+     49  f6da		       c8		      .BYTE.b	%11001000
+     50  f6db		       38		      .BYTE.b	%00111000
+     51  f6dc		       b4		      .BYTE.b	%10110100
+     52  f6dd		       6f		      .BYTE.b	%01101111
+     53  f6de		       1d		      .BYTE.b	%00011101
+     54  f6df		       08		      .BYTE.b	%00001000
+     55  f6e0		       0c		      .BYTE.b	%00001100
+     56  f6e1
+     57  f6e1		       e3		      .BYTE.b	%11100011
+     58  f6e2		       14		      .BYTE.b	%00010100
+     59  f6e3		       5e		      .BYTE.b	%01011110
+     60  f6e4		       ff		      .BYTE.b	%11111111
+     61  f6e5		       ff		      .BYTE.b	%11111111
+     62  f6e6		       5e		      .BYTE.b	%01011110
+     63  f6e7		       14		      .BYTE.b	%00010100
+     64  f6e8		       e3		      .BYTE.b	%11100011
+     65  f6e9
+     66  f6e9		       0c		      .BYTE.b	%00001100
+     67  f6ea		       08		      .BYTE.b	%00001000
+     68  f6eb		       1d		      .BYTE.b	%00011101
+     69  f6ec		       6f		      .BYTE.b	%01101111
+     70  f6ed		       b4		      .BYTE.b	%10110100
+     71  f6ee		       38		      .BYTE.b	%00111000
+     72  f6ef		       c8		      .BYTE.b	%11001000
+     73  f6f0		       d0		      .BYTE.b	%11010000
 ------- FILE game.asm
 ------- FILE kernel.asm
-    262  f5f6
-    263  f5f6							;================
-    264  f5f6							; End of cart
-    265  f5f6							;================
-    266  f5f6
-    267  f7fa					      ORG	$F7FA	; 2k = $F7FA, 4k = $FFFA
-    268  f7fa
-    269  f7fa				   InterruptVectors
-    270  f7fa
-    271  f7fa		       26 f0		      .word.w	InitSystem	; NMI
-    272  f7fc		       26 f0		      .word.w	InitSystem	; RESET
-    273  f7fe		       26 f0		      .word.w	InitSystem	; IRQ
-    274  f800
-    275  f800					      END
+    267  f6f1
+    268  f6f1							;================
+    269  f6f1							; End of cart
+    270  f6f1							;================
+    271  f6f1
+    272  f7fa					      ORG	$F7FA	; 2k = $F7FA, 4k = $FFFA
+    273  f7fa
+    274  f7fa				   InterruptVectors
+    275  f7fa
+    276  f7fa		       26 f0		      .word.w	InitSystem	; NMI
+    277  f7fc		       26 f0		      .word.w	InitSystem	; RESET
+    278  f7fe		       26 f0		      .word.w	InitSystem	; IRQ
+    279  f800
+    280  f800					      END

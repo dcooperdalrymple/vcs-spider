@@ -1,48 +1,86 @@
 --- Symbol List (sorted by symbol)
 0.FREE_BYTES             0000                  
-0.game_control_boundary  f444              (R )
-0.game_control_boundary_bottom f450              (R )
-0.game_control_boundary_left f444                  
-0.game_control_boundary_right f44a              (R )
-0.game_control_boundary_top f44a                  
+0.game_control_boundary  f44a              (R )
+0.game_control_boundary_bottom f45c              (R )
+0.game_control_boundary_left f44a                  
+0.game_control_boundary_right f450              (R )
+0.game_control_boundary_top f456              (R )
 0.game_control_check_down f41c              (R )
 0.game_control_check_left f418              (R )
 0.game_control_check_right f415                  
 0.game_control_check_up  f420              (R )
-0.game_control_return    f4d3              (R )
+0.game_control_missile   f4df              (R )
+0.game_control_missile_fire f4f2              (R )
+0.game_control_missile_position f526                  
+0.game_control_missile_position_bottom f54f              (R )
+0.game_control_missile_position_bottom_left f56c              (R )
+0.game_control_missile_position_bottom_right f563              (R )
+0.game_control_missile_position_left f52e                  
+0.game_control_missile_position_right f539              (R )
+0.game_control_missile_position_store f57b              (R )
+0.game_control_missile_position_top f544              (R )
+0.game_control_missile_position_top_left f573              (R )
+0.game_control_missile_position_top_right f558              (R )
+0.game_control_missile_skip f4ef              (R )
+0.game_control_missile_x f4f6                  
+0.game_control_missile_x_left f4fc                  
+0.game_control_missile_x_none f50a              (R )
+0.game_control_missile_x_right f505              (R )
+0.game_control_missile_x_store f50c              (R )
+0.game_control_missile_y f50e                  
+0.game_control_missile_y_down f51d              (R )
+0.game_control_missile_y_none f522              (R )
+0.game_control_missile_y_store f524              (R )
+0.game_control_missile_y_up f514                  
+0.game_control_return    f593              (R )
 0.game_control_sprite    f424              (R )
-0.game_control_sprite_assign f45a                  
-0.game_control_sprite_assign_bottom f48b              (R )
-0.game_control_sprite_assign_bottom_left f4b8              (R )
-0.game_control_sprite_assign_bottom_right f4a9              (R )
-0.game_control_sprite_assign_left f45e                  
-0.game_control_sprite_assign_right f46d              (R )
-0.game_control_sprite_assign_top f47c              (R )
-0.game_control_sprite_assign_top_left f4c7              (R )
-0.game_control_sprite_assign_top_right f49a              (R )
+0.game_control_sprite_assign f466                  
+0.game_control_sprite_assign_bottom f497              (R )
+0.game_control_sprite_assign_bottom_left f4c4              (R )
+0.game_control_sprite_assign_bottom_right f4b5              (R )
+0.game_control_sprite_assign_left f46a                  
+0.game_control_sprite_assign_right f479              (R )
+0.game_control_sprite_assign_top f488              (R )
+0.game_control_sprite_assign_top_left f4d3              (R )
+0.game_control_sprite_assign_top_right f4a6              (R )
 0.game_control_sprite_down f43d              (R )
 0.game_control_sprite_left f42e              (R )
 0.game_control_sprite_right f433              (R )
+0.game_control_sprite_store f444              (R )
 0.game_control_sprite_up f442              (R )
 0.game_control_sprite_x  f426                  
 0.game_control_sprite_y  f435              (R )
-0.game_control_store     f456              (R )
-0.game_kernel            f517              (R )
-0.game_kernel_clean      f561                  
-0.game_kernel_image      f52f              (R )
-0.game_kernel_image_load f534                  
-0.game_kernel_line       f55e                  
-0.game_kernel_missile    f548              (R )
-0.game_kernel_missile_off f555              (R )
-0.game_kernel_missile_on f55a              (R )
-0.game_kernel_missile_write f55c              (R )
-0.game_kernel_player     f517                  
-0.game_kernel_player_blank f520                  
-0.game_kernel_player_draw f527              (R )
-0.game_kernel_return     f56d                  
-0.game_objects_missile   f4df                  
-0.game_objects_player    f4d4                  
-0.game_objects_return    f4f8                  
+0.game_control_store     f462              (R )
+0.game_kernel            f610              (R )
+0.game_kernel_clean      f65a                  
+0.game_kernel_image      f63e                  
+0.game_kernel_image_load f643                  
+0.game_kernel_image_skip f657              (R )
+0.game_kernel_line       f657                  
+0.game_kernel_missile    f628                  
+0.game_kernel_missile_off f635              (R )
+0.game_kernel_missile_on f63a              (R )
+0.game_kernel_missile_write f63c              (R )
+0.game_kernel_player     f610                  
+0.game_kernel_player_blank f619                  
+0.game_kernel_player_draw f620              (R )
+0.game_kernel_player_skip f628              (R )
+0.game_kernel_return     f668                  
+0.game_objects_missile   f59d                  
+0.game_objects_missile_boundary f5c3                  
+0.game_objects_missile_boundary_bottom f5cb                  
+0.game_objects_missile_boundary_left f5c3                  
+0.game_objects_missile_boundary_right f5c7                  
+0.game_objects_missile_boundary_top f5cf                  
+0.game_objects_missile_disable f5e9              (R )
+0.game_objects_missile_distance f5a7                  
+0.game_objects_missile_distance_x f5a7                  
+0.game_objects_missile_distance_x_check f5b1              (R )
+0.game_objects_missile_distance_y f5b5                  
+0.game_objects_missile_distance_y_check f5bf              (R )
+0.game_objects_missile_velocity f5d3                  
+0.game_objects_player    f596                  
+0.game_objects_return    f5ed              (R )
 0.init_clean             f026                  
 0.init_game              f055                  
 0.init_tia               f031                  
@@ -85,30 +123,30 @@
 1.CLEAR_STACK            f02c              (R )
 10.ADDRESS               f406              (R )
 10.POINTER               0080              (R )
-11.ADDRESS               f4f9              (R )
+11.ADDRESS               f5f2              (R )
 11.POINTER               0082              (R )
 12.ADDRESS               f40d              (R )
 12.POINTER               0084              (R )
-13.ADDRESS               f5b6              (R )
-13.POINTER               008a              (R )
-14.ADDRESS               f5e6              (R )
-14.POINTER               008a              (R )
-15.ADDRESS               f5c6              (R )
-15.POINTER               008a              (R )
-16.ADDRESS               f5b6              (R )
-16.POINTER               008a              (R )
-17.ADDRESS               f5d6              (R )
-17.POINTER               008a              (R )
-18.ADDRESS               f5be              (R )
-18.POINTER               008a              (R )
-19.ADDRESS               f5ce              (R )
-19.POINTER               008a              (R )
+13.ADDRESS               f6b1              (R )
+13.POINTER               008b              (R )
+14.ADDRESS               f6e1              (R )
+14.POINTER               008b              (R )
+15.ADDRESS               f6c1              (R )
+15.POINTER               008b              (R )
+16.ADDRESS               f6b1              (R )
+16.POINTER               008b              (R )
+17.ADDRESS               f6d1              (R )
+17.POINTER               008b              (R )
+18.ADDRESS               f6b9              (R )
+18.POINTER               008b              (R )
+19.ADDRESS               f6c9              (R )
+19.POINTER               008b              (R )
 2.ADDRESS                f0f6              (R )
 2.POINTER                0080              (R )
-20.ADDRESS               f5de              (R )
-20.POINTER               008a              (R )
-21.ADDRESS               f5ee              (R )
-21.POINTER               008a              (R )
+20.ADDRESS               f6d9              (R )
+20.POINTER               008b              (R )
+21.ADDRESS               f6e9              (R )
+21.POINTER               008b              (R )
 3.ADDRESS                f13a              (R )
 3.POINTER                0082              (R )
 4.ADDRESS                f0f7              (R )
@@ -125,7 +163,7 @@ AUDC0                    0015              (R )
 AUDC1                    0016              (R )
 AUDF0                    0017              (R )
 AUDF1                    0018              (R )
-AudioStep                0088              (R )
+AudioStep                0089              (R )
 AUDV0                    0019              (R )
 AUDV1                    001a              (R )
 COLOR_NTSC               0001                  
@@ -146,36 +184,39 @@ CXPPMM                   0007
 ENABL                    001f              (R )
 ENAM0                    001d              (R )
 ENAM1                    001e              (R )
-Frame                    0086              (R )
-FrameTimer               0087              (R )
+Frame                    0087              (R )
+FrameTimer               0088              (R )
 GAME_BG_COLOR            0000              (R )
-GAME_FG_COLOR            000c              (R )
+GAME_FG_COLOR            0006              (R )
 GAME_M1_COLOR            000e              (R )
+GAME_M1_DISTANCE         0040              (R )
 GAME_M1_SIZE             0002              (R )
+GAME_M1_VEL_X            0002              (R )
+GAME_M1_VEL_Y            0003              (R )
 GAME_P0_BOUNDARY         0008              (R )
 GAME_P0_COLOR            0056              (R )
 GAME_P0_SIZE             0008              (R )
-GameAssets               f56e                  
+GameAssets               f669                  
 GameControl              f40e              (R )
-GameImagePF0             f56e              (R )
-GameImagePF1             f586              (R )
-GameImagePF2             f59e              (R )
+GameImagePF0             f669              (R )
+GameImagePF1             f681              (R )
+GameImagePF2             f699              (R )
 GameInit                 f3b1              (R )
-GameKernel               f4f9              (R )
-GameObjects              f4d4              (R )
+GameKernel               f5f2              (R )
+GameObjects              f594              (R )
 GameOverScan             f40d              (R )
-GamePlayerSprite         f5b6              (R )
+GamePlayerSprite         f6b1              (R )
 GameVerticalBlank        f406              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
-HMCLR                    002b                  
+HMCLR                    002b              (R )
 HMM0                     0022              (R )
 HMM1                     0023                  
 HMOVE                    002a              (R )
 HMP0                     0020              (R )
 HMP1                     0021                  
-ImageIndex               0089              (R )
+ImageIndex               008a              (R )
 InitSystem               f026              (R )
 INPT0                    0008                  
 INPT1                    0009                  
@@ -186,6 +227,7 @@ INPT5                    000d
 InterruptVectors         f7fa                  
 INTIM                    0284              (R )
 Kernel                   f091              (R )
+KERNEL_HBLANK            0044                  
 KERNEL_IMAGE_FULL_DATA   0006              (R )
 KERNEL_IMAGE_LINE        0008              (R )
 KERNEL_IMAGE_MIRROR_DATA 0003                  
@@ -218,9 +260,10 @@ LogoOverScan             f0f7              (R )
 LogoState                f130              (R )
 LogoVerticalBlank        f0f6              (R )
 Main                     f058              (R )
-MissileEnabled           008e              (R )
-MissilePosition          008f              (R )
-MissileVelocity          0091              (R )
+MissileEnabled           0090              (R )
+MissilePosition          0091              (R )
+MissileStartPos          0095              (R )
+MissileVelocity          0093              (R )
 NO_ILLEGAL_OPCODES       0000 ????         (R )
 NTSC                     0001              (R )
 NTSC_SCANLINES           00c0              (R )
@@ -235,8 +278,9 @@ PAL_TOTAL                0138
 PF0                      000d              (R )
 PF1                      000e              (R )
 PF2                      000f              (R )
-PlayerPosition           008c              (R )
-PlayerPtr                008a              (R )
+PlayerControl            008f              (R )
+PlayerPosition           008d              (R )
+PlayerPtr                008b              (R )
 PosMissile               f013              (R )
 PosObject                f000              (R )
 REFP0                    000b                  
@@ -255,6 +299,7 @@ SWCHA                    0280              (R )
 SWCHB                    0282                  
 SYSTEM                   0001              (R )
 T1024T                   0297                  
+Temp                     0086              (R )
 TIA_BASE_ADDRESS         0000              (R )
 TIA_BASE_READ_ADDRESS    0000              (R )
 TIA_BASE_WRITE_ADDRESS   0000              (R )
