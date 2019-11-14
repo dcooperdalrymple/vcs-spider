@@ -1251,7 +1251,7 @@
     121  f2a1		       a5 0c		      lda	INPT4
     122  f2a3		       30 03		      bmi	.title_state_return
     123  f2a5
-    124  f2a5		       20 19 f5 	      jsr	GameInit
+    124  f2a5		       20 2b f5 	      jsr	GameInit
     125  f2a8
     126  f2a8				   .title_state_return
     127  f2a8		       60		      rts
@@ -1815,117 +1815,101 @@
       0  f452					      include	"objects/score_digits.asm"
       1  f452				   ScoreDigits
       2  f452
-      3  f452							; 0
-      4  f452		       77		      .byte.b	%01110111
-      5  f453		       55		      .byte.b	%01010101
-      6  f454		       55		      .byte.b	%01010101
-      7  f455		       55		      .byte.b	%01010101
-      8  f456		       77		      .byte.b	%01110111
-      9  f457
-     10  f457							; 1
-     11  f457		       11		      .byte.b	%00010001
-     12  f458		       11		      .byte.b	%00010001
-     13  f459		       11		      .byte.b	%00010001
-     14  f45a		       11		      .byte.b	%00010001
-     15  f45b		       11		      .byte.b	%00010001
-     16  f45c
-     17  f45c							; 2
-     18  f45c		       77		      .byte.b	%01110111
-     19  f45d		       22		      .byte.b	%00100010
-     20  f45e		       11		      .byte.b	%00010001
-     21  f45f		       55		      .byte.b	%01010101
-     22  f460		       77		      .byte.b	%01110111
-     23  f461
-     24  f461							; 3
-     25  f461		       77		      .byte.b	%01110111
-     26  f462		       11		      .byte.b	%00010001
-     27  f463		       33		      .byte.b	%00110011
-     28  f464		       11		      .byte.b	%00010001
-     29  f465		       77		      .byte.b	%01110111
-     30  f466
-     31  f466							; 4
-     32  f466		       11		      .byte.b	%00010001
-     33  f467		       77		      .byte.b	%01110111
-     34  f468		       55		      .byte.b	%01010101
-     35  f469		       33		      .byte.b	%00110011
-     36  f46a		       11		      .byte.b	%00010001
-     37  f46b
-     38  f46b							; 5
-     39  f46b		       77		      .byte.b	%01110111
-     40  f46c		       11		      .byte.b	%00010001
-     41  f46d		       77		      .byte.b	%01110111
-     42  f46e		       44		      .byte.b	%01000100
-     43  f46f		       77		      .byte.b	%01110111
-     44  f470
-     45  f470							; 6
-     46  f470		       77		      .byte.b	%01110111
-     47  f471		       55		      .byte.b	%01010101
-     48  f472		       77		      .byte.b	%01110111
-     49  f473		       44		      .byte.b	%01000100
-     50  f474		       33		      .byte.b	%00110011
-     51  f475
-     52  f475							; 7
-     53  f475		       44		      .byte.b	%01000100
-     54  f476		       44		      .byte.b	%01000100
-     55  f477		       22		      .byte.b	%00100010
-     56  f478		       11		      .byte.b	%00010001
-     57  f479		       77		      .byte.b	%01110111
-     58  f47a
-     59  f47a							; 8
-     60  f47a		       77		      .byte.b	%01110111
-     61  f47b		       55		      .byte.b	%01010101
-     62  f47c		       77		      .byte.b	%01110111
-     63  f47d		       55		      .byte.b	%01010101
-     64  f47e		       77		      .byte.b	%01110111
-     65  f47f
-     66  f47f							; 9
-     67  f47f		       11		      .byte.b	%00010001
-     68  f480		       11		      .byte.b	%00010001
-     69  f481		       77		      .byte.b	%01110111
-     70  f482		       55		      .byte.b	%01010101
-     71  f483		       77		      .byte.b	%01110111
-     72  f484
-     73  f484							; A
-     74  f484		       55		      .byte.b	%01010101
-     75  f485		       55		      .byte.b	%01010101
-     76  f486		       77		      .byte.b	%01110111
-     77  f487		       55		      .byte.b	%01010101
-     78  f488		       22		      .byte.b	%00100010
-     79  f489
-     80  f489							; B
-     81  f489		       66		      .byte.b	%01100110
-     82  f48a		       55		      .byte.b	%01010101
-     83  f48b		       66		      .byte.b	%01100110
-     84  f48c		       55		      .byte.b	%01010101
-     85  f48d		       66		      .byte.b	%01100110
-     86  f48e
-     87  f48e							; C
-     88  f48e		       33		      .byte.b	%00110011
-     89  f48f		       44		      .byte.b	%01000100
-     90  f490		       44		      .byte.b	%01000100
-     91  f491		       44		      .byte.b	%01000100
-     92  f492		       33		      .byte.b	%00110011
-     93  f493
-     94  f493							; D
-     95  f493		       66		      .byte.b	%01100110
-     96  f494		       55		      .byte.b	%01010101
-     97  f495		       55		      .byte.b	%01010101
-     98  f496		       55		      .byte.b	%01010101
-     99  f497		       66		      .byte.b	%01100110
-    100  f498
-    101  f498							; E
-    102  f498		       77		      .byte.b	%01110111
-    103  f499		       44		      .byte.b	%01000100
-    104  f49a		       66		      .byte.b	%01100110
-    105  f49b		       44		      .byte.b	%01000100
-    106  f49c		       77		      .byte.b	%01110111
-    107  f49d
-    108  f49d							; F
-    109  f49d		       44		      .byte.b	%01000100
-    110  f49e		       44		      .byte.b	%01000100
-    111  f49f		       66		      .byte.b	%01100110
-    112  f4a0		       44		      .byte.b	%01000100
-    113  f4a1		       77		      .byte.b	%01110111
+      3  f452		       77		      .BYTE.b	%01110111
+      4  f453		       55		      .BYTE.b	%01010101
+      5  f454		       55		      .BYTE.b	%01010101
+      6  f455		       55		      .BYTE.b	%01010101
+      7  f456		       77		      .BYTE.b	%01110111
+      8  f457
+      9  f457		       11		      .BYTE.b	%00010001
+     10  f458		       11		      .BYTE.b	%00010001
+     11  f459		       11		      .BYTE.b	%00010001
+     12  f45a		       11		      .BYTE.b	%00010001
+     13  f45b		       11		      .BYTE.b	%00010001
+     14  f45c
+     15  f45c		       77		      .BYTE.b	%01110111
+     16  f45d		       11		      .BYTE.b	%00010001
+     17  f45e		       77		      .BYTE.b	%01110111
+     18  f45f		       44		      .BYTE.b	%01000100
+     19  f460		       77		      .BYTE.b	%01110111
+     20  f461
+     21  f461		       77		      .BYTE.b	%01110111
+     22  f462		       11		      .BYTE.b	%00010001
+     23  f463		       33		      .BYTE.b	%00110011
+     24  f464		       11		      .BYTE.b	%00010001
+     25  f465		       77		      .BYTE.b	%01110111
+     26  f466
+     27  f466		       55		      .BYTE.b	%01010101
+     28  f467		       55		      .BYTE.b	%01010101
+     29  f468		       77		      .BYTE.b	%01110111
+     30  f469		       11		      .BYTE.b	%00010001
+     31  f46a		       11		      .BYTE.b	%00010001
+     32  f46b
+     33  f46b		       77		      .BYTE.b	%01110111
+     34  f46c		       44		      .BYTE.b	%01000100
+     35  f46d		       77		      .BYTE.b	%01110111
+     36  f46e		       11		      .BYTE.b	%00010001
+     37  f46f		       77		      .BYTE.b	%01110111
+     38  f470
+     39  f470		       77		      .BYTE.b	%01110111
+     40  f471		       44		      .BYTE.b	%01000100
+     41  f472		       77		      .BYTE.b	%01110111
+     42  f473		       55		      .BYTE.b	%01010101
+     43  f474		       77		      .BYTE.b	%01110111
+     44  f475
+     45  f475		       77		      .BYTE.b	%01110111
+     46  f476		       11		      .BYTE.b	%00010001
+     47  f477		       22		      .BYTE.b	%00100010
+     48  f478		       22		      .BYTE.b	%00100010
+     49  f479		       22		      .BYTE.b	%00100010
+     50  f47a
+     51  f47a		       77		      .BYTE.b	%01110111
+     52  f47b		       55		      .BYTE.b	%01010101
+     53  f47c		       77		      .BYTE.b	%01110111
+     54  f47d		       55		      .BYTE.b	%01010101
+     55  f47e		       77		      .BYTE.b	%01110111
+     56  f47f
+     57  f47f		       77		      .BYTE.b	%01110111
+     58  f480		       55		      .BYTE.b	%01010101
+     59  f481		       77		      .BYTE.b	%01110111
+     60  f482		       11		      .BYTE.b	%00010001
+     61  f483		       11		      .BYTE.b	%00010001
+     62  f484
+     63  f484		       77		      .BYTE.b	%01110111
+     64  f485		       55		      .BYTE.b	%01010101
+     65  f486		       77		      .BYTE.b	%01110111
+     66  f487		       55		      .BYTE.b	%01010101
+     67  f488		       55		      .BYTE.b	%01010101
+     68  f489
+     69  f489		       66		      .BYTE.b	%01100110
+     70  f48a		       55		      .BYTE.b	%01010101
+     71  f48b		       66		      .BYTE.b	%01100110
+     72  f48c		       55		      .BYTE.b	%01010101
+     73  f48d		       66		      .BYTE.b	%01100110
+     74  f48e
+     75  f48e		       77		      .BYTE.b	%01110111
+     76  f48f		       44		      .BYTE.b	%01000100
+     77  f490		       44		      .BYTE.b	%01000100
+     78  f491		       44		      .BYTE.b	%01000100
+     79  f492		       77		      .BYTE.b	%01110111
+     80  f493
+     81  f493		       66		      .BYTE.b	%01100110
+     82  f494		       55		      .BYTE.b	%01010101
+     83  f495		       55		      .BYTE.b	%01010101
+     84  f496		       55		      .BYTE.b	%01010101
+     85  f497		       66		      .BYTE.b	%01100110
+     86  f498
+     87  f498		       77		      .BYTE.b	%01110111
+     88  f499		       44		      .BYTE.b	%01000100
+     89  f49a		       66		      .BYTE.b	%01100110
+     90  f49b		       44		      .BYTE.b	%01000100
+     91  f49c		       77		      .BYTE.b	%01110111
+     92  f49d
+     93  f49d		       77		      .BYTE.b	%01110111
+     94  f49e		       44		      .BYTE.b	%01000100
+     95  f49f		       66		      .BYTE.b	%01100110
+     96  f4a0		       44		      .BYTE.b	%01000100
+     97  f4a1		       44		      .BYTE.b	%01000100
 ------- FILE objects/score.asm
 ------- FILE game.asm
 ------- FILE objects/web.asm LEVEL 3 PASS 2
@@ -1976,9 +1960,9 @@
      44  f4b5							; Draw Image
      45  f4b5		       b9 d1 f4 	      lda	WebImagePF0,y
      46  f4b8		       85 0d		      sta	PF0
-     47  f4ba		       b9 e9 f4 	      lda	WebImagePF1,y
+     47  f4ba		       b9 ef f4 	      lda	WebImagePF1,y
      48  f4bd		       85 0e		      sta	PF1
-     49  f4bf		       b9 01 f5 	      lda	WebImagePF2,y
+     49  f4bf		       b9 0d f5 	      lda	WebImagePF2,y
      50  f4c2		       85 0f		      sta	PF2
      51  f4c4
      52  f4c4							; Increment and store image index
@@ -2007,207 +1991,242 @@
       5  f4d4		       00		      .BYTE.b	%00000000
       6  f4d5		       00		      .BYTE.b	%00000000
       7  f4d6		       00		      .BYTE.b	%00000000
-      8  f4d7		       30		      .BYTE.b	%00110000
-      9  f4d8		       e0		      .BYTE.b	%11100000
-     10  f4d9		       20		      .BYTE.b	%00100000
-     11  f4da		       40		      .BYTE.b	%01000000
-     12  f4db		       40		      .BYTE.b	%01000000
-     13  f4dc		       80		      .BYTE.b	%10000000
-     14  f4dd		       80		      .BYTE.b	%10000000
+      8  f4d7		       00		      .BYTE.b	%00000000
+      9  f4d8		       00		      .BYTE.b	%00000000
+     10  f4d9		       00		      .BYTE.b	%00000000
+     11  f4da		       30		      .BYTE.b	%00110000
+     12  f4db		       e0		      .BYTE.b	%11100000
+     13  f4dc		       20		      .BYTE.b	%00100000
+     14  f4dd		       40		      .BYTE.b	%01000000
      15  f4de		       40		      .BYTE.b	%01000000
-     16  f4df		       40		      .BYTE.b	%01000000
-     17  f4e0		       20		      .BYTE.b	%00100000
-     18  f4e1		       e0		      .BYTE.b	%11100000
-     19  f4e2		       30		      .BYTE.b	%00110000
-     20  f4e3		       00		      .BYTE.b	%00000000
-     21  f4e4		       00		      .BYTE.b	%00000000
-     22  f4e5		       00		      .BYTE.b	%00000000
+     16  f4df		       80		      .BYTE.b	%10000000
+     17  f4e0		       80		      .BYTE.b	%10000000
+     18  f4e1		       40		      .BYTE.b	%01000000
+     19  f4e2		       40		      .BYTE.b	%01000000
+     20  f4e3		       20		      .BYTE.b	%00100000
+     21  f4e4		       e0		      .BYTE.b	%11100000
+     22  f4e5		       30		      .BYTE.b	%00110000
      23  f4e6		       00		      .BYTE.b	%00000000
      24  f4e7		       00		      .BYTE.b	%00000000
      25  f4e8		       00		      .BYTE.b	%00000000
-     26  f4e9
-     27  f4e9				   WebImagePF1
-     28  f4e9		       00		      .BYTE.b	%00000000
-     29  f4ea		       00		      .BYTE.b	%00000000
-     30  f4eb		       01		      .BYTE.b	%00000001
-     31  f4ec		       01		      .BYTE.b	%00000001
-     32  f4ed		       02		      .BYTE.b	%00000010
-     33  f4ee		       0c		      .BYTE.b	%00001100
-     34  f4ef		       30		      .BYTE.b	%00110000
-     35  f4f0		       c0		      .BYTE.b	%11000000
-     36  f4f1		       38		      .BYTE.b	%00111000
-     37  f4f2		       07		      .BYTE.b	%00000111
+     26  f4e9		       00		      .BYTE.b	%00000000
+     27  f4ea		       00		      .BYTE.b	%00000000
+     28  f4eb		       00		      .BYTE.b	%00000000
+     29  f4ec		       00		      .BYTE.b	%00000000
+     30  f4ed		       00		      .BYTE.b	%00000000
+     31  f4ee		       00		      .BYTE.b	%00000000
+     32  f4ef
+     33  f4ef				   WebImagePF1
+     34  f4ef		       08		      .BYTE.b	%00001000
+     35  f4f0		       06		      .BYTE.b	%00000110
+     36  f4f1		       01		      .BYTE.b	%00000001
+     37  f4f2		       00		      .BYTE.b	%00000000
      38  f4f3		       00		      .BYTE.b	%00000000
-     39  f4f4		       00		      .BYTE.b	%00000000
-     40  f4f5		       00		      .BYTE.b	%00000000
-     41  f4f6		       00		      .BYTE.b	%00000000
-     42  f4f7		       07		      .BYTE.b	%00000111
-     43  f4f8		       38		      .BYTE.b	%00111000
+     39  f4f4		       01		      .BYTE.b	%00000001
+     40  f4f5		       01		      .BYTE.b	%00000001
+     41  f4f6		       02		      .BYTE.b	%00000010
+     42  f4f7		       0c		      .BYTE.b	%00001100
+     43  f4f8		       30		      .BYTE.b	%00110000
      44  f4f9		       c0		      .BYTE.b	%11000000
-     45  f4fa		       30		      .BYTE.b	%00110000
-     46  f4fb		       0c		      .BYTE.b	%00001100
-     47  f4fc		       02		      .BYTE.b	%00000010
-     48  f4fd		       01		      .BYTE.b	%00000001
-     49  f4fe		       01		      .BYTE.b	%00000001
+     45  f4fa		       38		      .BYTE.b	%00111000
+     46  f4fb		       07		      .BYTE.b	%00000111
+     47  f4fc		       00		      .BYTE.b	%00000000
+     48  f4fd		       00		      .BYTE.b	%00000000
+     49  f4fe		       00		      .BYTE.b	%00000000
      50  f4ff		       00		      .BYTE.b	%00000000
-     51  f500		       00		      .BYTE.b	%00000000
-     52  f501
-     53  f501				   WebImagePF2
-     54  f501		       03		      .BYTE.b	%00000011
-     55  f502		       3f		      .BYTE.b	%00111111
-     56  f503		       c2		      .BYTE.b	%11000010
-     57  f504		       04		      .BYTE.b	%00000100
-     58  f505		       08		      .BYTE.b	%00001000
-     59  f506		       08		      .BYTE.b	%00001000
-     60  f507		       10		      .BYTE.b	%00010000
-     61  f508		       20		      .BYTE.b	%00100000
-     62  f509		       20		      .BYTE.b	%00100000
-     63  f50a		       41		      .BYTE.b	%01000001
-     64  f50b		       8e		      .BYTE.b	%10001110
-     65  f50c		       f0		      .BYTE.b	%11110000
-     66  f50d		       f0		      .BYTE.b	%11110000
-     67  f50e		       8e		      .BYTE.b	%10001110
-     68  f50f		       41		      .BYTE.b	%01000001
-     69  f510		       20		      .BYTE.b	%00100000
-     70  f511		       20		      .BYTE.b	%00100000
-     71  f512		       10		      .BYTE.b	%00010000
-     72  f513		       08		      .BYTE.b	%00001000
+     51  f500		       07		      .BYTE.b	%00000111
+     52  f501		       38		      .BYTE.b	%00111000
+     53  f502		       c0		      .BYTE.b	%11000000
+     54  f503		       30		      .BYTE.b	%00110000
+     55  f504		       0c		      .BYTE.b	%00001100
+     56  f505		       02		      .BYTE.b	%00000010
+     57  f506		       01		      .BYTE.b	%00000001
+     58  f507		       01		      .BYTE.b	%00000001
+     59  f508		       00		      .BYTE.b	%00000000
+     60  f509		       00		      .BYTE.b	%00000000
+     61  f50a		       01		      .BYTE.b	%00000001
+     62  f50b		       06		      .BYTE.b	%00000110
+     63  f50c		       08		      .BYTE.b	%00001000
+     64  f50d
+     65  f50d				   WebImagePF2
+     66  f50d		       20		      .BYTE.b	%00100000
+     67  f50e		       18		      .BYTE.b	%00011000
+     68  f50f		       04		      .BYTE.b	%00000100
+     69  f510		       03		      .BYTE.b	%00000011
+     70  f511		       3f		      .BYTE.b	%00111111
+     71  f512		       c2		      .BYTE.b	%11000010
+     72  f513		       04		      .BYTE.b	%00000100
      73  f514		       08		      .BYTE.b	%00001000
-     74  f515		       04		      .BYTE.b	%00000100
-     75  f516		       c2		      .BYTE.b	%11000010
-     76  f517		       3f		      .BYTE.b	%00111111
-     77  f518		       03		      .BYTE.b	%00000011
+     74  f515		       08		      .BYTE.b	%00001000
+     75  f516		       10		      .BYTE.b	%00010000
+     76  f517		       20		      .BYTE.b	%00100000
+     77  f518		       20		      .BYTE.b	%00100000
+     78  f519		       41		      .BYTE.b	%01000001
+     79  f51a		       8e		      .BYTE.b	%10001110
+     80  f51b		       f0		      .BYTE.b	%11110000
+     81  f51c		       f0		      .BYTE.b	%11110000
+     82  f51d		       8e		      .BYTE.b	%10001110
+     83  f51e		       41		      .BYTE.b	%01000001
+     84  f51f		       20		      .BYTE.b	%00100000
+     85  f520		       20		      .BYTE.b	%00100000
+     86  f521		       10		      .BYTE.b	%00010000
+     87  f522		       08		      .BYTE.b	%00001000
+     88  f523		       08		      .BYTE.b	%00001000
+     89  f524		       04		      .BYTE.b	%00000100
+     90  f525		       c2		      .BYTE.b	%11000010
+     91  f526		       3f		      .BYTE.b	%00111111
+     92  f527		       03		      .BYTE.b	%00000011
+     93  f528		       04		      .BYTE.b	%00000100
+     94  f529		       18		      .BYTE.b	%00011000
+     95  f52a		       20		      .BYTE.b	%00100000
 ------- FILE objects/web.asm
 ------- FILE game.asm
-      9  f519							;    include "objects/spider.asm"
-     10  f519							;    include "objects/line.asm"
-     11  f519							;    include "objects/bug.asm"
-     12  f519							;    include "objects/swatter.asm"
-     13  f519
-     14  f519							; Initialization
-     15  f519
-     16  f519				   GameInit
-     17  f519
-     18  f519							; Setup logic and kernel
-      0  f519					      SET_POINTER	VBlankPtr, GameVerticalBlank
-      1  f519				   .POINTER   SET	VBlankPtr
-      2  f519				   .ADDRESS   SET	GameVerticalBlank
-      3  f519
-      4  f519		       a9 40		      LDA	#<.ADDRESS
-      5  f51b		       85 81		      STA	.POINTER
-      6  f51d		       a9 f5		      LDA	#>.ADDRESS
-      7  f51f		       85 82		      STA	.POINTER+1
-      8  f521
-      0  f521					      SET_POINTER	KernelPtr, GameKernel
-      1  f521				   .POINTER   SET	KernelPtr
-      2  f521				   .ADDRESS   SET	GameKernel
-      3  f521
-      4  f521		       a9 4b		      LDA	#<.ADDRESS
-      5  f523		       85 83		      STA	.POINTER
-      6  f525		       a9 f5		      LDA	#>.ADDRESS
-      7  f527		       85 84		      STA	.POINTER+1
-      8  f529
-      0  f529					      SET_POINTER	OverScanPtr, GameOverScan
-      1  f529				   .POINTER   SET	OverScanPtr
-      2  f529				   .ADDRESS   SET	GameOverScan
-      3  f529
-      4  f529		       a9 4a		      LDA	#<.ADDRESS
-      5  f52b		       85 85		      STA	.POINTER
-      6  f52d		       a9 f5		      LDA	#>.ADDRESS
-      7  f52f		       85 86		      STA	.POINTER+1
-      8  f531
-     22  f531
-     23  f531							; Mute Audio
-     24  f531		       a9 00		      lda	#0
-     25  f533		       85 15		      sta	AUDC0
-     26  f535		       85 19		      sta	AUDV0
-     27  f537		       85 17		      sta	AUDF0
-     28  f539		       85 16		      sta	AUDC1
-     29  f53b		       85 1a		      sta	AUDV1
-     30  f53d		       85 18		      sta	AUDF1
-     31  f53f
-     32  f53f							; Initialize Objects
-     33  f53f							;    jsr SpiderInit
-     34  f53f							;    jsr LineInit
-     35  f53f							;    jsr BugInit
-     36  f53f							;    jsr SwatterInit
-     37  f53f
-     38  f53f		       60		      rts
-     39  f540
-     40  f540				   GameVerticalBlank
-     41  f540
-     42  f540							; Clear horizontal movement
-     43  f540		       85 2b		      sta	HMCLR
-     44  f542
-     45  f542							; Update Objects
-     46  f542							;    jsr SpiderUpdate
-     47  f542							;    jsr LineUpdate
-     48  f542							;    jsr BugUpdate
-     49  f542							;    jsr SwatterUpdate
-     50  f542		       20 bc f3 	      jsr	ScoreUpdate
-     51  f545
-     52  f545							; Set final x positions
-     53  f545		       85 02		      sta	WSYNC
-     54  f547		       85 2a		      sta	HMOVE
-     55  f549
-     56  f549		       60		      rts
-     57  f54a
-     58  f54a				   GameOverScan
-     59  f54a							; Do nothing at the moment
-     60  f54a							; Room for some updating...
-     61  f54a		       60		      rts
-     62  f54b
-     63  f54b				   GameKernel
-     64  f54b
-     65  f54b							; Turn on display
-     66  f54b		       a9 00		      lda	#0
-     67  f54d		       85 01		      sta	VBLANK
-     68  f54f
-     69  f54f				   .game_kernel_score
-     70  f54f
-     71  f54f							; Draw Score on top first
-     72  f54f		       20 ee f3 	      jsr	ScoreDraw
-     73  f552
-     74  f552				   .game_kernel_objects_start
-     75  f552
-     76  f552							; Start Scanline Counter
-     77  f552		       a2 b3		      ldx	#KERNEL_SCANLINES-SCORE_LINES
-     78  f554
-     79  f554							; Setup Drawing Objects
-     80  f554		       20 a2 f4 	      jsr	WebDrawStart
-     81  f557							;    jsr SpiderDrawStart
-     82  f557
-     83  f557				   .game_kernel_objects
-     84  f557
-     85  f557							; Draw Objects in order
-     86  f557
-     87  f557		       20 b3 f4 	      jsr	WebDraw
-     88  f55a							;dex
-     89  f55a
-     90  f55a							;jsr SpiderDraw
-     91  f55a							;dex
-     92  f55a
-     93  f55a				   .game_kernel_line
-     94  f55a		       85 02		      sta	WSYNC
-     95  f55c		       ca		      dex
-     96  f55d		       d0 f8		      bne	.game_kernel_objects
-     97  f55f
-     98  f55f				   .game_kernel_clean
-     99  f55f
-    100  f55f		       20 c8 f4 	      jsr	WebClean
-    101  f562							;    jsr SpiderClean
-    102  f562							;    jsr LineClean
-    103  f562
-    104  f562		       85 02		      sta	WSYNC
-    105  f564
-    106  f564				   .game_kernel_return
-    107  f564		       60		      rts
+      9  f52b							;    include "objects/spider.asm"
+     10  f52b							;    include "objects/line.asm"
+     11  f52b							;    include "objects/bug.asm"
+     12  f52b							;    include "objects/swatter.asm"
+     13  f52b
+     14  f52b							; Initialization
+     15  f52b
+     16  f52b				   GameInit
+     17  f52b
+     18  f52b							; Setup logic and kernel
+      0  f52b					      SET_POINTER	VBlankPtr, GameVerticalBlank
+      1  f52b				   .POINTER   SET	VBlankPtr
+      2  f52b				   .ADDRESS   SET	GameVerticalBlank
+      3  f52b
+      4  f52b		       a9 52		      LDA	#<.ADDRESS
+      5  f52d		       85 81		      STA	.POINTER
+      6  f52f		       a9 f5		      LDA	#>.ADDRESS
+      7  f531		       85 82		      STA	.POINTER+1
+      8  f533
+      0  f533					      SET_POINTER	KernelPtr, GameKernel
+      1  f533				   .POINTER   SET	KernelPtr
+      2  f533				   .ADDRESS   SET	GameKernel
+      3  f533
+      4  f533		       a9 5d		      LDA	#<.ADDRESS
+      5  f535		       85 83		      STA	.POINTER
+      6  f537		       a9 f5		      LDA	#>.ADDRESS
+      7  f539		       85 84		      STA	.POINTER+1
+      8  f53b
+      0  f53b					      SET_POINTER	OverScanPtr, GameOverScan
+      1  f53b				   .POINTER   SET	OverScanPtr
+      2  f53b				   .ADDRESS   SET	GameOverScan
+      3  f53b
+      4  f53b		       a9 5c		      LDA	#<.ADDRESS
+      5  f53d		       85 85		      STA	.POINTER
+      6  f53f		       a9 f5		      LDA	#>.ADDRESS
+      7  f541		       85 86		      STA	.POINTER+1
+      8  f543
+     22  f543
+     23  f543							; Mute Audio
+     24  f543		       a9 00		      lda	#0
+     25  f545		       85 15		      sta	AUDC0
+     26  f547		       85 19		      sta	AUDV0
+     27  f549		       85 17		      sta	AUDF0
+     28  f54b		       85 16		      sta	AUDC1
+     29  f54d		       85 1a		      sta	AUDV1
+     30  f54f		       85 18		      sta	AUDF1
+     31  f551
+     32  f551							; Initialize Objects
+     33  f551							;    jsr SpiderInit
+     34  f551							;    jsr LineInit
+     35  f551							;    jsr BugInit
+     36  f551							;    jsr SwatterInit
+     37  f551
+     38  f551		       60		      rts
+     39  f552
+     40  f552				   GameVerticalBlank
+     41  f552
+     42  f552							; Clear horizontal movement
+     43  f552		       85 2b		      sta	HMCLR
+     44  f554
+     45  f554							; Update Objects
+     46  f554							;    jsr SpiderUpdate
+     47  f554							;    jsr LineUpdate
+     48  f554							;    jsr BugUpdate
+     49  f554							;    jsr SwatterUpdate
+     50  f554		       20 bc f3 	      jsr	ScoreUpdate
+     51  f557
+     52  f557							; Set final x positions
+     53  f557		       85 02		      sta	WSYNC
+     54  f559		       85 2a		      sta	HMOVE
+     55  f55b
+     56  f55b		       60		      rts
+     57  f55c
+     58  f55c				   GameOverScan
+     59  f55c							; Do nothing at the moment
+     60  f55c							; Room for some updating...
+     61  f55c		       60		      rts
+     62  f55d
+     63  f55d				   GameKernel
+     64  f55d
+     65  f55d							; Turn on display
+     66  f55d		       a9 00		      lda	#0
+     67  f55f		       85 01		      sta	VBLANK
+     68  f561
+     69  f561				   .game_kernel_score
+     70  f561
+     71  f561							; Draw Score on top first
+     72  f561		       20 ee f3 	      jsr	ScoreDraw
+     73  f564
+     74  f564				   .game_kernel_objects_start
+     75  f564
+     76  f564							; Start Scanline Counter
+     77  f564		       a2 b4		      ldx	#KERNEL_SCANLINES-SCORE_LINES+1
+     78  f566
+     79  f566							; Setup Drawing Objects
+     80  f566		       20 a2 f4 	      jsr	WebDrawStart
+     81  f569							;    jsr SpiderDrawStart
+     82  f569
+     83  f569				   .game_kernel_objects
+     84  f569
+     85  f569							; Draw Objects in order
+     86  f569
+     87  f569		       20 b3 f4 	      jsr	WebDraw	; Every 6 lines
+     88  f56c							;dex
+     89  f56c
+     90  f56c							;jsr SpiderDraw
+     91  f56c							;dex
+     92  f56c
+     93  f56c					      REPEAT	5
+     94  f56c		       85 02		      sta	WSYNC
+     95  f56e		       ca		      dex
+     93  f56e					      REPEND
+     94  f56f		       85 02		      sta	WSYNC
+     95  f571		       ca		      dex
+     93  f571					      REPEND
+     94  f572		       85 02		      sta	WSYNC
+     95  f574		       ca		      dex
+     93  f574					      REPEND
+     94  f575		       85 02		      sta	WSYNC
+     95  f577		       ca		      dex
+     93  f577					      REPEND
+     94  f578		       85 02		      sta	WSYNC
+     95  f57a		       ca		      dex
+     96  f57b					      REPEND
+     97  f57b
+     98  f57b				   .game_kernel_line
+     99  f57b		       85 02		      sta	WSYNC
+    100  f57d		       ca		      dex
+    101  f57e		       d0 e9		      bne	.game_kernel_objects
+    102  f580
+    103  f580				   .game_kernel_clean
+    104  f580
+    105  f580		       20 c8 f4 	      jsr	WebClean
+    106  f583							;    jsr SpiderClean
+    107  f583							;    jsr LineClean
+    108  f583
+    109  f583		       85 02		      sta	WSYNC
+    110  f585
+    111  f585				   .game_kernel_return
+    112  f585		       60		      rts
 ------- FILE kernel.asm
-    255  f565
-    256  f565							;================
-    257  f565							; End of cart
-    258  f565							;================
-    259  f565
+    255  f586
+    256  f586							;================
+    257  f586							; End of cart
+    258  f586							;================
+    259  f586
     260  f7fa					      ORG	$F7FA	; 2k = $F7FA, 4k = $FFFA
     261  f7fa
     262  f7fa				   InterruptVectors

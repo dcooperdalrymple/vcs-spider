@@ -1,11 +1,11 @@
 --- Symbol List (sorted by symbol)
 0.FREE_BYTES             0000                  
-0.game_kernel_clean      f55f                  
-0.game_kernel_line       f55a                  
-0.game_kernel_objects    f557              (R )
-0.game_kernel_objects_start f552                  
-0.game_kernel_return     f564                  
-0.game_kernel_score      f54f                  
+0.game_kernel_clean      f580                  
+0.game_kernel_line       f57b                  
+0.game_kernel_objects    f569              (R )
+0.game_kernel_objects_start f564                  
+0.game_kernel_return     f585                  
+0.game_kernel_score      f561                  
 0.init_clean             f026                  
 0.init_game              f055                  
 0.init_tia               f031                  
@@ -52,11 +52,11 @@
 1.CLEAR_STACK            f02c              (R )
 10.CYCLES                000c              (R )
 11.CYCLES                000c              (R )
-12.ADDRESS               f540              (R )
+12.ADDRESS               f552              (R )
 12.POINTER               0081              (R )
-13.ADDRESS               f54b              (R )
+13.ADDRESS               f55d              (R )
 13.POINTER               0083              (R )
-14.ADDRESS               f54a              (R )
+14.ADDRESS               f55c              (R )
 14.POINTER               0085              (R )
 2.ADDRESS                f0f6              (R )
 2.POINTER                0081              (R )
@@ -99,10 +99,10 @@ ENAM0                    001d              (R )
 ENAM1                    001e              (R )
 Frame                    0087              (R )
 FrameTimer               0088              (R )
-GameInit                 f519              (R )
-GameKernel               f54b              (R )
-GameOverScan             f54a              (R )
-GameVerticalBlank        f540              (R )
+GameInit                 f52b              (R )
+GameKernel               f55d              (R )
+GameOverScan             f55c              (R )
+GameVerticalBlank        f552              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
@@ -249,8 +249,8 @@ WebClean                 f4c8              (R )
 WebDraw                  f4b3              (R )
 WebDrawStart             f4a2              (R )
 WebImagePF0              f4d1              (R )
-WebImagePF1              f4e9              (R )
-WebImagePF2              f501              (R )
+WebImagePF1              f4ef              (R )
+WebImagePF2              f50d              (R )
 WebIndex                 0092              (R )
 WSYNC                    0002              (R )
 --- End of Symbol List.

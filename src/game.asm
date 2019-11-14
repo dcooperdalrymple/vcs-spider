@@ -74,7 +74,7 @@ GameKernel:
 .game_kernel_objects_start:
 
     ; Start Scanline Counter
-    ldx #KERNEL_SCANLINES-SCORE_LINES
+    ldx #KERNEL_SCANLINES-SCORE_LINES+1
 
     ; Setup Drawing Objects
     jsr WebDrawStart
@@ -84,11 +84,16 @@ GameKernel:
 
     ; Draw Objects in order
 
-    jsr WebDraw
+    jsr WebDraw ; Every 6 lines
     ;dex
 
     ;jsr SpiderDraw
     ;dex
+
+    REPEAT 5
+    sta WSYNC
+    dex
+    REPEND
 
 .game_kernel_line:
     sta WSYNC

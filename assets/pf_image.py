@@ -14,7 +14,7 @@ except ImportError, err:
 print "\nVCS Playfield Image Converter\nCopyright (c) 2019 D Cooper Dalrymple\n"
 
 # Constants
-PF_HEIGHT = 192 / 8
+#PF_HEIGHT = 192 / 8
 PF_MIRROR_WIDTH = 4 + 8 + 8
 PF_FULL_WIDTH = PF_MIRROR_WIDTH * 2
 OUTPUT_TAB_LENGTH = 4
@@ -29,9 +29,9 @@ def load_image(filename):
     return image
 
 def read_image(image):
-    data = [[0 for x in range(0, PF_FULL_WIDTH)] for y in range(0, PF_HEIGHT)]
+    data = [[0 for x in range(0, PF_FULL_WIDTH)] for y in range(0, image.height)]
 
-    for y in range(0, min(image.height, PF_HEIGHT)):
+    for y in range(0, image.height):
         for x in range(0, min(image.width, PF_FULL_WIDTH)):
             pixel = image.getpixel((x, y))
             avg = sum(pixel) / float(len(pixel))
@@ -57,10 +57,10 @@ def get_bin(n):
     return b[::-1]
 
 def convert_mirror(image_data):
-    pf_data = [0b00000000 for x in range(0, PF_HEIGHT * 3)]
+    pf_data = [0b00000000 for x in range(0, len(image_data) * 3)]
 
     i = 0 # pf_data index
-    for y in range(0, PF_HEIGHT):
+    for y in range(0, len(image_data)):
         j = 0 # image_data x index
 
         for x in range(0, 4):
@@ -86,10 +86,10 @@ def convert_mirror(image_data):
     return pf_data
 
 def convert_full(image_data):
-    pf_data = [0b00000000 for x in range(0, PF_HEIGHT * 3 * 2)]
+    pf_data = [0b00000000 for x in range(0, len(image_data) * 3 * 2)]
 
     i = 0 # pf_data index
-    for y in range(0, PF_HEIGHT):
+    for y in range(0, len(image_data)):
         j = 0 # image_data x index
 
         for x in range(0, 4):
