@@ -1,86 +1,11 @@
 --- Symbol List (sorted by symbol)
 0.FREE_BYTES             0000                  
-0.game_control_boundary  f44a              (R )
-0.game_control_boundary_bottom f45c              (R )
-0.game_control_boundary_left f44a                  
-0.game_control_boundary_right f450              (R )
-0.game_control_boundary_top f456              (R )
-0.game_control_check_down f41c              (R )
-0.game_control_check_left f418              (R )
-0.game_control_check_right f415                  
-0.game_control_check_up  f420              (R )
-0.game_control_missile   f4df              (R )
-0.game_control_missile_fire f4f2              (R )
-0.game_control_missile_position f526                  
-0.game_control_missile_position_bottom f54f              (R )
-0.game_control_missile_position_bottom_left f56c              (R )
-0.game_control_missile_position_bottom_right f563              (R )
-0.game_control_missile_position_left f52e                  
-0.game_control_missile_position_right f539              (R )
-0.game_control_missile_position_store f57b              (R )
-0.game_control_missile_position_top f544              (R )
-0.game_control_missile_position_top_left f573              (R )
-0.game_control_missile_position_top_right f558              (R )
-0.game_control_missile_skip f4ef              (R )
-0.game_control_missile_x f4f6                  
-0.game_control_missile_x_left f4fc                  
-0.game_control_missile_x_none f50a              (R )
-0.game_control_missile_x_right f505              (R )
-0.game_control_missile_x_store f50c              (R )
-0.game_control_missile_y f50e                  
-0.game_control_missile_y_down f51d              (R )
-0.game_control_missile_y_none f522              (R )
-0.game_control_missile_y_store f524              (R )
-0.game_control_missile_y_up f514                  
-0.game_control_return    f593              (R )
-0.game_control_sprite    f424              (R )
-0.game_control_sprite_assign f466                  
-0.game_control_sprite_assign_bottom f497              (R )
-0.game_control_sprite_assign_bottom_left f4c4              (R )
-0.game_control_sprite_assign_bottom_right f4b5              (R )
-0.game_control_sprite_assign_left f46a                  
-0.game_control_sprite_assign_right f479              (R )
-0.game_control_sprite_assign_top f488              (R )
-0.game_control_sprite_assign_top_left f4d3              (R )
-0.game_control_sprite_assign_top_right f4a6              (R )
-0.game_control_sprite_down f43d              (R )
-0.game_control_sprite_left f42e              (R )
-0.game_control_sprite_right f433              (R )
-0.game_control_sprite_store f444              (R )
-0.game_control_sprite_up f442              (R )
-0.game_control_sprite_x  f426                  
-0.game_control_sprite_y  f435              (R )
-0.game_control_store     f462              (R )
-0.game_kernel            f610              (R )
-0.game_kernel_clean      f65a                  
-0.game_kernel_image      f63e                  
-0.game_kernel_image_load f643                  
-0.game_kernel_image_skip f657              (R )
-0.game_kernel_line       f657                  
-0.game_kernel_missile    f628                  
-0.game_kernel_missile_off f635              (R )
-0.game_kernel_missile_on f63a              (R )
-0.game_kernel_missile_write f63c              (R )
-0.game_kernel_player     f610                  
-0.game_kernel_player_blank f619                  
-0.game_kernel_player_draw f620              (R )
-0.game_kernel_player_skip f628              (R )
-0.game_kernel_return     f668                  
-0.game_objects_missile   f59d                  
-0.game_objects_missile_boundary f5c3                  
-0.game_objects_missile_boundary_bottom f5cb                  
-0.game_objects_missile_boundary_left f5c3                  
-0.game_objects_missile_boundary_right f5c7                  
-0.game_objects_missile_boundary_top f5cf                  
-0.game_objects_missile_disable f5e9              (R )
-0.game_objects_missile_distance f5a7                  
-0.game_objects_missile_distance_x f5a7                  
-0.game_objects_missile_distance_x_check f5b1              (R )
-0.game_objects_missile_distance_y f5b5                  
-0.game_objects_missile_distance_y_check f5bf              (R )
-0.game_objects_missile_velocity f5d3                  
-0.game_objects_player    f596                  
-0.game_objects_return    f5ed              (R )
+0.game_kernel_clean      f549                  
+0.game_kernel_line       f544                  
+0.game_kernel_objects    f541              (R )
+0.game_kernel_objects_start f53c                  
+0.game_kernel_return     f54e                  
+0.game_kernel_score      f539                  
 0.init_clean             f026                  
 0.init_game              f055                  
 0.init_tia               f031                  
@@ -104,6 +29,9 @@
 0.overscan_return        f0ab                  
 0.posmissle_divide_loop  f016              (R )
 0.posobject_divide_loop  f003              (R )
+0.score_draw_line        f3e6              (R )
+0.score_update_end       f3d7                  
+0.score_update_loop      f3ba              (R )
 0.title_audio_play       f273                  
 0.title_audio_play_note  f27c              (R )
 0.title_audio_play_note_1_mute f298              (R )
@@ -121,43 +49,27 @@
 0.vblank_return          f08d                  
 0.vsync_return           f07d                  
 1.CLEAR_STACK            f02c              (R )
-10.ADDRESS               f406              (R )
-10.POINTER               0080              (R )
-11.ADDRESS               f5f2              (R )
-11.POINTER               0082              (R )
-12.ADDRESS               f40d              (R )
-12.POINTER               0084              (R )
-13.ADDRESS               f6b1              (R )
-13.POINTER               008b              (R )
-14.ADDRESS               f6e1              (R )
-14.POINTER               008b              (R )
-15.ADDRESS               f6c1              (R )
-15.POINTER               008b              (R )
-16.ADDRESS               f6b1              (R )
-16.POINTER               008b              (R )
-17.ADDRESS               f6d1              (R )
-17.POINTER               008b              (R )
-18.ADDRESS               f6b9              (R )
-18.POINTER               008b              (R )
-19.ADDRESS               f6c9              (R )
-19.POINTER               008b              (R )
+10.CYCLES                000c              (R )
+11.CYCLES                000c              (R )
+12.ADDRESS               f52a              (R )
+12.POINTER               0081              (R )
+13.ADDRESS               f535              (R )
+13.POINTER               0083              (R )
+14.ADDRESS               f534              (R )
+14.POINTER               0085              (R )
 2.ADDRESS                f0f6              (R )
-2.POINTER                0080              (R )
-20.ADDRESS               f6d9              (R )
-20.POINTER               008b              (R )
-21.ADDRESS               f6e9              (R )
-21.POINTER               008b              (R )
+2.POINTER                0081              (R )
 3.ADDRESS                f13a              (R )
-3.POINTER                0082              (R )
+3.POINTER                0083              (R )
 4.ADDRESS                f0f7              (R )
-4.POINTER                0084              (R )
+4.POINTER                0085              (R )
 5.CYCLES                 0006              (R )
 6.ADDRESS                f261              (R )
-6.POINTER                0080              (R )
+6.POINTER                0081              (R )
 7.ADDRESS                f2a9              (R )
-7.POINTER                0082              (R )
+7.POINTER                0083              (R )
 8.ADDRESS                f262              (R )
-8.POINTER                0084              (R )
+8.POINTER                0085              (R )
 9.CYCLES                 0006              (R )
 AUDC0                    0015              (R )
 AUDC1                    0016              (R )
@@ -186,27 +98,10 @@ ENAM0                    001d              (R )
 ENAM1                    001e              (R )
 Frame                    0087              (R )
 FrameTimer               0088              (R )
-GAME_BG_COLOR            0000              (R )
-GAME_FG_COLOR            0006              (R )
-GAME_M1_COLOR            000e              (R )
-GAME_M1_DISTANCE         0040              (R )
-GAME_M1_SIZE             0002              (R )
-GAME_M1_VEL_X            0002              (R )
-GAME_M1_VEL_Y            0003              (R )
-GAME_P0_BOUNDARY         0008              (R )
-GAME_P0_COLOR            0056              (R )
-GAME_P0_SIZE             0008              (R )
-GameAssets               f669                  
-GameControl              f40e              (R )
-GameImagePF0             f669              (R )
-GameImagePF1             f681              (R )
-GameImagePF2             f699              (R )
-GameInit                 f3b1              (R )
-GameKernel               f5f2              (R )
-GameObjects              f594              (R )
-GameOverScan             f40d              (R )
-GamePlayerSprite         f6b1              (R )
-GameVerticalBlank        f406              (R )
+GameInit                 f503              (R )
+GameKernel               f535              (R )
+GameOverScan             f534              (R )
+GameVerticalBlank        f52a              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
@@ -216,7 +111,6 @@ HMM1                     0023
 HMOVE                    002a              (R )
 HMP0                     0020              (R )
 HMP1                     0021                  
-ImageIndex               008a              (R )
 InitSystem               f026              (R )
 INPT0                    0008                  
 INPT1                    0009                  
@@ -238,7 +132,7 @@ KERNEL_TOTAL             0106
 KERNEL_VBLANK            0025                  
 KERNEL_VSYNC             0003              (R )
 KERNEL_WIDTH             0140                  
-KernelPtr                0082              (R )
+KernelPtr                0083              (R )
 LOGO_AUDIO_0_TONE        0004              (R )
 LOGO_AUDIO_0_VOLUME      000f              (R )
 LOGO_AUDIO_1_TONE        0001              (R )
@@ -260,29 +154,22 @@ LogoOverScan             f0f7              (R )
 LogoState                f130              (R )
 LogoVerticalBlank        f0f6              (R )
 Main                     f058              (R )
-MissileEnabled           0090              (R )
-MissilePosition          0091              (R )
-MissileStartPos          0095              (R )
-MissileVelocity          0093              (R )
 NO_ILLEGAL_OPCODES       0000 ????         (R )
 NTSC                     0001              (R )
 NTSC_SCANLINES           00c0              (R )
 NTSC_TOTAL               0106              (R )
-NUSIZ0                   0004              (R )
-NUSIZ1                   0005              (R )
+NUSIZ0                   0004                  
+NUSIZ1                   0005                  
 OverScan                 f098              (R )
-OverScanPtr              0084              (R )
+OverScanPtr              0085              (R )
 PAL                      0000              (R )
 PAL_SCANLINES            00f2                  
 PAL_TOTAL                0138                  
 PF0                      000d              (R )
 PF1                      000e              (R )
 PF2                      000f              (R )
-PlayerControl            008f              (R )
-PlayerPosition           008d              (R )
-PlayerPtr                008b              (R )
-PosMissile               f013              (R )
-PosObject                f000              (R )
+PosMissile               f013                  
+PosObject                f000                  
 REFP0                    000b                  
 REFP1                    000c                  
 RESBL                    0014                  
@@ -293,13 +180,26 @@ RESMP1                   0029
 RESP0                    0010              (R )
 RESP1                    0011                  
 RSYNC                    0003                  
+SCORE_BG_COLOR           0000              (R )
+SCORE_CHAR_SIZE          0005              (R )
+SCORE_FG_COLOR           000f              (R )
+SCORE_LINE_SIZE          0002              (R )
+SCORE_LINES              000d              (R )
+ScoreDigitOnes           008c              (R )
+ScoreDigits              f43c              (R )
+ScoreDigitTens           008e              (R )
+ScoreDraw                f3d8              (R )
+ScoreGfx                 0090              (R )
+ScoreInit                f3b1                  
+ScoreUpdate              f3b8              (R )
+ScoreValue               008a              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
-SWCHA                    0280              (R )
+SWCHA                    0280                  
 SWCHB                    0282                  
 SYSTEM                   0001              (R )
 T1024T                   0297                  
-Temp                     0086              (R )
+Temp                     0080              (R )
 TIA_BASE_ADDRESS         0000              (R )
 TIA_BASE_READ_ADDRESS    0000              (R )
 TIA_BASE_WRITE_ADDRESS   0000              (R )
@@ -333,7 +233,7 @@ TitleState               f2a1              (R )
 TitleTone1               f391              (R )
 TitleVerticalBlank       f261              (R )
 VBLANK                   0001              (R )
-VBlankPtr                0080              (R )
+VBlankPtr                0081              (R )
 VDELBL                   0027                  
 VDELP0                   0025                  
 VDELP1                   0026                  
@@ -342,5 +242,14 @@ VERSION_VCS              0069
 VerticalBlank            f07e              (R )
 VerticalSync             f067              (R )
 VSYNC                    0000              (R )
+WEB_BG_COLOR             0000              (R )
+WEB_FG_COLOR             0006              (R )
+WebClean                 f4b2              (R )
+WebDraw                  f49d              (R )
+WebDrawStart             f48c              (R )
+WebImagePF0              f4bb              (R )
+WebImagePF1              f4d3              (R )
+WebImagePF2              f4eb              (R )
+WebIndex                 0092              (R )
 WSYNC                    0002              (R )
 --- End of Symbol List.

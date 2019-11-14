@@ -49,31 +49,19 @@ KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
     SEG.U vars
     org $80
 
+Temp                ds 1
+
 VBlankPtr           ds 2
 KernelPtr           ds 2
 OverScanPtr         ds 2
-
-Temp                ds 1
 
 Frame               ds 1
 FrameTimer          ds 1
 
 AudioStep           ds 1
 
-ImageIndex          ds 1
-
-PlayerPtr           ds 2
-PlayerPosition      ds 2
-PlayerControl       ds 1
-
-MissileEnabled      ds 1
-MissilePosition     ds 2
-MissileVelocity     ds 2
-MissileStartPos     ds 2
-
     SEG
-
-    ORG $F000           ; Start of cart area
+    org $F000           ; Start of cart area
 
 ;=======================================
 ; Global Kernel Subroutines

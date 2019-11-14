@@ -10,13 +10,13 @@ python ./assets/pf_image.py -type full -split 0 -name LogoImage -in ./assets/log
 echo "/assets/title.png => /src/title_image.asm"
 python ./assets/pf_image.py -type full -split 0 -name TitleImage -in ./assets/title.png -out ./src/title_image.asm
 
-echo "/assets/web.png => /src/game_image.asm"
-python ./assets/pf_image.py -type mirror -split 1 -name GameImage -in ./assets/web.png -out ./src/game_image.asm
+echo "/assets/web.png => /src/objects/web_image.asm"
+python ./assets/pf_image.py -type mirror -split 1 -name WebImage -in ./assets/web.png -out ./src/objects/web_image.asm
 
 ## Sprites
 
-echo "/assets/player.png => /src/game_player.asm"
-python ./assets/sprite_image.py -name GamePlayerSprite -in ./assets/player.png -out ./src/game_player.asm
+echo "/assets/player.png => /src/objects/spider_sprite.asm"
+python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm
 
 # Source
 

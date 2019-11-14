@@ -1,4 +1,4 @@
-GamePlayerSprite:
+SpiderSprite:
 
     .BYTE %10011001
     .BYTE %10111101

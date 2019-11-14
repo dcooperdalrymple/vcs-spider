@@ -1,4 +1,4 @@
-GameImagePF0:
+WebImagePF0:
     .BYTE %00000000
     .BYTE %00000000
     .BYTE %00000000
@@ -24,7 +24,7 @@ GameImagePF0:
     .BYTE %00000000
     .BYTE %00000000
 
-GameImagePF1:
+WebImagePF1:
     .BYTE %00000000
     .BYTE %00000000
     .BYTE %00000001
@@ -50,7 +50,7 @@ GameImagePF1:
     .BYTE %00000000
     .BYTE %00000000
 
-GameImagePF2:
+WebImagePF2:
     .BYTE %00000011
     .BYTE %00111111
     .BYTE %11000010
