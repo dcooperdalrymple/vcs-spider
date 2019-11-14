@@ -6,7 +6,7 @@
 
     include "objects/score.asm"
     include "objects/web.asm"
-;    include "objects/spider.asm"
+    include "objects/spider.asm"
 ;    include "objects/line.asm"
 ;    include "objects/bug.asm"
 ;    include "objects/swatter.asm"
@@ -30,7 +30,7 @@ GameInit:
     sta AUDF1
 
     ; Initialize Objects
-;    jsr SpiderInit
+    jsr SpiderInit
 ;    jsr LineInit
 ;    jsr BugInit
 ;    jsr SwatterInit
@@ -43,7 +43,7 @@ GameVerticalBlank:
     sta HMCLR
 
     ; Update Objects
-;    jsr SpiderUpdate
+    jsr SpiderUpdate
 ;    jsr LineUpdate
 ;    jsr BugUpdate
 ;    jsr SwatterUpdate
@@ -74,28 +74,44 @@ GameKernel:
 .game_kernel_objects_start:
 
     ; Start Scanline Counter
-    ldx #KERNEL_SCANLINES-SCORE_LINES+1
+    ldx #KERNEL_SCANLINES-SCORE_LINES
 
     ; Setup Drawing Objects
     jsr WebDrawStart
-;    jsr SpiderDrawStart
+    jsr SpiderDrawStart
 
 .game_kernel_objects:
 
     ; Draw Objects in order
 
     jsr WebDraw ; Every 6 lines
-    ;dex
 
-    ;jsr SpiderDraw
-    ;dex
-
-    REPEAT 5
     sta WSYNC
     dex
-    REPEND
+    beq .game_kernel_clean
 
-.game_kernel_line:
+    jsr SpiderDraw ; Every other scanline
+
+    sta WSYNC
+    dex
+    beq .game_kernel_clean
+
+    sta WSYNC
+    dex
+    beq .game_kernel_clean
+
+    jsr SpiderDraw
+
+    sta WSYNC
+    dex
+    beq .game_kernel_clean
+
+    sta WSYNC
+    dex
+    beq .game_kernel_clean
+
+    jsr SpiderDraw
+
     sta WSYNC
     dex
     bne .game_kernel_objects
@@ -103,7 +119,7 @@ GameKernel:
 .game_kernel_clean:
 
     jsr WebClean
-;    jsr SpiderClean
+    jsr SpiderClean
 ;    jsr LineClean
 
     sta WSYNC

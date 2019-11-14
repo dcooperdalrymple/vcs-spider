@@ -13,28 +13,27 @@ SPIDER_BOUNDARY    = SPIDER_SIZE
     SEG.U spider_vars
     org $93
 
-PlayerPtr           ds 2
-PlayerPosition      ds 2
-PlayerControl       ds 1
+SpiderPtr           ds 2
+SpiderPosition      ds 2
+SpiderCtrl          ds 1
+
+SpiderIndex         ds 1
+SpiderDrawPos       ds 1
 
     SEG
-    org $F000
+    org $F52B
 
 ; Initialization
 
 SpiderInit:
 
-    ; Load Colors
-    lda #SPIDER_COLOR
-    sta COLUP0
-
-    ; Initial Player Control
+    ; Initial Control
     lda #50
-    sta PlayerPosition
-    sta PlayerPosition+1
+    sta SpiderPosition
+    sta SpiderPosition+1
 
-    ; Setup Player Sprite
-    SET_POINTER PlayerPtr, GamePlayerSprite
+    ; Setup Sprite
+    SET_POINTER SpiderPtr, SpiderSprite
 
     rts
 
@@ -48,8 +47,8 @@ SpiderUpdate:
 SpiderControl:
 
     ; Control Position
-    ldx PlayerPosition
-    ldy PlayerPosition+1
+    ldx SpiderPosition
+    ldy SpiderPosition+1
     lda SWCHA
 
 .spider_control_check_right:
@@ -76,7 +75,7 @@ SpiderControl:
     lda #%00000000 ; First 2 bits are left or right, second 2 bits are up or down
 
 .spider_control_sprite_x:
-    cpx PlayerPosition
+    cpx SpiderPosition
     bcc .spider_control_sprite_left
     beq .spider_control_sprite_y
     bcs .spider_control_sprite_right
@@ -89,7 +88,7 @@ SpiderControl:
     ora #%01000000
 
 .spider_control_sprite_y:
-    cpy PlayerPosition+1
+    cpy SpiderPosition+1
     bcc .spider_control_sprite_down
     beq .spider_control_sprite_store
     bcs .spider_control_sprite_up
@@ -104,7 +103,7 @@ SpiderControl:
 .spider_control_sprite_store:
     cmp #%00000000
     beq .spider_control_boundary
-    sta PlayerControl
+    sta SpiderCtrl
 
 .spider_control_boundary:
     ; Check Playfield Boundaries
@@ -115,24 +114,24 @@ SpiderControl:
     ldx #SPIDER_BOUNDARY
 
 .spider_control_boundary_right:
-    cpx #151-SPIDER_BOUNDARY-SPIDER_SIZE ; #KERNEL_WIDTH/2-SPIDER_BOUNDARY-SPIDER_SIZE
+    cpx #151-SPIDER_BOUNDARY-SPIDER_SIZE*2 ; #KERNEL_WIDTH/2-SPIDER_BOUNDARY-SPIDER_SIZE
     bcc .spider_control_boundary_top
-    ldx #151-SPIDER_BOUNDARY-SPIDER_SIZE
+    ldx #151-SPIDER_BOUNDARY-SPIDER_SIZE*2
 
 .spider_control_boundary_top:
-    cpy #SPIDER_BOUNDARY
+    cpy #SCORE_LINES+SPIDER_BOUNDARY
     bcs .spider_control_boundary_bottom
-    ldy #SPIDER_BOUNDARY
+    ldy #SCORE_LINES+SPIDER_BOUNDARY
 
 .spider_control_boundary_bottom:
-    cpy #KERNEL_SCANLINES-SPIDER_BOUNDARY-SPIDER_SIZE
+    cpy #KERNEL_SCANLINES-SPIDER_BOUNDARY-SPIDER_SIZE*2
     bcc .spider_control_store
-    ldy #KERNEL_SCANLINES-SPIDER_BOUNDARY-SPIDER_SIZE
+    ldy #KERNEL_SCANLINES-SPIDER_BOUNDARY-SPIDER_SIZE*2
 
 .spider_control_store:
     ; Store new position
-    stx PlayerPosition
-    sty PlayerPosition+1
+    stx SpiderPosition
+    sty SpiderPosition+1
 
 .spider_control_sprite_assign:
     ; Skip if no change
@@ -142,58 +141,58 @@ SpiderControl:
 .spider_control_sprite_assign_left:
     cmp #%10000000
     bne .spider_control_sprite_assign_right
-    SET_POINTER PlayerPtr, GamePlayerSprite+#SPIDER_SIZE*6
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*6
     jmp .spider_control_return
 
 .spider_control_sprite_assign_right:
     cmp #%01000000
     bne .spider_control_sprite_assign_top
-    SET_POINTER PlayerPtr, GamePlayerSprite+#SPIDER_SIZE*2
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*2
     jmp .spider_control_return
 
 .spider_control_sprite_assign_top:
     cmp #%00100000
     bne .spider_control_sprite_assign_bottom
-    SET_POINTER PlayerPtr, GamePlayerSprite+#SPIDER_SIZE*0
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*0
     jmp .spider_control_return
 
 .spider_control_sprite_assign_bottom:
     cmp #%00010000
     bne .spider_control_sprite_assign_top_right
-    SET_POINTER PlayerPtr, GamePlayerSprite+#SPIDER_SIZE*4
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*4
     jmp .spider_control_return
 
 .spider_control_sprite_assign_top_right:
     cmp #%01100000
     bne .spider_control_sprite_assign_bottom_right
-    SET_POINTER PlayerPtr, GamePlayerSprite+#SPIDER_SIZE*1
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*1
     jmp .spider_control_return
 
 .spider_control_sprite_assign_bottom_right:
     cmp #%01010000
     bne .spider_control_sprite_assign_bottom_left
-    SET_POINTER PlayerPtr, GamePlayerSprite+#SPIDER_SIZE*3
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*3
     jmp .spider_control_return
 
 .spider_control_sprite_assign_bottom_left:
     cmp #%10010000
     bne .spider_control_sprite_assign_top_left
-    SET_POINTER PlayerPtr, GamePlayerSprite+#SPIDER_SIZE*5
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*5
     jmp .spider_control_return
 
 .spider_control_sprite_assign_top_left:
     cmp #%10100000
     bne .spider_control_return
-    SET_POINTER PlayerPtr, GamePlayerSprite+#SPIDER_SIZE*7
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*7
 
 .spider_control_return:
     rts
 
 SpiderObject:
 
-    ; Set Player Position
+    ; Set Position
     ldx #0                  ; Object (player0)
-    lda PlayerPosition      ; X Position
+    lda SpiderPosition      ; X Position
     jsr PosObject
 
     rts
@@ -208,46 +207,85 @@ SpiderDrawStart:
     ora #%00000101
     sta NUSIZ0
 
+    ; Set sprite color
+    lda #SPIDER_COLOR
+    sta COLUP0
+
+    ; Determine if we need to use vertical delay (odd line)
+    lda SpiderPosition+1    ; Y Position
+    lsr
+    bcs .spider_draw_start_nodelay
+
+    ldy #1
+    sty VDELP0
+    jmp .spider_draw_start_pos
+
+.spider_draw_start_nodelay:
+    ldy #0
+    sty VDELP0
+
+.spider_draw_start_pos:
+    ; Calculate starting position
+    clc
+    adc #SPIDER_SIZE
+    sta SpiderDrawPos
+
+    ; Initialize sprite index
+    lda #0
+    sta SpiderIndex
+
     rts
 
 SpiderDraw:
 
+    ldy SpiderIndex
+    cpy #SPIDER_SIZE
+    beq .spider_draw_blank  ; At end of sprite
+    bcs .spider_draw_return ; Completed drawing sprite
+    cpy #0
+    bne .spider_draw_line
+
+    ; Divide y in half
     txa
-    sbc PlayerPosition+1
+    lsr
 
-    ; Sync up to horizontal line
-    sta WSYNC
-
-    cmp #SPIDER_SIZE*2
-    bcc .spider_draw_line
-
-.game_kernel_player_blank:
-
-    ; Draw empty sprite
-    lda #0
-    sta GRP0
-    jmp .spider_draw_return
+    sbc SpiderDrawPos
+    bpl .spider_draw_return ; Not yet to draw sprite
 
 .spider_draw_line:
-
-    ; Load sprite line
-    and #%11111110
-    lsr ; Divide by 2
-    tay
-    lda (PlayerPtr),y
+    lda (SpiderPtr),y
     sta GRP0
+
+    ; Using this for now until we have another sprite
+    lda #0
+    sta GRP1
+
+    iny
+    sty SpiderIndex
+    rts                     ; Early return
+
+.spider_draw_blank:
+    lda #0
+    sta GRP0
+
+    ; Using this for now until we have another sprite
+    lda #0
+    sta GRP1
+
+    ; Push index to be one above
+    iny
+    sty SpiderIndex
 
 .spider_draw_return:
     rts
 
 SpiderClean:
 
-    ; Clear out Player sprite
+    ; Clear out Player0 sprite
     lda #0
     sta GRP0
 
     rts
 
-
     ; Spider Sprites
-    include "game_player.asm"
+    include "objects/spider_sprite.asm"

@@ -1,11 +1,10 @@
 --- Symbol List (sorted by symbol)
 0.FREE_BYTES             0000                  
-0.game_kernel_clean      f580                  
-0.game_kernel_line       f57b                  
-0.game_kernel_objects    f569              (R )
-0.game_kernel_objects_start f564                  
-0.game_kernel_return     f585                  
-0.game_kernel_score      f561                  
+0.game_kernel_clean      f721              (R )
+0.game_kernel_objects    f6f7              (R )
+0.game_kernel_objects_start f6ef                  
+0.game_kernel_return     f729                  
+0.game_kernel_score      f6ec                  
 0.init_clean             f026                  
 0.init_game              f055                  
 0.init_tia               f031                  
@@ -33,6 +32,39 @@
 0.score_update_end       f3ed                  
 0.score_update_loop      f3d0              (R )
 0.score_update_timer_skip f3ca              (R )
+0.spider_control_boundary f57d              (R )
+0.spider_control_boundary_bottom f58f              (R )
+0.spider_control_boundary_left f57d                  
+0.spider_control_boundary_right f583              (R )
+0.spider_control_boundary_top f589              (R )
+0.spider_control_check_down f54f              (R )
+0.spider_control_check_left f54b              (R )
+0.spider_control_check_right f548                  
+0.spider_control_check_up f553              (R )
+0.spider_control_return  f612              (R )
+0.spider_control_sprite  f557              (R )
+0.spider_control_sprite_assign f599                  
+0.spider_control_sprite_assign_bottom f5ca              (R )
+0.spider_control_sprite_assign_bottom_left f5f7              (R )
+0.spider_control_sprite_assign_bottom_right f5e8              (R )
+0.spider_control_sprite_assign_left f59d                  
+0.spider_control_sprite_assign_right f5ac              (R )
+0.spider_control_sprite_assign_top f5bb              (R )
+0.spider_control_sprite_assign_top_left f606              (R )
+0.spider_control_sprite_assign_top_right f5d9              (R )
+0.spider_control_sprite_down f570              (R )
+0.spider_control_sprite_left f561              (R )
+0.spider_control_sprite_right f566              (R )
+0.spider_control_sprite_store f577              (R )
+0.spider_control_sprite_up f575              (R )
+0.spider_control_sprite_x f559                  
+0.spider_control_sprite_y f568              (R )
+0.spider_control_store   f595              (R )
+0.spider_draw_blank      f65f              (R )
+0.spider_draw_line       f653              (R )
+0.spider_draw_return     f66a              (R )
+0.spider_draw_start_nodelay f633              (R )
+0.spider_draw_start_pos  f637              (R )
 0.title_audio_play       f273                  
 0.title_audio_play_note  f27c              (R )
 0.title_audio_play_note_1_mute f298              (R )
@@ -52,14 +84,32 @@
 1.CLEAR_STACK            f02c              (R )
 10.CYCLES                000c              (R )
 11.CYCLES                000c              (R )
-12.ADDRESS               f552              (R )
-12.POINTER               0081              (R )
-13.ADDRESS               f55d              (R )
-13.POINTER               0083              (R )
-14.ADDRESS               f55c              (R )
-14.POINTER               0085              (R )
+12.ADDRESS               f670              (R )
+12.POINTER               0093              (R )
+13.ADDRESS               f6a0              (R )
+13.POINTER               0093              (R )
+14.ADDRESS               f680              (R )
+14.POINTER               0093              (R )
+15.ADDRESS               f670              (R )
+15.POINTER               0093              (R )
+16.ADDRESS               f690              (R )
+16.POINTER               0093              (R )
+17.ADDRESS               f678              (R )
+17.POINTER               0093              (R )
+18.ADDRESS               f688              (R )
+18.POINTER               0093              (R )
+19.ADDRESS               f698              (R )
+19.POINTER               0093              (R )
 2.ADDRESS                f0f6              (R )
 2.POINTER                0081              (R )
+20.ADDRESS               f6a8              (R )
+20.POINTER               0093              (R )
+21.ADDRESS               f6da              (R )
+21.POINTER               0081              (R )
+22.ADDRESS               f6e8              (R )
+22.POINTER               0083              (R )
+23.ADDRESS               f6e7              (R )
+23.POINTER               0085              (R )
 3.ADDRESS                f13a              (R )
 3.POINTER                0083              (R )
 4.ADDRESS                f0f7              (R )
@@ -99,10 +149,10 @@ ENAM0                    001d              (R )
 ENAM1                    001e              (R )
 Frame                    0087              (R )
 FrameTimer               0088              (R )
-GameInit                 f52b              (R )
-GameKernel               f55d              (R )
-GameOverScan             f55c              (R )
-GameVerticalBlank        f552              (R )
+GameInit                 f6b0              (R )
+GameKernel               f6e8              (R )
+GameOverScan             f6e7              (R )
+GameVerticalBlank        f6da              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
@@ -159,7 +209,7 @@ NO_ILLEGAL_OPCODES       0000 ????         (R )
 NTSC                     0001              (R )
 NTSC_SCANLINES           00c0              (R )
 NTSC_TOTAL               0106              (R )
-NUSIZ0                   0004                  
+NUSIZ0                   0004              (R )
 NUSIZ1                   0005                  
 OverScan                 f098              (R )
 OverScanPtr              0085              (R )
@@ -170,7 +220,7 @@ PF0                      000d              (R )
 PF1                      000e              (R )
 PF2                      000f              (R )
 PosMissile               f013                  
-PosObject                f000                  
+PosObject                f000              (R )
 REFP0                    000b                  
 REFP1                    000c                  
 RESBL                    0014                  
@@ -194,9 +244,25 @@ ScoreGfx                 0090              (R )
 ScoreInit                f3b1                  
 ScoreUpdate              f3bc              (R )
 ScoreValue               008a              (R )
+SPIDER_BOUNDARY          0008              (R )
+SPIDER_COLOR             0056              (R )
+SPIDER_SIZE              0008              (R )
+SpiderClean              f66b              (R )
+SpiderControl            f541              (R )
+SpiderCtrl               0097              (R )
+SpiderDraw               f641              (R )
+SpiderDrawPos            0099              (R )
+SpiderDrawStart          f61b              (R )
+SpiderIndex              0098              (R )
+SpiderInit               f52b              (R )
+SpiderObject             f613              (R )
+SpiderPosition           0095              (R )
+SpiderPtr                0093              (R )
+SpiderSprite             f670              (R )
+SpiderUpdate             f53a              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
-SWCHA                    0280                  
+SWCHA                    0280              (R )
 SWCHB                    0282                  
 SYSTEM                   0001              (R )
 T1024T                   0297                  
@@ -236,7 +302,7 @@ TitleVerticalBlank       f261              (R )
 VBLANK                   0001              (R )
 VBlankPtr                0081              (R )
 VDELBL                   0027                  
-VDELP0                   0025                  
+VDELP0                   0025              (R )
 VDELP1                   0026                  
 VERSION_MACRO            006a                  
 VERSION_VCS              0069                  
@@ -245,6 +311,8 @@ VerticalSync             f067              (R )
 VSYNC                    0000              (R )
 WEB_BG_COLOR             0000              (R )
 WEB_FG_COLOR             0006              (R )
+WEB_LINE                 0005                  
+WEB_SIZE                 00b3              (R )
 WebClean                 f4c8              (R )
 WebDraw                  f4b3              (R )
 WebDrawStart             f4a2              (R )

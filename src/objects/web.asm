@@ -4,8 +4,11 @@
 
 ; Constants
 
-WEB_BG_COLOR       = #$00
-WEB_FG_COLOR       = #$06
+WEB_BG_COLOR        = #$00
+WEB_FG_COLOR        = #$06
+
+WEB_SIZE            = KERNEL_SCANLINES-SCORE_LINES
+WEB_LINE            = WEB_SIZE/30
 
 ; Variables
 

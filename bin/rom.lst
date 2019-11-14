@@ -1251,7 +1251,7 @@
     121  f2a1		       a5 0c		      lda	INPT4
     122  f2a3		       30 03		      bmi	.title_state_return
     123  f2a5
-    124  f2a5		       20 2b f5 	      jsr	GameInit
+    124  f2a5		       20 b0 f6 	      jsr	GameInit
     125  f2a8
     126  f2a8				   .title_state_return
     127  f2a8		       60		      rts
@@ -1923,65 +1923,68 @@
       7  f4a2		       00 00	   WEB_BG_COLOR =	#$00
       8  f4a2		       00 06	   WEB_FG_COLOR =	#$06
       9  f4a2
-     10  f4a2							; Variables
-     11  f4a2
-     12 U0093 ????				      SEG.U	web_vars
-     13 U0092					      org	$92
-     14 U0092
-     15 U0092		       00	   WebIndex   ds	1
-     16 U0093
-     17  f4a2					      SEG
-     18  f4a2					      org	$F4A2
-     19  f4a2
-     20  f4a2							; Scanline Draw
-     21  f4a2
-     22  f4a2				   WebDrawStart
-     23  f4a2
-     24  f4a2							; Load Colors
-     25  f4a2		       a9 00		      lda	#WEB_BG_COLOR
-     26  f4a4		       85 09		      sta	COLUBK
-     27  f4a6		       a9 06		      lda	#WEB_FG_COLOR
-     28  f4a8		       85 08		      sta	COLUPF
-     29  f4aa
-     30  f4aa							; Mirror playfield
-     31  f4aa		       a9 01		      lda	#%00000001	; Mirrored
-     32  f4ac		       85 0a		      sta	CTRLPF
-     33  f4ae
-     34  f4ae							; Initialize image index
-     35  f4ae		       a9 00		      lda	#0
-     36  f4b0		       85 92		      sta	WebIndex
-     37  f4b2
-     38  f4b2		       60		      rts
-     39  f4b3
-     40  f4b3				   WebDraw
-     41  f4b3
-     42  f4b3		       a4 92		      ldy	WebIndex
-     43  f4b5
-     44  f4b5							; Draw Image
-     45  f4b5		       b9 d1 f4 	      lda	WebImagePF0,y
-     46  f4b8		       85 0d		      sta	PF0
-     47  f4ba		       b9 ef f4 	      lda	WebImagePF1,y
-     48  f4bd		       85 0e		      sta	PF1
-     49  f4bf		       b9 0d f5 	      lda	WebImagePF2,y
-     50  f4c2		       85 0f		      sta	PF2
-     51  f4c4
-     52  f4c4							; Increment and store image index
-     53  f4c4		       c8		      iny
-     54  f4c5		       84 92		      sty	WebIndex
-     55  f4c7
-     56  f4c7		       60		      rts
-     57  f4c8
-     58  f4c8				   WebClean
-     59  f4c8
-     60  f4c8							; Clear out playfield
-     61  f4c8		       a9 00		      lda	#0
-     62  f4ca		       85 0d		      sta	PF0
-     63  f4cc		       85 0e		      sta	PF1
-     64  f4ce		       85 0f		      sta	PF2
-     65  f4d0
-     66  f4d0		       60		      rts
-     67  f4d1
-     68  f4d1							; Web Image
+     10  f4a2		       00 b3	   WEB_SIZE   =	KERNEL_SCANLINES-SCORE_LINES
+     11  f4a2		       00 05	   WEB_LINE   =	WEB_SIZE/30
+     12  f4a2
+     13  f4a2							; Variables
+     14  f4a2
+     15 U0093 ????				      SEG.U	web_vars
+     16 U0092					      org	$92
+     17 U0092
+     18 U0092		       00	   WebIndex   ds	1
+     19 U0093
+     20  f4a2					      SEG
+     21  f4a2					      org	$F4A2
+     22  f4a2
+     23  f4a2							; Scanline Draw
+     24  f4a2
+     25  f4a2				   WebDrawStart
+     26  f4a2
+     27  f4a2							; Load Colors
+     28  f4a2		       a9 00		      lda	#WEB_BG_COLOR
+     29  f4a4		       85 09		      sta	COLUBK
+     30  f4a6		       a9 06		      lda	#WEB_FG_COLOR
+     31  f4a8		       85 08		      sta	COLUPF
+     32  f4aa
+     33  f4aa							; Mirror playfield
+     34  f4aa		       a9 01		      lda	#%00000001	; Mirrored
+     35  f4ac		       85 0a		      sta	CTRLPF
+     36  f4ae
+     37  f4ae							; Initialize image index
+     38  f4ae		       a9 00		      lda	#0
+     39  f4b0		       85 92		      sta	WebIndex
+     40  f4b2
+     41  f4b2		       60		      rts
+     42  f4b3
+     43  f4b3				   WebDraw
+     44  f4b3
+     45  f4b3		       a4 92		      ldy	WebIndex
+     46  f4b5
+     47  f4b5							; Draw Image
+     48  f4b5		       b9 d1 f4 	      lda	WebImagePF0,y
+     49  f4b8		       85 0d		      sta	PF0
+     50  f4ba		       b9 ef f4 	      lda	WebImagePF1,y
+     51  f4bd		       85 0e		      sta	PF1
+     52  f4bf		       b9 0d f5 	      lda	WebImagePF2,y
+     53  f4c2		       85 0f		      sta	PF2
+     54  f4c4
+     55  f4c4							; Increment and store image index
+     56  f4c4		       c8		      iny
+     57  f4c5		       84 92		      sty	WebIndex
+     58  f4c7
+     59  f4c7		       60		      rts
+     60  f4c8
+     61  f4c8				   WebClean
+     62  f4c8
+     63  f4c8							; Clear out playfield
+     64  f4c8		       a9 00		      lda	#0
+     65  f4ca		       85 0d		      sta	PF0
+     66  f4cc		       85 0e		      sta	PF1
+     67  f4ce		       85 0f		      sta	PF2
+     68  f4d0
+     69  f4d0		       60		      rts
+     70  f4d1
+     71  f4d1							; Web Image
 ------- FILE objects/web_image.asm LEVEL 4 PASS 2
       0  f4d1					      include	"objects/web_image.asm"
       1  f4d1				   WebImagePF0
@@ -2081,152 +2084,594 @@
      95  f52a		       20		      .BYTE.b	%00100000
 ------- FILE objects/web.asm
 ------- FILE game.asm
-      9  f52b							;    include "objects/spider.asm"
-     10  f52b							;    include "objects/line.asm"
-     11  f52b							;    include "objects/bug.asm"
-     12  f52b							;    include "objects/swatter.asm"
-     13  f52b
-     14  f52b							; Initialization
-     15  f52b
-     16  f52b				   GameInit
-     17  f52b
-     18  f52b							; Setup logic and kernel
-      0  f52b					      SET_POINTER	VBlankPtr, GameVerticalBlank
-      1  f52b				   .POINTER   SET	VBlankPtr
-      2  f52b				   .ADDRESS   SET	GameVerticalBlank
-      3  f52b
-      4  f52b		       a9 52		      LDA	#<.ADDRESS
-      5  f52d		       85 81		      STA	.POINTER
-      6  f52f		       a9 f5		      LDA	#>.ADDRESS
-      7  f531		       85 82		      STA	.POINTER+1
-      8  f533
-      0  f533					      SET_POINTER	KernelPtr, GameKernel
-      1  f533				   .POINTER   SET	KernelPtr
-      2  f533				   .ADDRESS   SET	GameKernel
-      3  f533
-      4  f533		       a9 5d		      LDA	#<.ADDRESS
-      5  f535		       85 83		      STA	.POINTER
-      6  f537		       a9 f5		      LDA	#>.ADDRESS
-      7  f539		       85 84		      STA	.POINTER+1
-      8  f53b
-      0  f53b					      SET_POINTER	OverScanPtr, GameOverScan
-      1  f53b				   .POINTER   SET	OverScanPtr
-      2  f53b				   .ADDRESS   SET	GameOverScan
-      3  f53b
-      4  f53b		       a9 5c		      LDA	#<.ADDRESS
-      5  f53d		       85 85		      STA	.POINTER
-      6  f53f		       a9 f5		      LDA	#>.ADDRESS
-      7  f541		       85 86		      STA	.POINTER+1
-      8  f543
-     22  f543
-     23  f543							; Mute Audio
-     24  f543		       a9 00		      lda	#0
-     25  f545		       85 15		      sta	AUDC0
-     26  f547		       85 19		      sta	AUDV0
-     27  f549		       85 17		      sta	AUDF0
-     28  f54b		       85 16		      sta	AUDC1
-     29  f54d		       85 1a		      sta	AUDV1
-     30  f54f		       85 18		      sta	AUDF1
-     31  f551
-     32  f551							; Initialize Objects
-     33  f551							;    jsr SpiderInit
-     34  f551							;    jsr LineInit
-     35  f551							;    jsr BugInit
-     36  f551							;    jsr SwatterInit
-     37  f551
-     38  f551		       60		      rts
-     39  f552
-     40  f552				   GameVerticalBlank
-     41  f552
-     42  f552							; Clear horizontal movement
-     43  f552		       85 2b		      sta	HMCLR
-     44  f554
-     45  f554							; Update Objects
-     46  f554							;    jsr SpiderUpdate
-     47  f554							;    jsr LineUpdate
-     48  f554							;    jsr BugUpdate
-     49  f554							;    jsr SwatterUpdate
-     50  f554		       20 bc f3 	      jsr	ScoreUpdate
-     51  f557
-     52  f557							; Set final x positions
-     53  f557		       85 02		      sta	WSYNC
-     54  f559		       85 2a		      sta	HMOVE
-     55  f55b
-     56  f55b		       60		      rts
-     57  f55c
-     58  f55c				   GameOverScan
-     59  f55c							; Do nothing at the moment
-     60  f55c							; Room for some updating...
-     61  f55c		       60		      rts
-     62  f55d
-     63  f55d				   GameKernel
-     64  f55d
-     65  f55d							; Turn on display
-     66  f55d		       a9 00		      lda	#0
-     67  f55f		       85 01		      sta	VBLANK
-     68  f561
-     69  f561				   .game_kernel_score
-     70  f561
-     71  f561							; Draw Score on top first
-     72  f561		       20 ee f3 	      jsr	ScoreDraw
-     73  f564
-     74  f564				   .game_kernel_objects_start
-     75  f564
-     76  f564							; Start Scanline Counter
-     77  f564		       a2 b4		      ldx	#KERNEL_SCANLINES-SCORE_LINES+1
-     78  f566
-     79  f566							; Setup Drawing Objects
-     80  f566		       20 a2 f4 	      jsr	WebDrawStart
-     81  f569							;    jsr SpiderDrawStart
-     82  f569
-     83  f569				   .game_kernel_objects
-     84  f569
-     85  f569							; Draw Objects in order
-     86  f569
-     87  f569		       20 b3 f4 	      jsr	WebDraw	; Every 6 lines
-     88  f56c							;dex
-     89  f56c
-     90  f56c							;jsr SpiderDraw
-     91  f56c							;dex
-     92  f56c
-     93  f56c					      REPEAT	5
-     94  f56c		       85 02		      sta	WSYNC
-     95  f56e		       ca		      dex
-     93  f56e					      REPEND
-     94  f56f		       85 02		      sta	WSYNC
-     95  f571		       ca		      dex
-     93  f571					      REPEND
-     94  f572		       85 02		      sta	WSYNC
-     95  f574		       ca		      dex
-     93  f574					      REPEND
-     94  f575		       85 02		      sta	WSYNC
-     95  f577		       ca		      dex
-     93  f577					      REPEND
-     94  f578		       85 02		      sta	WSYNC
-     95  f57a		       ca		      dex
-     96  f57b					      REPEND
-     97  f57b
-     98  f57b				   .game_kernel_line
-     99  f57b		       85 02		      sta	WSYNC
-    100  f57d		       ca		      dex
-    101  f57e		       d0 e9		      bne	.game_kernel_objects
-    102  f580
-    103  f580				   .game_kernel_clean
-    104  f580
-    105  f580		       20 c8 f4 	      jsr	WebClean
-    106  f583							;    jsr SpiderClean
-    107  f583							;    jsr LineClean
-    108  f583
-    109  f583		       85 02		      sta	WSYNC
-    110  f585
-    111  f585				   .game_kernel_return
-    112  f585		       60		      rts
+------- FILE objects/spider.asm LEVEL 3 PASS 2
+      0  f52b					      include	"objects/spider.asm"
+      1  f52b							;=================
+      2  f52b							; Spider (player0)
+      3  f52b							;=================
+      4  f52b
+      5  f52b							; Constants
+      6  f52b
+      7  f52b		       00 56	   SPIDER_COLOR =	#$56
+      8  f52b		       00 08	   SPIDER_SIZE =	8
+      9  f52b		       00 08	   SPIDER_BOUNDARY =	SPIDER_SIZE
+     10  f52b
+     11  f52b							; Variables
+     12  f52b
+     13 U009a ????				      SEG.U	spider_vars
+     14 U0093					      org	$93
+     15 U0093
+     16 U0093		       00 00	   SpiderPtr  ds	2
+     17 U0095		       00 00	   SpiderPosition ds	2
+     18 U0097		       00	   SpiderCtrl ds	1
+     19 U0098
+     20 U0098		       00	   SpiderIndex ds	1
+     21 U0099		       00	   SpiderDrawPos ds	1
+     22 U009a
+     23  f52b					      SEG
+     24  f52b					      org	$F52B
+     25  f52b
+     26  f52b							; Initialization
+     27  f52b
+     28  f52b				   SpiderInit
+     29  f52b
+     30  f52b							; Initial Control
+     31  f52b		       a9 32		      lda	#50
+     32  f52d		       85 95		      sta	SpiderPosition
+     33  f52f		       85 96		      sta	SpiderPosition+1
+     34  f531
+     35  f531							; Setup Sprite
+      0  f531					      SET_POINTER	SpiderPtr, SpiderSprite
+      1  f531				   .POINTER   SET	SpiderPtr
+      2  f531				   .ADDRESS   SET	SpiderSprite
+      3  f531
+      4  f531		       a9 70		      LDA	#<.ADDRESS
+      5  f533		       85 93		      STA	.POINTER
+      6  f535		       a9 f6		      LDA	#>.ADDRESS
+      7  f537		       85 94		      STA	.POINTER+1
+      8  f539
+     37  f539
+     38  f539		       60		      rts
+     39  f53a
+     40  f53a							; Frame Update
+     41  f53a
+     42  f53a				   SpiderUpdate
+     43  f53a		       20 41 f5 	      jsr	SpiderControl
+     44  f53d		       20 13 f6 	      jsr	SpiderObject
+     45  f540		       60		      rts
+     46  f541
+     47  f541				   SpiderControl
+     48  f541
+     49  f541							; Control Position
+     50  f541		       a6 95		      ldx	SpiderPosition
+     51  f543		       a4 96		      ldy	SpiderPosition+1
+     52  f545		       ad 80 02 	      lda	SWCHA
+     53  f548
+     54  f548				   .spider_control_check_right
+     55  f548		       30 01		      bmi	.spider_control_check_left
+     56  f54a		       e8		      inx
+     57  f54b
+     58  f54b				   .spider_control_check_left
+     59  f54b		       2a		      rol
+     60  f54c		       30 01		      bmi	.spider_control_check_down
+     61  f54e		       ca		      dex
+     62  f54f
+     63  f54f				   .spider_control_check_down
+     64  f54f		       2a		      rol
+     65  f550		       30 01		      bmi	.spider_control_check_up
+     66  f552		       88		      dey
+     67  f553
+     68  f553				   .spider_control_check_up
+     69  f553		       2a		      rol
+     70  f554		       30 01		      bmi	.spider_control_sprite
+     71  f556		       c8		      iny
+     72  f557
+     73  f557				   .spider_control_sprite
+     74  f557							; Control Sprite
+     75  f557		       a9 00		      lda	#%00000000	; First 2 bits are left or right, second 2 bits are up or down
+     76  f559
+     77  f559				   .spider_control_sprite_x
+     78  f559		       e4 95		      cpx	SpiderPosition
+     79  f55b		       90 04		      bcc	.spider_control_sprite_left
+     80  f55d		       f0 09		      beq	.spider_control_sprite_y
+     81  f55f		       b0 05		      bcs	.spider_control_sprite_right
+     82  f561
+     83  f561				   .spider_control_sprite_left
+     84  f561		       09 80		      ora	#%10000000
+     85  f563		       4c 68 f5 	      jmp	.spider_control_sprite_y
+     86  f566
+     87  f566				   .spider_control_sprite_right
+     88  f566		       09 40		      ora	#%01000000
+     89  f568
+     90  f568				   .spider_control_sprite_y
+     91  f568		       c4 96		      cpy	SpiderPosition+1
+     92  f56a		       90 04		      bcc	.spider_control_sprite_down
+     93  f56c		       f0 09		      beq	.spider_control_sprite_store
+     94  f56e		       b0 05		      bcs	.spider_control_sprite_up
+     95  f570
+     96  f570				   .spider_control_sprite_down
+     97  f570		       09 10		      ora	#%00010000
+     98  f572		       4c 77 f5 	      jmp	.spider_control_sprite_store
+     99  f575
+    100  f575				   .spider_control_sprite_up
+    101  f575		       09 20		      ora	#%00100000
+    102  f577
+    103  f577				   .spider_control_sprite_store
+    104  f577		       c9 00		      cmp	#%00000000
+    105  f579		       f0 02		      beq	.spider_control_boundary
+    106  f57b		       85 97		      sta	SpiderCtrl
+    107  f57d
+    108  f57d				   .spider_control_boundary
+    109  f57d							; Check Playfield Boundaries
+    110  f57d
+    111  f57d				   .spider_control_boundary_left
+    112  f57d		       e0 08		      cpx	#SPIDER_BOUNDARY
+    113  f57f		       b0 02		      bcs	.spider_control_boundary_right
+    114  f581		       a2 08		      ldx	#SPIDER_BOUNDARY
+    115  f583
+    116  f583				   .spider_control_boundary_right
+    117  f583		       e0 7f		      cpx	#151-SPIDER_BOUNDARY-SPIDER_SIZE*2	; #KERNEL_WIDTH/2-SPIDER_BOUNDARY-SPIDER_SIZE
+    118  f585		       90 02		      bcc	.spider_control_boundary_top
+    119  f587		       a2 7f		      ldx	#151-SPIDER_BOUNDARY-SPIDER_SIZE*2
+    120  f589
+    121  f589				   .spider_control_boundary_top
+    122  f589		       c0 15		      cpy	#SCORE_LINES+SPIDER_BOUNDARY
+    123  f58b		       b0 02		      bcs	.spider_control_boundary_bottom
+    124  f58d		       a0 15		      ldy	#SCORE_LINES+SPIDER_BOUNDARY
+    125  f58f
+    126  f58f				   .spider_control_boundary_bottom
+    127  f58f		       c0 a8		      cpy	#KERNEL_SCANLINES-SPIDER_BOUNDARY-SPIDER_SIZE*2
+    128  f591		       90 02		      bcc	.spider_control_store
+    129  f593		       a0 a8		      ldy	#KERNEL_SCANLINES-SPIDER_BOUNDARY-SPIDER_SIZE*2
+    130  f595
+    131  f595				   .spider_control_store
+    132  f595							; Store new position
+    133  f595		       86 95		      stx	SpiderPosition
+    134  f597		       84 96		      sty	SpiderPosition+1
+    135  f599
+    136  f599				   .spider_control_sprite_assign
+    137  f599							; Skip if no change
+    138  f599		       c9 00		      cmp	#%00000000
+    139  f59b		       f0 75		      beq	.spider_control_return
+    140  f59d
+    141  f59d				   .spider_control_sprite_assign_left
+    142  f59d		       c9 80		      cmp	#%10000000
+    143  f59f		       d0 0b		      bne	.spider_control_sprite_assign_right
+      0  f5a1					      SET_POINTER	SpiderPtr, SpiderSprite+#SPIDER_SIZE*6
+      1  f5a1				   .POINTER   SET	SpiderPtr
+      2  f5a1				   .ADDRESS   SET	SpiderSprite+#SPIDER_SIZE*6
+      3  f5a1
+      4  f5a1		       a9 a0		      LDA	#<.ADDRESS
+      5  f5a3		       85 93		      STA	.POINTER
+      6  f5a5		       a9 f6		      LDA	#>.ADDRESS
+      7  f5a7		       85 94		      STA	.POINTER+1
+      8  f5a9
+    145  f5a9		       4c 12 f6 	      jmp	.spider_control_return
+    146  f5ac
+    147  f5ac				   .spider_control_sprite_assign_right
+    148  f5ac		       c9 40		      cmp	#%01000000
+    149  f5ae		       d0 0b		      bne	.spider_control_sprite_assign_top
+      0  f5b0					      SET_POINTER	SpiderPtr, SpiderSprite+#SPIDER_SIZE*2
+      1  f5b0				   .POINTER   SET	SpiderPtr
+      2  f5b0				   .ADDRESS   SET	SpiderSprite+#SPIDER_SIZE*2
+      3  f5b0
+      4  f5b0		       a9 80		      LDA	#<.ADDRESS
+      5  f5b2		       85 93		      STA	.POINTER
+      6  f5b4		       a9 f6		      LDA	#>.ADDRESS
+      7  f5b6		       85 94		      STA	.POINTER+1
+      8  f5b8
+    151  f5b8		       4c 12 f6 	      jmp	.spider_control_return
+    152  f5bb
+    153  f5bb				   .spider_control_sprite_assign_top
+    154  f5bb		       c9 20		      cmp	#%00100000
+    155  f5bd		       d0 0b		      bne	.spider_control_sprite_assign_bottom
+      0  f5bf					      SET_POINTER	SpiderPtr, SpiderSprite+#SPIDER_SIZE*0
+      1  f5bf				   .POINTER   SET	SpiderPtr
+      2  f5bf				   .ADDRESS   SET	SpiderSprite+#SPIDER_SIZE*0
+      3  f5bf
+      4  f5bf		       a9 70		      LDA	#<.ADDRESS
+      5  f5c1		       85 93		      STA	.POINTER
+      6  f5c3		       a9 f6		      LDA	#>.ADDRESS
+      7  f5c5		       85 94		      STA	.POINTER+1
+      8  f5c7
+    157  f5c7		       4c 12 f6 	      jmp	.spider_control_return
+    158  f5ca
+    159  f5ca				   .spider_control_sprite_assign_bottom
+    160  f5ca		       c9 10		      cmp	#%00010000
+    161  f5cc		       d0 0b		      bne	.spider_control_sprite_assign_top_right
+      0  f5ce					      SET_POINTER	SpiderPtr, SpiderSprite+#SPIDER_SIZE*4
+      1  f5ce				   .POINTER   SET	SpiderPtr
+      2  f5ce				   .ADDRESS   SET	SpiderSprite+#SPIDER_SIZE*4
+      3  f5ce
+      4  f5ce		       a9 90		      LDA	#<.ADDRESS
+      5  f5d0		       85 93		      STA	.POINTER
+      6  f5d2		       a9 f6		      LDA	#>.ADDRESS
+      7  f5d4		       85 94		      STA	.POINTER+1
+      8  f5d6
+    163  f5d6		       4c 12 f6 	      jmp	.spider_control_return
+    164  f5d9
+    165  f5d9				   .spider_control_sprite_assign_top_right
+    166  f5d9		       c9 60		      cmp	#%01100000
+    167  f5db		       d0 0b		      bne	.spider_control_sprite_assign_bottom_right
+      0  f5dd					      SET_POINTER	SpiderPtr, SpiderSprite+#SPIDER_SIZE*1
+      1  f5dd				   .POINTER   SET	SpiderPtr
+      2  f5dd				   .ADDRESS   SET	SpiderSprite+#SPIDER_SIZE*1
+      3  f5dd
+      4  f5dd		       a9 78		      LDA	#<.ADDRESS
+      5  f5df		       85 93		      STA	.POINTER
+      6  f5e1		       a9 f6		      LDA	#>.ADDRESS
+      7  f5e3		       85 94		      STA	.POINTER+1
+      8  f5e5
+    169  f5e5		       4c 12 f6 	      jmp	.spider_control_return
+    170  f5e8
+    171  f5e8				   .spider_control_sprite_assign_bottom_right
+    172  f5e8		       c9 50		      cmp	#%01010000
+    173  f5ea		       d0 0b		      bne	.spider_control_sprite_assign_bottom_left
+      0  f5ec					      SET_POINTER	SpiderPtr, SpiderSprite+#SPIDER_SIZE*3
+      1  f5ec				   .POINTER   SET	SpiderPtr
+      2  f5ec				   .ADDRESS   SET	SpiderSprite+#SPIDER_SIZE*3
+      3  f5ec
+      4  f5ec		       a9 88		      LDA	#<.ADDRESS
+      5  f5ee		       85 93		      STA	.POINTER
+      6  f5f0		       a9 f6		      LDA	#>.ADDRESS
+      7  f5f2		       85 94		      STA	.POINTER+1
+      8  f5f4
+    175  f5f4		       4c 12 f6 	      jmp	.spider_control_return
+    176  f5f7
+    177  f5f7				   .spider_control_sprite_assign_bottom_left
+    178  f5f7		       c9 90		      cmp	#%10010000
+    179  f5f9		       d0 0b		      bne	.spider_control_sprite_assign_top_left
+      0  f5fb					      SET_POINTER	SpiderPtr, SpiderSprite+#SPIDER_SIZE*5
+      1  f5fb				   .POINTER   SET	SpiderPtr
+      2  f5fb				   .ADDRESS   SET	SpiderSprite+#SPIDER_SIZE*5
+      3  f5fb
+      4  f5fb		       a9 98		      LDA	#<.ADDRESS
+      5  f5fd		       85 93		      STA	.POINTER
+      6  f5ff		       a9 f6		      LDA	#>.ADDRESS
+      7  f601		       85 94		      STA	.POINTER+1
+      8  f603
+    181  f603		       4c 12 f6 	      jmp	.spider_control_return
+    182  f606
+    183  f606				   .spider_control_sprite_assign_top_left
+    184  f606		       c9 a0		      cmp	#%10100000
+    185  f608		       d0 08		      bne	.spider_control_return
+      0  f60a					      SET_POINTER	SpiderPtr, SpiderSprite+#SPIDER_SIZE*7
+      1  f60a				   .POINTER   SET	SpiderPtr
+      2  f60a				   .ADDRESS   SET	SpiderSprite+#SPIDER_SIZE*7
+      3  f60a
+      4  f60a		       a9 a8		      LDA	#<.ADDRESS
+      5  f60c		       85 93		      STA	.POINTER
+      6  f60e		       a9 f6		      LDA	#>.ADDRESS
+      7  f610		       85 94		      STA	.POINTER+1
+      8  f612
+    187  f612
+    188  f612				   .spider_control_return
+    189  f612		       60		      rts
+    190  f613
+    191  f613				   SpiderObject
+    192  f613
+    193  f613							; Set Position
+    194  f613		       a2 00		      ldx	#0	; Object (player0)
+    195  f615		       a5 95		      lda	SpiderPosition	; X Position
+    196  f617		       20 00 f0 	      jsr	PosObject
+    197  f61a
+    198  f61a		       60		      rts
+    199  f61b
+    200  f61b							; Scanline Draw
+    201  f61b
+    202  f61b				   SpiderDrawStart
+    203  f61b
+    204  f61b							; Set player 0 to be double size
+    205  f61b		       a5 04		      lda	NUSIZ0
+    206  f61d		       29 f8		      and	#%11111000
+    207  f61f		       09 05		      ora	#%00000101
+    208  f621		       85 04		      sta	NUSIZ0
+    209  f623
+    210  f623							; Set sprite color
+    211  f623		       a9 56		      lda	#SPIDER_COLOR
+    212  f625		       85 06		      sta	COLUP0
+    213  f627
+    214  f627							; Determine if we need to use vertical delay (odd line)
+    215  f627		       a5 96		      lda	SpiderPosition+1	; Y Position
+    216  f629		       4a		      lsr
+    217  f62a		       b0 07		      bcs	.spider_draw_start_nodelay
+    218  f62c
+    219  f62c		       a0 01		      ldy	#1
+    220  f62e		       84 25		      sty	VDELP0
+    221  f630		       4c 37 f6 	      jmp	.spider_draw_start_pos
+    222  f633
+    223  f633				   .spider_draw_start_nodelay
+    224  f633		       a0 00		      ldy	#0
+    225  f635		       84 25		      sty	VDELP0
+    226  f637
+    227  f637				   .spider_draw_start_pos
+    228  f637							; Calculate starting position
+    229  f637		       18		      clc
+    230  f638		       69 08		      adc	#SPIDER_SIZE
+    231  f63a		       85 99		      sta	SpiderDrawPos
+    232  f63c
+    233  f63c							; Initialize sprite index
+    234  f63c		       a9 00		      lda	#0
+    235  f63e		       85 98		      sta	SpiderIndex
+    236  f640
+    237  f640		       60		      rts
+    238  f641
+    239  f641				   SpiderDraw
+    240  f641
+    241  f641		       a4 98		      ldy	SpiderIndex
+    242  f643		       c0 08		      cpy	#SPIDER_SIZE
+    243  f645		       f0 18		      beq	.spider_draw_blank	; At end of sprite
+    244  f647		       b0 21		      bcs	.spider_draw_return	; Completed drawing sprite
+    245  f649		       c0 00		      cpy	#0
+    246  f64b		       d0 06		      bne	.spider_draw_line
+    247  f64d
+    248  f64d							; Divide y in half
+    249  f64d		       8a		      txa
+    250  f64e		       4a		      lsr
+    251  f64f
+    252  f64f		       e5 99		      sbc	SpiderDrawPos
+    253  f651		       10 17		      bpl	.spider_draw_return	; Not yet to draw sprite
+    254  f653
+    255  f653				   .spider_draw_line
+    256  f653		       b1 93		      lda	(SpiderPtr),y
+    257  f655		       85 1b		      sta	GRP0
+    258  f657
+    259  f657		       a9 00		      lda	#0
+    260  f659		       85 1c		      sta	GRP1
+    261  f65b
+    262  f65b		       c8		      iny
+    263  f65c		       84 98		      sty	SpiderIndex
+    264  f65e		       60		      rts		; Early return
+    265  f65f
+    266  f65f				   .spider_draw_blank
+    267  f65f		       a9 00		      lda	#0
+    268  f661		       85 1b		      sta	GRP0
+    269  f663
+    270  f663		       a9 00		      lda	#0
+    271  f665		       85 1c		      sta	GRP1
+    272  f667
+    273  f667							; Push index to be one above
+    274  f667		       c8		      iny
+    275  f668		       84 98		      sty	SpiderIndex
+    276  f66a
+    277  f66a				   .spider_draw_return
+    278  f66a		       60		      rts
+    279  f66b
+    280  f66b				   SpiderClean
+    281  f66b
+    282  f66b							; Clear out Player0 sprite
+    283  f66b		       a9 00		      lda	#0
+    284  f66d		       85 1b		      sta	GRP0
+    285  f66f
+    286  f66f		       60		      rts
+    287  f670
+    288  f670							; Spider Sprites
+------- FILE objects/spider_sprite.asm LEVEL 4 PASS 2
+      0  f670					      include	"objects/spider_sprite.asm"
+      1  f670				   SpiderSprite
+      2  f670
+      3  f670		       99		      .BYTE.b	%10011001
+      4  f671		       bd		      .BYTE.b	%10111101
+      5  f672		       99		      .BYTE.b	%10011001
+      6  f673		       7e		      .BYTE.b	%01111110
+      7  f674		       3c		      .BYTE.b	%00111100
+      8  f675		       7e		      .BYTE.b	%01111110
+      9  f676		       bd		      .BYTE.b	%10111101
+     10  f677		       99		      .BYTE.b	%10011001
+     11  f678
+     12  f678		       0b		      .BYTE.b	%00001011
+     13  f679		       13		      .BYTE.b	%00010011
+     14  f67a		       1c		      .BYTE.b	%00011100
+     15  f67b		       2d		      .BYTE.b	%00101101
+     16  f67c		       f6		      .BYTE.b	%11110110
+     17  f67d		       b8		      .BYTE.b	%10111000
+     18  f67e		       10		      .BYTE.b	%00010000
+     19  f67f		       30		      .BYTE.b	%00110000
+     20  f680
+     21  f680		       c7		      .BYTE.b	%11000111
+     22  f681		       28		      .BYTE.b	%00101000
+     23  f682		       7a		      .BYTE.b	%01111010
+     24  f683		       ff		      .BYTE.b	%11111111
+     25  f684		       ff		      .BYTE.b	%11111111
+     26  f685		       7a		      .BYTE.b	%01111010
+     27  f686		       28		      .BYTE.b	%00101000
+     28  f687		       c7		      .BYTE.b	%11000111
+     29  f688
+     30  f688		       30		      .BYTE.b	%00110000
+     31  f689		       10		      .BYTE.b	%00010000
+     32  f68a		       b8		      .BYTE.b	%10111000
+     33  f68b		       f6		      .BYTE.b	%11110110
+     34  f68c		       2d		      .BYTE.b	%00101101
+     35  f68d		       1c		      .BYTE.b	%00011100
+     36  f68e		       13		      .BYTE.b	%00010011
+     37  f68f		       0b		      .BYTE.b	%00001011
+     38  f690
+     39  f690		       99		      .BYTE.b	%10011001
+     40  f691		       bd		      .BYTE.b	%10111101
+     41  f692		       7e		      .BYTE.b	%01111110
+     42  f693		       3c		      .BYTE.b	%00111100
+     43  f694		       7e		      .BYTE.b	%01111110
+     44  f695		       99		      .BYTE.b	%10011001
+     45  f696		       bd		      .BYTE.b	%10111101
+     46  f697		       99		      .BYTE.b	%10011001
+     47  f698
+     48  f698		       0c		      .BYTE.b	%00001100
+     49  f699		       08		      .BYTE.b	%00001000
+     50  f69a		       1d		      .BYTE.b	%00011101
+     51  f69b		       6f		      .BYTE.b	%01101111
+     52  f69c		       b4		      .BYTE.b	%10110100
+     53  f69d		       38		      .BYTE.b	%00111000
+     54  f69e		       c8		      .BYTE.b	%11001000
+     55  f69f		       d0		      .BYTE.b	%11010000
+     56  f6a0
+     57  f6a0		       e3		      .BYTE.b	%11100011
+     58  f6a1		       14		      .BYTE.b	%00010100
+     59  f6a2		       5e		      .BYTE.b	%01011110
+     60  f6a3		       ff		      .BYTE.b	%11111111
+     61  f6a4		       ff		      .BYTE.b	%11111111
+     62  f6a5		       5e		      .BYTE.b	%01011110
+     63  f6a6		       14		      .BYTE.b	%00010100
+     64  f6a7		       e3		      .BYTE.b	%11100011
+     65  f6a8
+     66  f6a8		       d0		      .BYTE.b	%11010000
+     67  f6a9		       c8		      .BYTE.b	%11001000
+     68  f6aa		       38		      .BYTE.b	%00111000
+     69  f6ab		       b4		      .BYTE.b	%10110100
+     70  f6ac		       6f		      .BYTE.b	%01101111
+     71  f6ad		       1d		      .BYTE.b	%00011101
+     72  f6ae		       08		      .BYTE.b	%00001000
+     73  f6af		       0c		      .BYTE.b	%00001100
+------- FILE objects/spider.asm
+------- FILE game.asm
+     10  f6b0							;    include "objects/line.asm"
+     11  f6b0							;    include "objects/bug.asm"
+     12  f6b0							;    include "objects/swatter.asm"
+     13  f6b0
+     14  f6b0							; Initialization
+     15  f6b0
+     16  f6b0				   GameInit
+     17  f6b0
+     18  f6b0							; Setup logic and kernel
+      0  f6b0					      SET_POINTER	VBlankPtr, GameVerticalBlank
+      1  f6b0				   .POINTER   SET	VBlankPtr
+      2  f6b0				   .ADDRESS   SET	GameVerticalBlank
+      3  f6b0
+      4  f6b0		       a9 da		      LDA	#<.ADDRESS
+      5  f6b2		       85 81		      STA	.POINTER
+      6  f6b4		       a9 f6		      LDA	#>.ADDRESS
+      7  f6b6		       85 82		      STA	.POINTER+1
+      8  f6b8
+      0  f6b8					      SET_POINTER	KernelPtr, GameKernel
+      1  f6b8				   .POINTER   SET	KernelPtr
+      2  f6b8				   .ADDRESS   SET	GameKernel
+      3  f6b8
+      4  f6b8		       a9 e8		      LDA	#<.ADDRESS
+      5  f6ba		       85 83		      STA	.POINTER
+      6  f6bc		       a9 f6		      LDA	#>.ADDRESS
+      7  f6be		       85 84		      STA	.POINTER+1
+      8  f6c0
+      0  f6c0					      SET_POINTER	OverScanPtr, GameOverScan
+      1  f6c0				   .POINTER   SET	OverScanPtr
+      2  f6c0				   .ADDRESS   SET	GameOverScan
+      3  f6c0
+      4  f6c0		       a9 e7		      LDA	#<.ADDRESS
+      5  f6c2		       85 85		      STA	.POINTER
+      6  f6c4		       a9 f6		      LDA	#>.ADDRESS
+      7  f6c6		       85 86		      STA	.POINTER+1
+      8  f6c8
+     22  f6c8
+     23  f6c8							; Mute Audio
+     24  f6c8		       a9 00		      lda	#0
+     25  f6ca		       85 15		      sta	AUDC0
+     26  f6cc		       85 19		      sta	AUDV0
+     27  f6ce		       85 17		      sta	AUDF0
+     28  f6d0		       85 16		      sta	AUDC1
+     29  f6d2		       85 1a		      sta	AUDV1
+     30  f6d4		       85 18		      sta	AUDF1
+     31  f6d6
+     32  f6d6							; Initialize Objects
+     33  f6d6		       20 2b f5 	      jsr	SpiderInit
+     34  f6d9							;    jsr LineInit
+     35  f6d9							;    jsr BugInit
+     36  f6d9							;    jsr SwatterInit
+     37  f6d9
+     38  f6d9		       60		      rts
+     39  f6da
+     40  f6da				   GameVerticalBlank
+     41  f6da
+     42  f6da							; Clear horizontal movement
+     43  f6da		       85 2b		      sta	HMCLR
+     44  f6dc
+     45  f6dc							; Update Objects
+     46  f6dc		       20 3a f5 	      jsr	SpiderUpdate
+     47  f6df							;    jsr LineUpdate
+     48  f6df							;    jsr BugUpdate
+     49  f6df							;    jsr SwatterUpdate
+     50  f6df		       20 bc f3 	      jsr	ScoreUpdate
+     51  f6e2
+     52  f6e2							; Set final x positions
+     53  f6e2		       85 02		      sta	WSYNC
+     54  f6e4		       85 2a		      sta	HMOVE
+     55  f6e6
+     56  f6e6		       60		      rts
+     57  f6e7
+     58  f6e7				   GameOverScan
+     59  f6e7							; Do nothing at the moment
+     60  f6e7							; Room for some updating...
+     61  f6e7		       60		      rts
+     62  f6e8
+     63  f6e8				   GameKernel
+     64  f6e8
+     65  f6e8							; Turn on display
+     66  f6e8		       a9 00		      lda	#0
+     67  f6ea		       85 01		      sta	VBLANK
+     68  f6ec
+     69  f6ec				   .game_kernel_score
+     70  f6ec
+     71  f6ec							; Draw Score on top first
+     72  f6ec		       20 ee f3 	      jsr	ScoreDraw
+     73  f6ef
+     74  f6ef				   .game_kernel_objects_start
+     75  f6ef
+     76  f6ef							; Start Scanline Counter
+     77  f6ef		       a2 b3		      ldx	#KERNEL_SCANLINES-SCORE_LINES
+     78  f6f1
+     79  f6f1							; Setup Drawing Objects
+     80  f6f1		       20 a2 f4 	      jsr	WebDrawStart
+     81  f6f4		       20 1b f6 	      jsr	SpiderDrawStart
+     82  f6f7
+     83  f6f7				   .game_kernel_objects
+     84  f6f7
+     85  f6f7							; Draw Objects in order
+     86  f6f7
+     87  f6f7		       20 b3 f4 	      jsr	WebDraw	; Every 6 lines
+     88  f6fa
+     89  f6fa		       85 02		      sta	WSYNC
+     90  f6fc		       ca		      dex
+     91  f6fd		       f0 22		      beq	.game_kernel_clean
+     92  f6ff
+     93  f6ff		       20 41 f6 	      jsr	SpiderDraw	; Every other scanline
+     94  f702
+     95  f702		       85 02		      sta	WSYNC
+     96  f704		       ca		      dex
+     97  f705		       f0 1a		      beq	.game_kernel_clean
+     98  f707
+     99  f707		       85 02		      sta	WSYNC
+    100  f709		       ca		      dex
+    101  f70a		       f0 15		      beq	.game_kernel_clean
+    102  f70c
+    103  f70c		       20 41 f6 	      jsr	SpiderDraw
+    104  f70f
+    105  f70f		       85 02		      sta	WSYNC
+    106  f711		       ca		      dex
+    107  f712		       f0 0d		      beq	.game_kernel_clean
+    108  f714
+    109  f714		       85 02		      sta	WSYNC
+    110  f716		       ca		      dex
+    111  f717		       f0 08		      beq	.game_kernel_clean
+    112  f719
+    113  f719		       20 41 f6 	      jsr	SpiderDraw
+    114  f71c
+    115  f71c		       85 02		      sta	WSYNC
+    116  f71e		       ca		      dex
+    117  f71f		       d0 d6		      bne	.game_kernel_objects
+    118  f721
+    119  f721				   .game_kernel_clean
+    120  f721
+    121  f721		       20 c8 f4 	      jsr	WebClean
+    122  f724		       20 6b f6 	      jsr	SpiderClean
+    123  f727							;    jsr LineClean
+    124  f727
+    125  f727		       85 02		      sta	WSYNC
+    126  f729
+    127  f729				   .game_kernel_return
+    128  f729		       60		      rts
 ------- FILE kernel.asm
-    255  f586
-    256  f586							;================
-    257  f586							; End of cart
-    258  f586							;================
-    259  f586
+    255  f72a
+    256  f72a							;================
+    257  f72a							; End of cart
+    258  f72a							;================
+    259  f72a
     260  f7fa					      ORG	$F7FA	; 2k = $F7FA, 4k = $FFFA
     261  f7fa
     262  f7fa				   InterruptVectors
