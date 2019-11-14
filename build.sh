@@ -16,7 +16,10 @@ python ./assets/pf_image.py -type mirror -split 1 -name WebImage -in ./assets/we
 ## Sprites
 
 echo "/assets/player.png => /src/objects/spider_sprite.asm"
-python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm
+python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm -mirror 1
+
+echo "/assets/digits.png => /src/objects/score_digits.asm"
+python ./assets/sprite_image.py -name ScoreDigits -in ./assets/digits.png -out ./src/objects/score_digits.asm -mirror 0
 
 # Source
 

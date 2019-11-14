@@ -94,20 +94,22 @@ if len(sys.argv) < 2:
 # Help message
 elif sys.argv[1] == "-h" or sys.argv[1] == "-help" or sys.argv[1] == "--help":
     print "Convert " + str(SPRITE_WIDTH) + " pixel wide sprite frames to GRP bytes:"
-    print "  sprite_image.py -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
+    print "  sprite_image.py -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME] -mirror [0/1]"
     print "\nAccepts png/jpg input and .asm output is preferred."
     raise SystemExit
 
-if len(sys.argv) == 7 and sys.argv[1] == '-name' and sys.argv[3] == '-in' and sys.argv[5] == '-out':
+if len(sys.argv) == 9 and sys.argv[1] == '-name' and sys.argv[3] == '-in' and sys.argv[5] == '-out' and sys.argv[7] == '-mirror':
     address_name = sys.argv[2]
     in_file = sys.argv[4]
     out_file = sys.argv[6]
+    mirror = sys.argv[8]
 
     image = load_image(in_file)
     image_data = read_image(image)
 
     sprite_data = convert_bin(image_data)
-    sprite_data = reverse_data(sprite_data)
+    if mirror == '1':
+        sprite_data = reverse_data(sprite_data)
     sprite_output = compose_output(sprite_data, address_name)
 
     output = open(out_file, "w")

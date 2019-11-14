@@ -1,11 +1,11 @@
 --- Symbol List (sorted by symbol)
 0.FREE_BYTES             0000                  
-0.game_kernel_clean      f549                  
-0.game_kernel_line       f544                  
-0.game_kernel_objects    f541              (R )
-0.game_kernel_objects_start f53c                  
-0.game_kernel_return     f54e                  
-0.game_kernel_score      f539                  
+0.game_kernel_clean      f55f                  
+0.game_kernel_line       f55a                  
+0.game_kernel_objects    f557              (R )
+0.game_kernel_objects_start f552                  
+0.game_kernel_return     f564                  
+0.game_kernel_score      f54f                  
 0.init_clean             f026                  
 0.init_game              f055                  
 0.init_tia               f031                  
@@ -29,9 +29,10 @@
 0.overscan_return        f0ab                  
 0.posmissle_divide_loop  f016              (R )
 0.posobject_divide_loop  f003              (R )
-0.score_draw_line        f3e6              (R )
-0.score_update_end       f3d7                  
-0.score_update_loop      f3ba              (R )
+0.score_draw_line        f3fc              (R )
+0.score_update_end       f3ed                  
+0.score_update_loop      f3d0              (R )
+0.score_update_timer_skip f3ca              (R )
 0.title_audio_play       f273                  
 0.title_audio_play_note  f27c              (R )
 0.title_audio_play_note_1_mute f298              (R )
@@ -51,11 +52,11 @@
 1.CLEAR_STACK            f02c              (R )
 10.CYCLES                000c              (R )
 11.CYCLES                000c              (R )
-12.ADDRESS               f52a              (R )
+12.ADDRESS               f540              (R )
 12.POINTER               0081              (R )
-13.ADDRESS               f535              (R )
+13.ADDRESS               f54b              (R )
 13.POINTER               0083              (R )
-14.ADDRESS               f534              (R )
+14.ADDRESS               f54a              (R )
 14.POINTER               0085              (R )
 2.ADDRESS                f0f6              (R )
 2.POINTER                0081              (R )
@@ -98,10 +99,10 @@ ENAM0                    001d              (R )
 ENAM1                    001e              (R )
 Frame                    0087              (R )
 FrameTimer               0088              (R )
-GameInit                 f503              (R )
-GameKernel               f535              (R )
-GameOverScan             f534              (R )
-GameVerticalBlank        f52a              (R )
+GameInit                 f519              (R )
+GameKernel               f54b              (R )
+GameOverScan             f54a              (R )
+GameVerticalBlank        f540              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
@@ -186,12 +187,12 @@ SCORE_FG_COLOR           000f              (R )
 SCORE_LINE_SIZE          0002              (R )
 SCORE_LINES              000d              (R )
 ScoreDigitOnes           008c              (R )
-ScoreDigits              f43c              (R )
+ScoreDigits              f452              (R )
 ScoreDigitTens           008e              (R )
-ScoreDraw                f3d8              (R )
+ScoreDraw                f3ee              (R )
 ScoreGfx                 0090              (R )
 ScoreInit                f3b1                  
-ScoreUpdate              f3b8              (R )
+ScoreUpdate              f3bc              (R )
 ScoreValue               008a              (R )
 SWACNT                   0281                  
 SWBCNT                   0283                  
@@ -244,12 +245,12 @@ VerticalSync             f067              (R )
 VSYNC                    0000              (R )
 WEB_BG_COLOR             0000              (R )
 WEB_FG_COLOR             0006              (R )
-WebClean                 f4b2              (R )
-WebDraw                  f49d              (R )
-WebDrawStart             f48c              (R )
-WebImagePF0              f4bb              (R )
-WebImagePF1              f4d3              (R )
-WebImagePF2              f4eb              (R )
+WebClean                 f4c8              (R )
+WebDraw                  f4b3              (R )
+WebDrawStart             f4a2              (R )
+WebImagePF0              f4d1              (R )
+WebImagePF1              f4e9              (R )
+WebImagePF2              f501              (R )
 WebIndex                 0092              (R )
 WSYNC                    0002              (R )
 --- End of Symbol List.

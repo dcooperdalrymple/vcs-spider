@@ -15,7 +15,7 @@ WEB_FG_COLOR       = #$06
 WebIndex            ds 1
 
     SEG
-    org $F48c
+    org $F4A2
 
 ; Scanline Draw
 

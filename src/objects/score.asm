@@ -33,19 +33,38 @@ ScoreInit:
     sta ScoreValue
     sta ScoreValue+1
 
+    ; Setup frame counters
+    lda #$ff
+    sta FrameTimer
+
     rts
 
 ; Frame Update
 
 ScoreUpdate:
-    ldx #1
 
+    ldx FrameTimer
+    dex
+    cpx #1
+    bne .score_update_timer_skip
+
+    ldy ScoreValue
+    iny
+    sty ScoreValue
+
+    ldx #$ff
+
+.score_update_timer_skip:
+    stx FrameTimer
+    stx ScoreValue+1
+
+    ldx #1
 .score_update_loop:
 
     ; Ones Digit
     lda ScoreValue,x
     and #$0f
-    sta Temp        ; Uses a trick to use base-10. I don't quite understand this...
+    sta Temp
     asl
     asl
     adc Temp
@@ -63,7 +82,7 @@ ScoreUpdate:
     sta ScoreDigitTens,x
 
     dex
-    bne .score_update_loop
+    bpl .score_update_loop
 
 .score_update_end:
     rts
