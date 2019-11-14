@@ -54,6 +54,10 @@ TitleInit:
     rts
 
 TitleVerticalBlank:
+
+    ; Refresh random values
+    jsr Random
+    
     rts
 
 TitleOverScan:

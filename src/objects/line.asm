@@ -10,19 +10,6 @@ LINE_DISTANCE    = 64    ; Distance from player
 LINE_VEL_X       = 2
 LINE_VEL_Y       = 3
 
-; Variables
-
-    SEG.U line_vars
-    org $98
-
-LineEnabled         ds 1
-LinePosition        ds 2
-LineVelocity        ds 2
-LineStartPos        ds 2
-
-    SEG
-    org $F000
-
 ; Initialization
 
 LineInit:
@@ -60,7 +47,7 @@ LineControl:
     cmp #1
     beq .line_control_skip
 
-    lda PlayerControl
+    lda SpiderCtrl
     cmp #0
     bne .line_control_fire
 
@@ -72,7 +59,7 @@ LineControl:
     sta LineEnabled
 
 .line_control_x:
-    lda PlayerControl
+    lda SpiderCtrl
     and #%11000000
     beq .line_control_x_none
 .line_control_x_left:
@@ -90,7 +77,7 @@ LineControl:
     sta LineVelocity
 
 .line_control_y:
-    lda PlayerControl
+    lda SpiderCtrl
     and #%00110000
     beq .line_control_y_none
 .line_control_y_up:
@@ -112,7 +99,7 @@ LineControl:
     ldx #0 ; offsetX
     ldy #0 ; offsetY
 
-    lda PlayerControl
+    lda SpiderCtrl
     and #%11110000
 
 .line_control_position_left:
@@ -120,45 +107,45 @@ LineControl:
     bne .line_control_position_right
 
     ldx #LINE_SIZE
-    ldy #GAME_P0_SIZE
+    ldy #SPIDER_SIZE
     jmp .line_control_position_store
 
 .line_control_position_right:
     cmp #%01000000
     bne .line_control_position_top
 
-    ldx #GAME_P0_SIZE*2
-    ldy #GAME_P0_SIZE
+    ldx #SPIDER_SIZE*2
+    ldy #SPIDER_SIZE
     jmp .line_control_position_store
 
 .line_control_position_top:
     cmp #%00100000
     bne .line_control_position_bottom
 
-    ldx #GAME_P0_SIZE+LINE_SIZE/2
-    ldy #GAME_P0_SIZE*2
+    ldx #SPIDER_SIZE+LINE_SIZE/2
+    ldy #SPIDER_SIZE*2
     jmp .line_control_position_store
 
 .line_control_position_bottom:
     cmp #%00010000
     bne .line_control_position_top_right
 
-    ldx #GAME_P0_SIZE+LINE_SIZE/2
+    ldx #SPIDER_SIZE+LINE_SIZE/2
     jmp .line_control_position_store
 
 .line_control_position_top_right:
     cmp #%01100000
     bne .line_control_position_bottom_right
 
-    ldx #GAME_P0_SIZE*2
-    ldy #GAME_P0_SIZE*2
+    ldx #SPIDER_SIZE*2
+    ldy #SPIDER_SIZE*2
     jmp .line_control_position_store
 
 .line_control_position_bottom_right:
     cmp #%01010000
     bne .line_control_position_bottom_left
 
-    ldx #GAME_P0_SIZE*2
+    ldx #SPIDER_SIZE*2
     jmp .line_control_position_store
 
 .line_control_position_bottom_left:
@@ -173,19 +160,19 @@ LineControl:
     bne .line_control_position_store
 
     ldx #LINE_SIZE
-    ldy #GAME_P0_SIZE*2
+    ldy #SPIDER_SIZE*2
 
 .line_control_position_store:
 
     ; Apply offsetX to playerX
-    lda PlayerPosition
+    lda SpiderPosition
     stx Temp
     clc
     adc Temp
     tax
 
     ; Apply offsetY to playerY
-    lda PlayerPosition+1
+    lda SpiderPosition+1
     sty Temp
     clc
     adc Temp
@@ -204,7 +191,7 @@ LineObject:
     ; Check if missile is enabled
     lda LineEnabled
     cmp #1
-    bne .game_objects_return
+    bne .line_object_return
 
     ; Load position
     ldx LinePosition
@@ -263,11 +250,6 @@ LineObject:
     adc LineVelocity+1
     sta LinePosition+1
 
-    ; Set Line Position
-    ldx #1                  ; Object (missile1)
-    lda LinePosition     ; X Position
-    jsr PosObject
-
     jmp .line_object_return
 
 .line_object_disable:
@@ -275,6 +257,15 @@ LineObject:
     sta LineEnabled
 
 .line_object_return:
+    rts
+
+LinePosition:
+
+    ; Set Line Position
+    ldx #1                  ; Object (missile1)
+    lda LinePosition        ; X Position
+    jsr PosObject
+
     rts
 
 ; Scanline Draw

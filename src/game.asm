@@ -8,7 +8,7 @@
     include "objects/web.asm"
     include "objects/spider.asm"
 ;    include "objects/line.asm"
-;    include "objects/bug.asm"
+    include "objects/bug.asm"
 ;    include "objects/swatter.asm"
 
 ; Initialization
@@ -32,22 +32,30 @@ GameInit:
     ; Initialize Objects
     jsr SpiderInit
 ;    jsr LineInit
-;    jsr BugInit
+    jsr BugInit
 ;    jsr SwatterInit
 
     rts
 
 GameVerticalBlank:
 
-    ; Clear horizontal movement
-    sta HMCLR
+    ; Refresh random values
+    jsr Random
 
     ; Update Objects
     jsr SpiderUpdate
 ;    jsr LineUpdate
-;    jsr BugUpdate
+    jsr BugUpdate
 ;    jsr SwatterUpdate
     jsr ScoreUpdate
+
+    ; Clear horizontal movement
+    sta HMCLR
+
+    ; Update Positions
+    jsr SpiderPosition
+;    jsr LinePosition
+    jsr BugPosition
 
     ; Set final x positions
     sta WSYNC
@@ -79,22 +87,29 @@ GameKernel:
     ; Setup Drawing Objects
     jsr WebDrawStart
     jsr SpiderDrawStart
+;    jsr LineDrawStart
+    jsr BugDrawStart
 
 .game_kernel_objects:
 
     ; Draw Objects in order
 
     jsr WebDraw ; Every 6 lines
+;    jsr LineDraw
+    jsr BugDraw
 
     sta WSYNC
     dex
     beq .game_kernel_clean
 
-    jsr SpiderDraw ; Every other scanline
+    jsr SpiderDraw ; Every odd scanline
 
     sta WSYNC
     dex
     beq .game_kernel_clean
+
+;    jsr LineDraw
+    jsr BugDraw
 
     sta WSYNC
     dex
@@ -105,6 +120,9 @@ GameKernel:
     sta WSYNC
     dex
     beq .game_kernel_clean
+
+;    jsr LineDraw
+    jsr BugDraw
 
     sta WSYNC
     dex
@@ -121,6 +139,7 @@ GameKernel:
     jsr WebClean
     jsr SpiderClean
 ;    jsr LineClean
+    jsr BugClean
 
     sta WSYNC
 

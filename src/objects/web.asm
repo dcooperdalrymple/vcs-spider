@@ -10,16 +10,6 @@ WEB_FG_COLOR        = #$06
 WEB_SIZE            = KERNEL_SCANLINES-SCORE_LINES
 WEB_LINE            = WEB_SIZE/30
 
-; Variables
-
-    SEG.U web_vars
-    org $92
-
-WebIndex            ds 1
-
-    SEG
-    org $F4A2
-
 ; Scanline Draw
 
 WebDrawStart:

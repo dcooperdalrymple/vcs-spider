@@ -4,24 +4,9 @@
 
 ; Constants
 
-SPIDER_COLOR       = #$56
-SPIDER_SIZE        = 8
-SPIDER_BOUNDARY    = SPIDER_SIZE
-
-; Variables
-
-    SEG.U spider_vars
-    org $93
-
-SpiderPtr           ds 2
-SpiderPosition      ds 2
-SpiderCtrl          ds 1
-
-SpiderIndex         ds 1
-SpiderDrawPos       ds 1
-
-    SEG
-    org $F52B
+SPIDER_COLOR        = #$56
+SPIDER_SIZE         = 16
+SPIDER_SPRITE_SIZE  = 8
 
 ; Initialization
 
@@ -29,8 +14,8 @@ SpiderInit:
 
     ; Initial Control
     lda #50
-    sta SpiderPosition
-    sta SpiderPosition+1
+    sta SpiderPos
+    sta SpiderPos+1
 
     ; Setup Sprite
     SET_POINTER SpiderPtr, SpiderSprite
@@ -41,14 +26,13 @@ SpiderInit:
 
 SpiderUpdate:
     jsr SpiderControl
-    jsr SpiderObject
     rts
 
 SpiderControl:
 
     ; Control Position
-    ldx SpiderPosition
-    ldy SpiderPosition+1
+    ldx SpiderPos
+    ldy SpiderPos+1
     lda SWCHA
 
 .spider_control_check_right:
@@ -75,7 +59,7 @@ SpiderControl:
     lda #%00000000 ; First 2 bits are left or right, second 2 bits are up or down
 
 .spider_control_sprite_x:
-    cpx SpiderPosition
+    cpx SpiderPos
     bcc .spider_control_sprite_left
     beq .spider_control_sprite_y
     bcs .spider_control_sprite_right
@@ -88,7 +72,7 @@ SpiderControl:
     ora #%01000000
 
 .spider_control_sprite_y:
-    cpy SpiderPosition+1
+    cpy SpiderPos+1
     bcc .spider_control_sprite_down
     beq .spider_control_sprite_store
     bcs .spider_control_sprite_up
@@ -109,29 +93,31 @@ SpiderControl:
     ; Check Playfield Boundaries
 
 .spider_control_boundary_left:
-    cpx #SPIDER_BOUNDARY
+    cpx #1
     bcs .spider_control_boundary_right
-    ldx #SPIDER_BOUNDARY
+    ldx #1
+    jmp .spider_control_boundary_top
 
 .spider_control_boundary_right:
-    cpx #151-SPIDER_BOUNDARY-SPIDER_SIZE*2 ; #KERNEL_WIDTH/2-SPIDER_BOUNDARY-SPIDER_SIZE
+    cpx #KERNEL_WIDTH/2-(SPIDER_SIZE*2)-1
     bcc .spider_control_boundary_top
-    ldx #151-SPIDER_BOUNDARY-SPIDER_SIZE*2
+    ldx #KERNEL_WIDTH/2-(SPIDER_SIZE*2)-1
 
 .spider_control_boundary_top:
-    cpy #SCORE_LINES+SPIDER_BOUNDARY
+    cpy #SCORE_LINES
     bcs .spider_control_boundary_bottom
-    ldy #SCORE_LINES+SPIDER_BOUNDARY
+    ldy #SCORE_LINES
+    jmp .spider_control_store
 
 .spider_control_boundary_bottom:
-    cpy #KERNEL_SCANLINES-SPIDER_BOUNDARY-SPIDER_SIZE*2
+    cpy #KERNEL_SCANLINES-(SPIDER_SIZE*2)
     bcc .spider_control_store
-    ldy #KERNEL_SCANLINES-SPIDER_BOUNDARY-SPIDER_SIZE*2
+    ldy #KERNEL_SCANLINES-(SPIDER_SIZE*2)
 
 .spider_control_store:
     ; Store new position
-    stx SpiderPosition
-    sty SpiderPosition+1
+    stx SpiderPos
+    sty SpiderPos+1
 
 .spider_control_sprite_assign:
     ; Skip if no change
@@ -141,58 +127,58 @@ SpiderControl:
 .spider_control_sprite_assign_left:
     cmp #%10000000
     bne .spider_control_sprite_assign_right
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*6
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*6
     jmp .spider_control_return
 
 .spider_control_sprite_assign_right:
     cmp #%01000000
     bne .spider_control_sprite_assign_top
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*2
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*2
     jmp .spider_control_return
 
 .spider_control_sprite_assign_top:
     cmp #%00100000
     bne .spider_control_sprite_assign_bottom
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*0
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*0
     jmp .spider_control_return
 
 .spider_control_sprite_assign_bottom:
     cmp #%00010000
     bne .spider_control_sprite_assign_top_right
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*4
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*4
     jmp .spider_control_return
 
 .spider_control_sprite_assign_top_right:
     cmp #%01100000
     bne .spider_control_sprite_assign_bottom_right
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*1
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
     jmp .spider_control_return
 
 .spider_control_sprite_assign_bottom_right:
     cmp #%01010000
     bne .spider_control_sprite_assign_bottom_left
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*3
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*3
     jmp .spider_control_return
 
 .spider_control_sprite_assign_bottom_left:
     cmp #%10010000
     bne .spider_control_sprite_assign_top_left
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*5
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*5
     jmp .spider_control_return
 
 .spider_control_sprite_assign_top_left:
     cmp #%10100000
     bne .spider_control_return
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SIZE*7
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*7
 
 .spider_control_return:
     rts
 
-SpiderObject:
+SpiderPosition:
 
     ; Set Position
     ldx #0                  ; Object (player0)
-    lda SpiderPosition      ; X Position
+    lda SpiderPos      ; X Position
     jsr PosObject
 
     rts
@@ -202,9 +188,11 @@ SpiderObject:
 SpiderDrawStart:
 
     ; Set player 0 to be double size
+    ; and missile 0 to be 4 clock size
+    clc
     lda NUSIZ0
-    and #%11111000
-    ora #%00000101
+;    and #%11001000
+    ora #%00110111
     sta NUSIZ0
 
     ; Set sprite color
@@ -212,16 +200,17 @@ SpiderDrawStart:
     sta COLUP0
 
     ; Determine if we need to use vertical delay (odd line)
-    lda SpiderPosition+1    ; Y Position
+    lda SpiderPos+1    ; Y Position
     lsr
     bcs .spider_draw_start_nodelay
 
     ldy #1
-    sty VDELP0
-    jmp .spider_draw_start_pos
+    jmp .spider_draw_start_set_delay
 
 .spider_draw_start_nodelay:
     ldy #0
+
+.spider_draw_start_set_delay:
     sty VDELP0
 
 .spider_draw_start_pos:
@@ -239,7 +228,7 @@ SpiderDrawStart:
 SpiderDraw:
 
     ldy SpiderIndex
-    cpy #SPIDER_SIZE
+    cpy #(SPIDER_SPRITE_SIZE*2)
     beq .spider_draw_blank  ; At end of sprite
     bcs .spider_draw_return ; Completed drawing sprite
     cpy #0
@@ -253,6 +242,11 @@ SpiderDraw:
     bpl .spider_draw_return ; Not yet to draw sprite
 
 .spider_draw_line:
+    tya
+    lsr
+    bcs .spider_draw_skip
+    tay
+
     lda (SpiderPtr),y
     sta GRP0
 
@@ -260,6 +254,8 @@ SpiderDraw:
     lda #0
     sta GRP1
 
+.spider_draw_skip:
+    ldy SpiderIndex
     iny
     sty SpiderIndex
     rts                     ; Early return

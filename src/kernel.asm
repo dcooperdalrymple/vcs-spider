@@ -1,7 +1,7 @@
-    ; Spider Web game for Atari VCS/2600
-    ; Created by D Cooper Dalrymple 2018 - dcdalrymple.com
-    ; Licensed under GNU LGPL V3.0
-    ; Last revision: September 5th, 2019
+; Spider Web game for Atari VCS/2600
+; Created by D Cooper Dalrymple 2018 - dcdalrymple.com
+; Licensed under GNU LGPL V3.0
+; Last revision: November 14th, 2019
 
     processor 6502
     include "vcs.h"
@@ -49,7 +49,11 @@ KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
     SEG.U vars
     org $80
 
+; Global
+
 Temp                ds 1
+Rand8               ds 1
+Rand16              ds 1
 
 VBlankPtr           ds 2
 KernelPtr           ds 2
@@ -60,52 +64,45 @@ FrameTimer          ds 1
 
 AudioStep           ds 1
 
+; Score
+
+ScoreValue          ds 2
+ScoreDigitOnes      ds 2
+ScoreDigitTens      ds 2
+ScoreGfx            ds 2
+
+; Web
+
+WebIndex            ds 1
+
+; Spider
+
+SpiderPtr           ds 2
+SpiderPos           ds 2
+SpiderCtrl          ds 1
+
+SpiderIndex         ds 1
+SpiderDrawPos       ds 1
+
+; Line
+
+LineEnabled         ds 1
+LinePosition        ds 2
+LineVelocity        ds 2
+LineStartPos        ds 2
+
+; Bug
+
+BugEnabled          ds 1
+BugPos              ds 2
+BugColor            ds 1
+
+BugDrawPos          ds 2
+
     SEG
     org $F000           ; Start of cart area
 
-;=======================================
-; Global Kernel Subroutines
-;=======================================
-
-;=======================================
-; PosObject
-; ---------
-; A - holds the X position of the object
-; X - holds which object to position
-;   0 = player0
-;   1 = player1
-;   2 = missile0
-;   3 = missile1
-;   4 = Ball
-;=======================================
-
-PosObject:
-    sec
-    sta WSYNC
-.posobject_divide_loop:
-    sbc #15
-    bcs .posobject_divide_loop
-    eor #7
-    REPEAT 4
-        asl
-    REPEND
-    sta.wx HMP0,x
-    sta RESP0,x
-    rts
-
-PosMissile:
-    sec
-    sta WSYNC
-.posmissle_divide_loop:
-    sbc #15
-    bcs .posmissle_divide_loop
-    eor #7
-    REPEAT 4
-        asl
-    REPEND
-    sta.wx HMM0,x
-    sta RESM0,x
-    rts
+    include "routines.asm"
 
 InitSystem:
 
@@ -143,6 +140,13 @@ InitSystem:
     sta PF0
     sta PF1
     sta PF2
+
+.init_seed:
+    ; Seed the random number generator
+    lda INTIM       ; Unknown value
+    sta Rand8       ; Use as seed
+    eor #$FF        ; Flip bits
+    sta Rand16      ; Just in case INTIM was 0
 
 .init_game:
 
@@ -257,7 +261,7 @@ OverScan:
 ; End of cart
 ;================
 
-    ORG $F7FA ; 2k = $F7FA, 4k = $FFFA
+    ORG $FFFA ; 2k = $F7FA, 4k = $FFFA
 
 InterruptVectors:
 

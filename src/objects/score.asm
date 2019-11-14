@@ -11,19 +11,6 @@ SCORE_CHAR_SIZE     = 5
 SCORE_LINE_SIZE     = 2
 SCORE_LINES         = SCORE_CHAR_SIZE*SCORE_LINE_SIZE+3
 
-; Variables
-
-    SEG.U score_vars
-    org $8A
-
-ScoreValue          ds 2
-ScoreDigitOnes      ds 2
-ScoreDigitTens      ds 2
-ScoreGfx            ds 2
-
-    SEG
-    org $F3B1
-
 ; Initialization
 
 ScoreInit:
