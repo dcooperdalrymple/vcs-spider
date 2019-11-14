@@ -15,44 +15,71 @@ BUG_COLOR_CAPTURE   = #$38
 
 BugInit:
 
-    ; Initial Position
-    lda #60
-    sta BugPos
-    sta BugPos+1
+    ; Initialize Position
+    ldx #1
+
+.bug_init_pos:
+    jsr Random
+
+    lda Rand8
+    and #$7f
+    sta BugPosX,x
+
+    lda Rand16
+    and #$7f
+    sta BugPosY,x
+
+    dex
+    bpl .bug_init_pos
 
     lda #1
-    sta BugEnabled
+    sta BugEnabled+0
+    sta BugEnabled+1
 
     lda #BUG_COLOR_ACTIVE
-    sta BugColor
+    sta BugColor+0
+    sta BugColor+1
 
     rts
 
 ; Frame Update
 
 BugUpdate:
+
+    ldx #1
+.bug_update:
+    stx Temp+0
+
     jsr BugMovement
+
+    ldx Temp+0
+    dex
+    bpl .bug_update
+
     rts
 
 BugMovement:
 
-    lda BugEnabled
+    ldx Temp+0
+    lda BugEnabled,x
     cmp #1
     bne .bug_movement_return
 
 .bug_movement_random:
     jsr Random
     and #%00000011
-    sta Temp
+    sta Temp+1
 
 .bug_movement_load:
     ; Load x and y values
-    ldx BugPos
-    ldy BugPos+1
+    ldx Temp+0
+    lda BugPosX,x
+    ldy BugPosY,x
+    tax
 
 .bug_movement_x:
     ; Alter X Position
-    lda Temp
+    lda Temp+1
     and #%00000001
 
 .bug_movement_x_left:
@@ -68,7 +95,7 @@ BugMovement:
 
 .bug_movement_y:
     ; Alter Y Position
-    lda Temp
+    lda Temp+1
     and #%00000010
     lsr
 
@@ -108,8 +135,10 @@ BugMovement:
     ldy #KERNEL_SCANLINES-BUG_BOUNDARY-BUG_SIZE
 
 .bug_movement_store:
-    stx BugPos
-    sty BugPos+1
+    txa
+    ldx Temp+0
+    sta BugPosX,x
+    sty BugPosY,x
 
 .bug_movement_return:
     rts
@@ -118,10 +147,24 @@ BugMovement:
 
 BugPosition:
 
-    ; Set Position
-    ldx #2          ; Missile 0
-    lda BugPos
+    ; Set Position of each missile
+    ldy #1
+.bug_position:
+
+    ; Determine missile index
+    clc
+    ldx #2          ; Missile 0/1
+    tya
+    sta Temp
+    txa
+    adc Temp
+    tax
+
+    lda BugPosX,y
     jsr PosObject
+
+    dey
+    bpl .bug_position
 
     rts
 
@@ -130,51 +173,59 @@ BugPosition:
 BugDrawStart:
 
     ; Setup half scanline positions
-    lda BugPos+1    ; Y Position
+    ldy #1
+.bug_draw_start_pos:
+    lda BugPosY,y
     lsr
-    sta BugDrawPos
+    sta BugDrawPosBottom,y
 
     adc #BUG_SIZE/2
-    sta BugDrawPos+1
+    sta BugDrawPosTop,y
+
+    dey
+    bpl .bug_draw_start_pos
 
     rts
 
 BugDraw:
 
-    lda BugEnabled
+    ldy #1
+.bug_draw:
+    lda BugEnabled,y
     cmp #1
     bne .bug_draw_return
 
-    ; Divide y in half
+    ; Divide scanline in half
     txa
     lsr
 
-    cmp BugDrawPos+1
+    cmp BugDrawPosTop,y
     beq .bug_draw_start
 
-    cmp BugDrawPos
+    cmp BugDrawPosBottom,y
     beq .bug_draw_end
 
-    rts
+    jmp .bug_draw_return
 
 .bug_draw_start:
-    lda BugColor
-    sta COLUP0
+    lda BugColor,y
+    sta COLUP0,y
 
     lda #%00000010
-    sta ENAM0
-    rts
+    sta ENAM0,y
+    jmp .bug_draw_return
 
 .bug_draw_end:
     lda #%00000000
-    sta ENAM0
+    sta ENAM0,y
 
     lda #SPIDER_COLOR
-    sta COLUP0
-
-    rts
+    sta COLUP0,y
 
 .bug_draw_return:
+    dey
+    bpl .bug_draw
+
     rts
 
 BugClean:

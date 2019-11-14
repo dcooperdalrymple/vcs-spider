@@ -51,7 +51,7 @@ KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
 
 ; Global
 
-Temp                ds 1
+Temp                ds 2
 Rand8               ds 1
 Rand16              ds 1
 
@@ -93,11 +93,13 @@ LineStartPos        ds 2
 
 ; Bug
 
-BugEnabled          ds 1
-BugPos              ds 2
-BugColor            ds 1
+BugEnabled          ds 2
+BugPosX             ds 2
+BugPosY             ds 2
+BugColor            ds 2
 
-BugDrawPos          ds 2
+BugDrawPosBottom    ds 2
+BugDrawPosTop       ds 2
 
     SEG
     org $F000           ; Start of cart area
