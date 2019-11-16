@@ -9,13 +9,12 @@ TITLE_PAD           = 4
 TITLE_IMAGE         = 6
 TITLE_GAP           = 2
 
-TITLE_BG_COLOR      = #$70
-TITLE_BD_COLOR      = #$7E
+TITLE_BG_COLOR      = #$00
 TITLE_FG_COLOR      = #$0E
 
 TITLE_AUDIO_0_TONE    = 4
-TITLE_AUDIO_0_VOLUME  = 4
-TITLE_AUDIO_1_VOLUME  = 7
+TITLE_AUDIO_0_VOLUME  = 1
+TITLE_AUDIO_1_VOLUME  = 5
 TITLE_AUDIO_LENGTH    = 16
 TITLE_AUDIO_STEP      = 9
 
@@ -57,7 +56,7 @@ TitleVerticalBlank:
 
     ; Refresh random values
     jsr Random
-    
+
     rts
 
 TitleOverScan:
@@ -133,7 +132,9 @@ TitleState:
 TitleKernel:
 
     ; Playfield Control
-    lda #%00000000 ; No mirroring
+    lda CtrlPf
+    and #%11111110  ; No mirroring
+    sta CtrlPf
     sta CTRLPF
 
     ; Start Counters

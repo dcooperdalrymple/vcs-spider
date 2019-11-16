@@ -4,29 +4,35 @@
 
 ; Constants
 
-LINE_COLOR       = #$0E
-LINE_SIZE        = 2
-LINE_DISTANCE    = 64    ; Distance from player
-LINE_VEL_X       = 2
-LINE_VEL_Y       = 3
+LINE_SIZE       = 4
+LINE_DISTANCE   = 64    ; Distance from player
+LINE_VEL_X      = 4
+LINE_VEL_Y      = 4
+
+LINE_AUDIO_C    = 8
+LINE_AUDIO_F    = 1
+LINE_AUDIO_V    = 4
+
+LINE_SAMPLE_LEN = 8
+LINE_SAMPLE_C   = 3
+LINE_SAMPLE_F   = 1
+LINE_SAMPLE_V   = 4
 
 ; Initialization
 
 LineInit:
 
-    ; Load Colors
-    lda #LINE_COLOR
-    sta COLUP1
-
     ; Initial Line Control
     lda #0
     sta LineEnabled
-    sta LinePosition
-    sta LinePosition+1
-    sta LineVelocity
+    sta LinePos+0
+    sta LinePos+1
+    sta LineVelocity+0
     sta LineVelocity+1
-    sta LineStartPos
+    sta LineStartPos+0
     sta LineStartPos+1
+    sta LineDrawPos+0
+    sta LineDrawPos+1
 
     rts
 
@@ -35,6 +41,7 @@ LineInit:
 LineUpdate:
     jsr LineControl
     jsr LineObject
+    jsr LineCollision
     rts
 
 LineControl:
@@ -43,9 +50,8 @@ LineControl:
     lda INPT4
     bmi .line_control_skip
 
-    lda LineEnabled
-    cmp #1
-    beq .line_control_skip
+    bit LineEnabled
+    bmi .line_control_skip
 
     lda SpiderCtrl
     cmp #0
@@ -55,8 +61,7 @@ LineControl:
     jmp .line_control_return
 
 .line_control_fire:
-    lda #1
-    sta LineEnabled
+    jsr LineEnable
 
 .line_control_x:
     lda SpiderCtrl
@@ -122,7 +127,7 @@ LineControl:
     cmp #%00100000
     bne .line_control_position_bottom
 
-    ldx #SPIDER_SIZE+LINE_SIZE/2
+    ldx #SPIDER_SIZE
     ldy #SPIDER_SIZE*2
     jmp .line_control_position_store
 
@@ -130,7 +135,7 @@ LineControl:
     cmp #%00010000
     bne .line_control_position_top_right
 
-    ldx #SPIDER_SIZE+LINE_SIZE/2
+    ldx #SPIDER_SIZE
     jmp .line_control_position_store
 
 .line_control_position_top_right:
@@ -165,21 +170,21 @@ LineControl:
 .line_control_position_store:
 
     ; Apply offsetX to playerX
-    lda SpiderPosition
+    lda SpiderPos
     stx Temp
     clc
     adc Temp
     tax
 
     ; Apply offsetY to playerY
-    lda SpiderPosition+1
+    lda SpiderPos+1
     sty Temp
     clc
     adc Temp
     tay
 
-    stx LinePosition
-    sty LinePosition+1
+    stx LinePos
+    sty LinePos+1
     stx LineStartPos
     sty LineStartPos+1
 
@@ -188,14 +193,13 @@ LineControl:
 
 LineObject:
 
-    ; Check if missile is enabled
-    lda LineEnabled
-    cmp #1
-    bne .line_object_return
+    ; Check if line is enabled
+    bit LineEnabled
+    bpl .line_object_return
 
     ; Load position
-    ldx LinePosition
-    ldy LinePosition+1
+    ldx LinePos
+    ldy LinePos+1
 
 .line_object_distance:
 
@@ -243,27 +247,57 @@ LineObject:
     txa
     clc
     adc LineVelocity
-    sta LinePosition
+    sta LinePos
 
     tya
     clc
     adc LineVelocity+1
-    sta LinePosition+1
+    sta LinePos+1
 
     jmp .line_object_return
 
 .line_object_disable:
-    lda #0
-    sta LineEnabled
+    jsr LineDisable
 
 .line_object_return:
+    rts
+
+LineCollision:
+
+    lda #BUG_STUN_LENGTH
+
+.line_collision_m0:
+    bit CXM0FB
+    bvc .line_collision_m1
+
+    ; Set stun timer
+    sta BugStunned+0
+
+    ; Disable line
+    jsr LineDisable
+    jmp .line_collision_sample
+
+.line_collision_m1:
+    bit CXM1FB
+    bvc .line_collision_return
+
+    ; Set stun timer
+    sta BugStunned+1
+
+    ; Disable line
+    jsr LineDisable
+
+.line_collision_sample:
+    jsr LineSample
+
+.line_collision_return:
     rts
 
 LinePosition:
 
     ; Set Line Position
-    ldx #1                  ; Object (missile1)
-    lda LinePosition        ; X Position
+    ldx #4                  ; Object (ball)
+    lda LinePos        ; X Position
     jsr PosObject
 
     rts
@@ -272,44 +306,120 @@ LinePosition:
 
 LineDrawStart:
 
-    ; Set missile 0 to be 2 clock size (4/5 bits)
-    lda NUSIZ1
+    ; Set ball size to be 4 clocks (4/5 bits)
+    lda CtrlPf
     and #%11001111
-    ora #%00010000
-    sta NUSIZ1
+    ora #%00100000
+    sta CtrlPf
+    sta CTRLPF
+
+    ; Determine if we need to use vertical delay (oven line)
+    lda LinePos+1
+    lsr
+    bcc .line_draw_start_nodelay
+
+    ldy #1
+    jmp .line_draw_start_set_delay
+
+.line_draw_start_nodelay:
+    ldy #0
+
+.line_draw_start_set_delay:
+    sty VDELBL
+
+.line_draw_start_pos:
+    ; Calculate starting position
+    clc
+    sta LineDrawPos+0
+    adc #LINE_SIZE/2
+    sta LineDrawPos+1
 
     rts
 
 LineDraw:
 
+    ldy #%00000000
+
     ; Check if visible
-    lda LineEnabled
-    cmp #1
-    bne .line_draw_off
+    bit LineEnabled
+    bpl .line_draw_off
 
-    ; Check y position
-    txa
-    sbc LinePosition+1
-    cmp #LINE_SIZE*2
-    bcc .line_draw_on
+    ; Load half scanline
+;    lda Temp+1
 
-.line_draw_off:
-    lda #%00000000
-    jmp .line_draw_write
+    ; Top
+    cmp LineDrawPos+1
+    bcs .line_draw_off
+
+    ; Bottom
+    cmp LineDrawPos+0
+    bcc .line_draw_off
 
 .line_draw_on:
-    lda #%00000010
+    ldy #%00000010
 
-.line_draw_write:
-    sta ENAM1
+.line_draw_off:
+    sty ENABL
 
-.line_draw_return:
     rts
 
 LineClean:
 
     ; Clear out Line
     lda #0
-    sta ENAM1
+    sta ENABL
 
+    rts
+
+LineEnable:
+    lda #%10000000
+    sta LineEnabled
+
+    lda SampleStep
+    cmp #0
+    bne .line_enable_return
+
+    jsr LineAudioPlay
+
+.line_enable_return:
+    rts
+
+LineDisable:
+    lda #0
+    sta LineEnabled
+
+    lda SampleStep
+    cmp #0
+    bne .line_disable_return
+
+    jsr LineAudioMute
+
+.line_disable_return:
+    rts
+
+LineAudioPlay:
+    lda #LINE_AUDIO_C
+    sta AUDC1
+    lda #LINE_AUDIO_F
+    sta AUDF1
+    lda #LINE_AUDIO_V
+    sta AUDV1
+    rts
+
+LineAudioMute:
+    lda #0
+    sta AUDV1
+    sta AUDF1
+    sta AUDC1
+    rts
+
+LineSample:
+    lda #LINE_SAMPLE_LEN
+    sta SampleStep
+    lda #LINE_SAMPLE_C
+    sta AUDC1
+    lda #LINE_SAMPLE_F
+    sta AUDF1
+    lda #LINE_SAMPLE_V
+    sta AUDV1
     rts

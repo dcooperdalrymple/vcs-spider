@@ -20,8 +20,11 @@ WebDrawStart:
     lda #WEB_FG_COLOR
     sta COLUPF
 
-    ; Mirror playfield
-    lda #%00000001 ; Mirrored
+    ; Mirror playfield and use standard playfield color
+    lda CtrlPf
+    and #%11111100
+    ora #%00000001
+    sta CtrlPf
     sta CTRLPF
 
     ; Initialize image index
@@ -32,9 +35,8 @@ WebDrawStart:
 
 WebDraw:
 
-    ldy WebIndex
-
     ; Draw Image
+    ldy WebIndex
     lda WebImagePF0,y
     sta PF0
     lda WebImagePF1,y
@@ -42,9 +44,8 @@ WebDraw:
     lda WebImagePF2,y
     sta PF2
 
-    ; Increment and store image index
-    iny
-    sty WebIndex
+    ; Increment image index
+    inc WebIndex
 
     rts
 

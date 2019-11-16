@@ -135,7 +135,9 @@ LogoState:
 LogoKernel:
 
     ; Playfield Control
-    lda #%00000000 ; No mirroring
+    lda CtrlPf
+    and #%11111110 ; No mirroring
+    sta CtrlPf
     sta CTRLPF
 
     ; Start Counters

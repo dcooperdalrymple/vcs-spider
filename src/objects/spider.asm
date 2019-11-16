@@ -7,6 +7,8 @@
 SPIDER_COLOR        = #$56
 SPIDER_SIZE         = 16
 SPIDER_SPRITE_SIZE  = 8
+SPIDER_VEL_X        = 2
+SPIDER_VEL_Y        = 2
 
 ; Initialization
 
@@ -37,22 +39,34 @@ SpiderControl:
 
 .spider_control_check_right:
     bmi .spider_control_check_left
+
+    REPEAT #SPIDER_VEL_X
     inx
+    REPEND
 
 .spider_control_check_left:
     rol
     bmi .spider_control_check_down
+
+    REPEAT #SPIDER_VEL_X
     dex
+    REPEND
 
 .spider_control_check_down:
     rol
     bmi .spider_control_check_up
+
+    REPEAT #SPIDER_VEL_Y
     dey
+    REPEND
 
 .spider_control_check_up:
     rol
     bmi .spider_control_sprite
+
+    REPEAT #SPIDER_VEL_Y
     iny
+    REPEND
 
 .spider_control_sprite:
     ; Control Sprite
@@ -93,26 +107,26 @@ SpiderControl:
     ; Check Playfield Boundaries
 
 .spider_control_boundary_left:
-    cpx #1
+    cpx #SPIDER_VEL_X+1
     bcs .spider_control_boundary_right
-    ldx #1
+    ldx #SPIDER_VEL_X+1
     jmp .spider_control_boundary_top
 
 .spider_control_boundary_right:
-    cpx #KERNEL_WIDTH/2-(SPIDER_SIZE*2)-1
+    cpx #(KERNEL_WIDTH/2)-(SPIDER_SIZE*2)-SPIDER_VEL_X
     bcc .spider_control_boundary_top
-    ldx #KERNEL_WIDTH/2-(SPIDER_SIZE*2)-1
+    ldx #(KERNEL_WIDTH/2)-(SPIDER_SIZE*2)-SPIDER_VEL_X
 
 .spider_control_boundary_top:
-    cpy #SCORE_LINES
+    cpy #SPIDER_VEL_X+1
     bcs .spider_control_boundary_bottom
-    ldy #SCORE_LINES
+    ldy #SPIDER_VEL_X+1
     jmp .spider_control_store
 
 .spider_control_boundary_bottom:
-    cpy #KERNEL_SCANLINES-(SPIDER_SIZE*2)
+    cpy #KERNEL_SCANLINES-SCORE_LINES-SPIDER_VEL_Y
     bcc .spider_control_store
-    ldy #KERNEL_SCANLINES-(SPIDER_SIZE*2)
+    ldy #KERNEL_SCANLINES-SCORE_LINES-SPIDER_VEL_Y
 
 .spider_control_store:
     ; Store new position
@@ -189,10 +203,9 @@ SpiderDrawStart:
 
     ; Set player 0 to be double size
     ; and missile 0 to be 4 clock size
-    clc
-    lda NUSIZ0
-;    and #%11001000
-    ora #%00110111
+    lda NuSiz0
+    ora #%00000111
+    sta NuSiz0
     sta NUSIZ0
 
     ; Set sprite color

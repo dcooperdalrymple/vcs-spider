@@ -5,7 +5,8 @@
 ; Constants
 
 SCORE_BG_COLOR      = #$00
-SCORE_FG_COLOR      = #$0f
+SCORE_FG_0_COLOR    = #$44
+SCORE_FG_1_COLOR    = #$C8
 
 SCORE_CHAR_SIZE     = 5
 SCORE_LINE_SIZE     = 2
@@ -15,35 +16,19 @@ SCORE_LINES         = SCORE_CHAR_SIZE*SCORE_LINE_SIZE+3
 
 ScoreInit:
 
-    ; Reset Scores
-    lda #0
-    sta ScoreValue
-    sta ScoreValue+1
+    ; Health Score
+    lda #$FF
+    sta ScoreValue+0
 
-    ; Setup frame counters
-    lda #$ff
-    sta FrameTimer
+    ; Game Score
+    lda #0
+    sta ScoreValue+1
 
     rts
 
 ; Frame Update
 
 ScoreUpdate:
-
-    ldx FrameTimer
-    dex
-    cpx #1
-    bne .score_update_timer_skip
-
-    ldy ScoreValue
-    iny
-    sty ScoreValue
-
-    ldx #$ff
-
-.score_update_timer_skip:
-    stx FrameTimer
-    stx ScoreValue+1
 
     ldx #1
 .score_update_loop:
@@ -81,11 +66,17 @@ ScoreDraw:
     ; Load Colors
     lda #SCORE_BG_COLOR
     sta COLUBK
-    lda #SCORE_FG_COLOR
+    lda #SCORE_FG_0_COLOR
     sta COLUPF
+    sta COLUP0
+    lda #SCORE_FG_1_COLOR
+    sta COLUP1
 
-    ; Set Non-Mirror
-    lda #%00000000  ; Last digit to 0
+    ; Set Non-Mirror and p0/p1 color
+    lda CtrlPf
+    and #%11111100
+    ora #%00000010
+    sta CtrlPf
     sta CTRLPF
 
     ;sta WSYNC

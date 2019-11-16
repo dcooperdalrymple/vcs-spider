@@ -175,19 +175,20 @@ if len(sys.argv) < 2:
 # Help message
 elif sys.argv[1] == "-h" or sys.argv[1] == "-help" or sys.argv[1] == "--help":
     print "Convert mirrored monochromatic image to playfield bytes:"
-    print "  pf_image.py -type mirror -split 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
+    print "  pf_image.py -type mirror -split 0 -reverse 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
     print "Convert fullscreen monochromatic image to playfield bytes:"
-    print "  pf_image.py -type full -split 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
+    print "  pf_image.py -type full -split 0 -reverse 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
     print "\nSetting split to 1 will separate playfield bytes into different address positions."
     print "Accepts png/jpg input and .asm output is preferred.\n"
     raise SystemExit
 
-if len(sys.argv) == 11 and sys.argv[1] == '-type' and sys.argv[3] == '-split' and sys.argv[5] == '-name' and sys.argv[7] == '-in' and sys.argv[9] == '-out':
+if len(sys.argv) == 13 and sys.argv[1] == '-type' and sys.argv[3] == '-split' and sys.argv[5] == '-reverse' and sys.argv[7] == '-name' and sys.argv[9] == '-in' and sys.argv[11] == '-out':
     type = sys.argv[2]
     split = sys.argv[4]
-    address_name = sys.argv[6]
-    in_file = sys.argv[8]
-    out_file = sys.argv[10]
+    reverse = sys.argv[6]
+    address_name = sys.argv[8]
+    in_file = sys.argv[10]
+    out_file = sys.argv[12]
 
     image = load_image(in_file)
     image_data = read_image(image)
@@ -202,6 +203,9 @@ if len(sys.argv) == 11 and sys.argv[1] == '-type' and sys.argv[3] == '-split' an
         print "Invalid conversion type. Must be \"mirror\" or \"full\"."
         raise SystemExit
 
+    if reverse == '1':
+        pf_data = reverse_data(pf_data, group_size)
+
     if split == '1':
         # Force group size to 3. Full image alternates.
         pf0_output = compose_output(pf_data, PF_MIRROR_GROUP, address_name + "PF0", 0)
@@ -209,7 +213,6 @@ if len(sys.argv) == 11 and sys.argv[1] == '-type' and sys.argv[3] == '-split' an
         pf2_output = compose_output(pf_data, PF_MIRROR_GROUP, address_name + "PF2", 2)
         pf_output = compose_merge([pf0_output, pf1_output, pf2_output])
     else:
-        #pf_data = reverse_data(pf_data, group_size)
         pf_output = compose_output(pf_data, group_size, address_name, -1)
 
     output = open(out_file, "w")

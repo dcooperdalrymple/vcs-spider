@@ -49,6 +49,12 @@ KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
     SEG.U vars
     org $80
 
+; TIA Register Copies
+
+CtrlPf              ds 1
+NuSiz0              ds 1
+NuSiz1              ds 1
+
 ; Global
 
 Temp                ds 2
@@ -63,6 +69,8 @@ Frame               ds 1
 FrameTimer          ds 1
 
 AudioStep           ds 1
+
+SampleStep          ds 1
 
 ; Score
 
@@ -87,13 +95,14 @@ SpiderDrawPos       ds 1
 ; Line
 
 LineEnabled         ds 1
-LinePosition        ds 2
+LinePos             ds 2
 LineVelocity        ds 2
 LineStartPos        ds 2
+LineDrawPos         ds 2
 
 ; Bug
 
-BugEnabled          ds 2
+BugStunned          ds 2
 BugPosX             ds 2
 BugPosY             ds 2
 BugColor            ds 2
@@ -115,6 +124,12 @@ InitSystem:
 .init_tia:
     ; Define default TIA register values
 
+    ; Initialize copies
+    lda #0
+    sta CtrlPf
+    sta NuSiz0
+    sta NuSiz1
+
     ; Set background color
     lda #$00        ; Black
     sta COLUBK
@@ -127,6 +142,7 @@ InitSystem:
 
     ; Playfield Control
     lda #%00000001  ; 1 for mirroring
+    sta CtrlPf
     sta CTRLPF
 
     ; Disable Game Elements
@@ -153,7 +169,7 @@ InitSystem:
 .init_game:
 
     jsr LogoInit
-    ;jsr GameInit
+;    jsr GameInit   ; Used for testing
 
 ;=======================================
 ; Game Kernel
@@ -234,6 +250,16 @@ OverScan:
     lda #36 ; #KERNEL_OVERSCAN*76/64
     sta TIM64T
 
+.overscan_reset:
+    ; Check for reset switch
+    lda SWCHB
+    lsr                     ; Push D0 to carry (C)
+    bcs .overscan_logic     ; If D0 is set, no reset
+
+    ; Perform reset
+    jsr LogoInit            ; No need for logic
+    jmp .overscan_loop
+
 .overscan_logic:
     ; Perform OverScan Logic
     ;jsr (OverScanPtr)
@@ -258,6 +284,7 @@ OverScan:
     include "logo.asm"
     include "title.asm"
     include "game.asm"
+    include "over.asm"
 
 ;================
 ; End of cart

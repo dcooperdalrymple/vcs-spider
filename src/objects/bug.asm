@@ -7,18 +7,35 @@
 BUG_SIZE            = 8
 BUG_BOUNDARY        = BUG_SIZE
 BUG_SPEED           = 2
+BUG_STUN_LENGTH     = 120
+BUG_POINTS          = 4
 
 BUG_COLOR_ACTIVE    = #$CC
-BUG_COLOR_CAPTURE   = #$38
+BUG_COLOR_STUN      = #$38
+
+BUG_SAMPLE_LEN      = 30
+BUG_SAMPLE_C        = 3
+BUG_SAMPLE_F        = 20
+BUG_SAMPLE_V        = 4
 
 ; Initialization
 
 BugInit:
 
-    ; Initialize Position
+    ; Initialize Bugs
     ldx #1
 
-.bug_init_pos:
+.bug_init_loop:
+    jsr BugReset
+
+    dex
+    bpl .bug_init_loop
+
+    rts
+
+BugReset:   ; x = bug (0 or 1)
+
+    ; Set random position
     jsr Random
 
     lda Rand8
@@ -29,16 +46,13 @@ BugInit:
     and #$7f
     sta BugPosY,x
 
-    dex
-    bpl .bug_init_pos
+    ; Set as active
+    lda #0
+    sta BugStunned,x
 
-    lda #1
-    sta BugEnabled+0
-    sta BugEnabled+1
-
+    ; Reset Color
     lda #BUG_COLOR_ACTIVE
-    sta BugColor+0
-    sta BugColor+1
+    sta BugColor,x
 
     rts
 
@@ -47,23 +61,30 @@ BugInit:
 BugUpdate:
 
     ldx #1
-.bug_update:
+.bug_update_loop:
     stx Temp+0
 
-    jsr BugMovement
+    lda BugStunned,x
+    cmp #0
+    beq .bug_update_active
 
+.bug_update_stunned:
+    dec BugStunned,x
+    jsr BugStunCollision
+    jmp .bug_update_next
+
+.bug_update_active:
+    jsr BugMovement
+    jsr BugCollision
+
+.bug_update_next:
     ldx Temp+0
     dex
-    bpl .bug_update
+    bpl .bug_update_loop
 
     rts
 
 BugMovement:
-
-    ldx Temp+0
-    lda BugEnabled,x
-    cmp #1
-    bne .bug_movement_return
 
 .bug_movement_random:
     jsr Random
@@ -143,6 +164,59 @@ BugMovement:
 .bug_movement_return:
     rts
 
+BugCollision:
+
+    cpx #1
+    beq .bug_collision_m1
+
+.bug_collision_m0:
+    ; Collision for M0 (V set)
+    bit CXM0P
+    bvs .bug_collision_active
+    rts
+
+.bug_collision_m1:
+    ; Collision for M1 (N set)
+    bit CXM1P
+    bmi .bug_collision_active
+    rts
+
+.bug_collision_active:
+    dec ScoreValue
+    rts
+
+BugStunCollision:
+
+    cpx #1
+    beq .bug_stun_collision_m1
+
+.bug_stun_collision_m0:
+    ; Collision for M0 (V set)
+    bit CXM0P
+    bvs .bug_stun_collision_active
+    rts
+
+.bug_stun_collision_m1:
+    ; Collision for M1 (N set)
+    bit CXM1P
+    bmi .bug_stun_collision_active
+    rts
+
+.bug_stun_collision_active:
+    ; Add points to score
+    clc
+    lda ScoreValue+1
+    adc #BUG_POINTS
+    sta ScoreValue+1
+
+    ; Reset bug
+    jsr BugReset
+
+    ; Play sample
+    jsr BugSample
+
+    rts
+
 ; Horizontal Positioning
 
 BugPosition:
@@ -172,6 +246,18 @@ BugPosition:
 
 BugDrawStart:
 
+    ; Set missile 0 to be 4 clock size
+    lda NuSiz0
+    ora #%00110000
+    sta NuSiz0
+    sta NUSIZ0
+
+    ; Set missile 1 to be 4 clock size
+    lda NuSiz1
+    ora #%00110000
+    sta NuSiz1
+    sta NUSIZ1
+
     ; Setup half scanline positions
     ldy #1
 .bug_draw_start_pos:
@@ -189,46 +275,57 @@ BugDrawStart:
 
 BugDraw:
 
-    ldy #1
-.bug_draw:
-    lda BugEnabled,y
-    cmp #1
-    bne .bug_draw_return
+    ; Load half scanline
+;    lda Temp+1
 
-    ; Divide scanline in half
-    txa
-    lsr
+.bug_draw_0:
+    ldy #%00000000
 
-    cmp BugDrawPosTop,y
-    beq .bug_draw_start
+    ; Check top and bottom y pos
+    cmp BugDrawPosTop+0
+    bcs .bug_draw_0_off
 
-    cmp BugDrawPosBottom,y
-    beq .bug_draw_end
+    cmp BugDrawPosBottom+0
+    bcc .bug_draw_0_off
 
-    jmp .bug_draw_return
+.bug_draw_0_on:
+    ldy #%00000010
 
-.bug_draw_start:
-    lda BugColor,y
-    sta COLUP0,y
+.bug_draw_0_off:
+    sty ENAM0
 
-    lda #%00000010
-    sta ENAM0,y
-    jmp .bug_draw_return
+.bug_draw_1:
+    ldy #%00000000
 
-.bug_draw_end:
-    lda #%00000000
-    sta ENAM0,y
+    ; Check top and bottom y pos
+    cmp BugDrawPosTop+1
+    bcs .bug_draw_1_off
 
-    lda #SPIDER_COLOR
-    sta COLUP0,y
+    cmp BugDrawPosBottom+1
+    bcc .bug_draw_1_off
+
+.bug_draw_1_on:
+    ldy #%00000010
+
+.bug_draw_1_off:
+    sty ENAM1
 
 .bug_draw_return:
-    dey
-    bpl .bug_draw
-
     rts
 
 BugClean:
     lda #0
     sta ENAM0
+    sta ENAM1
+    rts
+
+BugSample:
+    lda #BUG_SAMPLE_LEN
+    sta SampleStep
+    lda #BUG_SAMPLE_C
+    sta AUDC1
+    lda #BUG_SAMPLE_F
+    sta AUDF1
+    lda #BUG_SAMPLE_V
+    sta AUDV1
     rts
