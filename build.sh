@@ -13,8 +13,8 @@ python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleImage -in 
 echo "/assets/web.png => /src/objects/web_image.asm"
 python ./assets/pf_image.py -type mirror -split 1 -reverse 0 -name WebImage -in ./assets/web.png -out ./src/objects/web_image.asm
 
-echo "/assets/over.png => /src/over_image.asm"
-python ./assets/pf_image.py -type mirror -split 1 -reverse 1 -name OverImage -in ./assets/over.png -out ./src/over_image.asm
+#echo "/assets/over.png => /src/over_image.asm"
+#python ./assets/pf_image.py -type mirror -split 1 -reverse 1 -name OverImage -in ./assets/over.png -out ./src/over_image.asm
 
 ## Sprites
 

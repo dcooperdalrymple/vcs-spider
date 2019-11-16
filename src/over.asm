@@ -12,7 +12,7 @@ OVER_AUDIO_VOLUME   = 6 ; 15 is max
 OVER_AUDIO_LENGTH   = 6
 OVER_AUDIO_STEP     = 16
 
-OVER_IMAGE_SIZE     = 11
+OVER_IMAGE_SIZE     = 9
 OVER_IMAGE_LINE_SIZE = 8
 OVER_IMAGE_LINES    = OVER_IMAGE_SIZE*OVER_IMAGE_LINE_SIZE
 OVER_IMAGE_PADDING  = #(KERNEL_SCANLINES-SCORE_LINES-OVER_IMAGE_LINES)/2
@@ -149,8 +149,8 @@ OverKernel:
     sta PF2
     lda OverImagePF1,x
     sta PF1
-    lda OverImagePF0,x
-    sta PF0
+;    lda OverImagePF0,x
+;    sta PF0
 
     ldy #OVER_IMAGE_LINE_SIZE
 .over_kernel_image_loop:

@@ -133,33 +133,33 @@ InitSystem:
     sta NuSiz1
 
     ; Set background color
-    lda #$00        ; Black
-    sta COLUBK
+;    lda #$00        ; Black
+;    sta COLUBK
 
     ; Set the playfield and player color
-    lda #$0E        ; White
-    sta COLUPF
-    sta COLUP0
-    sta COLUP1
+;    lda #$0E        ; White
+;    sta COLUPF
+;    sta COLUP0
+;    sta COLUP1
 
     ; Playfield Control
-    lda #%00000001  ; 1 for mirroring
-    sta CtrlPf
-    sta CTRLPF
+;    lda #%00000001  ; 1 for mirroring
+;    sta CtrlPf
+;    sta CTRLPF
 
     ; Disable Game Elements
-    lda #$00
-    sta ENABL       ; Turn off ball
-    sta ENAM0       ; Turn off player 1 missile
-    sta ENAM1       ; Turn off player 2 missile
-    sta GRP0        ; Turn off player 1
-    sta GRP1        ; Turn off player 2
+;    lda #$00
+;    sta ENABL       ; Turn off ball
+;    sta ENAM0       ; Turn off player 1 missile
+;    sta ENAM1       ; Turn off player 2 missile
+;    sta GRP0        ; Turn off player 1
+;    sta GRP1        ; Turn off player 2
 
     ; Empty playfield
-    lda #%00000000
-    sta PF0
-    sta PF1
-    sta PF2
+;    lda #%00000000
+;    sta PF0
+;    sta PF1
+;    sta PF2
 
 .init_seed:
     ; Seed the random number generator
@@ -252,16 +252,16 @@ OverScan:
     lda #36 ; #KERNEL_OVERSCAN*76/64
     sta TIM64T
 
-.overscan_reset:
+;.overscan_reset:
     ; Check for reset switch
-    lda SWCHB
-    lsr                     ; Push D0 to carry (C)
-    bcs .overscan_logic     ; If D0 is set, no reset
+;    lda SWCHB
+;    lsr                     ; Push D0 to carry (C)
+;    bcs .overscan_logic     ; If D0 is set, no reset
 
     ; Perform reset
 ;    jsr LogoInit            ; No need for logic
-    jsr GameInit
-    jmp .overscan_loop
+;    jsr GameInit
+;    jmp .overscan_loop
 
 .overscan_logic:
     ; Perform OverScan Logic
@@ -293,7 +293,7 @@ OverScan:
 ; End of cart
 ;================
 
-    ORG $FFFA ; 2k = $F7FA, 4k = $FFFA
+    ORG $F7FA ; 2k = $F7FA, 4k = $FFFA
 
 InterruptVectors:
 

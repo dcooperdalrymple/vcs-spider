@@ -16,16 +16,17 @@ SPIDER_COL_COLOR    = #$44
 
 SpiderInit:
 
-    ; Initial Control
-    lda #50
+    ; Initialize Position in center of screen
+    lda #(KERNEL_WIDTH/4)-SPIDER_SIZE-1
     sta SpiderPos
+    lda #(KERNEL_SCANLINES-SCORE_LINES)/2-SPIDER_SIZE-1
     sta SpiderPos+1
 
     ; Setup Sprite
     SET_POINTER SpiderPtr, SpiderSprite
 
-    lda #SPIDER_COLOR
-    sta SpiderColor
+;    lda #SPIDER_COLOR
+;    sta SpiderColor
 
     rts
 
@@ -139,6 +140,7 @@ SpiderControl:
     stx SpiderPos
     sty SpiderPos+1
 
+; TODO: Optimize this somehow?
 .spider_control_sprite_assign:
     ; Skip if no change
     cmp #%00000000
@@ -237,8 +239,8 @@ SpiderCollision:
 SpiderPosition:
 
     ; Set Position
-    ldx #0                  ; Object (player0)
-    lda SpiderPos      ; X Position
+    ldx #0              ; Object (player0)
+    lda SpiderPos       ; X Position
     jsr PosObject
 
     rts
@@ -293,9 +295,8 @@ SpiderDraw:
     cpy #0
     bne .spider_draw_line
 
-    ; Divide y in half
-    txa
-    lsr
+    ; Use half scanline
+    lda Temp+1
 
     sbc SpiderDrawPos
     bpl .spider_draw_return ; Not yet to draw sprite

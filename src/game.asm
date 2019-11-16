@@ -29,18 +29,18 @@ GameInit:
     SET_POINTER OverScanPtr, GameOverScan
 
     ; Mute Audio
-    lda #0
-    sta AUDC0
-    sta AUDV0
-    sta AUDF0
-    sta AUDC1
-    sta AUDV1
-    sta AUDF1
-    sta SampleStep
+;    lda #0
+;    sta AUDC0
+;    sta AUDV0
+;    sta AUDF0
+;    sta AUDC1
+;    sta AUDV1
+;    sta AUDF1
+;    sta SampleStep
 
     ; Load Audio Settings
-    lda #GAME_AUDIO_VOLUME
-    sta AUDV0
+;    lda #GAME_AUDIO_VOLUME
+;    sta AUDV0
 
     ; Make it so that we play the first note immediately
     lda #GAME_AUDIO_LENGTH-1
@@ -51,7 +51,7 @@ GameInit:
     ; Initialize Objects
     jsr ScoreInit
     jsr SpiderInit
-    jsr LineInit
+;    jsr LineInit
     jsr BugInit
 ;    jsr SwatterInit
 
@@ -90,7 +90,7 @@ GameVerticalBlank:
 GameOverScan:
 
     ; Audio Routines
-    jsr GameAudio
+;    jsr GameAudio
     jsr GameSample
 
     ; State Routines
@@ -117,56 +117,56 @@ GameSample:
     stx SampleStep
     rts
 
-GameAudio:
+;GameAudio:
 
-    ldx FrameTimer
-    cpx #GAME_AUDIO_OFFSET
-    beq .game_audio_mute_note
-    cpx #0
-    bne .game_audio_return
+;    ldx FrameTimer
+;    cpx #GAME_AUDIO_OFFSET
+;    beq .game_audio_mute_note
+;    cpx #0
+;    bne .game_audio_return
 
     ; Reset Timer
-    ldx #GAME_AUDIO_STEP
-    stx FrameTimer
+;    ldx #GAME_AUDIO_STEP
+;    stx FrameTimer
 
-.game_audio_play:
+;.game_audio_play:
 
     ; Increment melody position
-    ldy AudioStep
-    iny
+;    ldy AudioStep
+;    iny
 
-    cpy #GAME_AUDIO_LENGTH
-    bne .game_audio_play_note
+;    cpy #GAME_AUDIO_LENGTH
+;    bne .game_audio_play_note
 
     ; Loop our audio step
-    ldy #0
+;    ldy #0
 
-.game_audio_play_note:
+;.game_audio_play_note:
 
     ; Save current position
-    sty AudioStep
+;    sty AudioStep
 
     ; Melody Line
-    lda GameAudio0,y
-    cmp #$FF
-    beq .game_audio_mute_note
-    sta AUDF0
-    lda #GAME_AUDIO_TONE
-    sta AUDC0
-    lda #GAME_AUDIO_VOLUME
-    sta AUDV0
+;    lda GameAudio0,y
+;    cmp #$FF
+;    beq .game_audio_mute_note
+;    sta AUDF0
+;    lda #GAME_AUDIO_TONE
+;    sta AUDC0
+;    lda #GAME_AUDIO_VOLUME
+;    sta AUDV0
 
-    rts
+;    rts
 
-.game_audio_mute_note:
+;.game_audio_mute_note:
 
-    lda #0
-    sta AUDF0
-    sta AUDC0
-    sta AUDV0
+;    lda #0
+;    sta AUDF0
+;    sta AUDC0
+;    sta AUDV0
 
-.game_audio_return:
-    rts
+;.game_audio_return:
+;    rts
 
 GameDeath:
     lda ScoreValue+0
@@ -263,8 +263,8 @@ GameKernel:
 
     jsr WebClean
     jsr SpiderClean
-    jsr LineClean
-    jsr BugClean
+;    jsr LineClean
+;    jsr BugClean
 ;    jsr SwatterDraw
 
     sta WSYNC
@@ -272,36 +272,36 @@ GameKernel:
 .game_kernel_return:
     rts
 
-GameAudio0:
-    .byte #13   ; D
-    .byte #$FF
-    .byte #15   ; B
-    .byte #$FF
-    .byte #13   ; D
-    .byte #$FF
-    .byte #15   ; B
-    .byte #$FF
-    .byte #13   ; D
-    .byte #13   ; D
-    .byte #15   ; B
-    .byte #$FF
-    .byte #12   ; D#
-    .byte #$FF
-    .byte #15   ; B
-    .byte #$FF
-    .byte #11   ; E
-    .byte #$FF
-    .byte #14   ; C#
-    .byte #$FF
-    .byte #11
-    .byte #$FF
-    .byte #14
-    .byte #$FF
-    .byte #11
-    .byte #11
-    .byte #14
-    .byte #$FF
-    .byte #11
-    .byte #$FF
-    .byte #14
-    .byte #$FF
+;GameAudio0:
+;    .byte #13   ; D
+;    .byte #$FF
+;    .byte #15   ; B
+;    .byte #$FF
+;    .byte #13   ; D
+;    .byte #$FF
+;    .byte #15   ; B
+;    .byte #$FF
+;    .byte #13   ; D
+;    .byte #13   ; D
+;    .byte #15   ; B
+;    .byte #$FF
+;    .byte #12   ; D#
+;    .byte #$FF
+;    .byte #15   ; B
+;    .byte #$FF
+;    .byte #11   ; E
+;    .byte #$FF
+;    .byte #14   ; C#
+;    .byte #$FF
+;    .byte #11
+;    .byte #$FF
+;    .byte #14
+;    .byte #$FF
+;    .byte #11
+;    .byte #11
+;    .byte #14
+;    .byte #$FF
+;    .byte #11
+;    .byte #$FF
+;    .byte #14
+;    .byte #$FF

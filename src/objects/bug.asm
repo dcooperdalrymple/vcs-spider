@@ -106,13 +106,15 @@ BugMovement:
 .bug_movement_x_left:
     cmp #1
     bne .bug_movement_x_right
+    REPEAT #BUG_SPEED
     dex
-    dex
+    REPEND
     jmp .bug_movement_y
 
 .bug_movement_x_right:
+    REPEAT #BUG_SPEED
     inx
-    inx
+    REPEND
 
 .bug_movement_y:
     ; Alter Y Position
@@ -123,13 +125,15 @@ BugMovement:
 .bug_movement_y_up:
     cmp #1
     bne .bug_movement_y_down
+    REPEAT #BUG_SPEED
     iny
-    iny
+    REPEND
     jmp .bug_movement_boundary
 
 .bug_movement_y_down:
+    REPEAT #BUG_SPEED
     dey
-    dey
+    REPEND
 
 .bug_movement_boundary:
 
@@ -221,24 +225,13 @@ BugStunCollision:
 
 BugPosition:
 
-    ; Set Position of each missile
-    ldy #1
-.bug_position:
-
-    ; Determine missile index
-    clc
-    ldx #2          ; Missile 0/1
-    tya
-    sta Temp
-    txa
-    adc Temp
-    tax
-
-    lda BugPosX,y
+    ldx #2
+    lda BugPosX+0
     jsr PosObject
 
-    dey
-    bpl .bug_position
+    ldx #3
+    lda BugPosX+1
+    jsr PosObject
 
     rts
 
@@ -246,21 +239,16 @@ BugPosition:
 
 BugDrawStart:
 
-    ; Set missile 0 to be 4 clock size
-    lda NuSiz0
-    ora #%00110000
-    sta NuSiz0
-    sta NUSIZ0
+    ldy #1
+.bug_draw_start_loop:
 
-    ; Set missile 1 to be 4 clock size
-    lda NuSiz1
+    ; Set missile 0 & 1 to be 4 clock size
+    lda NuSiz0,y
     ora #%00110000
-    sta NuSiz1
-    sta NUSIZ1
+    sta NuSiz0,y
+    sta NUSIZ0,y
 
     ; Setup half scanline positions
-    ldy #1
-.bug_draw_start_pos:
     lda BugPosY,y
     lsr
     sta BugDrawPosBottom,y
@@ -269,7 +257,7 @@ BugDrawStart:
     sta BugDrawPosTop,y
 
     dey
-    bpl .bug_draw_start_pos
+    bpl .bug_draw_start_loop
 
     rts
 
@@ -313,11 +301,11 @@ BugDraw:
 .bug_draw_return:
     rts
 
-BugClean:
-    lda #0
-    sta ENAM0
-    sta ENAM1
-    rts
+;BugClean:
+;    lda #0
+;    sta ENAM0
+;    sta ENAM1
+;    rts
 
 BugSample:
     lda #BUG_SAMPLE_LEN
