@@ -14,6 +14,11 @@ LOGO_AUDIO_1_VOLUME = 3
 LOGO_AUDIO_LENGTH   = 12
 LOGO_AUDIO_STEP     = 8
 
+LOGO_IMAGE_SIZE         = 9
+LOGO_IMAGE_LINE_SIZE    = 8
+LOGO_IMAGE_LINES        = LOGO_IMAGE_SIZE*LOGO_IMAGE_LINE_SIZE
+LOGO_IMAGE_PADDING      = #(KERNEL_SCANLINES-LOGO_IMAGE_LINES)/2
+
 LogoInit:
 
     ; Setup logic and kernel
@@ -127,7 +132,8 @@ LogoState:
     cmp #0
     bne .logo_state_return
 
-    jsr TitleInit
+;    jsr TitleInit
+    jsr GameInit
 
 .logo_state_return:
     rts
@@ -140,67 +146,67 @@ LogoKernel:
     sta CtrlPf
     sta CTRLPF
 
-    ; Start Counters
-    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
-    ldy #0 ; Image Counter
-
     ; Turn on display
     lda #0
     sta VBLANK
 
-    sta WSYNC
+.logo_kernel_top_padding:
+    ; Top Padding
+    jsr LogoPadding
 
 .logo_kernel_image:
 
-    ; 76 machine cycles per scanline
+    ldx #(LOGO_IMAGE_SIZE*2)-1
+    ldy #LOGO_IMAGE_LINE_SIZE-1
+    ; The extra 1 on line size is for processing overflow
+
+.logo_kernel_image_line:
     sta WSYNC
 
-.logo_kernel_image_load: ; 66 cycles
-
-    ; First half of image
-    lda LogoImage,y ; 5
-    sta PF0 ; 4
-    lda LogoImage+1,y ; 5
-    sta PF1 ; 4
-    lda LogoImage+2,y ; 5
-    sta PF2 ; 4
+    lda LogoImagePF0-1,x
+    sta PF0
+    lda LogoImagePF1-1,x
+    sta PF1
+    lda LogoImagePF2-1,x
+    sta PF2
 
     sleep 6
 
-    ; Second half of image
-    lda LogoImage+3,y ; 5
-    sta PF0 ; 4
-    lda LogoImage+4,y ; 5
-    sta PF1 ; 4
-    lda LogoImage+5,y ; 5
-    sta PF2 ; 4
+    lda LogoImagePF0,x
+    sta PF0
+    lda LogoImagePF1,x
+    sta PF1
+    lda LogoImagePF2,x
+    sta PF2
 
-.logo_kernel_image_index: ; 4 cycles
+    dey
+    bne .logo_kernel_image_line
 
-    dex ; 2
-    bne .logo_kernel_image ; 2
+    ldy #LOGO_IMAGE_LINE_SIZE
 
-.logo_kernel_image_index_next: ; 6 cycles
+    dex
+    dex
+    bpl .logo_kernel_image_line
 
-    ; Restore scanline counter
-    ldx #KERNEL_IMAGE_LINE ; 2
+.logo_kernel_bottom_padding:
+    ; Bottom Padding
+    jsr LogoPadding
 
-    tya ; 2
-    clc ; 2
-    adc #KERNEL_IMAGE_FULL_DATA ; 2
-    tay ; 2
-    cpy #KERNEL_IMAGE_SIZE*KERNEL_IMAGE_FULL_DATA
-    bne .logo_kernel_image ; 2
+.logo_kernel_image_return:
+    rts
 
-.logo_kernel_image_clean:
-
-    ; Clear out playfield
+LogoPadding:
     lda #0
     sta PF0
     sta PF1
     sta PF2
 
-.logo_kernel_image_return:
+    ldx #LOGO_IMAGE_PADDING
+.logo_padding_loop:
+    sta WSYNC
+    dex
+    bne .logo_padding_loop
+
     rts
 
 LogoAssets:

@@ -10,6 +10,8 @@ SPIDER_SPRITE_SIZE  = 8
 SPIDER_VEL_X        = 2
 SPIDER_VEL_Y        = 2
 
+SPIDER_COL_COLOR    = #$44
+
 ; Initialization
 
 SpiderInit:
@@ -22,12 +24,16 @@ SpiderInit:
     ; Setup Sprite
     SET_POINTER SpiderPtr, SpiderSprite
 
+    lda #SPIDER_COLOR
+    sta SpiderColor
+
     rts
 
 ; Frame Update
 
 SpiderUpdate:
     jsr SpiderControl
+    jsr SpiderCollision
     rts
 
 SpiderControl:
@@ -138,54 +144,94 @@ SpiderControl:
     cmp #%00000000
     beq .spider_control_return
 
+    ldx #%00000000  ; For reflection
+
 .spider_control_sprite_assign_left:
     cmp #%10000000
     bne .spider_control_sprite_assign_right
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*6
-    jmp .spider_control_return
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*2
+    ldx #%00001000
+    jmp .spider_control_reflect
 
 .spider_control_sprite_assign_right:
     cmp #%01000000
     bne .spider_control_sprite_assign_top
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*2
-    jmp .spider_control_return
+    jmp .spider_control_reflect
 
 .spider_control_sprite_assign_top:
     cmp #%00100000
     bne .spider_control_sprite_assign_bottom
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*0
-    jmp .spider_control_return
+    jmp .spider_control_reflect
 
 .spider_control_sprite_assign_bottom:
     cmp #%00010000
     bne .spider_control_sprite_assign_top_right
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*4
-    jmp .spider_control_return
+    jmp .spider_control_reflect
 
 .spider_control_sprite_assign_top_right:
     cmp #%01100000
     bne .spider_control_sprite_assign_bottom_right
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
-    jmp .spider_control_return
+    jmp .spider_control_reflect
 
 .spider_control_sprite_assign_bottom_right:
     cmp #%01010000
     bne .spider_control_sprite_assign_bottom_left
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*3
-    jmp .spider_control_return
+    jmp .spider_control_reflect
 
 .spider_control_sprite_assign_bottom_left:
     cmp #%10010000
     bne .spider_control_sprite_assign_top_left
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*5
-    jmp .spider_control_return
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*3
+    ldx #%00001000
+    jmp .spider_control_reflect
 
 .spider_control_sprite_assign_top_left:
     cmp #%10100000
-    bne .spider_control_return
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*7
+    bne .spider_control_reflect
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
+    ldx #%00001000
+
+.spider_control_reflect:
+    stx REFP0
 
 .spider_control_return:
+    rts
+
+SpiderCollision:
+    lda #SPIDER_COLOR
+
+.spider_collision_m0:
+    ; Check stun status
+    ldx BugStunned
+    cpx #0
+    bne .spider_collision_m1
+
+    ; Collision for M0 (V set)
+    bit CXM0P
+    bvs .spider_collision_active
+
+.spider_collision_m1:
+    ; Check stun status
+    ldx BugStunned+1
+    cpx #0
+    bne .spider_collision_return
+
+    ; Collision for M1 (N set)
+    bit CXM1P
+    bmi .spider_collision_active
+
+    jmp .spider_collision_return
+
+.spider_collision_active:
+    lda #SPIDER_COL_COLOR
+
+.spider_collision_return:
+    sta SpiderColor
     rts
 
 SpiderPosition:
@@ -209,7 +255,7 @@ SpiderDrawStart:
     sta NUSIZ0
 
     ; Set sprite color
-    lda #SPIDER_COLOR
+    lda SpiderColor
     sta COLUP0
 
     ; Determine if we need to use vertical delay (odd line)

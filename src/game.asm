@@ -4,10 +4,11 @@
 
 ; Constants
 
-GAME_AUDIO_VOLUME = 4
+GAME_AUDIO_VOLUME   = 4
 GAME_AUDIO_LENGTH   = 32
 GAME_AUDIO_STEP     = 9
 GAME_AUDIO_OFFSET   = 1
+GAME_AUDIO_TONE     = 6
 
 ; Object Code
 
@@ -146,13 +147,12 @@ GameAudio:
     sty AudioStep
 
     ; Melody Line
-    lda GameTone0,y
+    lda GameAudio0,y
     cmp #$FF
     beq .game_audio_mute_note
-
-    sta AUDC0
-    lda GameAudio0,y
     sta AUDF0
+    lda #GAME_AUDIO_TONE
+    sta AUDC0
     lda #GAME_AUDIO_VOLUME
     sta AUDV0
 
@@ -200,7 +200,8 @@ GameKernel:
 ;    jsr SwatterDrawStart
 
     ; Start Scanline Counter
-    ldx #KERNEL_SCANLINES-SCORE_LINES
+    ldx #KERNEL_SCANLINES-SCORE_LINES-5
+    ; The extra 5 is for processing overflow
 
     ; Half scanline counter in Temp+1
     lda #(KERNEL_SCANLINES-SCORE_LINES)/2
@@ -270,40 +271,6 @@ GameKernel:
 
 .game_kernel_return:
     rts
-
-GameTone0:
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #6
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #6
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
-    .byte #6
-    .byte #$FF
 
 GameAudio0:
     .byte #13   ; D

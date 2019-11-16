@@ -7,8 +7,9 @@
 WEB_BG_COLOR        = #$00
 WEB_FG_COLOR        = #$06
 
-WEB_SIZE            = KERNEL_SCANLINES-SCORE_LINES
-WEB_LINE            = WEB_SIZE/30
+WEB_SIZE            = 30
+WEB_LINES           = KERNEL_SCANLINES-SCORE_LINES
+WEB_LINE            = WEB_LINES/WEB_SIZE
 
 ; Scanline Draw
 
@@ -30,13 +31,16 @@ WebDrawStart:
     ; Initialize image index
     lda #0
     sta WebIndex
+    lda #1
+    sta WebDir
 
     rts
 
 WebDraw:
 
-    ; Draw Image
     ldy WebIndex
+
+    ; Draw Image
     lda WebImagePF0,y
     sta PF0
     lda WebImagePF1,y
@@ -45,8 +49,20 @@ WebDraw:
     sta PF2
 
     ; Increment image index
-    inc WebIndex
+    clc
+    tya
+    adc WebDir
+    sta WebIndex
 
+    cmp #WEB_SIZE/2
+    bne .web_draw_return
+
+    lda #-1
+    sta WebDir
+
+    dec WebIndex
+
+.web_draw_return:
     rts
 
 WebClean:

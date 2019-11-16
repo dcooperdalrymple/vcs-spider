@@ -82,12 +82,14 @@ ScoreGfx            ds 2
 ; Web
 
 WebIndex            ds 1
+WebDir              ds 1
 
 ; Spider
 
 SpiderPtr           ds 2
 SpiderPos           ds 2
 SpiderCtrl          ds 1
+SpiderColor         ds 1
 
 SpiderIndex         ds 1
 SpiderDrawPos       ds 1
@@ -168,8 +170,8 @@ InitSystem:
 
 .init_game:
 
-    jsr LogoInit
-;    jsr GameInit   ; Used for testing
+;   jsr LogoInit
+    jsr GameInit   ; Used for testing
 
 ;=======================================
 ; Game Kernel
@@ -257,7 +259,8 @@ OverScan:
     bcs .overscan_logic     ; If D0 is set, no reset
 
     ; Perform reset
-    jsr LogoInit            ; No need for logic
+;    jsr LogoInit            ; No need for logic
+    jsr GameInit
     jmp .overscan_loop
 
 .overscan_logic:
@@ -281,8 +284,8 @@ OverScan:
 ; State Code
 ;================
 
-    include "logo.asm"
-    include "title.asm"
+;    include "logo.asm"
+;    include "title.asm"
     include "game.asm"
     include "over.asm"
 

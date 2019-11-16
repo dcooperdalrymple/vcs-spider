@@ -112,7 +112,8 @@ OverState:
     cmp #OVER_FRAMES
     bne .over_state_return
 
-    jsr TitleInit
+;    jsr TitleInit
+    jsr GameInit
 
 .over_state_return:
     rts
@@ -165,6 +166,7 @@ OverKernel:
     jsr OverPadding
 
 .over_kernel_return:
+    sta WSYNC   ; This extra line is to account for constant rounding
     rts
 
 OverPadding:
