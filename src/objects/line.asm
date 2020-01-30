@@ -20,21 +20,21 @@ LINE_SAMPLE_V   = 4
 
 ; Initialization
 
-;LineInit:
+LineInit:
 
     ; Initial Line Control
-;    lda #0
-;    sta LineEnabled
-;    sta LinePos+0
-;    sta LinePos+1
-;    sta LineVelocity+0
-;    sta LineVelocity+1
-;    sta LineStartPos+0
-;    sta LineStartPos+1
-;    sta LineDrawPos+0
-;    sta LineDrawPos+1
+    lda #0
+    sta LineEnabled
+    sta LinePos+0
+    sta LinePos+1
+    sta LineVelocity+0
+    sta LineVelocity+1
+    sta LineStartPos+0
+    sta LineStartPos+1
+    sta LineDrawPos+0
+    sta LineDrawPos+1
 
-;    rts
+    rts
 
 ; Frame Update
 
@@ -363,13 +363,13 @@ LineDraw:
 
     rts
 
-;LineClean:
+LineClean:
 
     ; Clear out Line
-;    lda #0
-;    sta ENABL
+    lda #0
+    sta ENABL
 
-;    rts
+    rts
 
 LineEnable:
     lda #%10000000

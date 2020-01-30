@@ -301,11 +301,11 @@ BugDraw:
 .bug_draw_return:
     rts
 
-;BugClean:
-;    lda #0
-;    sta ENAM0
-;    sta ENAM1
-;    rts
+BugClean:
+    lda #0
+    sta ENAM0
+    sta ENAM1
+    rts
 
 BugSample:
     lda #BUG_SAMPLE_LEN

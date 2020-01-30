@@ -112,8 +112,7 @@ OverState:
     cmp #OVER_FRAMES
     bne .over_state_return
 
-;    jsr TitleInit
-    jsr GameInit
+    jsr TitleInit
 
 .over_state_return:
     rts

@@ -132,8 +132,7 @@ LogoState:
     cmp #0
     bne .logo_state_return
 
-;    jsr TitleInit
-    jsr GameInit
+    jsr TitleInit
 
 .logo_state_return:
     rts
