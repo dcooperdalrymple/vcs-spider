@@ -48,6 +48,13 @@ GameInit:
     lda #2
     sta FrameTimer
 
+    ; Reset NuSiz
+    lda #0
+    sta NuSiz0
+    sta NUSIZ0
+    sta NuSiz1
+    sta NUSIZ1
+
     ; Initialize Objects
     jsr ScoreInit
     jsr SpiderInit

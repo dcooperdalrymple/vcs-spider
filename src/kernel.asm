@@ -94,6 +94,8 @@ SpiderColor         ds 1
 SpiderIndex         ds 1
 SpiderDrawPos       ds 1
 
+SpiderPtr2          ds 2
+
 ; Line
 
 LineEnabled         ds 1

@@ -2,21 +2,26 @@
 ; Constants
 ;================
 
-TITLE_LINE_SIZE     = 8
-TITLE_DATA_SIZE     = %00000100
-TITLE_BORDER        = 1
-TITLE_PAD           = 4
-TITLE_IMAGE         = 6
-TITLE_GAP           = 2
+TITLE_BG_COLOR          = #$00
+TITLE_FRAME_COLOR          = #$06
+TITLE_LABEL_COLOR          = #$0E
+TITLE_SPIDER_COLOR          = #$56
 
-TITLE_BG_COLOR      = #$00
-TITLE_FG_COLOR      = #$0E
+TITLE_AUDIO_0_TONE      = 4
+TITLE_AUDIO_0_VOLUME    = 1
+TITLE_AUDIO_1_VOLUME    = 5
+TITLE_AUDIO_LENGTH      = 16
+TITLE_AUDIO_STEP        = 9
 
-TITLE_AUDIO_0_TONE    = 4
-TITLE_AUDIO_0_VOLUME  = 1
-TITLE_AUDIO_1_VOLUME  = 5
-TITLE_AUDIO_LENGTH    = 16
-TITLE_AUDIO_STEP      = 9
+TITLE_FRAME_TOP_LINES   = 7
+TITLE_LABEL_LINES       = 6
+TITLE_FRAME_BOT_LINES   = 5
+
+TITLE_GAP_SIZE          = #1
+
+TITLE_SPIDER_POS_X      = #(KERNEL_WIDTH/4)-(8*3)-(8*2)
+TITLE_SPIDER_SIZE       = #10
+TITLE_SPIDER_LINE_SIZE  = #4
 
 TitleInit:
 
@@ -28,8 +33,11 @@ TitleInit:
     ; Load Colors
     lda #TITLE_BG_COLOR
     sta COLUBK
-    lda #TITLE_FG_COLOR
+    lda #TITLE_FRAME_COLOR
     sta COLUPF
+    lda #TITLE_SPIDER_COLOR
+    sta COLUP0
+    sta COLUP1
 
     ; Load audio settings
 
@@ -50,6 +58,20 @@ TitleInit:
     lda #1
     sta FrameTimer
 
+    ; Setup Spider Sprite
+    SET_POINTER SpiderPtr, TitleSpider
+
+    lda #%00000110  ; Triple Sprite
+    sta NuSiz0
+    sta NUSIZ0
+    sta NuSiz1
+    sta NUSIZ1
+
+    lda #0          ; No reflect
+    sta REFP0
+    lda #$FF        ; Reflect P1
+    sta REFP1
+
     rts
 
 TitleVerticalBlank:
@@ -57,6 +79,46 @@ TitleVerticalBlank:
     ; Refresh random values
     jsr Random
 
+    jsr TitlePosition
+    jsr TitleAnimation
+
+    rts
+
+TitlePosition:
+
+    ; Position Spider
+    ldx #0                      ; Object (player0)
+    lda #TITLE_SPIDER_POS_X     ; X Position
+    jsr PosObject
+
+    ldx #1                      ; Object (player1)
+    lda #(TITLE_SPIDER_POS_X+8)  ; X Position
+    jsr PosObject
+
+    sta WSYNC
+    sta HMOVE
+
+    rts
+
+TitleAnimation:
+
+    lda AudioStep
+    cmp #TITLE_AUDIO_LENGTH*3/4
+    beq .title_animation_2
+    cmp #TITLE_AUDIO_LENGTH/2
+    beq .title_animation_1
+    cmp #TITLE_AUDIO_LENGTH/4
+    beq .title_animation_2
+    cmp #0
+    beq .title_animation_1
+    rts
+
+.title_animation_1:
+    SET_POINTER SpiderPtr, TitleSpider
+    rts
+
+.title_animation_2:
+    SET_POINTER SpiderPtr, TitleSpider+#TITLE_SPIDER_SIZE
     rts
 
 TitleOverScan:
@@ -137,47 +199,49 @@ TitleKernel:
     sta CtrlPf
     sta CTRLPF
 
-    ; Start Counters
-    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
-    ldy #0 ; Image Counter
-
     ; Turn on display
     lda #0
     sta VBLANK
 
     sta WSYNC
 
-.title_kernel_image:
+TitleFrameTopDraw:
+
+    ; Start Counters
+    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
+    ldy #0 ; Image Counter
+
+.title_frame_top:
 
     ; 76 machine cycles per scanline
     sta WSYNC
 
-.title_kernel_image_load: ; 66 cycles
+.title_frame_top_load: ; 66 cycles
 
     ; First half of image
-    lda TitleImage,y ; 5
+    lda TitleFrameTop,y ; 5
     sta PF0 ; 4
-    lda TitleImage+1,y ; 5
+    lda TitleFrameTop+1,y ; 5
     sta PF1 ; 4
-    lda TitleImage+2,y ; 5
+    lda TitleFrameTop+2,y ; 5
     sta PF2 ; 4
 
     sleep 6
 
     ; Second half of image
-    lda TitleImage+3,y ; 5
+    lda TitleFrameTop+3,y ; 5
     sta PF0 ; 4
-    lda TitleImage+4,y ; 5
+    lda TitleFrameTop+4,y ; 5
     sta PF1 ; 4
-    lda TitleImage+5,y ; 5
+    lda TitleFrameTop+5,y ; 5
     sta PF2 ; 4
 
-.title_kernel_image_index: ; 4 cycles
+.title_frame_top_index: ; 4 cycles
 
     dex ; 2
-    bne .title_kernel_image ; 2
+    bne .title_frame_top ; 2
 
-.title_kernel_image_index_next: ; 6 cycles
+.title_frame_top_index_next: ; 6 cycles
 
     ; Restore scanline counter
     ldx #KERNEL_IMAGE_LINE ; 2
@@ -186,10 +250,10 @@ TitleKernel:
     clc ; 2
     adc #KERNEL_IMAGE_FULL_DATA ; 2
     tay ; 2
-    cpy #KERNEL_IMAGE_SIZE*KERNEL_IMAGE_FULL_DATA
-    bne .title_kernel_image ; 2
+    cpy #TITLE_FRAME_TOP_LINES*KERNEL_IMAGE_FULL_DATA
+    bne .title_frame_top ; 2
 
-.title_kernel_image_clean:
+.title_frame_top_clean:
 
     ; Clear out playfield
     lda #0
@@ -197,13 +261,180 @@ TitleKernel:
     sta PF1
     sta PF2
 
-.title_kernel_image_return:
+    jsr TitleGap
+
+TitleLabelDraw:
+
+    ; Load Label Color
+    lda #TITLE_LABEL_COLOR
+    sta COLUPF
+
+    ; Start Counters
+    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
+    ldy #0 ; Image Counter
+
+.title_label:
+
+    ; 76 machine cycles per scanline
+    sta WSYNC
+
+.title_label_load: ; 66 cycles
+
+    ; First half of image
+    lda TitleLabel,y ; 5
+    sta PF0 ; 4
+    lda TitleLabel+1,y ; 5
+    sta PF1 ; 4
+    lda TitleLabel+2,y ; 5
+    sta PF2 ; 4
+
+    sleep 6
+
+    ; Second half of image
+    lda TitleLabel+3,y ; 5
+    sta PF0 ; 4
+    lda TitleLabel+4,y ; 5
+    sta PF1 ; 4
+    lda TitleLabel+5,y ; 5
+    sta PF2 ; 4
+
+.title_label_index: ; 4 cycles
+
+    dex ; 2
+    bne .title_label ; 2
+
+.title_label_index_next: ; 6 cycles
+
+    ; Restore scanline counter
+    ldx #KERNEL_IMAGE_LINE ; 2
+
+    tya ; 2
+    clc ; 2
+    adc #KERNEL_IMAGE_FULL_DATA ; 2
+    tay ; 2
+    cpy #TITLE_LABEL_LINES*KERNEL_IMAGE_FULL_DATA
+    bne .title_label ; 2
+
+.title_label_clean:
+
+    ; Clear out playfield
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+    jsr TitleGap
+
+TitleSpiderDraw:
+    ldx #TITLE_SPIDER_LINE_SIZE
+    ldy #TITLE_SPIDER_SIZE-1
+
+    sta WSYNC
+
+.title_spider:
+    lda (SpiderPtr),y
+    sta GRP0
+    sta GRP1
+
+.title_spider_delay:
+    dex
+    sta WSYNC
+    bne .title_spider_delay
+
+.title_spider_index:
+    ldx #TITLE_SPIDER_LINE_SIZE
+    dey
+    bpl .title_spider
+
+.title_spider_clean:
+
+    ; Clear sprites
+    lda #0
+    sta GRP0
+    sta GRP1
+
+    jsr TitleGap
+
+TitleFrameBottomDraw:
+
+    ; Load Frame Color
+    lda #TITLE_FRAME_COLOR
+    sta COLUPF
+
+    ; Start Counters
+    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
+    ldy #0 ; Image Counter
+
+.title_frame_bottom:
+
+    ; 76 machine cycles per scanline
+    sta WSYNC
+
+.title_frame_bottom_load: ; 66 cycles
+
+    ; First half of image
+    lda TitleFrameBottom,y ; 5
+    sta PF0 ; 4
+    lda TitleFrameBottom+1,y ; 5
+    sta PF1 ; 4
+    lda TitleFrameBottom+2,y ; 5
+    sta PF2 ; 4
+
+    sleep 6
+
+    ; Second half of image
+    lda TitleFrameBottom+3,y ; 5
+    sta PF0 ; 4
+    lda TitleFrameBottom+4,y ; 5
+    sta PF1 ; 4
+    lda TitleFrameBottom+5,y ; 5
+    sta PF2 ; 4
+
+.title_frame_bottom_index: ; 4 cycles
+
+    dex ; 2
+    bne .title_frame_bottom ; 2
+
+.title_frame_bottom_index_next: ; 6 cycles
+
+    ; Restore scanline counter
+    ldx #KERNEL_IMAGE_LINE ; 2
+
+    tya ; 2
+    clc ; 2
+    adc #KERNEL_IMAGE_FULL_DATA ; 2
+    tay ; 2
+    cpy #TITLE_FRAME_BOT_LINES*KERNEL_IMAGE_FULL_DATA
+    bne .title_frame_bottom ; 2
+
+.title_frame_bottom_clean:
+
+    ; Clear out playfield
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+.title_kernel_return:
+    rts
+
+TitleGap:
+    ldx #TITLE_GAP_SIZE
+
+.title_gap:
+    dex
+    sta WSYNC
+    bne .title_gap
+
     rts
 
 TitleAssets:
 
     ; Assets
-    include "title_image.asm"
+    include "title_frame_top.asm"
+    include "title_frame_bottom.asm"
+    include "title_label.asm"
+    include "title_spider.asm"
 
 TitleAudio0:
 

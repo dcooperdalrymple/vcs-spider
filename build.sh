@@ -7,8 +7,14 @@
 echo "/assets/logo.png => /src/logo_image.asm"
 python ./assets/pf_image.py -type full -split 1 -reverse 1 -name LogoImage -in ./assets/logo.png -out ./src/logo_image.asm
 
-echo "/assets/title.png => /src/title_image.asm"
-python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleImage -in ./assets/title.png -out ./src/title_image.asm
+echo "/assets/title-frame-top.png => /src/title_frame_top.asm"
+python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleFrameTop -in ./assets/title-frame-top.png -out ./src/title_frame_top.asm
+
+echo "/assets/title-frame-bottom.png => /src/title_frame_bottom.asm"
+python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleFrameBottom -in ./assets/title-frame-bottom.png -out ./src/title_frame_bottom.asm
+
+echo "/assets/title-label.png => /src/title_label.asm"
+python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleLabel -in ./assets/title-label.png -out ./src/title_label.asm
 
 echo "/assets/web.png => /src/objects/web_image.asm"
 python ./assets/pf_image.py -type mirror -split 1 -reverse 0 -name WebImage -in ./assets/web.png -out ./src/objects/web_image.asm
@@ -17,6 +23,9 @@ python ./assets/pf_image.py -type mirror -split 1 -reverse 0 -name WebImage -in 
 #python ./assets/pf_image.py -type mirror -split 1 -reverse 1 -name OverImage -in ./assets/over.png -out ./src/over_image.asm
 
 ## Sprites
+
+echo "/assets/title-spider.png => /src/title_spider.asm"
+python ./assets/sprite_image.py -name TitleSpider -in ./assets/title-spider.png -out ./src/title_spider.asm -reverse 1
 
 echo "/assets/player.png => /src/objects/spider_sprite.asm"
 python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm -reverse 0
