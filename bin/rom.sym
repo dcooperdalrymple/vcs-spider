@@ -2,14 +2,14 @@
 0.bug_collision_active   f9cc              (R )
 0.bug_collision_m0       f9c2                  
 0.bug_collision_m1       f9c7              (R )
-0.bug_draw_0             fa17                  
-0.bug_draw_0_off         fa23              (R )
-0.bug_draw_0_on          fa21                  
-0.bug_draw_1             fa25                  
-0.bug_draw_1_off         fa31              (R )
-0.bug_draw_1_on          fa2f                  
-0.bug_draw_return        fa33                  
-0.bug_draw_start_loop    f9fc              (R )
+0.bug_draw_0             fa1a                  
+0.bug_draw_0_off         fa26              (R )
+0.bug_draw_0_on          fa24                  
+0.bug_draw_1             fa28                  
+0.bug_draw_1_off         fa34              (R )
+0.bug_draw_1_on          fa32                  
+0.bug_draw_return        fa36                  
+0.bug_draw_start_loop    f9ff              (R )
 0.bug_init_loop          f92e              (R )
 0.bug_movement_boundary  f998              (R )
 0.bug_movement_boundary_bottom f9b0              (R )
@@ -26,26 +26,26 @@
 0.bug_movement_y         f988              (R )
 0.bug_movement_y_down    f996              (R )
 0.bug_movement_y_up      f98d                  
-0.bug_stun_collision_active f9dd              (R )
-0.bug_stun_collision_m0  f9d3                  
-0.bug_stun_collision_m1  f9d8              (R )
+0.bug_stun_collision_active f9e0              (R )
+0.bug_stun_collision_m0  f9d6                  
+0.bug_stun_collision_m1  f9db              (R )
 0.bug_update_active      f95f              (R )
 0.bug_update_loop        f94f              (R )
 0.bug_update_next        f965              (R )
 0.bug_update_stunned     f957                  
 0.FREE_BYTES             0000                  
-0.game_audio_mute_note   fb01              (R )
-0.game_audio_play        fae4                  
-0.game_audio_play_note   faed              (R )
-0.game_audio_return      fb09              (R )
-0.game_death_return      fb13              (R )
-0.game_kernel_clean      fb69              (R )
-0.game_kernel_objects    fb2d              (R )
-0.game_kernel_objects_start fb1b                  
-0.game_kernel_return     fb77                  
-0.game_kernel_score      fb18                  
-0.game_sample_mute       facb                  
-0.game_sample_return     fad3              (R )
+0.game_audio_mute_note   fb15              (R )
+0.game_audio_play        faf8                  
+0.game_audio_play_note   fb01              (R )
+0.game_audio_return      fb1d              (R )
+0.game_death_return      fb27              (R )
+0.game_kernel_clean      fb7d              (R )
+0.game_kernel_objects    fb41              (R )
+0.game_kernel_objects_start fb2f                  
+0.game_kernel_return     fb8b                  
+0.game_kernel_score      fb2c                  
+0.game_sample_mute       fadf                  
+0.game_sample_return     fae7              (R )
 0.init_clean             f021                  
 0.init_game              f063                  
 0.init_seed              f05a                  
@@ -111,20 +111,20 @@
 0.logo_kernel_top_padding f160                  
 0.logo_padding_loop      f1a1              (R )
 0.logo_state_return      f153              (R )
-0.over_audio_mute_note   fc07              (R )
-0.over_audio_play        fbf4                  
-0.over_audio_play_note   fbfb                  
-0.over_audio_return      fc0d              (R )
-0.over_kernel_bottom_padding fc42                  
-0.over_kernel_image      fc2c                  
-0.over_kernel_image_loop fc3a              (R )
-0.over_kernel_image_next fc2e              (R )
-0.over_kernel_init       fc1f                  
-0.over_kernel_return     fc45                  
-0.over_kernel_score      fc1c                  
-0.over_kernel_top_padding fc29                  
-0.over_padding_loop      fc52              (R )
-0.over_state_return      fc17              (R )
+0.over_audio_mute_note   fc1b              (R )
+0.over_audio_play        fc08                  
+0.over_audio_play_note   fc0f                  
+0.over_audio_return      fc21              (R )
+0.over_kernel_bottom_padding fc56                  
+0.over_kernel_image      fc40                  
+0.over_kernel_image_loop fc4e              (R )
+0.over_kernel_image_next fc42              (R )
+0.over_kernel_init       fc33                  
+0.over_kernel_return     fc59                  
+0.over_kernel_score      fc30                  
+0.over_kernel_top_padding fc3d                  
+0.over_padding_loop      fc66              (R )
+0.over_state_return      fc2b              (R )
 0.overscan_logic         f0bb              (R )
 0.overscan_logic_call_ptr f0c6              (R )
 0.overscan_loop          f0be              (R )
@@ -238,19 +238,19 @@
 24.POINTER               009b              (R )
 25.ADDRESS               f756              (R )
 25.POINTER               009b              (R )
-26.ADDRESS               fa97              (R )
+26.ADDRESS               faab              (R )
 26.POINTER               0087              (R )
-27.ADDRESS               fb14              (R )
+27.ADDRESS               fb28              (R )
 27.POINTER               0089              (R )
-28.ADDRESS               fab8              (R )
+28.ADDRESS               facc              (R )
 28.POINTER               008b              (R )
-29.ADDRESS               fbda              (R )
+29.ADDRESS               fbee              (R )
 29.POINTER               0087              (R )
 3.ADDRESS                f154              (R )
 3.POINTER                0089              (R )
-30.ADDRESS               fc18              (R )
+30.ADDRESS               fc2c              (R )
 30.POINTER               0089              (R )
-31.ADDRESS               fbde              (R )
+31.ADDRESS               fbf2              (R )
 31.POINTER               008b              (R )
 4.ADDRESS                f111              (R )
 4.POINTER                008b              (R )
@@ -271,6 +271,10 @@ AudioStep                008f              (R )
 AUDV0                    0019              (R )
 AUDV1                    001a              (R )
 BUG_BOUNDARY             0008              (R )
+BUG_COL_SAMPLE_C         0008              (R )
+BUG_COL_SAMPLE_F         0008              (R )
+BUG_COL_SAMPLE_LEN       0001              (R )
+BUG_COL_SAMPLE_V         0003              (R )
 BUG_COLOR_ACTIVE         00cc              (R )
 BUG_COLOR_STUN           0038                  
 BUG_POINTS               0004              (R )
@@ -281,21 +285,22 @@ BUG_SAMPLE_V             0004              (R )
 BUG_SIZE                 0008              (R )
 BUG_SPEED                0002              (R )
 BUG_STUN_LENGTH          0078                  
-BugClean                 fa34              (R )
+BugClean                 fa37              (R )
 BugCollision             f9be              (R )
 BugColor                 00b4              (R )
-BugDraw                  fa17              (R )
+BugColSample             fa4f              (R )
+BugDraw                  fa1a              (R )
 BugDrawPosBottom         00b6              (R )
 BugDrawPosTop            00b8              (R )
-BugDrawStart             f9fa              (R )
+BugDrawStart             f9fd              (R )
 BugInit                  f92c              (R )
 BugMovement              f96b              (R )
-BugPosition              f9eb              (R )
+BugPosition              f9ee              (R )
 BugPosX                  00b0              (R )
 BugPosY                  00b2              (R )
 BugReset                 f935              (R )
-BugSample                fa3b              (R )
-BugStunCollision         f9cf              (R )
+BugSample                fa3e              (R )
+BugStunCollision         f9d2              (R )
 BugStunned               00ae              (R )
 BugUpdate                f94d              (R )
 COLOR_NTSC               0001                  
@@ -324,14 +329,14 @@ GAME_AUDIO_OFFSET        0001              (R )
 GAME_AUDIO_STEP          0009              (R )
 GAME_AUDIO_TONE          0006              (R )
 GAME_AUDIO_VOLUME        0004              (R )
-GameAudio                fad6              (R )
-GameAudio0               fb78              (R )
-GameDeath                fb0a              (R )
-GameInit                 fa4c              (R )
-GameKernel               fb14              (R )
-GameOverScan             fab8              (R )
-GameSample               fac2              (R )
-GameVerticalBlank        fa97              (R )
+GameAudio                faea              (R )
+GameAudio0               fb8c              (R )
+GameDeath                fb1e              (R )
+GameInit                 fa60              (R )
+GameKernel               fb28              (R )
+GameOverScan             facc              (R )
+GameSample               fad6              (R )
+GameVerticalBlank        faab              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
@@ -440,19 +445,19 @@ OVER_IMAGE_LINE_SIZE     0008              (R )
 OVER_IMAGE_LINES         0048              (R )
 OVER_IMAGE_PADDING       0035              (R )
 OVER_IMAGE_SIZE          0009              (R )
-OverAssets               fc58                  
-OverAudio                fbe5              (R )
-OverAudio0               fc6a              (R )
-OverImagePF1             fc58              (R )
-OverImagePF2             fc61              (R )
-OverInit                 fb98              (R )
-OverKernel               fc18              (R )
-OverOverScan             fbde              (R )
-OverPadding              fc48              (R )
+OverAssets               fc6c                  
+OverAudio                fbf9              (R )
+OverAudio0               fc7e              (R )
+OverImagePF1             fc6c              (R )
+OverImagePF2             fc75              (R )
+OverInit                 fbac              (R )
+OverKernel               fc2c              (R )
+OverOverScan             fbf2              (R )
+OverPadding              fc5c              (R )
 OverScan                 f0a6              (R )
 OverScanPtr              008b              (R )
-OverState                fc0e              (R )
-OverVerticalBlank        fbda              (R )
+OverState                fc22              (R )
+OverVerticalBlank        fbee              (R )
 PAL                      0000              (R )
 PAL_SCANLINES            00f2                  
 PAL_TOTAL                0138                  

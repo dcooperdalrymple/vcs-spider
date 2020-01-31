@@ -1315,7 +1315,7 @@
     186  f2cd		       a5 0c		      lda	INPT4
     187  f2cf		       30 03		      bmi	.title_state_return
     188  f2d1
-    189  f2d1		       20 4c fa 	      jsr	GameInit
+    189  f2d1		       20 60 fa 	      jsr	GameInit
     190  f2d4
     191  f2d4				   .title_state_return
     192  f2d4		       60		      rts
@@ -3220,901 +3220,923 @@
      18  f92c		       00 14	   BUG_SAMPLE_F =	20
      19  f92c		       00 04	   BUG_SAMPLE_V =	4
      20  f92c
-     21  f92c							; Initialization
-     22  f92c
-     23  f92c				   BugInit
-     24  f92c
-     25  f92c							; Initialize Bugs
-     26  f92c		       a2 01		      ldx	#1
-     27  f92e
-     28  f92e				   .bug_init_loop
-     29  f92e		       20 35 f9 	      jsr	BugReset
-     30  f931
-     31  f931		       ca		      dex
-     32  f932		       10 fa		      bpl	.bug_init_loop
-     33  f934
-     34  f934		       60		      rts
-     35  f935
-     36  f935				   BugReset		; x = bug (0 or 1)
-     37  f935
-     38  f935							; Set random position
-     39  f935		       20 13 f0 	      jsr	Random
-     40  f938
-     41  f938		       a5 85		      lda	Rand8
-     42  f93a		       29 7f		      and	#$7f
-     43  f93c		       95 b0		      sta	BugPosX,x
-     44  f93e
-     45  f93e		       a5 86		      lda	Rand16
-     46  f940		       29 7f		      and	#$7f
-     47  f942		       95 b2		      sta	BugPosY,x
-     48  f944
-     49  f944							; Set as active
-     50  f944		       a9 00		      lda	#0
-     51  f946		       95 ae		      sta	BugStunned,x
-     52  f948
-     53  f948							; Reset Color
-     54  f948		       a9 cc		      lda	#BUG_COLOR_ACTIVE
-     55  f94a		       95 b4		      sta	BugColor,x
-     56  f94c
-     57  f94c		       60		      rts
-     58  f94d
-     59  f94d							; Frame Update
-     60  f94d
-     61  f94d				   BugUpdate
-     62  f94d
-     63  f94d		       a2 01		      ldx	#1
-     64  f94f				   .bug_update_loop
-     65  f94f		       86 83		      stx	Temp+0
-     66  f951
-     67  f951		       b5 ae		      lda	BugStunned,x
-     68  f953		       c9 00		      cmp	#0
-     69  f955		       f0 08		      beq	.bug_update_active
-     70  f957
-     71  f957				   .bug_update_stunned
-     72  f957		       d6 ae		      dec	BugStunned,x
-     73  f959		       20 cf f9 	      jsr	BugStunCollision
-     74  f95c		       4c 65 f9 	      jmp	.bug_update_next
-     75  f95f
-     76  f95f				   .bug_update_active
-     77  f95f		       20 6b f9 	      jsr	BugMovement
-     78  f962		       20 be f9 	      jsr	BugCollision
-     79  f965
-     80  f965				   .bug_update_next
-     81  f965		       a6 83		      ldx	Temp+0
-     82  f967		       ca		      dex
-     83  f968		       10 e5		      bpl	.bug_update_loop
-     84  f96a
-     85  f96a		       60		      rts
-     86  f96b
-     87  f96b				   BugMovement
-     88  f96b
-     89  f96b				   .bug_movement_random
-     90  f96b		       20 13 f0 	      jsr	Random
-     91  f96e		       29 03		      and	#%00000011
-     92  f970		       85 84		      sta	Temp+1
-     93  f972
-     94  f972				   .bug_movement_load
-     95  f972							; Load x and y values
-     96  f972		       a6 83		      ldx	Temp+0
-     97  f974		       b5 b0		      lda	BugPosX,x
-     98  f976		       b4 b2		      ldy	BugPosY,x
-     99  f978		       aa		      tax
-    100  f979
-    101  f979				   .bug_movement_x
-    102  f979							; Alter X Position
-    103  f979		       a5 84		      lda	Temp+1
-    104  f97b		       29 01		      and	#%00000001
-    105  f97d
-    106  f97d				   .bug_movement_x_left
-    107  f97d		       c9 01		      cmp	#1
-    108  f97f		       d0 05		      bne	.bug_movement_x_right
-    109  f981					      REPEAT	#BUG_SPEED
-    110  f981		       ca		      dex
-    109  f981					      REPEND
-    110  f982		       ca		      dex
-    111  f983					      REPEND
-    112  f983		       4c 88 f9 	      jmp	.bug_movement_y
-    113  f986
-    114  f986				   .bug_movement_x_right
-    115  f986					      REPEAT	#BUG_SPEED
-    116  f986		       e8		      inx
-    115  f986					      REPEND
-    116  f987		       e8		      inx
-    117  f988					      REPEND
-    118  f988
-    119  f988				   .bug_movement_y
-    120  f988							; Alter Y Position
-    121  f988		       a5 84		      lda	Temp+1
-    122  f98a		       29 02		      and	#%00000010
-    123  f98c		       4a		      lsr
-    124  f98d
-    125  f98d				   .bug_movement_y_up
-    126  f98d		       c9 01		      cmp	#1
-    127  f98f		       d0 05		      bne	.bug_movement_y_down
-    128  f991					      REPEAT	#BUG_SPEED
-    129  f991		       c8		      iny
-    128  f991					      REPEND
-    129  f992		       c8		      iny
-    130  f993					      REPEND
-    131  f993		       4c 98 f9 	      jmp	.bug_movement_boundary
-    132  f996
-    133  f996				   .bug_movement_y_down
-    134  f996					      REPEAT	#BUG_SPEED
-    135  f996		       88		      dey
-    134  f996					      REPEND
-    135  f997		       88		      dey
-    136  f998					      REPEND
-    137  f998
-    138  f998				   .bug_movement_boundary
-    139  f998
-    140  f998				   .bug_movement_boundary_left
-    141  f998		       e0 08		      cpx	#BUG_BOUNDARY
-    142  f99a		       b0 05		      bcs	.bug_movement_boundary_right
-    143  f99c		       a2 08		      ldx	#BUG_BOUNDARY
-    144  f99e		       4c a7 f9 	      jmp	.bug_movement_boundary_top
-    145  f9a1
-    146  f9a1				   .bug_movement_boundary_right
-    147  f9a1		       e0 90		      cpx	#(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
-    148  f9a3		       90 02		      bcc	.bug_movement_boundary_top
-    149  f9a5		       a2 90		      ldx	#(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
-    150  f9a7
-    151  f9a7				   .bug_movement_boundary_top
-    152  f9a7		       c0 25		      cpy	#SCORE_LINES+BUG_BOUNDARY+(BUG_SIZE*2)
-    153  f9a9		       b0 05		      bcs	.bug_movement_boundary_bottom
-    154  f9ab		       a0 25		      ldy	#SCORE_LINES+BUG_BOUNDARY+(BUG_SIZE*2)
-    155  f9ad		       4c b6 f9 	      jmp	.bug_movement_store
-    156  f9b0
-    157  f9b0				   .bug_movement_boundary_bottom
-    158  f9b0		       c0 b0		      cpy	#KERNEL_SCANLINES-BUG_BOUNDARY-BUG_SIZE
-    159  f9b2		       90 02		      bcc	.bug_movement_store
-    160  f9b4		       a0 b0		      ldy	#KERNEL_SCANLINES-BUG_BOUNDARY-BUG_SIZE
-    161  f9b6
-    162  f9b6				   .bug_movement_store
-    163  f9b6		       8a		      txa
-    164  f9b7		       a6 83		      ldx	Temp+0
-    165  f9b9		       95 b0		      sta	BugPosX,x
-    166  f9bb		       94 b2		      sty	BugPosY,x
-    167  f9bd
-    168  f9bd				   .bug_movement_return
-    169  f9bd		       60		      rts
-    170  f9be
-    171  f9be				   BugCollision
-    172  f9be
-    173  f9be		       e0 01		      cpx	#1
-    174  f9c0		       f0 05		      beq	.bug_collision_m1
-    175  f9c2
-    176  f9c2				   .bug_collision_m0
-    177  f9c2							; Collision for M0 (V set)
-    178  f9c2		       24 00		      bit	CXM0P
-    179  f9c4		       70 06		      bvs	.bug_collision_active
-    180  f9c6		       60		      rts
-    181  f9c7
-    182  f9c7				   .bug_collision_m1
-    183  f9c7							; Collision for M1 (N set)
-    184  f9c7		       24 01		      bit	CXM1P
-    185  f9c9		       30 01		      bmi	.bug_collision_active
-    186  f9cb		       60		      rts
-    187  f9cc
-    188  f9cc				   .bug_collision_active
-    189  f9cc		       c6 91		      dec	ScoreValue
-    190  f9ce		       60		      rts
-    191  f9cf
-    192  f9cf				   BugStunCollision
-    193  f9cf
-    194  f9cf		       e0 01		      cpx	#1
-    195  f9d1		       f0 05		      beq	.bug_stun_collision_m1
-    196  f9d3
-    197  f9d3				   .bug_stun_collision_m0
-    198  f9d3							; Collision for M0 (V set)
-    199  f9d3		       24 00		      bit	CXM0P
-    200  f9d5		       70 06		      bvs	.bug_stun_collision_active
-    201  f9d7		       60		      rts
-    202  f9d8
-    203  f9d8				   .bug_stun_collision_m1
-    204  f9d8							; Collision for M1 (N set)
-    205  f9d8		       24 01		      bit	CXM1P
-    206  f9da		       30 01		      bmi	.bug_stun_collision_active
-    207  f9dc		       60		      rts
-    208  f9dd
-    209  f9dd				   .bug_stun_collision_active
-    210  f9dd							; Add points to score
-    211  f9dd		       18		      clc
-    212  f9de		       a5 92		      lda	ScoreValue+1
-    213  f9e0		       69 04		      adc	#BUG_POINTS
-    214  f9e2		       85 92		      sta	ScoreValue+1
-    215  f9e4
-    216  f9e4							; Reset bug
-    217  f9e4		       20 35 f9 	      jsr	BugReset
-    218  f9e7
-    219  f9e7							; Play sample
-    220  f9e7		       20 3b fa 	      jsr	BugSample
-    221  f9ea
-    222  f9ea		       60		      rts
-    223  f9eb
-    224  f9eb							; Horizontal Positioning
-    225  f9eb
-    226  f9eb				   BugPosition
-    227  f9eb
-    228  f9eb		       a2 02		      ldx	#2
-    229  f9ed		       a5 b0		      lda	BugPosX+0
-    230  f9ef		       20 00 f0 	      jsr	PosObject
-    231  f9f2
-    232  f9f2		       a2 03		      ldx	#3
-    233  f9f4		       a5 b1		      lda	BugPosX+1
-    234  f9f6		       20 00 f0 	      jsr	PosObject
-    235  f9f9
-    236  f9f9		       60		      rts
-    237  f9fa
-    238  f9fa							; Scanline Draw
-    239  f9fa
-    240  f9fa				   BugDrawStart
-    241  f9fa
-    242  f9fa		       a0 01		      ldy	#1
-    243  f9fc				   .bug_draw_start_loop
-    244  f9fc
-    245  f9fc							; Set missile 0 & 1 to be 4 clock size
-    246  f9fc		       b9 81 00 	      lda	NuSiz0,y
-    247  f9ff		       09 30		      ora	#%00110000
-    248  fa01		       99 81 00 	      sta	NuSiz0,y
-    249  fa04		       99 04 00 	      sta	NUSIZ0,y
-    250  fa07
-    251  fa07							; Setup half scanline positions
-    252  fa07		       b9 b2 00 	      lda	BugPosY,y
-    253  fa0a		       4a		      lsr
-    254  fa0b		       99 b6 00 	      sta	BugDrawPosBottom,y
-    255  fa0e
-    256  fa0e		       69 04		      adc	#BUG_SIZE/2
-    257  fa10		       99 b8 00 	      sta	BugDrawPosTop,y
-    258  fa13
-    259  fa13		       88		      dey
-    260  fa14		       10 e6		      bpl	.bug_draw_start_loop
-    261  fa16
-    262  fa16		       60		      rts
-    263  fa17
-    264  fa17				   BugDraw
-    265  fa17
-    266  fa17							; Load half scanline
-    267  fa17							;    lda Temp+1
-    268  fa17
-    269  fa17				   .bug_draw_0
-    270  fa17		       a0 00		      ldy	#%00000000
-    271  fa19
-    272  fa19							; Check top and bottom y pos
-    273  fa19		       c5 b8		      cmp	BugDrawPosTop+0
-    274  fa1b		       b0 06		      bcs	.bug_draw_0_off
-    275  fa1d
-    276  fa1d		       c5 b6		      cmp	BugDrawPosBottom+0
-    277  fa1f		       90 02		      bcc	.bug_draw_0_off
-    278  fa21
-    279  fa21				   .bug_draw_0_on
-    280  fa21		       a0 02		      ldy	#%00000010
-    281  fa23
-    282  fa23				   .bug_draw_0_off
-    283  fa23		       84 1d		      sty	ENAM0
-    284  fa25
-    285  fa25				   .bug_draw_1
-    286  fa25		       a0 00		      ldy	#%00000000
-    287  fa27
-    288  fa27							; Check top and bottom y pos
-    289  fa27		       c5 b9		      cmp	BugDrawPosTop+1
-    290  fa29		       b0 06		      bcs	.bug_draw_1_off
-    291  fa2b
-    292  fa2b		       c5 b7		      cmp	BugDrawPosBottom+1
-    293  fa2d		       90 02		      bcc	.bug_draw_1_off
-    294  fa2f
-    295  fa2f				   .bug_draw_1_on
-    296  fa2f		       a0 02		      ldy	#%00000010
-    297  fa31
-    298  fa31				   .bug_draw_1_off
-    299  fa31		       84 1e		      sty	ENAM1
-    300  fa33
-    301  fa33				   .bug_draw_return
-    302  fa33		       60		      rts
-    303  fa34
-    304  fa34				   BugClean
-    305  fa34		       a9 00		      lda	#0
-    306  fa36		       85 1d		      sta	ENAM0
-    307  fa38		       85 1e		      sta	ENAM1
-    308  fa3a		       60		      rts
-    309  fa3b
-    310  fa3b				   BugSample
-    311  fa3b		       a9 1e		      lda	#BUG_SAMPLE_LEN
-    312  fa3d		       85 90		      sta	SampleStep
-    313  fa3f		       a9 03		      lda	#BUG_SAMPLE_C
-    314  fa41		       85 16		      sta	AUDC1
-    315  fa43		       a9 14		      lda	#BUG_SAMPLE_F
-    316  fa45		       85 18		      sta	AUDF1
-    317  fa47		       a9 04		      lda	#BUG_SAMPLE_V
-    318  fa49		       85 1a		      sta	AUDV1
-    319  fa4b		       60		      rts
+     21  f92c		       00 01	   BUG_COL_SAMPLE_LEN =	1
+     22  f92c		       00 08	   BUG_COL_SAMPLE_C =	8
+     23  f92c		       00 08	   BUG_COL_SAMPLE_F =	8
+     24  f92c		       00 03	   BUG_COL_SAMPLE_V =	3
+     25  f92c
+     26  f92c							; Initialization
+     27  f92c
+     28  f92c				   BugInit
+     29  f92c
+     30  f92c							; Initialize Bugs
+     31  f92c		       a2 01		      ldx	#1
+     32  f92e
+     33  f92e				   .bug_init_loop
+     34  f92e		       20 35 f9 	      jsr	BugReset
+     35  f931
+     36  f931		       ca		      dex
+     37  f932		       10 fa		      bpl	.bug_init_loop
+     38  f934
+     39  f934		       60		      rts
+     40  f935
+     41  f935				   BugReset		; x = bug (0 or 1)
+     42  f935
+     43  f935							; Set random position
+     44  f935		       20 13 f0 	      jsr	Random
+     45  f938
+     46  f938		       a5 85		      lda	Rand8
+     47  f93a		       29 7f		      and	#$7f
+     48  f93c		       95 b0		      sta	BugPosX,x
+     49  f93e
+     50  f93e		       a5 86		      lda	Rand16
+     51  f940		       29 7f		      and	#$7f
+     52  f942		       95 b2		      sta	BugPosY,x
+     53  f944
+     54  f944							; Set as active
+     55  f944		       a9 00		      lda	#0
+     56  f946		       95 ae		      sta	BugStunned,x
+     57  f948
+     58  f948							; Reset Color
+     59  f948		       a9 cc		      lda	#BUG_COLOR_ACTIVE
+     60  f94a		       95 b4		      sta	BugColor,x
+     61  f94c
+     62  f94c		       60		      rts
+     63  f94d
+     64  f94d							; Frame Update
+     65  f94d
+     66  f94d				   BugUpdate
+     67  f94d
+     68  f94d		       a2 01		      ldx	#1
+     69  f94f				   .bug_update_loop
+     70  f94f		       86 83		      stx	Temp+0
+     71  f951
+     72  f951		       b5 ae		      lda	BugStunned,x
+     73  f953		       c9 00		      cmp	#0
+     74  f955		       f0 08		      beq	.bug_update_active
+     75  f957
+     76  f957				   .bug_update_stunned
+     77  f957		       d6 ae		      dec	BugStunned,x
+     78  f959		       20 d2 f9 	      jsr	BugStunCollision
+     79  f95c		       4c 65 f9 	      jmp	.bug_update_next
+     80  f95f
+     81  f95f				   .bug_update_active
+     82  f95f		       20 6b f9 	      jsr	BugMovement
+     83  f962		       20 be f9 	      jsr	BugCollision
+     84  f965
+     85  f965				   .bug_update_next
+     86  f965		       a6 83		      ldx	Temp+0
+     87  f967		       ca		      dex
+     88  f968		       10 e5		      bpl	.bug_update_loop
+     89  f96a
+     90  f96a		       60		      rts
+     91  f96b
+     92  f96b				   BugMovement
+     93  f96b
+     94  f96b				   .bug_movement_random
+     95  f96b		       20 13 f0 	      jsr	Random
+     96  f96e		       29 03		      and	#%00000011
+     97  f970		       85 84		      sta	Temp+1
+     98  f972
+     99  f972				   .bug_movement_load
+    100  f972							; Load x and y values
+    101  f972		       a6 83		      ldx	Temp+0
+    102  f974		       b5 b0		      lda	BugPosX,x
+    103  f976		       b4 b2		      ldy	BugPosY,x
+    104  f978		       aa		      tax
+    105  f979
+    106  f979				   .bug_movement_x
+    107  f979							; Alter X Position
+    108  f979		       a5 84		      lda	Temp+1
+    109  f97b		       29 01		      and	#%00000001
+    110  f97d
+    111  f97d				   .bug_movement_x_left
+    112  f97d		       c9 01		      cmp	#1
+    113  f97f		       d0 05		      bne	.bug_movement_x_right
+    114  f981					      REPEAT	#BUG_SPEED
+    115  f981		       ca		      dex
+    114  f981					      REPEND
+    115  f982		       ca		      dex
+    116  f983					      REPEND
+    117  f983		       4c 88 f9 	      jmp	.bug_movement_y
+    118  f986
+    119  f986				   .bug_movement_x_right
+    120  f986					      REPEAT	#BUG_SPEED
+    121  f986		       e8		      inx
+    120  f986					      REPEND
+    121  f987		       e8		      inx
+    122  f988					      REPEND
+    123  f988
+    124  f988				   .bug_movement_y
+    125  f988							; Alter Y Position
+    126  f988		       a5 84		      lda	Temp+1
+    127  f98a		       29 02		      and	#%00000010
+    128  f98c		       4a		      lsr
+    129  f98d
+    130  f98d				   .bug_movement_y_up
+    131  f98d		       c9 01		      cmp	#1
+    132  f98f		       d0 05		      bne	.bug_movement_y_down
+    133  f991					      REPEAT	#BUG_SPEED
+    134  f991		       c8		      iny
+    133  f991					      REPEND
+    134  f992		       c8		      iny
+    135  f993					      REPEND
+    136  f993		       4c 98 f9 	      jmp	.bug_movement_boundary
+    137  f996
+    138  f996				   .bug_movement_y_down
+    139  f996					      REPEAT	#BUG_SPEED
+    140  f996		       88		      dey
+    139  f996					      REPEND
+    140  f997		       88		      dey
+    141  f998					      REPEND
+    142  f998
+    143  f998				   .bug_movement_boundary
+    144  f998
+    145  f998				   .bug_movement_boundary_left
+    146  f998		       e0 08		      cpx	#BUG_BOUNDARY
+    147  f99a		       b0 05		      bcs	.bug_movement_boundary_right
+    148  f99c		       a2 08		      ldx	#BUG_BOUNDARY
+    149  f99e		       4c a7 f9 	      jmp	.bug_movement_boundary_top
+    150  f9a1
+    151  f9a1				   .bug_movement_boundary_right
+    152  f9a1		       e0 90		      cpx	#(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
+    153  f9a3		       90 02		      bcc	.bug_movement_boundary_top
+    154  f9a5		       a2 90		      ldx	#(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
+    155  f9a7
+    156  f9a7				   .bug_movement_boundary_top
+    157  f9a7		       c0 25		      cpy	#SCORE_LINES+BUG_BOUNDARY+(BUG_SIZE*2)
+    158  f9a9		       b0 05		      bcs	.bug_movement_boundary_bottom
+    159  f9ab		       a0 25		      ldy	#SCORE_LINES+BUG_BOUNDARY+(BUG_SIZE*2)
+    160  f9ad		       4c b6 f9 	      jmp	.bug_movement_store
+    161  f9b0
+    162  f9b0				   .bug_movement_boundary_bottom
+    163  f9b0		       c0 b0		      cpy	#KERNEL_SCANLINES-BUG_BOUNDARY-BUG_SIZE
+    164  f9b2		       90 02		      bcc	.bug_movement_store
+    165  f9b4		       a0 b0		      ldy	#KERNEL_SCANLINES-BUG_BOUNDARY-BUG_SIZE
+    166  f9b6
+    167  f9b6				   .bug_movement_store
+    168  f9b6		       8a		      txa
+    169  f9b7		       a6 83		      ldx	Temp+0
+    170  f9b9		       95 b0		      sta	BugPosX,x
+    171  f9bb		       94 b2		      sty	BugPosY,x
+    172  f9bd
+    173  f9bd				   .bug_movement_return
+    174  f9bd		       60		      rts
+    175  f9be
+    176  f9be				   BugCollision
+    177  f9be
+    178  f9be		       e0 01		      cpx	#1
+    179  f9c0		       f0 05		      beq	.bug_collision_m1
+    180  f9c2
+    181  f9c2				   .bug_collision_m0
+    182  f9c2							; Collision for M0 (V set)
+    183  f9c2		       24 00		      bit	CXM0P
+    184  f9c4		       70 06		      bvs	.bug_collision_active
+    185  f9c6		       60		      rts
+    186  f9c7
+    187  f9c7				   .bug_collision_m1
+    188  f9c7							; Collision for M1 (N set)
+    189  f9c7		       24 01		      bit	CXM1P
+    190  f9c9		       30 01		      bmi	.bug_collision_active
+    191  f9cb		       60		      rts
+    192  f9cc
+    193  f9cc				   .bug_collision_active
+    194  f9cc
+    195  f9cc							; Reduce players score
+    196  f9cc		       c6 91		      dec	ScoreValue
+    197  f9ce
+    198  f9ce							; Play sound
+    199  f9ce		       20 4f fa 	      jsr	BugColSample
+    200  f9d1
+    201  f9d1		       60		      rts
+    202  f9d2
+    203  f9d2				   BugStunCollision
+    204  f9d2
+    205  f9d2		       e0 01		      cpx	#1
+    206  f9d4		       f0 05		      beq	.bug_stun_collision_m1
+    207  f9d6
+    208  f9d6				   .bug_stun_collision_m0
+    209  f9d6							; Collision for M0 (V set)
+    210  f9d6		       24 00		      bit	CXM0P
+    211  f9d8		       70 06		      bvs	.bug_stun_collision_active
+    212  f9da		       60		      rts
+    213  f9db
+    214  f9db				   .bug_stun_collision_m1
+    215  f9db							; Collision for M1 (N set)
+    216  f9db		       24 01		      bit	CXM1P
+    217  f9dd		       30 01		      bmi	.bug_stun_collision_active
+    218  f9df		       60		      rts
+    219  f9e0
+    220  f9e0				   .bug_stun_collision_active
+    221  f9e0							; Add points to score
+    222  f9e0		       18		      clc
+    223  f9e1		       a5 92		      lda	ScoreValue+1
+    224  f9e3		       69 04		      adc	#BUG_POINTS
+    225  f9e5		       85 92		      sta	ScoreValue+1
+    226  f9e7
+    227  f9e7							; Reset bug
+    228  f9e7		       20 35 f9 	      jsr	BugReset
+    229  f9ea
+    230  f9ea							; Play sample
+    231  f9ea		       20 3e fa 	      jsr	BugSample
+    232  f9ed
+    233  f9ed		       60		      rts
+    234  f9ee
+    235  f9ee							; Horizontal Positioning
+    236  f9ee
+    237  f9ee				   BugPosition
+    238  f9ee
+    239  f9ee		       a2 02		      ldx	#2
+    240  f9f0		       a5 b0		      lda	BugPosX+0
+    241  f9f2		       20 00 f0 	      jsr	PosObject
+    242  f9f5
+    243  f9f5		       a2 03		      ldx	#3
+    244  f9f7		       a5 b1		      lda	BugPosX+1
+    245  f9f9		       20 00 f0 	      jsr	PosObject
+    246  f9fc
+    247  f9fc		       60		      rts
+    248  f9fd
+    249  f9fd							; Scanline Draw
+    250  f9fd
+    251  f9fd				   BugDrawStart
+    252  f9fd
+    253  f9fd		       a0 01		      ldy	#1
+    254  f9ff				   .bug_draw_start_loop
+    255  f9ff
+    256  f9ff							; Set missile 0 & 1 to be 4 clock size
+    257  f9ff		       b9 81 00 	      lda	NuSiz0,y
+    258  fa02		       09 30		      ora	#%00110000
+    259  fa04		       99 81 00 	      sta	NuSiz0,y
+    260  fa07		       99 04 00 	      sta	NUSIZ0,y
+    261  fa0a
+    262  fa0a							; Setup half scanline positions
+    263  fa0a		       b9 b2 00 	      lda	BugPosY,y
+    264  fa0d		       4a		      lsr
+    265  fa0e		       99 b6 00 	      sta	BugDrawPosBottom,y
+    266  fa11
+    267  fa11		       69 04		      adc	#BUG_SIZE/2
+    268  fa13		       99 b8 00 	      sta	BugDrawPosTop,y
+    269  fa16
+    270  fa16		       88		      dey
+    271  fa17		       10 e6		      bpl	.bug_draw_start_loop
+    272  fa19
+    273  fa19		       60		      rts
+    274  fa1a
+    275  fa1a				   BugDraw
+    276  fa1a
+    277  fa1a							; Load half scanline
+    278  fa1a							;    lda Temp+1
+    279  fa1a
+    280  fa1a				   .bug_draw_0
+    281  fa1a		       a0 00		      ldy	#%00000000
+    282  fa1c
+    283  fa1c							; Check top and bottom y pos
+    284  fa1c		       c5 b8		      cmp	BugDrawPosTop+0
+    285  fa1e		       b0 06		      bcs	.bug_draw_0_off
+    286  fa20
+    287  fa20		       c5 b6		      cmp	BugDrawPosBottom+0
+    288  fa22		       90 02		      bcc	.bug_draw_0_off
+    289  fa24
+    290  fa24				   .bug_draw_0_on
+    291  fa24		       a0 02		      ldy	#%00000010
+    292  fa26
+    293  fa26				   .bug_draw_0_off
+    294  fa26		       84 1d		      sty	ENAM0
+    295  fa28
+    296  fa28				   .bug_draw_1
+    297  fa28		       a0 00		      ldy	#%00000000
+    298  fa2a
+    299  fa2a							; Check top and bottom y pos
+    300  fa2a		       c5 b9		      cmp	BugDrawPosTop+1
+    301  fa2c		       b0 06		      bcs	.bug_draw_1_off
+    302  fa2e
+    303  fa2e		       c5 b7		      cmp	BugDrawPosBottom+1
+    304  fa30		       90 02		      bcc	.bug_draw_1_off
+    305  fa32
+    306  fa32				   .bug_draw_1_on
+    307  fa32		       a0 02		      ldy	#%00000010
+    308  fa34
+    309  fa34				   .bug_draw_1_off
+    310  fa34		       84 1e		      sty	ENAM1
+    311  fa36
+    312  fa36				   .bug_draw_return
+    313  fa36		       60		      rts
+    314  fa37
+    315  fa37				   BugClean
+    316  fa37		       a9 00		      lda	#0
+    317  fa39		       85 1d		      sta	ENAM0
+    318  fa3b		       85 1e		      sta	ENAM1
+    319  fa3d		       60		      rts
+    320  fa3e
+    321  fa3e				   BugSample
+    322  fa3e		       a9 1e		      lda	#BUG_SAMPLE_LEN
+    323  fa40		       85 90		      sta	SampleStep
+    324  fa42		       a9 03		      lda	#BUG_SAMPLE_C
+    325  fa44		       85 16		      sta	AUDC1
+    326  fa46		       a9 14		      lda	#BUG_SAMPLE_F
+    327  fa48		       85 18		      sta	AUDF1
+    328  fa4a		       a9 04		      lda	#BUG_SAMPLE_V
+    329  fa4c		       85 1a		      sta	AUDV1
+    330  fa4e		       60		      rts
+    331  fa4f
+    332  fa4f				   BugColSample
+    333  fa4f		       a9 01		      lda	#BUG_COL_SAMPLE_LEN
+    334  fa51		       85 90		      sta	SampleStep
+    335  fa53		       a9 08		      lda	#BUG_COL_SAMPLE_C
+    336  fa55		       85 16		      sta	AUDC1
+    337  fa57		       a9 08		      lda	#BUG_COL_SAMPLE_F
+    338  fa59		       85 18		      sta	AUDF1
+    339  fa5b		       a9 03		      lda	#BUG_COL_SAMPLE_V
+    340  fa5d		       85 1a		      sta	AUDV1
+    341  fa5f		       60		      rts
 ------- FILE game.asm
-     20  fa4c							;    include "objects/swatter.asm"
-     21  fa4c
-     22  fa4c							; Initialization
-     23  fa4c
-     24  fa4c				   GameInit
-     25  fa4c
-     26  fa4c							; Setup logic and kernel
-      0  fa4c					      SET_POINTER	VBlankPtr, GameVerticalBlank
-      1  fa4c				   .POINTER   SET	VBlankPtr
-      2  fa4c				   .ADDRESS   SET	GameVerticalBlank
-      3  fa4c
-      4  fa4c		       a9 97		      LDA	#<.ADDRESS
-      5  fa4e		       85 87		      STA	.POINTER
-      6  fa50		       a9 fa		      LDA	#>.ADDRESS
-      7  fa52		       85 88		      STA	.POINTER+1
-      8  fa54
-      0  fa54					      SET_POINTER	KernelPtr, GameKernel
-      1  fa54				   .POINTER   SET	KernelPtr
-      2  fa54				   .ADDRESS   SET	GameKernel
-      3  fa54
-      4  fa54		       a9 14		      LDA	#<.ADDRESS
-      5  fa56		       85 89		      STA	.POINTER
-      6  fa58		       a9 fb		      LDA	#>.ADDRESS
-      7  fa5a		       85 8a		      STA	.POINTER+1
-      8  fa5c
-      0  fa5c					      SET_POINTER	OverScanPtr, GameOverScan
-      1  fa5c				   .POINTER   SET	OverScanPtr
-      2  fa5c				   .ADDRESS   SET	GameOverScan
-      3  fa5c
-      4  fa5c		       a9 b8		      LDA	#<.ADDRESS
-      5  fa5e		       85 8b		      STA	.POINTER
-      6  fa60		       a9 fa		      LDA	#>.ADDRESS
-      7  fa62		       85 8c		      STA	.POINTER+1
-      8  fa64
-     30  fa64
-     31  fa64							; Mute Audio
-     32  fa64		       a9 00		      lda	#0
-     33  fa66		       85 15		      sta	AUDC0
-     34  fa68		       85 19		      sta	AUDV0
-     35  fa6a		       85 17		      sta	AUDF0
-     36  fa6c		       85 16		      sta	AUDC1
-     37  fa6e		       85 1a		      sta	AUDV1
-     38  fa70		       85 18		      sta	AUDF1
-     39  fa72		       85 90		      sta	SampleStep
-     40  fa74
-     41  fa74							; Load Audio Settings
-     42  fa74		       a9 04		      lda	#GAME_AUDIO_VOLUME
-     43  fa76		       85 19		      sta	AUDV0
-     44  fa78
-     45  fa78							; Make it so that we play the first note immediately
-     46  fa78		       a9 1f		      lda	#GAME_AUDIO_LENGTH-1
-     47  fa7a		       85 8f		      sta	AudioStep
-     48  fa7c		       a9 02		      lda	#2
-     49  fa7e		       85 8e		      sta	FrameTimer
-     50  fa80
-     51  fa80							; Reset NuSiz
-     52  fa80		       a9 00		      lda	#0
-     53  fa82		       85 81		      sta	NuSiz0
-     54  fa84		       85 04		      sta	NUSIZ0
-     55  fa86		       85 82		      sta	NuSiz1
-     56  fa88		       85 05		      sta	NUSIZ1
-     57  fa8a
-     58  fa8a							; Initialize Objects
-     59  fa8a		       20 74 f4 	      jsr	ScoreInit
-     60  fa8d		       20 d0 f5 	      jsr	SpiderInit
-     61  fa90		       20 76 f7 	      jsr	LineInit
-     62  fa93		       20 2c f9 	      jsr	BugInit
-     63  fa96							;    jsr SwatterInit
-     64  fa96
-     65  fa96		       60		      rts
-     66  fa97
-     67  fa97				   GameVerticalBlank
-     68  fa97
-     69  fa97							; Refresh random values
-     70  fa97		       20 13 f0 	      jsr	Random
-     71  fa9a
-     72  fa9a							; Update Objects
-     73  fa9a		       20 e1 f5 	      jsr	SpiderUpdate
-     74  fa9d		       20 8b f7 	      jsr	LineUpdate
-     75  faa0		       20 4d f9 	      jsr	BugUpdate
-     76  faa3							;    jsr SwatterUpdate
-     77  faa3		       20 7d f4 	      jsr	ScoreUpdate
-     78  faa6
-     79  faa6							; Reset Collisions
-     80  faa6		       85 2c		      sta	CXCLR
-     81  faa8
-     82  faa8							; Clear horizontal movement
-     83  faa8		       85 2b		      sta	HMCLR
-     84  faaa
-     85  faaa							; Update Positions
-     86  faaa		       20 ec f6 	      jsr	SpiderPosition
-     87  faad		       20 a9 f8 	      jsr	LinePosition
-     88  fab0		       20 eb f9 	      jsr	BugPosition
-     89  fab3							;    jsr SwatterPosition
-     90  fab3
-     91  fab3							; Set final x positions
-     92  fab3		       85 02		      sta	WSYNC
-     93  fab5		       85 2a		      sta	HMOVE
-     94  fab7
-     95  fab7		       60		      rts
-     96  fab8
-     97  fab8				   GameOverScan
-     98  fab8
-     99  fab8							; Audio Routines
-    100  fab8		       20 d6 fa 	      jsr	GameAudio
-    101  fabb		       20 c2 fa 	      jsr	GameSample
-    102  fabe
-    103  fabe							; State Routines
-    104  fabe		       20 0a fb 	      jsr	GameDeath
-    105  fac1
-    106  fac1		       60		      rts
-    107  fac2
-    108  fac2				   GameSample
-    109  fac2
-    110  fac2		       a6 90		      ldx	SampleStep
-    111  fac4		       e0 00		      cpx	#0
-    112  fac6		       f0 0b		      beq	.game_sample_return
-    113  fac8
-    114  fac8		       ca		      dex
-    115  fac9		       d0 08		      bne	.game_sample_return
-    116  facb
-    117  facb				   .game_sample_mute
-    118  facb		       a9 00		      lda	#0
-    119  facd		       85 1a		      sta	AUDV1
-    120  facf		       85 18		      sta	AUDF1
-    121  fad1		       85 16		      sta	AUDC1
-    122  fad3
-    123  fad3				   .game_sample_return
-    124  fad3		       86 90		      stx	SampleStep
-    125  fad5		       60		      rts
-    126  fad6
-    127  fad6				   GameAudio
-    128  fad6
-    129  fad6		       a6 8e		      ldx	FrameTimer
-    130  fad8		       e0 01		      cpx	#GAME_AUDIO_OFFSET
-    131  fada		       f0 25		      beq	.game_audio_mute_note
-    132  fadc		       e0 00		      cpx	#0
-    133  fade		       d0 29		      bne	.game_audio_return
-    134  fae0
-    135  fae0							; Reset Timer
-    136  fae0		       a2 09		      ldx	#GAME_AUDIO_STEP
-    137  fae2		       86 8e		      stx	FrameTimer
-    138  fae4
-    139  fae4				   .game_audio_play
-    140  fae4
-    141  fae4							; Increment melody position
-    142  fae4		       a4 8f		      ldy	AudioStep
-    143  fae6		       c8		      iny
-    144  fae7
-    145  fae7		       c0 20		      cpy	#GAME_AUDIO_LENGTH
-    146  fae9		       d0 02		      bne	.game_audio_play_note
-    147  faeb
-    148  faeb							; Loop our audio step
-    149  faeb		       a0 00		      ldy	#0
-    150  faed
-    151  faed				   .game_audio_play_note
-    152  faed
-    153  faed							; Save current position
-    154  faed		       84 8f		      sty	AudioStep
-    155  faef
-    156  faef							; Melody Line
-    157  faef		       b9 78 fb 	      lda	GameAudio0,y
-    158  faf2		       c9 ff		      cmp	#$FF
-    159  faf4		       f0 0b		      beq	.game_audio_mute_note
-    160  faf6		       85 17		      sta	AUDF0
-    161  faf8		       a9 06		      lda	#GAME_AUDIO_TONE
-    162  fafa		       85 15		      sta	AUDC0
-    163  fafc		       a9 04		      lda	#GAME_AUDIO_VOLUME
-    164  fafe		       85 19		      sta	AUDV0
-    165  fb00
-    166  fb00		       60		      rts
-    167  fb01
-    168  fb01				   .game_audio_mute_note
-    169  fb01
-    170  fb01		       a9 00		      lda	#0
-    171  fb03		       85 17		      sta	AUDF0
-    172  fb05		       85 15		      sta	AUDC0
-    173  fb07		       85 19		      sta	AUDV0
-    174  fb09
-    175  fb09				   .game_audio_return
-    176  fb09		       60		      rts
-    177  fb0a
-    178  fb0a				   GameDeath
-    179  fb0a		       a5 91		      lda	ScoreValue+0
-    180  fb0c		       c9 00		      cmp	#0
-    181  fb0e		       d0 03		      bne	.game_death_return
-    182  fb10
-    183  fb10							; Show Game Over Screen
-    184  fb10		       20 98 fb 	      jsr	OverInit
-    185  fb13
-    186  fb13				   .game_death_return
-    187  fb13		       60		      rts
-    188  fb14
-    189  fb14				   GameKernel
-    190  fb14
-    191  fb14							; Turn on display
-    192  fb14		       a9 00		      lda	#0
-    193  fb16		       85 01		      sta	VBLANK
-    194  fb18
-    195  fb18				   .game_kernel_score
-    196  fb18
-    197  fb18							; Draw Score on top first
-    198  fb18		       20 9d f4 	      jsr	ScoreDraw
-    199  fb1b
-    200  fb1b				   .game_kernel_objects_start
-    201  fb1b
-    202  fb1b							; Setup Drawing Objects
-    203  fb1b		       20 5d f5 	      jsr	WebDrawStart
-    204  fb1e		       20 f4 f6 	      jsr	SpiderDrawStart
-    205  fb21		       20 b1 f8 	      jsr	LineDrawStart
-    206  fb24		       20 fa f9 	      jsr	BugDrawStart
-    207  fb27							;    jsr SwatterDrawStart
-    208  fb27
-    209  fb27							; Start Scanline Counter
-    210  fb27		       a2 ae		      ldx	#KERNEL_SCANLINES-SCORE_LINES-5
-    211  fb29							; The extra 5 is for processing overflow
-    212  fb29
-    213  fb29							; Half scanline counter in Temp+1
-    214  fb29		       a9 59		      lda	#(KERNEL_SCANLINES-SCORE_LINES)/2
-    215  fb2b		       85 84		      sta	Temp+1
-    216  fb2d
-    217  fb2d				   .game_kernel_objects
-    218  fb2d
-    219  fb2d							; Draw Objects in order
-    220  fb2d
-    221  fb2d							;    jsr LineDraw
-    222  fb2d							;    jsr BugDraw
-    223  fb2d		       20 78 f5 	      jsr	WebDraw	; Every 6 lines
-    224  fb30
-    225  fb30		       85 02		      sta	WSYNC
-    226  fb32		       ca		      dex
-    227  fb33		       f0 34		      beq	.game_kernel_clean
-    228  fb35
-    229  fb35		       20 18 f7 	      jsr	SpiderDraw	; Every odd scanline
-    230  fb38							;    jsr SwatterDraw
-    231  fb38
-    232  fb38		       85 02		      sta	WSYNC
-    233  fb3a		       c6 84		      dec	Temp+1
-    234  fb3c		       ca		      dex
-    235  fb3d		       f0 2a		      beq	.game_kernel_clean
-    236  fb3f
-    237  fb3f		       a5 84		      lda	Temp+1
-    238  fb41		       20 d1 f8 	      jsr	LineDraw
-    239  fb44		       20 17 fa 	      jsr	BugDraw
-    240  fb47
-    241  fb47							;    sta WSYNC
-    242  fb47		       ca		      dex
-    243  fb48		       f0 1f		      beq	.game_kernel_clean
-    244  fb4a
-    245  fb4a		       20 18 f7 	      jsr	SpiderDraw
-    246  fb4d							;    jsr SwatterDraw
-    247  fb4d
-    248  fb4d		       85 02		      sta	WSYNC
-    249  fb4f		       c6 84		      dec	Temp+1
-    250  fb51		       ca		      dex
-    251  fb52		       f0 15		      beq	.game_kernel_clean
-    252  fb54
-    253  fb54		       a5 84		      lda	Temp+1
-    254  fb56		       20 d1 f8 	      jsr	LineDraw
-    255  fb59		       20 17 fa 	      jsr	BugDraw
-    256  fb5c
-    257  fb5c							;    sta WSYNC
-    258  fb5c		       ca		      dex
-    259  fb5d		       f0 0a		      beq	.game_kernel_clean
-    260  fb5f
-    261  fb5f		       20 18 f7 	      jsr	SpiderDraw
-    262  fb62							;    jsr SwatterDraw
-    263  fb62
-    264  fb62		       85 02		      sta	WSYNC
-    265  fb64		       c6 84		      dec	Temp+1
-    266  fb66		       ca		      dex
-    267  fb67		       d0 c4		      bne	.game_kernel_objects
-    268  fb69
-    269  fb69				   .game_kernel_clean
-    270  fb69
-    271  fb69		       20 9a f5 	      jsr	WebClean
-    272  fb6c		       20 49 f7 	      jsr	SpiderClean
-    273  fb6f		       20 e4 f8 	      jsr	LineClean
-    274  fb72		       20 34 fa 	      jsr	BugClean
-    275  fb75							;    jsr SwatterClean
-    276  fb75
-    277  fb75		       85 02		      sta	WSYNC
-    278  fb77
-    279  fb77				   .game_kernel_return
-    280  fb77		       60		      rts
-    281  fb78
-    282  fb78				   GameAudio0
-    283  fb78		       0d		      .byte.b	#13	; D
-    284  fb79		       ff		      .byte.b	#$FF
-    285  fb7a		       0f		      .byte.b	#15	; B
-    286  fb7b		       ff		      .byte.b	#$FF
-    287  fb7c		       0d		      .byte.b	#13	; D
-    288  fb7d		       ff		      .byte.b	#$FF
-    289  fb7e		       0f		      .byte.b	#15	; B
-    290  fb7f		       ff		      .byte.b	#$FF
-    291  fb80		       0d		      .byte.b	#13	; D
-    292  fb81		       0d		      .byte.b	#13	; D
-    293  fb82		       0f		      .byte.b	#15	; B
-    294  fb83		       ff		      .byte.b	#$FF
-    295  fb84		       0c		      .byte.b	#12	; D#
-    296  fb85		       ff		      .byte.b	#$FF
-    297  fb86		       0f		      .byte.b	#15	; B
-    298  fb87		       ff		      .byte.b	#$FF
-    299  fb88		       0b		      .byte.b	#11	; E
-    300  fb89		       ff		      .byte.b	#$FF
-    301  fb8a		       0e		      .byte.b	#14	; C#
-    302  fb8b		       ff		      .byte.b	#$FF
-    303  fb8c		       0b		      .byte.b	#11
-    304  fb8d		       ff		      .byte.b	#$FF
-    305  fb8e		       0e		      .byte.b	#14
-    306  fb8f		       ff		      .byte.b	#$FF
-    307  fb90		       0b		      .byte.b	#11
-    308  fb91		       0b		      .byte.b	#11
-    309  fb92		       0e		      .byte.b	#14
-    310  fb93		       ff		      .byte.b	#$FF
-    311  fb94		       0b		      .byte.b	#11
-    312  fb95		       ff		      .byte.b	#$FF
-    313  fb96		       0e		      .byte.b	#14
-    314  fb97		       ff		      .byte.b	#$FF
+     20  fa60							;    include "objects/swatter.asm"
+     21  fa60
+     22  fa60							; Initialization
+     23  fa60
+     24  fa60				   GameInit
+     25  fa60
+     26  fa60							; Setup logic and kernel
+      0  fa60					      SET_POINTER	VBlankPtr, GameVerticalBlank
+      1  fa60				   .POINTER   SET	VBlankPtr
+      2  fa60				   .ADDRESS   SET	GameVerticalBlank
+      3  fa60
+      4  fa60		       a9 ab		      LDA	#<.ADDRESS
+      5  fa62		       85 87		      STA	.POINTER
+      6  fa64		       a9 fa		      LDA	#>.ADDRESS
+      7  fa66		       85 88		      STA	.POINTER+1
+      8  fa68
+      0  fa68					      SET_POINTER	KernelPtr, GameKernel
+      1  fa68				   .POINTER   SET	KernelPtr
+      2  fa68				   .ADDRESS   SET	GameKernel
+      3  fa68
+      4  fa68		       a9 28		      LDA	#<.ADDRESS
+      5  fa6a		       85 89		      STA	.POINTER
+      6  fa6c		       a9 fb		      LDA	#>.ADDRESS
+      7  fa6e		       85 8a		      STA	.POINTER+1
+      8  fa70
+      0  fa70					      SET_POINTER	OverScanPtr, GameOverScan
+      1  fa70				   .POINTER   SET	OverScanPtr
+      2  fa70				   .ADDRESS   SET	GameOverScan
+      3  fa70
+      4  fa70		       a9 cc		      LDA	#<.ADDRESS
+      5  fa72		       85 8b		      STA	.POINTER
+      6  fa74		       a9 fa		      LDA	#>.ADDRESS
+      7  fa76		       85 8c		      STA	.POINTER+1
+      8  fa78
+     30  fa78
+     31  fa78							; Mute Audio
+     32  fa78		       a9 00		      lda	#0
+     33  fa7a		       85 15		      sta	AUDC0
+     34  fa7c		       85 19		      sta	AUDV0
+     35  fa7e		       85 17		      sta	AUDF0
+     36  fa80		       85 16		      sta	AUDC1
+     37  fa82		       85 1a		      sta	AUDV1
+     38  fa84		       85 18		      sta	AUDF1
+     39  fa86		       85 90		      sta	SampleStep
+     40  fa88
+     41  fa88							; Load Audio Settings
+     42  fa88		       a9 04		      lda	#GAME_AUDIO_VOLUME
+     43  fa8a		       85 19		      sta	AUDV0
+     44  fa8c
+     45  fa8c							; Make it so that we play the first note immediately
+     46  fa8c		       a9 1f		      lda	#GAME_AUDIO_LENGTH-1
+     47  fa8e		       85 8f		      sta	AudioStep
+     48  fa90		       a9 02		      lda	#2
+     49  fa92		       85 8e		      sta	FrameTimer
+     50  fa94
+     51  fa94							; Reset NuSiz
+     52  fa94		       a9 00		      lda	#0
+     53  fa96		       85 81		      sta	NuSiz0
+     54  fa98		       85 04		      sta	NUSIZ0
+     55  fa9a		       85 82		      sta	NuSiz1
+     56  fa9c		       85 05		      sta	NUSIZ1
+     57  fa9e
+     58  fa9e							; Initialize Objects
+     59  fa9e		       20 74 f4 	      jsr	ScoreInit
+     60  faa1		       20 d0 f5 	      jsr	SpiderInit
+     61  faa4		       20 76 f7 	      jsr	LineInit
+     62  faa7		       20 2c f9 	      jsr	BugInit
+     63  faaa							;    jsr SwatterInit
+     64  faaa
+     65  faaa		       60		      rts
+     66  faab
+     67  faab				   GameVerticalBlank
+     68  faab
+     69  faab							; Refresh random values
+     70  faab		       20 13 f0 	      jsr	Random
+     71  faae
+     72  faae							; Update Objects
+     73  faae		       20 e1 f5 	      jsr	SpiderUpdate
+     74  fab1		       20 8b f7 	      jsr	LineUpdate
+     75  fab4		       20 4d f9 	      jsr	BugUpdate
+     76  fab7							;    jsr SwatterUpdate
+     77  fab7		       20 7d f4 	      jsr	ScoreUpdate
+     78  faba
+     79  faba							; Reset Collisions
+     80  faba		       85 2c		      sta	CXCLR
+     81  fabc
+     82  fabc							; Clear horizontal movement
+     83  fabc		       85 2b		      sta	HMCLR
+     84  fabe
+     85  fabe							; Update Positions
+     86  fabe		       20 ec f6 	      jsr	SpiderPosition
+     87  fac1		       20 a9 f8 	      jsr	LinePosition
+     88  fac4		       20 ee f9 	      jsr	BugPosition
+     89  fac7							;    jsr SwatterPosition
+     90  fac7
+     91  fac7							; Set final x positions
+     92  fac7		       85 02		      sta	WSYNC
+     93  fac9		       85 2a		      sta	HMOVE
+     94  facb
+     95  facb		       60		      rts
+     96  facc
+     97  facc				   GameOverScan
+     98  facc
+     99  facc							; Audio Routines
+    100  facc		       20 ea fa 	      jsr	GameAudio
+    101  facf		       20 d6 fa 	      jsr	GameSample
+    102  fad2
+    103  fad2							; State Routines
+    104  fad2		       20 1e fb 	      jsr	GameDeath
+    105  fad5
+    106  fad5		       60		      rts
+    107  fad6
+    108  fad6				   GameSample
+    109  fad6
+    110  fad6		       a6 90		      ldx	SampleStep
+    111  fad8		       e0 00		      cpx	#0
+    112  fada		       f0 0b		      beq	.game_sample_return
+    113  fadc
+    114  fadc		       ca		      dex
+    115  fadd		       d0 08		      bne	.game_sample_return
+    116  fadf
+    117  fadf				   .game_sample_mute
+    118  fadf		       a9 00		      lda	#0
+    119  fae1		       85 1a		      sta	AUDV1
+    120  fae3		       85 18		      sta	AUDF1
+    121  fae5		       85 16		      sta	AUDC1
+    122  fae7
+    123  fae7				   .game_sample_return
+    124  fae7		       86 90		      stx	SampleStep
+    125  fae9		       60		      rts
+    126  faea
+    127  faea				   GameAudio
+    128  faea
+    129  faea		       a6 8e		      ldx	FrameTimer
+    130  faec		       e0 01		      cpx	#GAME_AUDIO_OFFSET
+    131  faee		       f0 25		      beq	.game_audio_mute_note
+    132  faf0		       e0 00		      cpx	#0
+    133  faf2		       d0 29		      bne	.game_audio_return
+    134  faf4
+    135  faf4							; Reset Timer
+    136  faf4		       a2 09		      ldx	#GAME_AUDIO_STEP
+    137  faf6		       86 8e		      stx	FrameTimer
+    138  faf8
+    139  faf8				   .game_audio_play
+    140  faf8
+    141  faf8							; Increment melody position
+    142  faf8		       a4 8f		      ldy	AudioStep
+    143  fafa		       c8		      iny
+    144  fafb
+    145  fafb		       c0 20		      cpy	#GAME_AUDIO_LENGTH
+    146  fafd		       d0 02		      bne	.game_audio_play_note
+    147  faff
+    148  faff							; Loop our audio step
+    149  faff		       a0 00		      ldy	#0
+    150  fb01
+    151  fb01				   .game_audio_play_note
+    152  fb01
+    153  fb01							; Save current position
+    154  fb01		       84 8f		      sty	AudioStep
+    155  fb03
+    156  fb03							; Melody Line
+    157  fb03		       b9 8c fb 	      lda	GameAudio0,y
+    158  fb06		       c9 ff		      cmp	#$FF
+    159  fb08		       f0 0b		      beq	.game_audio_mute_note
+    160  fb0a		       85 17		      sta	AUDF0
+    161  fb0c		       a9 06		      lda	#GAME_AUDIO_TONE
+    162  fb0e		       85 15		      sta	AUDC0
+    163  fb10		       a9 04		      lda	#GAME_AUDIO_VOLUME
+    164  fb12		       85 19		      sta	AUDV0
+    165  fb14
+    166  fb14		       60		      rts
+    167  fb15
+    168  fb15				   .game_audio_mute_note
+    169  fb15
+    170  fb15		       a9 00		      lda	#0
+    171  fb17		       85 17		      sta	AUDF0
+    172  fb19		       85 15		      sta	AUDC0
+    173  fb1b		       85 19		      sta	AUDV0
+    174  fb1d
+    175  fb1d				   .game_audio_return
+    176  fb1d		       60		      rts
+    177  fb1e
+    178  fb1e				   GameDeath
+    179  fb1e		       a5 91		      lda	ScoreValue+0
+    180  fb20		       c9 00		      cmp	#0
+    181  fb22		       d0 03		      bne	.game_death_return
+    182  fb24
+    183  fb24							; Show Game Over Screen
+    184  fb24		       20 ac fb 	      jsr	OverInit
+    185  fb27
+    186  fb27				   .game_death_return
+    187  fb27		       60		      rts
+    188  fb28
+    189  fb28				   GameKernel
+    190  fb28
+    191  fb28							; Turn on display
+    192  fb28		       a9 00		      lda	#0
+    193  fb2a		       85 01		      sta	VBLANK
+    194  fb2c
+    195  fb2c				   .game_kernel_score
+    196  fb2c
+    197  fb2c							; Draw Score on top first
+    198  fb2c		       20 9d f4 	      jsr	ScoreDraw
+    199  fb2f
+    200  fb2f				   .game_kernel_objects_start
+    201  fb2f
+    202  fb2f							; Setup Drawing Objects
+    203  fb2f		       20 5d f5 	      jsr	WebDrawStart
+    204  fb32		       20 f4 f6 	      jsr	SpiderDrawStart
+    205  fb35		       20 b1 f8 	      jsr	LineDrawStart
+    206  fb38		       20 fd f9 	      jsr	BugDrawStart
+    207  fb3b							;    jsr SwatterDrawStart
+    208  fb3b
+    209  fb3b							; Start Scanline Counter
+    210  fb3b		       a2 ae		      ldx	#KERNEL_SCANLINES-SCORE_LINES-5
+    211  fb3d							; The extra 5 is for processing overflow
+    212  fb3d
+    213  fb3d							; Half scanline counter in Temp+1
+    214  fb3d		       a9 59		      lda	#(KERNEL_SCANLINES-SCORE_LINES)/2
+    215  fb3f		       85 84		      sta	Temp+1
+    216  fb41
+    217  fb41				   .game_kernel_objects
+    218  fb41
+    219  fb41							; Draw Objects in order
+    220  fb41
+    221  fb41							;    jsr LineDraw
+    222  fb41							;    jsr BugDraw
+    223  fb41		       20 78 f5 	      jsr	WebDraw	; Every 6 lines
+    224  fb44
+    225  fb44		       85 02		      sta	WSYNC
+    226  fb46		       ca		      dex
+    227  fb47		       f0 34		      beq	.game_kernel_clean
+    228  fb49
+    229  fb49		       20 18 f7 	      jsr	SpiderDraw	; Every odd scanline
+    230  fb4c							;    jsr SwatterDraw
+    231  fb4c
+    232  fb4c		       85 02		      sta	WSYNC
+    233  fb4e		       c6 84		      dec	Temp+1
+    234  fb50		       ca		      dex
+    235  fb51		       f0 2a		      beq	.game_kernel_clean
+    236  fb53
+    237  fb53		       a5 84		      lda	Temp+1
+    238  fb55		       20 d1 f8 	      jsr	LineDraw
+    239  fb58		       20 1a fa 	      jsr	BugDraw
+    240  fb5b
+    241  fb5b							;    sta WSYNC
+    242  fb5b		       ca		      dex
+    243  fb5c		       f0 1f		      beq	.game_kernel_clean
+    244  fb5e
+    245  fb5e		       20 18 f7 	      jsr	SpiderDraw
+    246  fb61							;    jsr SwatterDraw
+    247  fb61
+    248  fb61		       85 02		      sta	WSYNC
+    249  fb63		       c6 84		      dec	Temp+1
+    250  fb65		       ca		      dex
+    251  fb66		       f0 15		      beq	.game_kernel_clean
+    252  fb68
+    253  fb68		       a5 84		      lda	Temp+1
+    254  fb6a		       20 d1 f8 	      jsr	LineDraw
+    255  fb6d		       20 1a fa 	      jsr	BugDraw
+    256  fb70
+    257  fb70							;    sta WSYNC
+    258  fb70		       ca		      dex
+    259  fb71		       f0 0a		      beq	.game_kernel_clean
+    260  fb73
+    261  fb73		       20 18 f7 	      jsr	SpiderDraw
+    262  fb76							;    jsr SwatterDraw
+    263  fb76
+    264  fb76		       85 02		      sta	WSYNC
+    265  fb78		       c6 84		      dec	Temp+1
+    266  fb7a		       ca		      dex
+    267  fb7b		       d0 c4		      bne	.game_kernel_objects
+    268  fb7d
+    269  fb7d				   .game_kernel_clean
+    270  fb7d
+    271  fb7d		       20 9a f5 	      jsr	WebClean
+    272  fb80		       20 49 f7 	      jsr	SpiderClean
+    273  fb83		       20 e4 f8 	      jsr	LineClean
+    274  fb86		       20 37 fa 	      jsr	BugClean
+    275  fb89							;    jsr SwatterClean
+    276  fb89
+    277  fb89		       85 02		      sta	WSYNC
+    278  fb8b
+    279  fb8b				   .game_kernel_return
+    280  fb8b		       60		      rts
+    281  fb8c
+    282  fb8c				   GameAudio0
+    283  fb8c		       0d		      .byte.b	#13	; D
+    284  fb8d		       ff		      .byte.b	#$FF
+    285  fb8e		       0f		      .byte.b	#15	; B
+    286  fb8f		       ff		      .byte.b	#$FF
+    287  fb90		       0d		      .byte.b	#13	; D
+    288  fb91		       ff		      .byte.b	#$FF
+    289  fb92		       0f		      .byte.b	#15	; B
+    290  fb93		       ff		      .byte.b	#$FF
+    291  fb94		       0d		      .byte.b	#13	; D
+    292  fb95		       0d		      .byte.b	#13	; D
+    293  fb96		       0f		      .byte.b	#15	; B
+    294  fb97		       ff		      .byte.b	#$FF
+    295  fb98		       0c		      .byte.b	#12	; D#
+    296  fb99		       ff		      .byte.b	#$FF
+    297  fb9a		       0f		      .byte.b	#15	; B
+    298  fb9b		       ff		      .byte.b	#$FF
+    299  fb9c		       0b		      .byte.b	#11	; E
+    300  fb9d		       ff		      .byte.b	#$FF
+    301  fb9e		       0e		      .byte.b	#14	; C#
+    302  fb9f		       ff		      .byte.b	#$FF
+    303  fba0		       0b		      .byte.b	#11
+    304  fba1		       ff		      .byte.b	#$FF
+    305  fba2		       0e		      .byte.b	#14
+    306  fba3		       ff		      .byte.b	#$FF
+    307  fba4		       0b		      .byte.b	#11
+    308  fba5		       0b		      .byte.b	#11
+    309  fba6		       0e		      .byte.b	#14
+    310  fba7		       ff		      .byte.b	#$FF
+    311  fba8		       0b		      .byte.b	#11
+    312  fba9		       ff		      .byte.b	#$FF
+    313  fbaa		       0e		      .byte.b	#14
+    314  fbab		       ff		      .byte.b	#$FF
 ------- FILE kernel.asm
 ------- FILE over.asm LEVEL 2 PASS 2
-      0  fb98					      include	"over.asm"
-      1  fb98							;================
-      2  fb98							; Constants
-      3  fb98							;================
-      4  fb98
-      5  fb98		       00 dc	   OVER_FRAMES =	220
-      6  fb98
-      7  fb98		       00 00	   OVER_BG_COLOR =	#$00
-      8  fb98		       00 44	   OVER_FG_COLOR =	#$44
-      9  fb98
-     10  fb98		       00 07	   OVER_AUDIO_TONE =	7
-     11  fb98		       00 06	   OVER_AUDIO_VOLUME =	6	; 15 is max
-     12  fb98		       00 06	   OVER_AUDIO_LENGTH =	6
-     13  fb98		       00 10	   OVER_AUDIO_STEP =	16
-     14  fb98
-     15  fb98		       00 09	   OVER_IMAGE_SIZE =	9
-     16  fb98		       00 08	   OVER_IMAGE_LINE_SIZE =	8
-     17  fb98		       00 48	   OVER_IMAGE_LINES =	OVER_IMAGE_SIZE*OVER_IMAGE_LINE_SIZE
-     18  fb98		       00 35	   OVER_IMAGE_PADDING =	#(KERNEL_SCANLINES-SCORE_LINES-OVER_IMAGE_LINES)/2
-     19  fb98
-     20  fb98				   OverInit
-     21  fb98
-     22  fb98							; Setup logic and kernel
-      0  fb98					      SET_POINTER	VBlankPtr, OverVerticalBlank
-      1  fb98				   .POINTER   SET	VBlankPtr
-      2  fb98				   .ADDRESS   SET	OverVerticalBlank
-      3  fb98
-      4  fb98		       a9 da		      LDA	#<.ADDRESS
-      5  fb9a		       85 87		      STA	.POINTER
-      6  fb9c		       a9 fb		      LDA	#>.ADDRESS
-      7  fb9e		       85 88		      STA	.POINTER+1
-      8  fba0
-      0  fba0					      SET_POINTER	KernelPtr, OverKernel
-      1  fba0				   .POINTER   SET	KernelPtr
-      2  fba0				   .ADDRESS   SET	OverKernel
-      3  fba0
-      4  fba0		       a9 18		      LDA	#<.ADDRESS
-      5  fba2		       85 89		      STA	.POINTER
-      6  fba4		       a9 fc		      LDA	#>.ADDRESS
-      7  fba6		       85 8a		      STA	.POINTER+1
-      8  fba8
-      0  fba8					      SET_POINTER	OverScanPtr, OverOverScan
-      1  fba8				   .POINTER   SET	OverScanPtr
-      2  fba8				   .ADDRESS   SET	OverOverScan
-      3  fba8
-      4  fba8		       a9 de		      LDA	#<.ADDRESS
-      5  fbaa		       85 8b		      STA	.POINTER
-      6  fbac		       a9 fb		      LDA	#>.ADDRESS
-      7  fbae		       85 8c		      STA	.POINTER+1
-      8  fbb0
-     26  fbb0
-     27  fbb0							; Load Colors
-     28  fbb0		       a9 00		      lda	#OVER_BG_COLOR
-     29  fbb2		       85 09		      sta	COLUBK
-     30  fbb4		       a9 44		      lda	#OVER_FG_COLOR
-     31  fbb6		       85 08		      sta	COLUPF
-     32  fbb8
-     33  fbb8							; Load audio settings
-     34  fbb8		       a9 07		      lda	#OVER_AUDIO_TONE
-     35  fbba		       85 15		      sta	AUDC0
-     36  fbbc		       a9 06		      lda	#OVER_AUDIO_VOLUME
-     37  fbbe		       85 19		      sta	AUDV0
-     38  fbc0		       a9 00		      lda	#0
-     39  fbc2		       85 16		      sta	AUDC1
-     40  fbc4		       85 1a		      sta	AUDV1
-     41  fbc6		       a9 00		      lda	#0
-     42  fbc8		       85 8f		      sta	AudioStep
-     43  fbca
-     44  fbca							; Play first note
-     45  fbca		       ad 6a fc 	      lda	OverAudio0,AudioStep
-     46  fbcd		       85 17		      sta	AUDF0
-     47  fbcf
-     48  fbcf							; Setup frame counters
-     49  fbcf		       a9 00		      lda	#0
-     50  fbd1		       85 8d		      sta	Frame
-     51  fbd3		       a9 10		      lda	#OVER_AUDIO_STEP
-     52  fbd5		       85 8e		      sta	FrameTimer
-     53  fbd7		       85 84		      sta	Temp+1
-     54  fbd9
-     55  fbd9		       60		      rts
-     56  fbda
-     57  fbda				   OverVerticalBlank
-     58  fbda		       20 7d f4 	      jsr	ScoreUpdate
-     59  fbdd		       60		      rts
-     60  fbde
-     61  fbde				   OverOverScan
-     62  fbde		       20 e5 fb 	      jsr	OverAudio
-     63  fbe1		       20 0e fc 	      jsr	OverState
-     64  fbe4		       60		      rts
-     65  fbe5
-     66  fbe5				   OverAudio
-     67  fbe5
-     68  fbe5		       a6 8e		      ldx	FrameTimer
-     69  fbe7		       e0 00		      cpx	#0
-     70  fbe9		       d0 22		      bne	.over_audio_return
-     71  fbeb
-     72  fbeb							; Reset Timer
-     73  fbeb		       a6 84		      ldx	Temp+1
-     74  fbed					      REPEAT	3
-     75  fbed		       e8		      inx
-     74  fbed					      REPEND
-     75  fbee		       e8		      inx
-     74  fbee					      REPEND
-     75  fbef		       e8		      inx
-     76  fbf0					      REPEND
-     77  fbf0		       86 8e		      stx	FrameTimer
-     78  fbf2		       86 84		      stx	Temp+1
-     79  fbf4
-     80  fbf4				   .over_audio_play
-     81  fbf4
-     82  fbf4							; Increment melody position
-     83  fbf4		       a4 8f		      ldy	AudioStep
-     84  fbf6		       c8		      iny
-     85  fbf7
-     86  fbf7		       c0 06		      cpy	#OVER_AUDIO_LENGTH
-     87  fbf9		       f0 0c		      beq	.over_audio_mute_note
-     88  fbfb
-     89  fbfb				   .over_audio_play_note
-     90  fbfb
-     91  fbfb							; Save current position
-     92  fbfb		       84 8f		      sty	AudioStep
-     93  fbfd
-     94  fbfd							; Melody Line
-     95  fbfd		       b9 6a fc 	      lda	OverAudio0,y
-     96  fc00		       85 17		      sta	AUDF0
-     97  fc02		       a9 06		      lda	#OVER_AUDIO_VOLUME
-     98  fc04		       85 19		      sta	AUDV0
-     99  fc06
-    100  fc06		       60		      rts
-    101  fc07
-    102  fc07				   .over_audio_mute_note
-    103  fc07		       a9 00		      lda	#0
-    104  fc09		       85 17		      sta	AUDF0
-    105  fc0b		       85 19		      sta	AUDV0
-    106  fc0d
-    107  fc0d				   .over_audio_return
-    108  fc0d		       60		      rts
-    109  fc0e
-    110  fc0e				   OverState
-    111  fc0e		       a5 8d		      lda	Frame
-    112  fc10		       c9 dc		      cmp	#OVER_FRAMES
-    113  fc12		       d0 03		      bne	.over_state_return
-    114  fc14
-    115  fc14		       20 f5 f1 	      jsr	TitleInit
-    116  fc17
-    117  fc17				   .over_state_return
-    118  fc17		       60		      rts
-    119  fc18
-    120  fc18				   OverKernel
-    121  fc18
-    122  fc18							; Turn on display
-    123  fc18		       a9 00		      lda	#0
-    124  fc1a		       85 01		      sta	VBLANK
-    125  fc1c
-    126  fc1c				   .over_kernel_score
-    127  fc1c
-    128  fc1c							; Draw Score on top first (no update)
-    129  fc1c		       20 9d f4 	      jsr	ScoreDraw
-    130  fc1f
-    131  fc1f				   .over_kernel_init
-    132  fc1f							; Playfield Control
-    133  fc1f		       a5 80		      lda	CtrlPf
-    134  fc21		       29 fd		      and	#%11111101	; Use playfield foreground color
-    135  fc23		       09 01		      ora	#%00000001	; Set mirroring
-    136  fc25		       85 80		      sta	CtrlPf
-    137  fc27		       85 0a		      sta	CTRLPF
-    138  fc29
-    139  fc29				   .over_kernel_top_padding
-    140  fc29							; Top Padding
-    141  fc29		       20 48 fc 	      jsr	OverPadding
-    142  fc2c
-    143  fc2c				   .over_kernel_image
-    144  fc2c		       a2 08		      ldx	#OVER_IMAGE_SIZE-1
-    145  fc2e
-    146  fc2e				   .over_kernel_image_next
-    147  fc2e		       bd 61 fc 	      lda	OverImagePF2,x
-    148  fc31		       85 0f		      sta	PF2
-    149  fc33		       bd 58 fc 	      lda	OverImagePF1,x
-    150  fc36		       85 0e		      sta	PF1
-    151  fc38							;    lda OverImagePF0,x
-    152  fc38							;    sta PF0
-    153  fc38
-    154  fc38		       a0 08		      ldy	#OVER_IMAGE_LINE_SIZE
-    155  fc3a				   .over_kernel_image_loop
-    156  fc3a		       85 02		      sta	WSYNC
-    157  fc3c		       88		      dey
-    158  fc3d		       d0 fb		      bne	.over_kernel_image_loop
-    159  fc3f
-    160  fc3f		       ca		      dex
-    161  fc40		       10 ec		      bpl	.over_kernel_image_next
-    162  fc42
-    163  fc42				   .over_kernel_bottom_padding
-    164  fc42							; Bottom Padding
-    165  fc42		       20 48 fc 	      jsr	OverPadding
-    166  fc45
-    167  fc45				   .over_kernel_return
-    168  fc45		       85 02		      sta	WSYNC	; This extra line is to account for constant rounding
-    169  fc47		       60		      rts
-    170  fc48
-    171  fc48				   OverPadding
-    172  fc48		       a9 00		      lda	#0
-    173  fc4a		       85 0d		      sta	PF0
-    174  fc4c		       85 0e		      sta	PF1
-    175  fc4e		       85 0f		      sta	PF2
-    176  fc50
-    177  fc50		       a2 35		      ldx	#OVER_IMAGE_PADDING
-    178  fc52				   .over_padding_loop
-    179  fc52		       85 02		      sta	WSYNC
-    180  fc54		       ca		      dex
-    181  fc55		       d0 fb		      bne	.over_padding_loop
-    182  fc57
-    183  fc57		       60		      rts
-    184  fc58
-    185  fc58				   OverAssets
-    186  fc58
-    187  fc58							; Assets
+      0  fbac					      include	"over.asm"
+      1  fbac							;================
+      2  fbac							; Constants
+      3  fbac							;================
+      4  fbac
+      5  fbac		       00 dc	   OVER_FRAMES =	220
+      6  fbac
+      7  fbac		       00 00	   OVER_BG_COLOR =	#$00
+      8  fbac		       00 44	   OVER_FG_COLOR =	#$44
+      9  fbac
+     10  fbac		       00 07	   OVER_AUDIO_TONE =	7
+     11  fbac		       00 06	   OVER_AUDIO_VOLUME =	6	; 15 is max
+     12  fbac		       00 06	   OVER_AUDIO_LENGTH =	6
+     13  fbac		       00 10	   OVER_AUDIO_STEP =	16
+     14  fbac
+     15  fbac		       00 09	   OVER_IMAGE_SIZE =	9
+     16  fbac		       00 08	   OVER_IMAGE_LINE_SIZE =	8
+     17  fbac		       00 48	   OVER_IMAGE_LINES =	OVER_IMAGE_SIZE*OVER_IMAGE_LINE_SIZE
+     18  fbac		       00 35	   OVER_IMAGE_PADDING =	#(KERNEL_SCANLINES-SCORE_LINES-OVER_IMAGE_LINES)/2
+     19  fbac
+     20  fbac				   OverInit
+     21  fbac
+     22  fbac							; Setup logic and kernel
+      0  fbac					      SET_POINTER	VBlankPtr, OverVerticalBlank
+      1  fbac				   .POINTER   SET	VBlankPtr
+      2  fbac				   .ADDRESS   SET	OverVerticalBlank
+      3  fbac
+      4  fbac		       a9 ee		      LDA	#<.ADDRESS
+      5  fbae		       85 87		      STA	.POINTER
+      6  fbb0		       a9 fb		      LDA	#>.ADDRESS
+      7  fbb2		       85 88		      STA	.POINTER+1
+      8  fbb4
+      0  fbb4					      SET_POINTER	KernelPtr, OverKernel
+      1  fbb4				   .POINTER   SET	KernelPtr
+      2  fbb4				   .ADDRESS   SET	OverKernel
+      3  fbb4
+      4  fbb4		       a9 2c		      LDA	#<.ADDRESS
+      5  fbb6		       85 89		      STA	.POINTER
+      6  fbb8		       a9 fc		      LDA	#>.ADDRESS
+      7  fbba		       85 8a		      STA	.POINTER+1
+      8  fbbc
+      0  fbbc					      SET_POINTER	OverScanPtr, OverOverScan
+      1  fbbc				   .POINTER   SET	OverScanPtr
+      2  fbbc				   .ADDRESS   SET	OverOverScan
+      3  fbbc
+      4  fbbc		       a9 f2		      LDA	#<.ADDRESS
+      5  fbbe		       85 8b		      STA	.POINTER
+      6  fbc0		       a9 fb		      LDA	#>.ADDRESS
+      7  fbc2		       85 8c		      STA	.POINTER+1
+      8  fbc4
+     26  fbc4
+     27  fbc4							; Load Colors
+     28  fbc4		       a9 00		      lda	#OVER_BG_COLOR
+     29  fbc6		       85 09		      sta	COLUBK
+     30  fbc8		       a9 44		      lda	#OVER_FG_COLOR
+     31  fbca		       85 08		      sta	COLUPF
+     32  fbcc
+     33  fbcc							; Load audio settings
+     34  fbcc		       a9 07		      lda	#OVER_AUDIO_TONE
+     35  fbce		       85 15		      sta	AUDC0
+     36  fbd0		       a9 06		      lda	#OVER_AUDIO_VOLUME
+     37  fbd2		       85 19		      sta	AUDV0
+     38  fbd4		       a9 00		      lda	#0
+     39  fbd6		       85 16		      sta	AUDC1
+     40  fbd8		       85 1a		      sta	AUDV1
+     41  fbda		       a9 00		      lda	#0
+     42  fbdc		       85 8f		      sta	AudioStep
+     43  fbde
+     44  fbde							; Play first note
+     45  fbde		       ad 7e fc 	      lda	OverAudio0,AudioStep
+     46  fbe1		       85 17		      sta	AUDF0
+     47  fbe3
+     48  fbe3							; Setup frame counters
+     49  fbe3		       a9 00		      lda	#0
+     50  fbe5		       85 8d		      sta	Frame
+     51  fbe7		       a9 10		      lda	#OVER_AUDIO_STEP
+     52  fbe9		       85 8e		      sta	FrameTimer
+     53  fbeb		       85 84		      sta	Temp+1
+     54  fbed
+     55  fbed		       60		      rts
+     56  fbee
+     57  fbee				   OverVerticalBlank
+     58  fbee		       20 7d f4 	      jsr	ScoreUpdate
+     59  fbf1		       60		      rts
+     60  fbf2
+     61  fbf2				   OverOverScan
+     62  fbf2		       20 f9 fb 	      jsr	OverAudio
+     63  fbf5		       20 22 fc 	      jsr	OverState
+     64  fbf8		       60		      rts
+     65  fbf9
+     66  fbf9				   OverAudio
+     67  fbf9
+     68  fbf9		       a6 8e		      ldx	FrameTimer
+     69  fbfb		       e0 00		      cpx	#0
+     70  fbfd		       d0 22		      bne	.over_audio_return
+     71  fbff
+     72  fbff							; Reset Timer
+     73  fbff		       a6 84		      ldx	Temp+1
+     74  fc01					      REPEAT	3
+     75  fc01		       e8		      inx
+     74  fc01					      REPEND
+     75  fc02		       e8		      inx
+     74  fc02					      REPEND
+     75  fc03		       e8		      inx
+     76  fc04					      REPEND
+     77  fc04		       86 8e		      stx	FrameTimer
+     78  fc06		       86 84		      stx	Temp+1
+     79  fc08
+     80  fc08				   .over_audio_play
+     81  fc08
+     82  fc08							; Increment melody position
+     83  fc08		       a4 8f		      ldy	AudioStep
+     84  fc0a		       c8		      iny
+     85  fc0b
+     86  fc0b		       c0 06		      cpy	#OVER_AUDIO_LENGTH
+     87  fc0d		       f0 0c		      beq	.over_audio_mute_note
+     88  fc0f
+     89  fc0f				   .over_audio_play_note
+     90  fc0f
+     91  fc0f							; Save current position
+     92  fc0f		       84 8f		      sty	AudioStep
+     93  fc11
+     94  fc11							; Melody Line
+     95  fc11		       b9 7e fc 	      lda	OverAudio0,y
+     96  fc14		       85 17		      sta	AUDF0
+     97  fc16		       a9 06		      lda	#OVER_AUDIO_VOLUME
+     98  fc18		       85 19		      sta	AUDV0
+     99  fc1a
+    100  fc1a		       60		      rts
+    101  fc1b
+    102  fc1b				   .over_audio_mute_note
+    103  fc1b		       a9 00		      lda	#0
+    104  fc1d		       85 17		      sta	AUDF0
+    105  fc1f		       85 19		      sta	AUDV0
+    106  fc21
+    107  fc21				   .over_audio_return
+    108  fc21		       60		      rts
+    109  fc22
+    110  fc22				   OverState
+    111  fc22		       a5 8d		      lda	Frame
+    112  fc24		       c9 dc		      cmp	#OVER_FRAMES
+    113  fc26		       d0 03		      bne	.over_state_return
+    114  fc28
+    115  fc28		       20 f5 f1 	      jsr	TitleInit
+    116  fc2b
+    117  fc2b				   .over_state_return
+    118  fc2b		       60		      rts
+    119  fc2c
+    120  fc2c				   OverKernel
+    121  fc2c
+    122  fc2c							; Turn on display
+    123  fc2c		       a9 00		      lda	#0
+    124  fc2e		       85 01		      sta	VBLANK
+    125  fc30
+    126  fc30				   .over_kernel_score
+    127  fc30
+    128  fc30							; Draw Score on top first (no update)
+    129  fc30		       20 9d f4 	      jsr	ScoreDraw
+    130  fc33
+    131  fc33				   .over_kernel_init
+    132  fc33							; Playfield Control
+    133  fc33		       a5 80		      lda	CtrlPf
+    134  fc35		       29 fd		      and	#%11111101	; Use playfield foreground color
+    135  fc37		       09 01		      ora	#%00000001	; Set mirroring
+    136  fc39		       85 80		      sta	CtrlPf
+    137  fc3b		       85 0a		      sta	CTRLPF
+    138  fc3d
+    139  fc3d				   .over_kernel_top_padding
+    140  fc3d							; Top Padding
+    141  fc3d		       20 5c fc 	      jsr	OverPadding
+    142  fc40
+    143  fc40				   .over_kernel_image
+    144  fc40		       a2 08		      ldx	#OVER_IMAGE_SIZE-1
+    145  fc42
+    146  fc42				   .over_kernel_image_next
+    147  fc42		       bd 75 fc 	      lda	OverImagePF2,x
+    148  fc45		       85 0f		      sta	PF2
+    149  fc47		       bd 6c fc 	      lda	OverImagePF1,x
+    150  fc4a		       85 0e		      sta	PF1
+    151  fc4c							;    lda OverImagePF0,x
+    152  fc4c							;    sta PF0
+    153  fc4c
+    154  fc4c		       a0 08		      ldy	#OVER_IMAGE_LINE_SIZE
+    155  fc4e				   .over_kernel_image_loop
+    156  fc4e		       85 02		      sta	WSYNC
+    157  fc50		       88		      dey
+    158  fc51		       d0 fb		      bne	.over_kernel_image_loop
+    159  fc53
+    160  fc53		       ca		      dex
+    161  fc54		       10 ec		      bpl	.over_kernel_image_next
+    162  fc56
+    163  fc56				   .over_kernel_bottom_padding
+    164  fc56							; Bottom Padding
+    165  fc56		       20 5c fc 	      jsr	OverPadding
+    166  fc59
+    167  fc59				   .over_kernel_return
+    168  fc59		       85 02		      sta	WSYNC	; This extra line is to account for constant rounding
+    169  fc5b		       60		      rts
+    170  fc5c
+    171  fc5c				   OverPadding
+    172  fc5c		       a9 00		      lda	#0
+    173  fc5e		       85 0d		      sta	PF0
+    174  fc60		       85 0e		      sta	PF1
+    175  fc62		       85 0f		      sta	PF2
+    176  fc64
+    177  fc64		       a2 35		      ldx	#OVER_IMAGE_PADDING
+    178  fc66				   .over_padding_loop
+    179  fc66		       85 02		      sta	WSYNC
+    180  fc68		       ca		      dex
+    181  fc69		       d0 fb		      bne	.over_padding_loop
+    182  fc6b
+    183  fc6b		       60		      rts
+    184  fc6c
+    185  fc6c				   OverAssets
+    186  fc6c
+    187  fc6c							; Assets
 ------- FILE over_image.asm LEVEL 3 PASS 2
-      0  fc58					      include	"over_image.asm"
-      1  fc58							;OverImagePF0:
-      2  fc58							;    .BYTE %00000000
-      3  fc58							;    .BYTE %00000000
-      4  fc58							;    .BYTE %00000000
-      5  fc58							;    .BYTE %00000000
-      6  fc58							;    .BYTE %00000000
-      7  fc58							;    .BYTE %00000000
-      8  fc58							;    .BYTE %00000000
-      9  fc58							;    .BYTE %00000000
-     10  fc58							;    .BYTE %00000000
-     11  fc58
-     12  fc58				   OverImagePF1
-     13  fc58		       0c		      .BYTE.b	%00001100
-     14  fc59		       13		      .BYTE.b	%00010011
-     15  fc5a		       20		      .BYTE.b	%00100000
-     16  fc5b		       23		      .BYTE.b	%00100011
-     17  fc5c		       24		      .BYTE.b	%00100100
-     18  fc5d		       24		      .BYTE.b	%00100100
-     19  fc5e		       12		      .BYTE.b	%00010010
-     20  fc5f		       10		      .BYTE.b	%00010000
-     21  fc60		       08		      .BYTE.b	%00001000
-     22  fc61
-     23  fc61				   OverImagePF2
-     24  fc61		       e0		      .BYTE.b	%11100000
-     25  fc62		       18		      .BYTE.b	%00011000
-     26  fc63		       05		      .BYTE.b	%00000101
-     27  fc64		       52		      .BYTE.b	%01010010
-     28  fc65		       23		      .BYTE.b	%00100011
-     29  fc66		       52		      .BYTE.b	%01010010
-     30  fc67		       04		      .BYTE.b	%00000100
-     31  fc68		       18		      .BYTE.b	%00011000
-     32  fc69		       e0		      .BYTE.b	%11100000
+      0  fc6c					      include	"over_image.asm"
+      1  fc6c							;OverImagePF0:
+      2  fc6c							;    .BYTE %00000000
+      3  fc6c							;    .BYTE %00000000
+      4  fc6c							;    .BYTE %00000000
+      5  fc6c							;    .BYTE %00000000
+      6  fc6c							;    .BYTE %00000000
+      7  fc6c							;    .BYTE %00000000
+      8  fc6c							;    .BYTE %00000000
+      9  fc6c							;    .BYTE %00000000
+     10  fc6c							;    .BYTE %00000000
+     11  fc6c
+     12  fc6c				   OverImagePF1
+     13  fc6c		       0c		      .BYTE.b	%00001100
+     14  fc6d		       13		      .BYTE.b	%00010011
+     15  fc6e		       20		      .BYTE.b	%00100000
+     16  fc6f		       23		      .BYTE.b	%00100011
+     17  fc70		       24		      .BYTE.b	%00100100
+     18  fc71		       24		      .BYTE.b	%00100100
+     19  fc72		       12		      .BYTE.b	%00010010
+     20  fc73		       10		      .BYTE.b	%00010000
+     21  fc74		       08		      .BYTE.b	%00001000
+     22  fc75
+     23  fc75				   OverImagePF2
+     24  fc75		       e0		      .BYTE.b	%11100000
+     25  fc76		       18		      .BYTE.b	%00011000
+     26  fc77		       05		      .BYTE.b	%00000101
+     27  fc78		       52		      .BYTE.b	%01010010
+     28  fc79		       23		      .BYTE.b	%00100011
+     29  fc7a		       52		      .BYTE.b	%01010010
+     30  fc7b		       04		      .BYTE.b	%00000100
+     31  fc7c		       18		      .BYTE.b	%00011000
+     32  fc7d		       e0		      .BYTE.b	%11100000
 ------- FILE over.asm
-    189  fc6a
-    190  fc6a				   OverAudio0
-    191  fc6a
-    192  fc6a		       0c		      .BYTE.b	#12	; D#2
-    193  fc6b		       0d		      .BYTE.b	#13	; D2
-    194  fc6c		       11		      .BYTE.b	#17	; A1
-    195  fc6d		       16		      .BYTE.b	#22	; F1
-    196  fc6e		       1a		      .BYTE.b	#26	; D1
-    197  fc6f		       1a		      .BYTE.b	#26
+    189  fc7e
+    190  fc7e				   OverAudio0
+    191  fc7e
+    192  fc7e		       0c		      .BYTE.b	#12	; D#2
+    193  fc7f		       0d		      .BYTE.b	#13	; D2
+    194  fc80		       11		      .BYTE.b	#17	; A1
+    195  fc81		       16		      .BYTE.b	#22	; F1
+    196  fc82		       1a		      .BYTE.b	#26	; D1
+    197  fc83		       1a		      .BYTE.b	#26
 ------- FILE kernel.asm
-    288  fc70
-    289  fc70							;================
-    290  fc70							; End of cart
-    291  fc70							;================
-    292  fc70
+    288  fc84
+    289  fc84							;================
+    290  fc84							; End of cart
+    291  fc84							;================
+    292  fc84
     293  fffa					      ORG	$FFFA	; 2k = $F7FA, 4k = $FFFA
     294  fffa
     295  fffa				   InterruptVectors

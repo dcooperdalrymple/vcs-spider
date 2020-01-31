@@ -18,6 +18,11 @@ BUG_SAMPLE_C        = 3
 BUG_SAMPLE_F        = 20
 BUG_SAMPLE_V        = 4
 
+BUG_COL_SAMPLE_LEN  = 1
+BUG_COL_SAMPLE_C    = 8
+BUG_COL_SAMPLE_F    = 8
+BUG_COL_SAMPLE_V    = 3
+
 ; Initialization
 
 BugInit:
@@ -186,7 +191,13 @@ BugCollision:
     rts
 
 .bug_collision_active:
+
+    ; Reduce players score
     dec ScoreValue
+
+    ; Play sound
+    jsr BugColSample
+
     rts
 
 BugStunCollision:
@@ -315,5 +326,16 @@ BugSample:
     lda #BUG_SAMPLE_F
     sta AUDF1
     lda #BUG_SAMPLE_V
+    sta AUDV1
+    rts
+
+BugColSample:
+    lda #BUG_COL_SAMPLE_LEN
+    sta SampleStep
+    lda #BUG_COL_SAMPLE_C
+    sta AUDC1
+    lda #BUG_COL_SAMPLE_F
+    sta AUDF1
+    lda #BUG_COL_SAMPLE_V
     sta AUDV1
     rts
