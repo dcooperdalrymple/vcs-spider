@@ -17,10 +17,10 @@ TITLE_FRAME_TOP_LINES   = 7
 TITLE_LABEL_LINES       = 6
 TITLE_FRAME_BOT_LINES   = 5
 
-TITLE_GAP_SIZE          = #1
+TITLE_GAP_SIZE          = #7
 
 TITLE_SPIDER_POS_X      = #(KERNEL_WIDTH/4)-(8*3)-(8*2)
-TITLE_SPIDER_SIZE       = #10
+TITLE_SPIDER_SIZE       = #9
 TITLE_SPIDER_LINE_SIZE  = #4
 
 TitleInit:
@@ -103,14 +103,14 @@ TitlePosition:
 TitleAnimation:
 
     lda AudioStep
-    cmp #TITLE_AUDIO_LENGTH*3/4
-    beq .title_animation_2
-    cmp #TITLE_AUDIO_LENGTH/2
-    beq .title_animation_1
-    cmp #TITLE_AUDIO_LENGTH/4
-    beq .title_animation_2
     cmp #0
     beq .title_animation_1
+    cmp #4
+    beq .title_animation_2
+    cmp #9
+    beq .title_animation_1
+    cmp #12
+    beq .title_animation_2
     rts
 
 .title_animation_1:
@@ -261,8 +261,6 @@ TitleFrameTopDraw:
     sta PF1
     sta PF2
 
-    jsr TitleGap
-
 TitleLabelDraw:
 
     ; Load Label Color
@@ -323,7 +321,13 @@ TitleLabelDraw:
     sta PF1
     sta PF2
 
-    jsr TitleGap
+TitleGap:
+    ldx #TITLE_GAP_SIZE
+
+.title_gap:
+    dex
+    sta WSYNC
+    bne .title_gap
 
 TitleSpiderDraw:
     ldx #TITLE_SPIDER_LINE_SIZE
@@ -352,8 +356,6 @@ TitleSpiderDraw:
     lda #0
     sta GRP0
     sta GRP1
-
-    jsr TitleGap
 
 TitleFrameBottomDraw:
 
@@ -416,16 +418,6 @@ TitleFrameBottomDraw:
     sta PF2
 
 .title_kernel_return:
-    rts
-
-TitleGap:
-    ldx #TITLE_GAP_SIZE
-
-.title_gap:
-    dex
-    sta WSYNC
-    bne .title_gap
-
     rts
 
 TitleAssets:
