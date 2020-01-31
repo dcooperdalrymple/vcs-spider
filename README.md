@@ -26,6 +26,15 @@ Physical distribution for commercial use (whether in cartridge or compact format
 * Tested with Stella from [stella-emu.github.io](https://stella-emu.github.io)
 * Tested with real Atari 2600 using custom EEPROM cartridges
 
+## TODO
+
+- [ ] Swatter enemy sprite, kernel routines, and logic
+- [ ] Level variable with increasing difficulty and changing color palette
+- [ ] Difficulty switch support to increase starting difficulty
+- [ ] Black and white TV switch support
+- [ ] Game select switch support? (Easter egg?)
+- [ ] Add strands of web holding each spider up on title screen using missles and balls
+
 ## License
 
 This project is licensed under GNU LGPL V3.0 - see the [LICENSE](LICENSE) file for details.
