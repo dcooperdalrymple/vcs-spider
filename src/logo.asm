@@ -4,8 +4,8 @@
 
 LOGO_FRAMES         = 180
 
-LOGO_BG_COLOR       = #$A2
-LOGO_FG_COLOR       = #$5E
+LOGO_BG_COLOR       = #$00
+LOGO_FG_COLOR       = #$C6
 
 LOGO_AUDIO_0_TONE   = 4
 LOGO_AUDIO_0_VOLUME = 15 ; 15 is max
@@ -14,8 +14,8 @@ LOGO_AUDIO_1_VOLUME = 3
 LOGO_AUDIO_LENGTH   = 12
 LOGO_AUDIO_STEP     = 8
 
-LOGO_IMAGE_SIZE         = 9
-LOGO_IMAGE_LINE_SIZE    = 8
+LOGO_IMAGE_SIZE         = 16
+LOGO_IMAGE_LINE_SIZE    = 5
 LOGO_IMAGE_LINES        = LOGO_IMAGE_SIZE*LOGO_IMAGE_LINE_SIZE
 LOGO_IMAGE_PADDING      = #(KERNEL_SCANLINES-LOGO_IMAGE_LINES)/2
 
@@ -57,13 +57,13 @@ LogoInit:
     sta FrameTimer
 
     ; Setup Image Animation
-    ;lda #KERNEL_IMAGE_SIZE
-    ;sta ImageVisible
+    lda #(LOGO_IMAGE_SIZE+1)*2
+    sta WebIndex
 
     rts
 
 LogoVerticalBlank:
-    ;jsr LogoAnimation
+    jsr LogoAnimation
     rts
 
 LogoOverScan:
@@ -76,13 +76,14 @@ LogoAnimation:
     and #%00000011 ; Every 4 when bits are 00
     bne .logo_animation_return
 
-    ;ldx ImageVisible
-    ;cpx #0
-    ;beq .logo_animation_return
+    ldx WebIndex
+    cpx #0
+    beq .logo_animation_return
 
     ; Add another visible line
-    ;dex
-    ;stx ImageVisible
+    dex
+    dex
+    stx WebIndex
 
 .logo_animation_return:
     rts
@@ -153,11 +154,32 @@ LogoKernel:
     ; Top Padding
     jsr LogoPadding
 
+.logo_kernel_image_animation:
+    ldy WebIndex
+    cpy #0
+    beq .logo_kernel_image
+
+.logo_kernel_image_animation_start:
+    ldx #LOGO_IMAGE_LINE_SIZE
+
+.logo_kernel_image_animation_loop:
+    sta WSYNC
+    dex
+    bne .logo_kernel_image_animation_loop
+
+    dey
+    dey
+    bne .logo_kernel_image_animation_start
+
 .logo_kernel_image:
 
-    ldx #(LOGO_IMAGE_SIZE*2)-1
+    ldx #(LOGO_IMAGE_SIZE*2)
     ldy #LOGO_IMAGE_LINE_SIZE-1
     ; The extra 1 on line size is for processing overflow
+
+    dex
+    cpx WebIndex
+    bcc .logo_kernel_bottom_padding
 
 .logo_kernel_image_line:
     sta WSYNC
@@ -184,6 +206,9 @@ LogoKernel:
     ldy #LOGO_IMAGE_LINE_SIZE
 
     dex
+    cpx WebIndex
+    bcc .logo_kernel_bottom_padding
+
     dex
     bpl .logo_kernel_image_line
 
