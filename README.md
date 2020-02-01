@@ -33,7 +33,7 @@ Physical distribution for commercial use (whether in cartridge or compact format
 - [ ] Difficulty switch support to increase starting difficulty
 - [ ] Black and white TV switch support
 - [ ] Game select switch support? (Easter egg?)
-- [ ] Add strands of web holding each spider up on title screen using missles and balls
+- [x] Add strands of web holding each spider up on title screen using missles and balls
 
 ## License
 

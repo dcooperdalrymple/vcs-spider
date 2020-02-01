@@ -3,9 +3,9 @@
 ;================
 
 TITLE_BG_COLOR          = #$00
-TITLE_FRAME_COLOR          = #$06
-TITLE_LABEL_COLOR          = #$0E
-TITLE_SPIDER_COLOR          = #$56
+TITLE_WEB_COLOR         = #$06
+TITLE_LABEL_COLOR       = #$0E
+TITLE_SPIDER_COLOR      = #$56
 
 TITLE_AUDIO_0_TONE      = 4
 TITLE_AUDIO_0_VOLUME    = 1
@@ -13,13 +13,13 @@ TITLE_AUDIO_1_VOLUME    = 5
 TITLE_AUDIO_LENGTH      = 16
 TITLE_AUDIO_STEP        = 9
 
-TITLE_FRAME_TOP_LINES   = 7
-TITLE_LABEL_LINES       = 6
+TITLE_FRAME_TOP_LINES   = 12
 TITLE_FRAME_BOT_LINES   = 5
+TITLE_LABEL_LINE        = 7
 
-TITLE_GAP_SIZE          = #7
+TITLE_GAP_SIZE          = #15
 
-TITLE_SPIDER_POS_X      = #(KERNEL_WIDTH/4)-(8*3)-(8*2)
+TITLE_SPIDER_POS_X      = #(KERNEL_WIDTH/4)-(8*3)-(8*2)-2
 TITLE_SPIDER_SIZE       = #9
 TITLE_SPIDER_LINE_SIZE  = #4
 
@@ -33,7 +33,7 @@ TitleInit:
     ; Load Colors
     lda #TITLE_BG_COLOR
     sta COLUBK
-    lda #TITLE_FRAME_COLOR
+    lda #TITLE_WEB_COLOR
     sta COLUPF
     lda #TITLE_SPIDER_COLOR
     sta COLUP0
@@ -61,7 +61,9 @@ TitleInit:
     ; Setup Spider Sprite
     SET_POINTER SpiderPtr, TitleSpider
 
-    lda #%00000110  ; Triple Sprite
+    lda NuSiz0
+    and #%11111000
+    ora #%00000110  ; Triple Sprite
     sta NuSiz0
     sta NUSIZ0
     sta NuSiz1
@@ -71,6 +73,21 @@ TitleInit:
     sta REFP0
     lda #$FF        ; Reflect P1
     sta REFP1
+
+    lda #0
+    sta SpiderDrawPos ; Initialize animation state
+
+    ; Setup Web Line
+    ; Missle0 (2 clock size)
+    lda NuSiz0
+    and #%11001111
+    ora #%00010000
+    sta NuSiz0
+    sta NUSIZ0
+
+    ; Disable at start
+    lda #0
+    sta ENAM0
 
     rts
 
@@ -92,7 +109,12 @@ TitlePosition:
     jsr PosObject
 
     ldx #1                      ; Object (player1)
-    lda #(TITLE_SPIDER_POS_X+8)  ; X Position
+    lda #(TITLE_SPIDER_POS_X+8) ; X Position
+    jsr PosObject
+
+    ; Position Web Line
+    ldx #2                      ; Object (missle0)
+    lda #(TITLE_SPIDER_POS_X+8) ; X Position
     jsr PosObject
 
     sta WSYNC
@@ -115,10 +137,14 @@ TitleAnimation:
 
 .title_animation_1:
     SET_POINTER SpiderPtr, TitleSpider
+    lda #0
+    sta SpiderDrawPos
     rts
 
 .title_animation_2:
     SET_POINTER SpiderPtr, TitleSpider+#TITLE_SPIDER_SIZE
+    lda #1
+    sta SpiderDrawPos
     rts
 
 TitleOverScan:
@@ -250,6 +276,13 @@ TitleFrameTopDraw:
     clc ; 2
     adc #KERNEL_IMAGE_FULL_DATA ; 2
     tay ; 2
+
+    cpy #TITLE_LABEL_LINE*KERNEL_IMAGE_FULL_DATA
+    bne .title_frame_top_label_color_skip
+    lda #TITLE_LABEL_COLOR ; 2
+    sta COLUPF ; 4
+.title_frame_top_label_color_skip:
+
     cpy #TITLE_FRAME_TOP_LINES*KERNEL_IMAGE_FULL_DATA
     bne .title_frame_top ; 2
 
@@ -261,79 +294,47 @@ TitleFrameTopDraw:
     sta PF1
     sta PF2
 
-TitleLabelDraw:
+TitleWebDraw:
+    lda #%00000010
+    sta ENAM0
 
-    ; Load Label Color
-    lda #TITLE_LABEL_COLOR
-    sta COLUPF
+    lda #TITLE_WEB_COLOR
+    sta COLUP0
 
-    ; Start Counters
-    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
-    ldy #0 ; Image Counter
-
-.title_label:
-
-    ; 76 machine cycles per scanline
-    sta WSYNC
-
-.title_label_load: ; 66 cycles
-
-    ; First half of image
-    lda TitleLabel,y ; 5
-    sta PF0 ; 4
-    lda TitleLabel+1,y ; 5
-    sta PF1 ; 4
-    lda TitleLabel+2,y ; 5
-    sta PF2 ; 4
-
-    sleep 6
-
-    ; Second half of image
-    lda TitleLabel+3,y ; 5
-    sta PF0 ; 4
-    lda TitleLabel+4,y ; 5
-    sta PF1 ; 4
-    lda TitleLabel+5,y ; 5
-    sta PF2 ; 4
-
-.title_label_index: ; 4 cycles
-
-    dex ; 2
-    bne .title_label ; 2
-
-.title_label_index_next: ; 6 cycles
-
-    ; Restore scanline counter
-    ldx #KERNEL_IMAGE_LINE ; 2
-
-    tya ; 2
-    clc ; 2
-    adc #KERNEL_IMAGE_FULL_DATA ; 2
-    tay ; 2
-    cpy #TITLE_LABEL_LINES*KERNEL_IMAGE_FULL_DATA
-    bne .title_label ; 2
-
-.title_label_clean:
-
-    ; Clear out playfield
-    lda #0
-    sta PF0
-    sta PF1
-    sta PF2
-
-TitleGap:
     ldx #TITLE_GAP_SIZE
-
-.title_gap:
+.title_web_gap:
     dex
     sta WSYNC
-    bne .title_gap
+    bne .title_web_gap
 
 TitleSpiderDraw:
-    ldx #TITLE_SPIDER_LINE_SIZE
+
     ldy #TITLE_SPIDER_SIZE-1
 
+    lda SpiderDrawPos
+    cmp #1
+    bne .title_spider_extra_web_disable
+
+.title_spider_extra_web_start:
+    ldx #TITLE_SPIDER_LINE_SIZE
+.title_spider_extra_web_loop:
     sta WSYNC
+    dex
+    bne .title_spider_extra_web_loop
+
+    dey
+    cpy #TITLE_SPIDER_SIZE-3
+    bne .title_spider_extra_web_start
+
+.title_spider_extra_web_disable:
+    lda #0
+    ldx #TITLE_SPIDER_LINE_SIZE
+
+    sta WSYNC
+
+    sta ENAM0
+    lda #TITLE_SPIDER_COLOR
+    sta COLUP0
 
 .title_spider:
     lda (SpiderPtr),y
@@ -360,7 +361,7 @@ TitleSpiderDraw:
 TitleFrameBottomDraw:
 
     ; Load Frame Color
-    lda #TITLE_FRAME_COLOR
+    lda #TITLE_WEB_COLOR
     sta COLUPF
 
     ; Start Counters

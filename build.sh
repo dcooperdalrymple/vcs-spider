@@ -13,9 +13,6 @@ python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleFrameTop -
 echo "/assets/title-frame-bottom.png => /src/title_frame_bottom.asm"
 python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleFrameBottom -in ./assets/title-frame-bottom.png -out ./src/title_frame_bottom.asm
 
-echo "/assets/title-label.png => /src/title_label.asm"
-python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleLabel -in ./assets/title-label.png -out ./src/title_label.asm
-
 echo "/assets/web.png => /src/objects/web_image.asm"
 python ./assets/pf_image.py -type mirror -split 1 -reverse 0 -name WebImage -in ./assets/web.png -out ./src/objects/web_image.asm
 
