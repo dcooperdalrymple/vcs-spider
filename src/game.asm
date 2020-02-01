@@ -17,7 +17,7 @@ GAME_AUDIO_TONE     = 6
     include "objects/spider.asm"
     include "objects/line.asm"
     include "objects/bug.asm"
-;    include "objects/swatter.asm"
+    include "objects/swatter.asm"
 
 ; Initialization
 
@@ -60,7 +60,7 @@ GameInit:
     jsr SpiderInit
     jsr LineInit
     jsr BugInit
-;    jsr SwatterInit
+    jsr SwatterInit
 
     rts
 
@@ -73,7 +73,7 @@ GameVerticalBlank:
     jsr SpiderUpdate
     jsr LineUpdate
     jsr BugUpdate
-;    jsr SwatterUpdate
+    jsr SwatterUpdate
     jsr ScoreUpdate
 
     ; Reset Collisions
@@ -86,7 +86,7 @@ GameVerticalBlank:
     jsr SpiderPosition
     jsr LinePosition
     jsr BugPosition
-;    jsr SwatterPosition
+    jsr SwatterPosition
 
     ; Set final x positions
     sta WSYNC
@@ -202,9 +202,9 @@ GameKernel:
     ; Setup Drawing Objects
     jsr WebDrawStart
     jsr SpiderDrawStart
+    jsr SwatterDrawStart
     jsr LineDrawStart
     jsr BugDrawStart
-;    jsr SwatterDrawStart
 
     ; Start Scanline Counter
     ldx #KERNEL_SCANLINES-SCORE_LINES-5
@@ -226,8 +226,8 @@ GameKernel:
     dex
     beq .game_kernel_clean
 
-    jsr SpiderDraw ; Every odd scanline
-;    jsr SwatterDraw
+;    jsr SpiderDraw ; Every odd scanline
+    jsr SwatterDraw
 
     sta WSYNC
     dec Temp+1
@@ -242,8 +242,8 @@ GameKernel:
     dex
     beq .game_kernel_clean
 
-    jsr SpiderDraw
-;    jsr SwatterDraw
+;    jsr SpiderDraw
+    jsr SwatterDraw
 
     sta WSYNC
     dec Temp+1
@@ -258,8 +258,8 @@ GameKernel:
     dex
     beq .game_kernel_clean
 
-    jsr SpiderDraw
-;    jsr SwatterDraw
+;    jsr SpiderDraw
+    jsr SwatterDraw
 
     sta WSYNC
     dec Temp+1
@@ -272,7 +272,7 @@ GameKernel:
     jsr SpiderClean
     jsr LineClean
     jsr BugClean
-;    jsr SwatterClean
+    jsr SwatterClean
 
     sta WSYNC
 

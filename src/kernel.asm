@@ -66,7 +66,7 @@ KernelPtr           ds 2
 OverScanPtr         ds 2
 
 Frame               ds 1
-FrameTimer          ds 1
+FrameTimer          ds 2
 
 AudioStep           ds 1
 
@@ -113,6 +113,15 @@ BugColor            ds 2
 
 BugDrawPosBottom    ds 2
 BugDrawPosTop       ds 2
+
+; Swatter
+
+SwatterPos          ds 2
+SwatterState        ds 1
+SwatterColor        ds 1
+
+SwatterIndex        ds 1
+SwatterDrawPos      ds 1
 
     SEG
     org $F000           ; Start of cart area
@@ -198,6 +207,7 @@ VerticalSync:
     ; Increment frame count and reduce frame counter
     inc Frame
     dec FrameTimer
+    dec FrameTimer+1
 
     ; VSYNCH signal scanlines
     REPEAT #KERNEL_VSYNC

@@ -27,6 +27,9 @@ python ./assets/sprite_image.py -name TitleSpider -in ./assets/title-spider.png 
 echo "/assets/player.png => /src/objects/spider_sprite.asm"
 python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm -reverse 0
 
+echo "/assets/swatter.png => /src/objects/swatter_sprite.asm"
+python ./assets/sprite_image.py -name SwatterSprite -in ./assets/swatter.png -out ./src/objects/swatter_sprite.asm -reverse 0
+
 echo "/assets/digits.png => /src/objects/score_digits.asm"
 python ./assets/sprite_image.py -name ScoreDigits -in ./assets/digits.png -out ./src/objects/score_digits.asm -reverse 0
 

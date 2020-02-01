@@ -253,7 +253,7 @@ BugDrawStart:
     ldy #1
 .bug_draw_start_loop:
 
-    ; Set missile 0 & 1 to be 4 clock size
+    ; Set missile 0 & 1 to be 8 clock size
     lda NuSiz0,y
     ora #%00110000
     sta NuSiz0,y

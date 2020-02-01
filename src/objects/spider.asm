@@ -249,8 +249,7 @@ SpiderPosition:
 
 SpiderDrawStart:
 
-    ; Set player 0 to be double size
-    ; and missile 0 to be 4 clock size
+    ; Set player 0 to be quad size
     lda NuSiz0
     ora #%00000111
     sta NuSiz0
@@ -310,10 +309,6 @@ SpiderDraw:
     lda (SpiderPtr),y
     sta GRP0
 
-    ; Using this for now until we have another sprite
-    lda #0
-    sta GRP1
-
 .spider_draw_skip:
     ldy SpiderIndex
     iny
@@ -323,10 +318,6 @@ SpiderDraw:
 .spider_draw_blank:
     lda #0
     sta GRP0
-
-    ; Using this for now until we have another sprite
-    lda #0
-    sta GRP1
 
     ; Push index to be one above
     iny
