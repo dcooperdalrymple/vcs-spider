@@ -193,7 +193,11 @@ BugCollision:
 .bug_collision_active:
 
     ; Reduce players score
+    lda ScoreValue
+    cmp #0
+    beq .bug_collision_score_skip
     dec ScoreValue
+.bug_collision_score_skip:
 
     ; Play sound
     jsr BugColSample

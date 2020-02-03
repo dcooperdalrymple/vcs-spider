@@ -152,11 +152,17 @@ SwatterCollision:
 .swatter_collision_p0:
 
     lda ScoreValue
+    cmp #SWATTER_HIT_DAMAGE
+    bcc .swatter_collision_p0_zero
+    beq .swatter_collision_p0_zero
+
     clc
     sbc #SWATTER_HIT_DAMAGE
-    bpl .swatter_collision_p0_set
+    jmp .swatter_collision_p0_set
+
 .swatter_collision_p0_zero:
     lda #0
+    
 .swatter_collision_p0_set:
     sta ScoreValue
 
