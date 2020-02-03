@@ -123,6 +123,9 @@ SwatterColor        ds 1
 SwatterIndex        ds 1
 SwatterDrawPos      ds 1
 
+SwatterSampleCount  ds 1
+SwatterSampleF      ds 1
+
     SEG
     org $F000           ; Start of cart area
 

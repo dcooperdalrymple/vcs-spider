@@ -17,6 +17,24 @@ SWATTER_STATE_WAIT      = 0
 SWATTER_STATE_HOLD      = 1
 SWATTER_STATE_ACTIVE    = 2
 
+SWATTER_HIT_DAMAGE      = #$10
+
+SWATTER_HOLD_SAMPLE_C   = 2
+SWATTER_HOLD_SAMPLE_V   = 4
+SWATTER_HOLD_SAMPLE_F_MIN   = 21 ; Starting frequency
+SWATTER_HOLD_SAMPLE_F_MAX   = 1
+SWATTER_HOLD_SAMPLE_LEN = #SWATTER_HOLD_TIME/(SWATTER_HOLD_SAMPLE_F_MIN-SWATTER_HOLD_SAMPLE_F_MAX) ; Time between each frequency
+
+SWATTER_ACTIVE_SAMPLE_LEN   = 20
+SWATTER_ACTIVE_SAMPLE_C     = 8 ; 15
+SWATTER_ACTIVE_SAMPLE_F     = 12 ; 5
+SWATTER_ACTIVE_SAMPLE_V     = 4
+
+SWATTER_HIT_SAMPLE_LEN   = 20
+SWATTER_HIT_SAMPLE_C     = 3
+SWATTER_HIT_SAMPLE_F     = 6
+SWATTER_HIT_SAMPLE_V     = 4
+
 ; Initialization
 
 SwatterInit:
@@ -41,14 +59,30 @@ SwatterUpdate:
 .swatter_update_color_set:
     sta SwatterColor
 
+.swatter_update_hold_sample:
+    ldy SwatterState
+    cpy #SWATTER_STATE_HOLD
+    bne .swatter_update_state
+
+    dec SwatterSampleCount
+    bne .swatter_update_state
+
+    lda #SWATTER_HOLD_SAMPLE_LEN
+    sta SwatterSampleCount
+
+    dec SwatterSampleF
+    ldy SwatterSampleF
+    jsr SwatterHoldSample
+
 .swatter_update_state:
     ldx FrameTimer+1
     cpx #0
-    bne .swatter_update_return
+    bne .swatter_update_collision
 
     ldy SwatterState
     cpy #SWATTER_STATE_WAIT
     beq .swatter_update_state_wait
+
     cpy #SWATTER_STATE_HOLD
     beq .swatter_update_state_hold
 
@@ -57,11 +91,20 @@ SwatterUpdate:
     jmp .swatter_update_return
 
 .swatter_update_state_wait:
+    ldy #SWATTER_HOLD_SAMPLE_F_MIN
+    sty SwatterSampleF
+    jsr SwatterHoldSample
+
+    lda #SWATTER_HOLD_SAMPLE_LEN
+    sta SwatterSampleCount
+
     lda #SWATTER_STATE_HOLD
     ldx #SWATTER_HOLD_TIME
     jmp .swatter_update_state_set
 
 .swatter_update_state_hold:
+    jsr SwatterActiveSample
+
     lda #SWATTER_STATE_ACTIVE
     ldx #SWATTER_ACTIVE_TIME
 
@@ -69,7 +112,57 @@ SwatterUpdate:
     sta SwatterState
     stx FrameTimer+1
 
+.swatter_update_collision:
+    ; Check 1 frame after active
+    lda SwatterState
+    cmp #SWATTER_STATE_ACTIVE
+    bne .swatter_update_return
+    ldx FrameTimer+1
+    cpx #SWATTER_ACTIVE_TIME-1
+    bne .swatter_update_return
+
+    jsr SwatterCollision
+
 .swatter_update_return:
+    rts
+
+SwatterCollision:
+    bit CXM0P
+    bmi .swatter_collision_m0
+
+    bit CXM1P
+    bvs .swatter_collision_m1
+
+    bit CXPPMM
+    bmi .swatter_collision_p0
+
+    rts
+
+.swatter_collision_m0:
+    ldx #0
+    jmp .swatter_collision_bug_reset
+
+.swatter_collision_m1:
+    ldx #1
+
+.swatter_collision_bug_reset:
+    jsr BugReset
+    jmp .swatter_collision_active
+
+.swatter_collision_p0:
+
+    lda ScoreValue
+    clc
+    sbc #SWATTER_HIT_DAMAGE
+    bpl .swatter_collision_p0_set
+.swatter_collision_p0_zero:
+    lda #0
+.swatter_collision_p0_set:
+    sta ScoreValue
+
+.swatter_collision_active:
+    jsr SwatterHitSample
+
     rts
 
 SwatterPosition:
@@ -186,6 +279,40 @@ SwatterReset:
     and #$7e            ; Ensure that Y position is even
     sta SwatterPos+1
 
+    rts
+
+SwatterHoldSample:
+    lda #SWATTER_HOLD_SAMPLE_LEN
+    sta SampleStep
+    lda #SWATTER_HOLD_SAMPLE_C
+    sta AUDC1
+    lda #SWATTER_HOLD_SAMPLE_V
+    sta AUDV1
+
+    sty AUDF1 ; Store value of y as frequency
+
+    rts
+
+SwatterActiveSample:
+    lda #SWATTER_ACTIVE_SAMPLE_LEN
+    sta SampleStep
+    lda #SWATTER_ACTIVE_SAMPLE_C
+    sta AUDC1
+    lda #SWATTER_ACTIVE_SAMPLE_F
+    sta AUDF1
+    lda #SWATTER_ACTIVE_SAMPLE_V
+    sta AUDV1
+    rts
+
+SwatterHitSample:
+    lda #SWATTER_HIT_SAMPLE_LEN
+    sta SampleStep
+    lda #SWATTER_HIT_SAMPLE_C
+    sta AUDC1
+    lda #SWATTER_HIT_SAMPLE_F
+    sta AUDF1
+    lda #SWATTER_HIT_SAMPLE_V
+    sta AUDV1
     rts
 
     ; Swatter Sprites
