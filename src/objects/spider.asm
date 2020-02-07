@@ -120,20 +120,20 @@ SpiderControl:
     jmp .spider_control_boundary_top
 
 .spider_control_boundary_right:
-    cpx #(KERNEL_WIDTH/2)-(SPIDER_SIZE*2)-SPIDER_VEL_X
+    cpx #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X-3
     bcc .spider_control_boundary_top
-    ldx #(KERNEL_WIDTH/2)-(SPIDER_SIZE*2)-SPIDER_VEL_X
+    ldx #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X-3
 
 .spider_control_boundary_top:
-    cpy #SPIDER_VEL_X+1
+    cpy #SPIDER_VEL_Y+11
     bcs .spider_control_boundary_bottom
-    ldy #SPIDER_VEL_X+1
+    ldy #SPIDER_VEL_Y+11
     jmp .spider_control_store
 
 .spider_control_boundary_bottom:
-    cpy #KERNEL_SCANLINES-SCORE_LINES-SPIDER_VEL_Y
+    cpy #KERNEL_SCANLINES-SCORE_LINES-SPIDER_SIZE-SPIDER_VEL_Y-17
     bcc .spider_control_store
-    ldy #KERNEL_SCANLINES-SCORE_LINES-SPIDER_VEL_Y
+    ldy #KERNEL_SCANLINES-SCORE_LINES-SPIDER_SIZE-SPIDER_VEL_Y-17
 
 .spider_control_store:
     ; Store new position
