@@ -6,8 +6,8 @@
 
 SWATTER_COLOR           = #$36
 SWATTER_HOLD_COLOR      = #$30
-SWATTER_SIZE            = 10
-SWATTER_SPRITE_SIZE     = 10
+SWATTER_SPRITE_SIZE     = #20
+SWATTER_SIZE            = #SWATTER_SPRITE_SIZE*2
 
 SWATTER_WAIT_TIME       = 60*3 ; 60 frames per second
 SWATTER_HOLD_TIME       = 60

@@ -5,8 +5,8 @@
 ; Constants
 
 SPIDER_COLOR        = #$56
-SPIDER_SIZE         = 16
-SPIDER_SPRITE_SIZE  = 8
+SPIDER_SPRITE_SIZE  = 16
+SPIDER_SIZE         = #SPIDER_SPRITE_SIZE*2
 SPIDER_VEL_X        = 2
 SPIDER_VEL_Y        = 2
 
