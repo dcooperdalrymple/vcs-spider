@@ -18,6 +18,7 @@ LOGO_IMAGE_SIZE         = 16
 LOGO_IMAGE_LINE_SIZE    = 5
 LOGO_IMAGE_LINES        = LOGO_IMAGE_SIZE*LOGO_IMAGE_LINE_SIZE
 LOGO_IMAGE_PADDING      = #(KERNEL_SCANLINES-LOGO_IMAGE_LINES)/2
+LOGO_IMAGE_ANIM_PADDING = #LOGO_IMAGE_PADDING-6 ; The extra 6 is for processing overflow
 
 LogoInit:
 
@@ -150,14 +151,17 @@ LogoKernel:
     lda #0
     sta VBLANK
 
+    ldy WebIndex
+    cpy #0
+    bne .logo_kernel_top_anim_padding
+
 .logo_kernel_top_padding:
     ; Top Padding
     jsr LogoPadding
+    jmp .logo_kernel_image
 
-.logo_kernel_image_animation:
-    ldy WebIndex
-    cpy #0
-    beq .logo_kernel_image
+.logo_kernel_top_anim_padding:
+    jsr LogoAnimPadding
 
 .logo_kernel_image_animation_start:
     ldx #LOGO_IMAGE_LINE_SIZE
@@ -232,6 +236,15 @@ LogoPadding:
     bne .logo_padding_loop
 
     rts
+
+LogoAnimPadding:
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+    ldx #LOGO_IMAGE_ANIM_PADDING
+    jmp .logo_padding_loop
 
 LogoAssets:
 
