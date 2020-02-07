@@ -279,51 +279,11 @@ SpiderDrawStart:
     adc #SPIDER_SIZE
     sta SpiderDrawPos
 
-    ; Initialize sprite index
+    ; Initialize sprite index and line buffer
     lda #0
     sta SpiderIndex
+    sta SpiderLine
 
-    rts
-
-SpiderDraw:
-
-    ldy SpiderIndex
-    cpy #(SPIDER_SPRITE_SIZE*2)
-    beq .spider_draw_blank  ; At end of sprite
-    bcs .spider_draw_return ; Completed drawing sprite
-    cpy #0
-    bne .spider_draw_line
-
-    ; Use half scanline
-    lda Temp+1
-
-    sbc SpiderDrawPos
-    bpl .spider_draw_return ; Not yet to draw sprite
-
-.spider_draw_line:
-    tya
-    lsr
-    bcs .spider_draw_skip
-    tay
-
-    lda (SpiderPtr),y
-    sta GRP0
-
-.spider_draw_skip:
-    ldy SpiderIndex
-    iny
-    sty SpiderIndex
-    rts                     ; Early return
-
-.spider_draw_blank:
-    lda #0
-    sta GRP0
-
-    ; Push index to be one above
-    iny
-    sty SpiderIndex
-
-.spider_draw_return:
     rts
 
 SpiderClean:

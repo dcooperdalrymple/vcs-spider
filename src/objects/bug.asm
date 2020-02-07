@@ -276,46 +276,6 @@ BugDrawStart:
 
     rts
 
-BugDraw:
-
-    ; Load half scanline
-;    lda Temp+1
-
-.bug_draw_0:
-    ldy #%00000000
-
-    ; Check top and bottom y pos
-    cmp BugDrawPosTop+0
-    bcs .bug_draw_0_off
-
-    cmp BugDrawPosBottom+0
-    bcc .bug_draw_0_off
-
-.bug_draw_0_on:
-    ldy #%00000010
-
-.bug_draw_0_off:
-    sty ENAM0
-
-.bug_draw_1:
-    ldy #%00000000
-
-    ; Check top and bottom y pos
-    cmp BugDrawPosTop+1
-    bcs .bug_draw_1_off
-
-    cmp BugDrawPosBottom+1
-    bcc .bug_draw_1_off
-
-.bug_draw_1_on:
-    ldy #%00000010
-
-.bug_draw_1_off:
-    sty ENAM1
-
-.bug_draw_return:
-    rts
-
 BugClean:
     lda #0
     sta ENAM0

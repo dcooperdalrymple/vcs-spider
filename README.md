@@ -28,13 +28,19 @@ Physical distribution for commercial use (whether in cartridge or compact format
 
 ## TODO
 
-- [ ] Swatter & player sprite kernel with collision logic
+- [x] Revised game kernel
 - [ ] Level variable with increasing difficulty and changing color palette
 - [ ] Difficulty switch support to increase starting difficulty
 - [ ] Black and white TV switch support
 - [ ] Game select switch support? (Easter egg?)
+- [x] Swatter collision logic
 - [x] Swatter enemy sprite, kernel routines, and animation
 - [x] Add strands of web holding each spider up on title screen using missles and balls
+
+## BUGS
+
+- [ ] Spider boundary
+- [ ] Line spawning
 
 ## License
 

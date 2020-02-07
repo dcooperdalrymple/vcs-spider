@@ -36,35 +36,6 @@ WebDrawStart:
 
     rts
 
-WebDraw:
-
-    ldy WebIndex
-
-    ; Draw Image
-    lda WebImagePF0,y
-    sta PF0
-    lda WebImagePF1,y
-    sta PF1
-    lda WebImagePF2,y
-    sta PF2
-
-    ; Increment image index
-    clc
-    tya
-    adc WebDir
-    sta WebIndex
-
-    cmp #WEB_SIZE/2
-    bne .web_draw_return
-
-    lda #-1
-    sta WebDir
-
-    dec WebIndex
-
-.web_draw_return:
-    rts
-
 WebClean:
 
     ; Clear out playfield

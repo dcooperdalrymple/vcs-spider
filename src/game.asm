@@ -216,55 +216,408 @@ GameKernel:
 
 .game_kernel_objects:
 
-    ; Draw Objects in order
-
-;    jsr LineDraw
-;    jsr BugDraw
-    jsr WebDraw ; Every 6 lines
-
     sta WSYNC
-    dex
-    beq .game_kernel_clean
 
-;    jsr SpiderDraw ; Every odd scanline
-    jsr SwatterDraw
+.game_kernel_web:
 
-    sta WSYNC
-    dec Temp+1
-    dex
-    beq .game_kernel_clean
+    ; Web
+    ldy WebIndex
 
+    ; Load Image
+    lda WebImagePF0,y
+    sta PF0
+    lda WebImagePF1,y
+    sta PF1
+    lda WebImagePF2,y
+    sta PF2
+
+    inc WebIndex
+
+.game_kernel_line_1:
+    ; Line (1st time)
+
+    bit LineEnabled
+    bpl .game_kernel_line_1_skip
+
+    ; Load half-line
     lda Temp+1
-    jsr LineDraw
-    jsr BugDraw
 
-;    sta WSYNC
+    ldy #%00000000
+
+    ; Top
+    cmp LineDrawPos+1
+    bcs .game_kernel_line_1_off
+
+    ; Bottom
+    cmp LineDrawPos+0
+    bcc .game_kernel_line_1_off
+
+.game_kernel_line_1_on:
+    ldy #%00000010
+
+.game_kernel_line_1_off:
+    sty ENABL
+
+.game_kernel_line_1_skip:
+
     dex
-    beq .game_kernel_clean
-
-;    jsr SpiderDraw
-    jsr SwatterDraw
-
     sta WSYNC
+
+.game_kernel_spider_1:
+    ; Spider (1st time)
+
+    ldy SpiderIndex
+    bmi .game_kernel_spider_1_load  ; At end of sprite
+    bne .game_kernel_spider_1_draw  ; Currently drawing (not zero)
+
+    ; Check y position to see if we should start
+    lda Temp+1  ; Use half scanline
+    sbc SpiderDrawPos
+    bpl .game_kernel_spider_1_load
+
+.game_kernel_spider_1_draw:
+    lda (SpiderPtr),y
+    sta SpiderLine
+
+    ; Increment sprite index
+    inc SpiderIndex
+
+    ; See if we're at the end
+    cpy #SPIDER_SPRITE_SIZE
+    bne .game_kernel_spider_1_line
+    ldy #-1 ; Load a negative value to tell draw routine to stop
+    sty SpiderIndex
+    lda #0
+    sta SpiderLine
+
+.game_kernel_spider_1_load:
+    lda SpiderLine
+.game_kernel_spider_1_line:
+    sta GRP0
+
+.game_kernel_swatter_1:
+    ; Swatter (1st time)
+
+    ; Check if wait state
+    bit SwatterState
+    bpl .game_kernel_swatter_1_load
+
+    ldy SwatterIndex
+    bmi .game_kernel_swatter_1_load ; At end of sprite
+    bne .game_kernel_swatter_1_draw ; Currently drawing (not zero)
+
+    ; Check y position to see if we should start
+    lda Temp+1 ; Use half scanline
+    sbc SwatterDrawPos
+    bpl .game_kernel_swatter_1_load
+
+.game_kernel_swatter_1_draw:
+    lda SwatterSprite,y
+    sta SwatterLine
+
+    ; Increment index
+    inc SwatterIndex
+
+    ; See if we're at the end
+    cpy #(SWATTER_SPRITE_SIZE-1)
+    bne .game_kernel_swatter_1_line
+    ldy #-1 ; Load a negative value to tell draw routine to stop
+    sty SwatterIndex
+
+.game_kernel_swatter_1_load:
+    lda SwatterLine
+.game_kernel_swatter_1_line:
+    sta GRP1
+
+    ; New line and decrement half scanline
     dec Temp+1
     dex
-    beq .game_kernel_clean
+    sta WSYNC
 
+    ; Preload half-line
     lda Temp+1
-    jsr LineDraw
-    jsr BugDraw
 
-;    sta WSYNC
+.game_kernel_line_2:
+    ; Line (2nd time)
+
+    bit LineEnabled
+    bpl .game_kernel_line_2_skip
+
+    ldy #%00000000
+
+    ; Top
+    cmp LineDrawPos+1
+    bcs .game_kernel_line_2_off
+
+    ; Bottom
+    cmp LineDrawPos+0
+    bcc .game_kernel_line_2_off
+
+.game_kernel_line_2_on:
+    ldy #%00000010
+
+.game_kernel_line_2_off:
+    sty ENABL
+
+.game_kernel_line_2_skip:
+
+.game_kernel_bug_1_0:
+    ; First Bug (1st time)
+
+    ldy #%00000000
+
+    ; Top
+    cmp BugDrawPosTop+0
+    bcs .game_kernel_bug_1_0_off
+
+    ; Bottom
+    cmp BugDrawPosBottom+0
+    bcc .game_kernel_bug_1_0_off
+
+.game_kernel_bug_1_0_on:
+    ldy #%00000010
+
+.game_kernel_bug_1_0_off:
+    sty ENAM0
+
+.game_kernel_bug_1_1:
+    ; Second Bug (1st time)
+
+    ldy #%00000000
+
+    ; Top
+    cmp BugDrawPosTop+1
+    bcs .game_kernel_bug_1_1_off
+
+    ; Bottom
+    cmp BugDrawPosBottom+1
+    bcc .game_kernel_bug_1_1_off
+
+.game_kernel_bug_1_1_on:
+    ldy #%00000010
+
+.game_kernel_bug_1_1_off:
+    sty ENAM1
+
+    ; Next Line
     dex
-    beq .game_kernel_clean
-
-;    jsr SpiderDraw
-    jsr SwatterDraw
-
     sta WSYNC
+
+.game_kernel_spider_2:
+    ; Spider (2nd time)
+
+    ldy SpiderIndex
+    bmi .game_kernel_spider_2_load  ; At end of sprite
+    bne .game_kernel_spider_2_draw  ; Currently drawing (not zero)
+
+    ; Check y position to see if we should start
+    lda Temp+1  ; Use half scanline
+    sbc SpiderDrawPos
+    bpl .game_kernel_spider_2_load
+
+.game_kernel_spider_2_draw:
+    lda (SpiderPtr),y
+    sta SpiderLine
+
+    ; Increment sprite index
+    inc SpiderIndex
+
+    ; See if we're at the end
+    cpy #SPIDER_SPRITE_SIZE
+    bne .game_kernel_spider_2_line
+    ldy #-1 ; Load a negative value to tell draw routine to stop
+    sty SpiderIndex
+    lda #0
+    sta SpiderLine
+
+.game_kernel_spider_2_load:
+    lda SpiderLine
+.game_kernel_spider_2_line:
+    sta GRP0
+
+.game_kernel_swatter_2:
+    ; Swatter (2nd time)
+
+    ; Check if wait state
+    bit SwatterState
+    bpl .game_kernel_swatter_2_load
+
+    ldy SwatterIndex
+    bmi .game_kernel_swatter_2_load ; At end of sprite
+    bne .game_kernel_swatter_2_draw ; Currently drawing (not zero)
+
+    ; Check y position to see if we should start
+    lda Temp+1 ; Use half scanline
+    sbc SwatterDrawPos
+    bpl .game_kernel_swatter_2_load
+
+.game_kernel_swatter_2_draw:
+    lda SwatterSprite,y
+    sta SwatterLine
+
+    ; Increment index
+    inc SwatterIndex
+
+    ; See if we're at the end
+    cpy #(SWATTER_SPRITE_SIZE-1)
+    bne .game_kernel_swatter_2_line
+    ldy #-1 ; Load a negative value to tell draw routine to stop
+    sty SwatterIndex
+
+.game_kernel_swatter_2_load:
+    lda SwatterLine
+.game_kernel_swatter_2_line:
+    sta GRP1
+
+    ; Next Line and half-line
     dec Temp+1
     dex
-    bne .game_kernel_objects
+    sta WSYNC
+
+    ; Preload half-line
+    lda Temp+1
+
+.game_kernel_line_3:
+    ; Line (3rd time)
+
+    bit LineEnabled
+    bpl .game_kernel_line_3_skip
+
+    ldy #%00000000
+
+    ; Top
+    cmp LineDrawPos+1
+    bcs .game_kernel_line_3_off
+
+    ; Bottom
+    cmp LineDrawPos+0
+    bcc .game_kernel_line_3_off
+
+.game_kernel_line_3_on:
+    ldy #%00000010
+
+.game_kernel_line_3_off:
+    sty ENABL
+
+.game_kernel_line_3_skip:
+
+.game_kernel_bug_2_0:
+    ; First Bug (2nd time)
+
+    ldy #%00000000
+
+    ; Top
+    cmp BugDrawPosTop+0
+    bcs .game_kernel_bug_2_0_off
+
+    ; Bottom
+    cmp BugDrawPosBottom+0
+    bcc .game_kernel_bug_2_0_off
+
+.game_kernel_bug_2_0_on:
+    ldy #%00000010
+
+.game_kernel_bug_2_0_off:
+    sty ENAM0
+
+.game_kernel_bug_2_1:
+    ; Second Bug (2nd time)
+
+    ldy #%00000000
+
+    ; Top
+    cmp BugDrawPosTop+1
+    bcs .game_kernel_bug_2_1_off
+
+    ; Bottom
+    cmp BugDrawPosBottom+1
+    bcc .game_kernel_bug_2_1_off
+
+.game_kernel_bug_2_1_on:
+    ldy #%00000010
+
+.game_kernel_bug_2_1_off:
+    sty ENAM1
+
+    ; Next Line
+    dex
+    sta WSYNC
+
+.game_kernel_spider_3:
+    ; Spider (3rd time)
+
+    ldy SpiderIndex
+    bmi .game_kernel_spider_3_load  ; At end of sprite
+    bne .game_kernel_spider_3_draw  ; Currently drawing (not zero)
+
+    ; Check y position to see if we should start
+    lda Temp+1  ; Use half scanline
+    sbc SpiderDrawPos
+    bpl .game_kernel_spider_3_load
+
+.game_kernel_spider_3_draw:
+    lda (SpiderPtr),y
+    sta SpiderLine
+
+    ; Increment sprite index
+    inc SpiderIndex
+
+    ; See if we're at the end
+    cpy #SPIDER_SPRITE_SIZE
+    bne .game_kernel_spider_3_line
+    ldy #-1 ; Load a negative value to tell draw routine to stop
+    sty SpiderIndex
+    lda #0
+    sta SpiderLine
+
+.game_kernel_spider_3_load:
+    lda SpiderLine
+.game_kernel_spider_3_line:
+    sta GRP0
+
+.game_kernel_spider_3_skip:
+
+.game_kernel_swatter_3:
+    ; Swatter (3rd time)
+
+    ; Check if wait state
+    bit SwatterState
+    bpl .game_kernel_swatter_3_load
+
+    ldy SwatterIndex
+    bmi .game_kernel_swatter_3_load ; At end of sprite
+    bne .game_kernel_swatter_3_draw ; Currently drawing (not zero)
+
+    ; Check y position to see if we should start
+    lda Temp+1 ; Use half scanline
+    sbc SwatterDrawPos
+    bpl .game_kernel_swatter_3_load
+
+.game_kernel_swatter_3_draw:
+    lda SwatterSprite,y
+    sta SwatterLine
+
+    ; Increment index
+    inc SwatterIndex
+
+    ; See if we're at the end
+    cpy #(SWATTER_SPRITE_SIZE-1)
+    bne .game_kernel_swatter_3_line
+    ldy #-1 ; Load a negative value to tell draw routine to stop
+    sty SwatterIndex
+
+.game_kernel_swatter_3_load:
+    lda SwatterLine
+.game_kernel_swatter_3_line:
+    sta GRP1
+
+.game_kernel_swatter_3_skip:
+
+    ; New line and decrement half scanline
+    dec Temp+1
+    dex
+    beq .game_kernel_clean
+    jmp .game_kernel_objects
 
 .game_kernel_clean:
 

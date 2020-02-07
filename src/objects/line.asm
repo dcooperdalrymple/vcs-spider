@@ -336,33 +336,6 @@ LineDrawStart:
 
     rts
 
-LineDraw:
-
-    ldy #%00000000
-
-    ; Check if visible
-    bit LineEnabled
-    bpl .line_draw_off
-
-    ; Load half scanline
-;    lda Temp+1
-
-    ; Top
-    cmp LineDrawPos+1
-    bcs .line_draw_off
-
-    ; Bottom
-    cmp LineDrawPos+0
-    bcc .line_draw_off
-
-.line_draw_on:
-    ldy #%00000010
-
-.line_draw_off:
-    sty ENABL
-
-    rts
-
 LineClean:
 
     ; Clear out Line

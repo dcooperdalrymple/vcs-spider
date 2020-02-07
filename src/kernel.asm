@@ -93,6 +93,7 @@ SpiderColor         ds 1
 
 SpiderIndex         ds 1
 SpiderDrawPos       ds 1
+SpiderLine          ds 1
 
 SpiderPtr2          ds 2
 
@@ -122,6 +123,7 @@ SwatterColor        ds 1
 
 SwatterIndex        ds 1
 SwatterDrawPos      ds 1
+SwatterLine         ds 1
 
 SwatterSampleCount  ds 1
 SwatterSampleF      ds 1

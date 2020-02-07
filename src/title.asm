@@ -426,7 +426,6 @@ TitleAssets:
     ; Assets
     include "title_frame_top.asm"
     include "title_frame_bottom.asm"
-    include "title_label.asm"
     include "title_spider.asm"
 
 TitleAudio0:

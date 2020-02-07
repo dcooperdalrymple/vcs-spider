@@ -13,9 +13,9 @@ SWATTER_WAIT_TIME       = 60*3 ; 60 frames per second
 SWATTER_HOLD_TIME       = 60
 SWATTER_ACTIVE_TIME     = 60/2
 
-SWATTER_STATE_WAIT      = 0
-SWATTER_STATE_HOLD      = 1
-SWATTER_STATE_ACTIVE    = 2
+SWATTER_STATE_WAIT      = #%00000000
+SWATTER_STATE_HOLD      = #%10000000
+SWATTER_STATE_ACTIVE    = #%11000000
 
 SWATTER_HIT_DAMAGE      = #$10
 
@@ -162,7 +162,7 @@ SwatterCollision:
 
 .swatter_collision_p0_zero:
     lda #0
-    
+
 .swatter_collision_p0_set:
     sta ScoreValue
 
@@ -201,58 +201,14 @@ SwatterDrawStart:
     lda SwatterPos+1        ; Y Position
     lsr
     clc
-    adc #SWATTER_SIZE
+    adc #SWATTER_SPRITE_SIZE
     sta SwatterDrawPos
 
     ; Initialize sprite index
     lda #0
     sta SwatterIndex
+    sta SwatterLine
 
-    rts
-
-SwatterDraw:
-
-    lda SwatterState
-    cmp #SWATTER_STATE_WAIT
-    beq .swatter_draw_return
-
-    ldy SwatterIndex
-    cpy #(SWATTER_SPRITE_SIZE*2)
-    beq .swatter_draw_blank     ; At end of sprite
-    bcs .swatter_draw_return    ; Completed drawing sprite
-    cpy #0
-    bne .swatter_draw_line
-
-    ; Use half scanline
-    lda Temp+1
-
-    sbc SwatterDrawPos
-    bpl .swatter_draw_return    ; Not yet to draw sprite
-
-.swatter_draw_line:
-    tya
-    lsr
-    bcs .swatter_draw_skip
-    tay
-
-    lda SwatterSprite,y
-    sta GRP1
-
-.swatter_draw_skip:
-    ldy SwatterIndex
-    iny
-    sty SwatterIndex
-    rts ; Early return
-
-.swatter_draw_blank:
-;    lda #0
-;    sta GRP1
-
-    ; Push index to be one above
-    iny
-    sty SwatterIndex
-
-.swatter_draw_return:
     rts
 
 SwatterClean:
