@@ -4,7 +4,7 @@
 
 ; Constants
 
-LINE_SIZE       = 4
+LINE_SIZE       = 8
 LINE_DISTANCE   = 64    ; Distance from player
 LINE_VEL_X      = 4
 LINE_VEL_Y      = 4
@@ -111,46 +111,47 @@ LineControl:
     cmp #%10000000
     bne .line_control_position_right
 
-    ldx #LINE_SIZE
-    ldy #SPIDER_SIZE
+    ldx #0
+    ldy #SPIDER_SIZE-LINE_SIZE/2
     jmp .line_control_position_store
 
 .line_control_position_right:
     cmp #%01000000
     bne .line_control_position_top
 
-    ldx #SPIDER_SIZE*2
-    ldy #SPIDER_SIZE
+    ldx #SPIDER_SIZE-LINE_SIZE/2
+    ldy #SPIDER_SIZE-LINE_SIZE/2
     jmp .line_control_position_store
 
 .line_control_position_top:
     cmp #%00100000
     bne .line_control_position_bottom
 
-    ldx #SPIDER_SIZE
-    ldy #SPIDER_SIZE*2
+    ldx #SPIDER_SIZE/2
+    ldy #SPIDER_SIZE
     jmp .line_control_position_store
 
 .line_control_position_bottom:
     cmp #%00010000
     bne .line_control_position_top_right
 
-    ldx #SPIDER_SIZE
+    ldx #SPIDER_SIZE/2
     jmp .line_control_position_store
 
 .line_control_position_top_right:
     cmp #%01100000
     bne .line_control_position_bottom_right
 
-    ldx #SPIDER_SIZE*2
-    ldy #SPIDER_SIZE*2
+    ldx #SPIDER_SIZE
+    ldy #SPIDER_SIZE+LINE_SIZE*2
     jmp .line_control_position_store
 
 .line_control_position_bottom_right:
     cmp #%01010000
     bne .line_control_position_bottom_left
 
-    ldx #SPIDER_SIZE*2
+    ldx #SPIDER_SIZE-LINE_SIZE/2
+    ldy #0
     jmp .line_control_position_store
 
 .line_control_position_bottom_left:
@@ -158,14 +159,16 @@ LineControl:
     bne .line_control_position_top_left
 
     ; No Offset
+    ldx #LINE_SIZE/2
+    ldy #LINE_SIZE/2
     jmp .line_control_position_store
 
 .line_control_position_top_left:
     cmp #%10100000
     bne .line_control_position_store
 
-    ldx #LINE_SIZE
-    ldy #SPIDER_SIZE*2
+    ldx #0
+    ldy #SPIDER_SIZE+LINE_SIZE*3/2
 
 .line_control_position_store:
 

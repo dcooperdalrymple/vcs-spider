@@ -40,7 +40,7 @@ Physical distribution for commercial use (whether in cartridge or compact format
 ## BUGS
 
 - [ ] Spider boundary
-- [ ] Line spawning
+- [x] Line spawning
 
 ## License
 
