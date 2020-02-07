@@ -6,7 +6,7 @@
 
 SPIDER_COLOR        = #$56
 SPIDER_SPRITE_SIZE  = 16
-SPIDER_SIZE         = #SPIDER_SPRITE_SIZE*2
+SPIDER_SIZE         = #SPIDER_SPRITE_SIZE
 SPIDER_VEL_X        = 2
 SPIDER_VEL_Y        = 2
 
@@ -251,7 +251,8 @@ SpiderDrawStart:
 
     ; Set player 0 to be quad size
     lda NuSiz0
-    ora #%00000111
+    and #%11111000
+    ora #%00000101
     sta NuSiz0
     sta NUSIZ0
 
