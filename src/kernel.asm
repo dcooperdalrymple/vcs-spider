@@ -79,10 +79,13 @@ ScoreDigitOnes      ds 2
 ScoreDigitTens      ds 2
 ScoreGfx            ds 2
 
+; Level
+LevelCurrent        ds 1
+
 ; Web
 
 WebIndex            ds 1
-WebDir              ds 1
+WebColor            ds 2
 
 ; Spider
 

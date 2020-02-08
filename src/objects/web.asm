@@ -16,9 +16,9 @@ WEB_LINE            = WEB_LINES/WEB_SIZE
 WebDrawStart:
 
     ; Load Colors
-    lda #WEB_BG_COLOR
+    lda WebColor+0
     sta COLUBK
-    lda #WEB_FG_COLOR
+    lda WebColor+1
     sta COLUPF
 
     ; Mirror playfield and use standard playfield color
@@ -31,8 +31,6 @@ WebDrawStart:
     ; Initialize image index
     lda #0
     sta WebIndex
-    lda #1
-    sta WebDir
 
     rts
 

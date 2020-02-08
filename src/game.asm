@@ -12,6 +12,7 @@ GAME_AUDIO_TONE     = 6
 
 ; Object Code
 
+    include "objects/level.asm"
     include "objects/score.asm"
     include "objects/web.asm"
     include "objects/spider.asm"
@@ -56,6 +57,7 @@ GameInit:
     sta NUSIZ1
 
     ; Initialize Objects
+    jsr LevelInit
     jsr ScoreInit
     jsr SpiderInit
     jsr LineInit
@@ -70,6 +72,7 @@ GameVerticalBlank:
     jsr Random
 
     ; Update Objects
+    jsr LevelUpdate
     jsr SpiderUpdate
     jsr LineUpdate
     jsr BugUpdate
