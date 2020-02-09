@@ -4,8 +4,8 @@
 
 ; Constants
 
-SWATTER_COLOR           = #$36
-SWATTER_HOLD_COLOR      = #$30
+SWATTER_COLOR           = #$30
+SWATTER_HOLD_COLOR      = #$36
 SWATTER_SPRITE_SIZE     = #20
 SWATTER_SIZE            = #SWATTER_SPRITE_SIZE*2
 
@@ -46,13 +46,13 @@ SwatterUpdate:
 
 .swatter_update_color:
     lda SwatterState
-    cmp #SWATTER_STATE_HOLD
-    bne .swatter_update_color_active
-.swatter_update_color_hold:
-    lda #SWATTER_HOLD_COLOR
-    jmp .swatter_update_color_set
+    cmp #SWATTER_STATE_ACTIVE
+    bne .swatter_update_color_hold
 .swatter_update_color_active:
     lda #SWATTER_COLOR
+    jmp .swatter_update_color_set
+.swatter_update_color_hold:
+    lda #SWATTER_HOLD_COLOR
 .swatter_update_color_set:
     sta SwatterColor
 
