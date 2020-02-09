@@ -16,8 +16,8 @@ WEB_LINE            = WEB_LINES/WEB_SIZE
 WebDrawStart:
 
     ; Load Colors
-    lda WebColor+0
-    sta COLUBK
+;    lda WebColor+0
+;    sta COLUBK
     lda WebColor+1
     sta COLUPF
 

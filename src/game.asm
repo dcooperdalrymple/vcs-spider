@@ -217,6 +217,10 @@ GameKernel:
     lda #(KERNEL_SCANLINES-SCORE_LINES)/2
     sta Temp+1
 
+    ; Load background color
+    lda WebColor+0
+    sta COLUBK
+
 .game_kernel_objects:
 
     sta WSYNC
