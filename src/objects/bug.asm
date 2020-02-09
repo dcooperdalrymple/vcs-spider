@@ -6,7 +6,6 @@
 
 BUG_SIZE            = 8
 BUG_BOUNDARY        = BUG_SIZE
-BUG_SPEED           = 2
 BUG_STUN_LENGTH     = 120
 BUG_POINTS          = 4
 
@@ -97,61 +96,69 @@ BugMovement:
     sta Temp+1
 
 .bug_movement_load:
-    ; Load x and y values
     ldx Temp+0
-    lda BugPosX,x
-    ldy BugPosY,x
-    tax
 
 .bug_movement_x:
+    ldy BugSpeed
+
     ; Alter X Position
     lda Temp+1
     and #%00000001
 
-.bug_movement_x_left:
+.bug_movement_x_check:
     cmp #1
     bne .bug_movement_x_right
-    REPEAT #BUG_SPEED
-    dex
-    REPEND
+
+.bug_movement_x_left:
+    dec BugPosX,x
+    dey
+    bne .bug_movement_x_left
+
     jmp .bug_movement_y
 
 .bug_movement_x_right:
-    REPEAT #BUG_SPEED
-    inx
-    REPEND
+    inc BugPosX,x
+    dey
+    bne .bug_movement_x_right
 
 .bug_movement_y:
+    ldy BugSpeed
+
     ; Alter Y Position
     lda Temp+1
     and #%00000010
     lsr
 
-.bug_movement_y_up:
+.bug_movement_y_check:
     cmp #1
     bne .bug_movement_y_down
-    REPEAT #BUG_SPEED
-    iny
-    REPEND
+
+.bug_movement_y_up:
+    inc BugPosY,x
+    dey
+    bne .bug_movement_y_up
+
     jmp .bug_movement_boundary
 
 .bug_movement_y_down:
-    REPEAT #BUG_SPEED
+    dec BugPosY,x
     dey
-    REPEND
+    bne .bug_movement_y_down
 
 .bug_movement_boundary:
+    lda BugPosX,x
+    ldy BugPosY,x
 
 .bug_movement_boundary_left:
-    cpx #BUG_BOUNDARY
+    cmp #BUG_BOUNDARY
     bcs .bug_movement_boundary_right
-    ldx #BUG_BOUNDARY
+    lda #BUG_BOUNDARY
     jmp .bug_movement_boundary_top
 
 .bug_movement_boundary_right:
-    cpx #(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
+    cmp #(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
     bcc .bug_movement_boundary_top
-    ldx #(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
+    lda #(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
 
 .bug_movement_boundary_top:
     cpy #SCORE_LINES+BUG_BOUNDARY+(BUG_SIZE*2)
@@ -165,8 +172,6 @@ BugMovement:
     ldy #KERNEL_SCANLINES-BUG_BOUNDARY-BUG_SIZE
 
 .bug_movement_store:
-    txa
-    ldx Temp+0
     sta BugPosX,x
     sty BugPosY,x
 

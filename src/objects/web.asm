@@ -42,6 +42,10 @@ WebClean:
     sta PF1
     sta PF2
 
+    ; Clear colors
+    sta COLUBK
+    sta COLUPF
+
     rts
 
     ; Web Image

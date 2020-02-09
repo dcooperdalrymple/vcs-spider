@@ -9,15 +9,12 @@ SWATTER_HOLD_COLOR      = #$30
 SWATTER_SPRITE_SIZE     = #20
 SWATTER_SIZE            = #SWATTER_SPRITE_SIZE*2
 
-SWATTER_WAIT_TIME       = 60*3 ; 60 frames per second
 SWATTER_HOLD_TIME       = 60
 SWATTER_ACTIVE_TIME     = 60/2
 
 SWATTER_STATE_WAIT      = #%00000000
 SWATTER_STATE_HOLD      = #%10000000
 SWATTER_STATE_ACTIVE    = #%11000000
-
-SWATTER_HIT_DAMAGE      = #$10
 
 SWATTER_HOLD_SAMPLE_C   = 2
 SWATTER_HOLD_SAMPLE_V   = 4
@@ -152,12 +149,12 @@ SwatterCollision:
 .swatter_collision_p0:
 
     lda ScoreValue
-    cmp #SWATTER_HIT_DAMAGE
+    cmp SwatterHitDamage
     bcc .swatter_collision_p0_zero
     beq .swatter_collision_p0_zero
 
     clc
-    sbc #SWATTER_HIT_DAMAGE
+    sbc SwatterHitDamage
     jmp .swatter_collision_p0_set
 
 .swatter_collision_p0_zero:
@@ -229,7 +226,7 @@ SwatterReset:
     lda Rand8
     and #$3f
     clc
-    adc #SWATTER_WAIT_TIME
+    adc SwatterWaitTime
     sta FrameTimer+1
 
     ; Set Random Position

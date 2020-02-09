@@ -110,6 +110,8 @@ LineDrawPos         ds 2
 
 ; Bug
 
+BugSpeed            ds 1
+
 BugStunned          ds 2
 BugPosX             ds 2
 BugPosY             ds 2
@@ -123,6 +125,9 @@ BugDrawPosTop       ds 2
 SwatterPos          ds 2
 SwatterState        ds 1
 SwatterColor        ds 1
+
+SwatterWaitTime     ds 1
+SwatterHitDamage    ds 1
 
 SwatterIndex        ds 1
 SwatterDrawPos      ds 1

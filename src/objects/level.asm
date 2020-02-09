@@ -4,8 +4,7 @@
 
 ; Constants
 
-LEVEL_MIN       = 0
-LEVEL_MAX       = 3
+LEVELS          = 3
 
 LevelInit:
 
@@ -26,12 +25,12 @@ LevelUpdate:
     ; Check if score is high enough
     ldy LevelCurrent
     lda ScoreValue+1
-    cmp LevelVars+0,y
+    cmp LevelDataScore,y
     bcc .level_update_return
 
     ; Check if we haven't reached the final level
     lda LevelCurrent
-    cmp #LEVEL_MAX
+    cmp #LEVELS
     bcs .level_update_return
 
     inc LevelCurrent
@@ -44,37 +43,59 @@ LevelLoad:
     ldy LevelCurrent
 
     ; Background Color
-    lda LevelVars+4,y
+    lda LevelDataBk,y
     sta WebColor+0
 
     ; Web Color
-    lda LevelVars+8,y
+    lda LevelDataPf,y
     sta WebColor+1
+
+    ; Bug Speed
+    lda LevelDataBug,y
+    sta BugSpeed
+
+    ; Swatter Wait Time
+    lda LevelDataSwatterWait,y
+    sta SwatterWaitTime
+
+    ; Swatter Hit Damage
+    lda LevelDataSwatterDamage,y
+    sta SwatterHitDamage
 
     rts
 
-LevelVars:
-
-    ; Score needed
+LevelDataScore:     ; Score needed
     .BYTE #$10
     .BYTE #$20
     .BYTE #$40
     .BYTE #$FF
 
-    ; Background Color
+LevelDataBk:        ; Background Color
     .BYTE #$00
     .BYTE #$60
     .BYTE #$50
     .BYTE #$30
 
-    ; Web Color
+LevelDataPf:        ; Web Color
     .BYTE #$06
     .BYTE #$64
     .BYTE #$54
     .BYTE #$34
 
-    ; Bug Speed
+LevelDataBug:       ; Bug Speed
+    .BYTE #2
+    .BYTE #3
+    .BYTE #4
+    .BYTE #5
 
-    ; Swatter Wait
+LevelDataSwatterWait: ; Swatter Wait Time Min (adds random 0-128)
+    .BYTE #180
+    .BYTE #150
+    .BYTE #120
+    .BYTE #60
 
-    ; Swatter Damage
+LevelDataSwatterDamage: ; Swatter Damage
+    .BYTE #$10
+    .BYTE #$18
+    .BYTE #$20
+    .BYTE #$40
