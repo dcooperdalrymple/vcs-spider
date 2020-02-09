@@ -185,7 +185,7 @@ ScoreBarFlip:
     .BYTE #%00011111
     .BYTE #%00111111
     .BYTE #%01111111
-    .BYTE #%11111111
+    .BYTE #%01111111
 
     include "objects/score_digits.asm"
     include "objects/score_level.asm"
