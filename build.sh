@@ -33,6 +33,12 @@ python ./assets/sprite_image.py -name SwatterSprite -in ./assets/swatter.png -ou
 echo "/assets/digits.png => /src/objects/score_digits.asm"
 python ./assets/sprite_image.py -name ScoreDigits -in ./assets/digits.png -out ./src/objects/score_digits.asm -reverse 0
 
+echo "/assets/score-level.png => /src/objects/score_level.asm"
+python ./assets/sprite_image.py -name ScoreLevel -in ./assets/score-level.png -out ./src/objects/score_level.asm -reverse 1
+
+echo "/assets/score-health.png => /src/objects/score_health.asm"
+python ./assets/sprite_image.py -name ScoreHealth -in ./assets/score-health.png -out ./src/objects/score_health.asm -reverse 1
+
 # Source
 
 cd src

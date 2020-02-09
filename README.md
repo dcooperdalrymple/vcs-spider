@@ -30,7 +30,8 @@ Physical distribution for commercial use (whether in cartridge or compact format
 
 - [x] Level variable with increasing difficulty and changing color palette
 - [x] Difficulty switch support to increase starting difficulty
-- [ ] Health bar and 16-bit score with 6 digit display
+- [x] Health bar and level counter
+- [ ] 6 digit score kernel with 16-bit score
 - [ ] Black and white TV switch support
 - [ ] Game select switch support? (Easter egg?)
 - [x] Revised game kernel

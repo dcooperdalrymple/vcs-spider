@@ -4,7 +4,7 @@
 
 ; Constants
 
-LEVELS          = 3
+LEVELS          = 4
 
 LevelInit:
 
@@ -30,7 +30,7 @@ LevelUpdate:
 
     ; Check if we haven't reached the final level
     lda LevelCurrent
-    cmp #LEVELS
+    cmp #LEVELS-1
     bcs .level_update_return
 
     inc LevelCurrent
