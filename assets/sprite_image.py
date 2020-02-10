@@ -11,7 +11,7 @@ except ImportError, err:
     print "Could not load %s module." % (err)
     raise SystemExit
 
-print "\nVCS Sprite Image Converter\nCopyright (c) 2019 D Cooper Dalrymple\n"
+print "\nVCS Sprite Image Converter\nCopyright (c) 2020 D Cooper Dalrymple\n"
 
 # Constants
 SPRITE_WIDTH = 8

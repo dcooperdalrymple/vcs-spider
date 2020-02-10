@@ -2,7 +2,7 @@
 > Spider Web game for Atari VCS/2600<br />
 > Created by D Cooper Dalrymple 2018 - [dcdalrymple.com](https://dcdalrymple.com/)<br />
 > Licensed under GNU LGPL V3.0<br />
-> Last revision: September 5th, 2019
+> Last revision: February 10th, 2020
 
 ## Compilation
 
