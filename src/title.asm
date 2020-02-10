@@ -277,13 +277,16 @@ TitleFrameTopDraw:
     adc #KERNEL_IMAGE_FULL_DATA ; 2
     tay ; 2
 
-    cpy #TITLE_LABEL_LINE*KERNEL_IMAGE_FULL_DATA
-    bne .title_frame_top_label_color_skip
+    cpy #TITLE_LABEL_LINE*KERNEL_IMAGE_FULL_DATA ; 2
+    bne .title_frame_top_label_color_skip ; 2
     lda #TITLE_LABEL_COLOR ; 2
     sta COLUPF ; 4
+    nop ; 2
+    jmp .title_frame_top_load ; 3
+
 .title_frame_top_label_color_skip:
 
-    cpy #TITLE_FRAME_TOP_LINES*KERNEL_IMAGE_FULL_DATA
+    cpy #TITLE_FRAME_TOP_LINES*KERNEL_IMAGE_FULL_DATA ; 2
     bne .title_frame_top ; 2
 
 .title_frame_top_clean:

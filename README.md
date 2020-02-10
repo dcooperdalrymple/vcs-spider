@@ -43,7 +43,7 @@ Physical distribution for commercial use (whether in cartridge or compact format
 - [ ] Improve multiple sprite scanlines
 - [x] Spider boundary
 - [x] Line spawning
-- [ ] Fix playfield loading of title after color switch
+- [x] Fix playfield loading of title after color switch
 
 ## License
 
