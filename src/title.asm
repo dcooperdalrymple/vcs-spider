@@ -421,13 +421,6 @@ TitleFrameBottomDraw:
 .title_kernel_return:
     rts
 
-TitleAssets:
-
-    ; Assets
-    include "title_frame_top.asm"
-    include "title_frame_bottom.asm"
-    include "title_spider.asm"
-
 TitleAudio0:
 
     .BYTE #15   ; B

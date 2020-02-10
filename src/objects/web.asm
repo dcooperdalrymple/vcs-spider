@@ -47,6 +47,3 @@ WebClean:
     sta COLUPF
 
     rts
-
-    ; Web Image
-    include "objects/web_image.asm"

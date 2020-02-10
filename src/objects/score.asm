@@ -308,8 +308,3 @@ ScoreBarFlip:
     .BYTE #%00111111
     .BYTE #%01111111
     .BYTE #%01111111
-
-    include "objects/score_digits.asm"
-    include "objects/score_label.asm"
-;    include "objects/score_level.asm"
-;    include "objects/score_health.asm"

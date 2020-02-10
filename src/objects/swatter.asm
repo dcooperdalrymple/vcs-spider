@@ -273,6 +273,3 @@ SwatterHitSample:
     lda #SWATTER_HIT_SAMPLE_V
     sta AUDV1
     rts
-
-    ; Swatter Sprites
-    include "objects/swatter_sprite.asm"

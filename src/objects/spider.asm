@@ -294,6 +294,3 @@ SpiderClean:
     sta GRP0
 
     rts
-
-    ; Spider Sprites
-    include "objects/spider_sprite.asm"

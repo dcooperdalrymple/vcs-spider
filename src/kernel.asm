@@ -142,6 +142,22 @@ SwatterSampleF      ds 1
 
     include "routines.asm"
 
+    ; Assets
+
+    include "title_frame_top.asm"
+    include "title_frame_bottom.asm"
+    include "title_spider.asm"
+
+    include "objects/score_digits.asm"
+    include "objects/score_digits_flip.asm"
+    include "objects/score_label.asm"
+
+    include "objects/web_image.asm"
+
+    include "objects/spider_sprite.asm"
+
+    include "objects/swatter_sprite.asm"
+
 InitSystem:
 
 .init_clean:
