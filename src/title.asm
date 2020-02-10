@@ -6,6 +6,7 @@ TITLE_BG_COLOR          = #$00
 TITLE_WEB_COLOR         = #$06
 TITLE_LABEL_COLOR       = #$0E
 TITLE_SPIDER_COLOR      = #$56
+TITLE_SPIDER_BW_COLOR   = #$0E
 
 TITLE_AUDIO_0_TONE      = 4
 TITLE_AUDIO_0_VOLUME    = 1
@@ -29,15 +30,6 @@ TitleInit:
     SET_POINTER VBlankPtr, TitleVerticalBlank
     SET_POINTER KernelPtr, TitleKernel
     SET_POINTER OverScanPtr, TitleOverScan
-
-    ; Load Colors
-    lda #TITLE_BG_COLOR
-    sta COLUBK
-    lda #TITLE_WEB_COLOR
-    sta COLUPF
-    lda #TITLE_SPIDER_COLOR
-    sta COLUP0
-    sta COLUP1
 
     ; Load audio settings
 
@@ -98,6 +90,7 @@ TitleVerticalBlank:
 
     jsr TitlePosition
     jsr TitleAnimation
+    jsr TitleColor
 
     rts
 
@@ -145,6 +138,36 @@ TitleAnimation:
     SET_POINTER SpiderPtr, TitleSpider+#TITLE_SPIDER_SIZE
     lda #1
     sta SpiderDrawPos
+    rts
+
+TitleColor:
+
+    ; Load Colors
+    lda #TITLE_BG_COLOR
+    sta COLUBK
+    lda #TITLE_WEB_COLOR
+    sta COLUPF
+
+    ; Check b/w
+    lda SWCHB
+    REPEAT 4
+    lsr
+    REPEND
+    bcc .title_bw
+
+.title_color:
+    lda #TITLE_SPIDER_COLOR
+    sta COLUP0
+    sta COLUP1
+
+    rts
+
+.title_bw:
+    ; Load B/W Colors
+    lda #TITLE_SPIDER_BW_COLOR
+    sta COLUP0
+    sta COLUP1
+
     rts
 
 TitleOverScan:
@@ -336,7 +359,20 @@ TitleSpiderDraw:
     sta WSYNC
 
     sta ENAM0
+
+    ; Check b/w
+    lda SWCHB
+    REPEAT 4
+    lsr
+    REPEND
+    bcc .title_spider_bw
+
+.title_spider_color:
     lda #TITLE_SPIDER_COLOR
+    jmp .title_spider_color_set
+.title_spider_bw:
+    lda #TITLE_SPIDER_BW_COLOR
+.title_spider_color_set:
     sta COLUP0
 
 .title_spider:

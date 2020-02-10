@@ -5,9 +5,11 @@
 ; Constants
 
 SCORE_BG_COLOR      = #$00
-SCORE_LABEL_COLOR   = #$0f
+SCORE_LABEL_COLOR   = #$06
 SCORE_LEVEL_COLOR   = #$44
 SCORE_HEALTH_COLOR  = #$C8
+SCORE_LEVEL_BW_COLOR    = #$0E
+SCORE_HEALTH_BW_COLOR   = #$0E
 
 SCORE_LABEL_SIZE    = 5
 SCORE_DIGIT_SIZE    = 5
@@ -188,11 +190,30 @@ ScoreDraw:
 
     sta WSYNC
 
+    ; Load Colors
+    lda SWCHB
+    REPEAT 4
+    lsr
+    REPEND
+    bcc .score_draw_bw
+
+.score_draw_color:
     lda #SCORE_LEVEL_COLOR
     sta COLUPF
     sta COLUP0
     lda #SCORE_HEALTH_COLOR
     sta COLUP1
+
+    jmp .score_draw_digit_start
+
+.score_draw_bw:
+    lda #SCORE_LEVEL_BW_COLOR
+    sta COLUPF
+    sta COLUP0
+    lda #SCORE_HEALTH_BW_COLOR
+    sta COLUP1
+
+.score_draw_digit_start:
 
     sta WSYNC
 

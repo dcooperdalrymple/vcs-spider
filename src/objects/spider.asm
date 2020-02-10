@@ -5,12 +5,14 @@
 ; Constants
 
 SPIDER_COLOR        = #$56
+SPIDER_BW_COLOR     = #$0E
+SPIDER_COL_COLOR    = #$44
+SPIDER_COL_BW_COLOR = #$08
+
 SPIDER_SPRITE_SIZE  = 16
 SPIDER_SIZE         = #SPIDER_SPRITE_SIZE
 SPIDER_VEL_X        = 2
 SPIDER_VEL_Y        = 2
-
-SPIDER_COL_COLOR    = #$44
 
 ; Initialization
 
@@ -24,9 +26,6 @@ SpiderInit:
 
     ; Setup Sprite
     SET_POINTER SpiderPtr, SpiderSprite
-
-;    lda #SPIDER_COLOR
-;    sta SpiderColor
 
     rts
 
@@ -205,7 +204,16 @@ SpiderControl:
     rts
 
 SpiderCollision:
-    lda #SPIDER_COLOR
+    ldy #SPIDER_COLOR
+
+    ; Check b/w
+    lda SWCHB
+    REPEAT 4
+    lsr
+    REPEND
+    bcs .spider_collision_m0
+
+    ldy #SPIDER_BW_COLOR
 
 .spider_collision_m0:
     ; Check stun status
@@ -230,10 +238,19 @@ SpiderCollision:
     jmp .spider_collision_return
 
 .spider_collision_active:
-    lda #SPIDER_COL_COLOR
+    ldy #SPIDER_COL_COLOR
+
+    ; Check b/w
+    lda SWCHB
+    REPEAT 4
+    lsr
+    REPEND
+    bcs .spider_collision_return
+
+    ldy #SPIDER_COL_BW_COLOR
 
 .spider_collision_return:
-    sta SpiderColor
+    sty SpiderColor
     rts
 
 SpiderPosition:

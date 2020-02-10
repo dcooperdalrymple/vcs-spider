@@ -41,18 +41,13 @@ LevelUpdate:
     jsr LevelLoad
 
 .level_update_return:
+
+    jsr LevelLoadColor ; Always update color (for b/w support)
+
     rts
 
 LevelLoad:
     ldy LevelCurrent
-
-    ; Background Color
-    lda LevelDataBk,y
-    sta WebColor+0
-
-    ; Web Color
-    lda LevelDataPf,y
-    sta WebColor+1
 
     ; Bug Speed
     lda LevelDataBug,y
@@ -65,6 +60,40 @@ LevelLoad:
     ; Swatter Hit Damage
     lda LevelDataSwatterDamage,y
     sta SwatterHitDamage
+
+    rts
+
+LevelLoadColor:
+    ldy LevelCurrent
+
+    ; check b/w
+    lda SWCHB
+    REPEAT 4
+    lsr
+    REPEND
+    bcc .level_load_bw
+
+.level_load_color:
+
+    ; Background Color
+    lda LevelDataBk,y
+    sta WebColor+0
+
+    ; Web Color
+    lda LevelDataPf,y
+    sta WebColor+1
+
+    rts
+
+.level_load_bw:
+
+    ; Background Color
+    lda #WEB_BG_COLOR
+    sta WebColor+0
+
+    ; Web Color
+    lda #WEB_FG_COLOR
+    sta WebColor+1
 
     rts
 

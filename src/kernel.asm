@@ -116,7 +116,6 @@ BugSpeed            ds 1
 BugStunned          ds 2
 BugPosX             ds 2
 BugPosY             ds 2
-BugColor            ds 2
 
 BugDrawPosBottom    ds 2
 BugDrawPosTop       ds 2

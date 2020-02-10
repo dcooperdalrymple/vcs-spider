@@ -6,6 +6,8 @@ LOGO_FRAMES         = 180
 
 LOGO_BG_COLOR       = #$00
 LOGO_FG_COLOR       = #$C6
+LOGO_BG_BW_COLOR    = #$00
+LOGO_FG_BW_COLOR    = #$0E
 
 LOGO_AUDIO_0_TONE   = 4
 LOGO_AUDIO_0_VOLUME = 15 ; 15 is max
@@ -27,11 +29,7 @@ LogoInit:
     SET_POINTER KernelPtr, LogoKernel
     SET_POINTER OverScanPtr, LogoOverScan
 
-    ; Load Colors
-    lda #LOGO_BG_COLOR
-    sta COLUBK
-    lda #LOGO_FG_COLOR
-    sta COLUPF
+.logo_init_audio:
 
     ; Load audio settings
     lda #LOGO_AUDIO_0_TONE
@@ -146,6 +144,29 @@ LogoKernel:
     and #%11111110 ; No mirroring
     sta CtrlPf
     sta CTRLPF
+
+    ; Load Colors
+    lda SWCHB
+    REPEAT 4
+    lsr
+    REPEND
+    bcc .level_kernel_bw
+
+.logo_kernel_color:
+    lda #LOGO_BG_COLOR
+    sta COLUBK
+    lda #LOGO_FG_COLOR
+    sta COLUPF
+
+    jmp .logo_kernel_start
+
+.logo_kernel_bw:
+    lda #LOGO_BG_BW_COLOR
+    sta COLUBK
+    lda #LOGO_FG_BW_COLOR
+    sta COLUPF
+
+.logo_kernel_start:
 
     ; Turn on display
     lda #0

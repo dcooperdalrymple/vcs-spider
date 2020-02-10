@@ -5,7 +5,7 @@
 ; Constants
 
 WEB_BG_COLOR        = #$00
-WEB_FG_COLOR        = #$06
+WEB_FG_COLOR        = #$02
 
 WEB_SIZE            = 30
 WEB_LINES           = KERNEL_SCANLINES-SCORE_LINES
@@ -16,8 +16,6 @@ WEB_LINE            = WEB_LINES/WEB_SIZE
 WebDrawStart:
 
     ; Load Colors
-;    lda WebColor+0
-;    sta COLUBK
     lda WebColor+1
     sta COLUPF
 

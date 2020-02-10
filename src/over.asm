@@ -6,6 +6,7 @@ OVER_FRAMES         = 220
 
 OVER_BG_COLOR       = #$00
 OVER_FG_COLOR       = #$44
+OVER_FG_BW_COLOR    = #$06
 
 OVER_AUDIO_TONE     = 7
 OVER_AUDIO_VOLUME   = 6 ; 15 is max
@@ -23,12 +24,6 @@ OverInit:
     SET_POINTER VBlankPtr, OverVerticalBlank
     SET_POINTER KernelPtr, OverKernel
     SET_POINTER OverScanPtr, OverOverScan
-
-    ; Load Colors
-    lda #OVER_BG_COLOR
-    sta COLUBK
-    lda #OVER_FG_COLOR
-    sta COLUPF
 
     ; Load audio settings
     lda #OVER_AUDIO_TONE
@@ -56,6 +51,29 @@ OverInit:
 
 OverVerticalBlank:
     jsr ScoreUpdate
+
+    ; Load Colors
+    lda #OVER_BG_COLOR
+    sta COLUBK
+
+    ; Check b/w
+    lda SWCHB
+    REPEAT 4
+    lsr
+    REPEND
+    bcc .over_bw
+
+.over_color:
+    lda #OVER_FG_COLOR
+    sta COLUPF
+
+    rts
+
+.over_bw:
+    ; Load b/w Colors
+    lda #OVER_FG_BW_COLOR
+    sta COLUPF
+
     rts
 
 OverOverScan:
