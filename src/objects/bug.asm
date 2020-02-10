@@ -5,7 +5,7 @@
 ; Constants
 
 BUG_SIZE            = 8
-BUG_BOUNDARY        = BUG_SIZE
+BUG_BOUNDARY        = #(BUG_SIZE*3)
 BUG_STUN_LENGTH     = 120
 BUG_POINTS          = 4
 
@@ -156,20 +156,20 @@ BugMovement:
     jmp .bug_movement_boundary_top
 
 .bug_movement_boundary_right:
-    cmp #(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
+    cmp #(KERNEL_WIDTH/2)-BUG_BOUNDARY
     bcc .bug_movement_boundary_top
-    lda #(KERNEL_WIDTH/2)-BUG_BOUNDARY-BUG_SIZE
+    lda #(KERNEL_WIDTH/2)-BUG_BOUNDARY
 
 .bug_movement_boundary_top:
-    cpy #SCORE_LINES+BUG_BOUNDARY+(BUG_SIZE*2)
+    cpy #BUG_BOUNDARY
     bcs .bug_movement_boundary_bottom
-    ldy #SCORE_LINES+BUG_BOUNDARY+(BUG_SIZE*2)
+    ldy #BUG_BOUNDARY
     jmp .bug_movement_store
 
 .bug_movement_boundary_bottom:
-    cpy #KERNEL_SCANLINES-BUG_BOUNDARY-BUG_SIZE
+    cpy #KERNEL_SCANLINES-SCORE_LINES-BUG_BOUNDARY
     bcc .bug_movement_store
-    ldy #KERNEL_SCANLINES-BUG_BOUNDARY-BUG_SIZE
+    ldy #KERNEL_SCANLINES-SCORE_LINES-BUG_BOUNDARY
 
 .bug_movement_store:
     sta BugPosX,x
