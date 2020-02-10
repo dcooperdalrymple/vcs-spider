@@ -57,7 +57,7 @@ NuSiz1              ds 1
 
 ; Global
 
-Temp                ds 2
+Temp                ds 3
 Rand8               ds 1
 Rand16              ds 1
 
@@ -75,8 +75,9 @@ SampleStep          ds 1
 ; Score
 
 ScoreValue          ds 2
-ScoreDigitOnes      ds 1
-ScoreDigitGfx       ds 1
+ScoreDigitOnes      ds 2
+ScoreDigitTens      ds 2
+ScoreDigitGfx       ds 2
 ScoreBarGfx         ds 2
 
 ; Level

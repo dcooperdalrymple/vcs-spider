@@ -48,3 +48,45 @@ Random:
     sta Rand8
     eor Rand16
     rts
+
+;=======================================
+; BinBcdConvert
+; ---------
+; Input: A
+; Uses: A,X,Y,Temp0/1/2
+; Converts binary value to decimal value (BCD)
+; Returns X,Y
+; Sourced from http://www.6502.org/source/integers/hex2dec-more.htm
+;=======================================
+
+BinBcdConvert:
+    sta Temp+0
+
+    clc
+    sed                 ; Switch to decimal mode
+
+    lda #0              ; Clear result
+    sta Temp+1
+    sta Temp+2
+
+    ldx #8              ; Number of source bits
+.bin_bcd_convert_bit:
+    asl Temp+0          ; Shift out one bit
+
+    lda Temp+1          ; And add into result
+    adc Temp+1
+    sta Temp+1
+
+    lda Temp+2          ; Propagating any carry
+    adc Temp+2
+    sta Temp+2
+
+    dex                 ; Repeat for next bit
+    bne .bin_bcd_convert_bit
+
+    cld                 ; Back to binary
+
+    ldx Temp+1          ; Load result into registers
+    ldy Temp+2
+
+    rts

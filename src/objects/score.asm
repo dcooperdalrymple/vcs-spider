@@ -19,7 +19,7 @@ SCORE_LINES         = SCORE_LABEL_SIZE+1+SCORE_DIGIT_SIZE*SCORE_LINE_SIZE+3
 ScoreInit:
 
     ; Health Score
-    lda #$FF
+    lda #$ff
     sta ScoreValue+0
 
     ; Game Score
@@ -32,16 +32,69 @@ ScoreInit:
 
 ScoreUpdate:
 
-    ; Current Level Digit
+    ; Current Level Digits
     lda LevelCurrent
     clc
     adc #1
+
+    jsr BinBcdConvert
+
+    ; Only use first byte
+    txa
     and #$0f
+    tay
+    txa
+    and #$f0
+    REPEAT 4
+    lsr
+    REPEND
+    tax
+
+    ; Adjust index positions by multiplying by 5
+    txa
+    sta Temp
+    asl
+    asl
+    adc Temp
+    sta ScoreDigitTens
+
+    tya
     sta Temp
     asl
     asl
     adc Temp
     sta ScoreDigitOnes
+
+    ; Score Digits
+    lda ScoreValue+1
+
+    jsr BinBcdConvert
+
+    ; Only use first byte
+    txa
+    and #$0f
+    tay
+    txa
+    and #$f0
+    REPEAT 4
+    lsr
+    REPEND
+    tax
+
+    ; Adjust index positions by multiplying by 5
+    txa
+    sta Temp
+    asl
+    asl
+    adc Temp
+    sta ScoreDigitTens+1
+
+    tya
+    sta Temp
+    asl
+    asl
+    adc Temp
+    sta ScoreDigitOnes+1
 
     ; Health Bar
     lda ScoreValue+0
@@ -109,7 +162,7 @@ ScoreDraw:
     lda ScoreLabel+2,x
     sta PF2
 
-    sleep 19
+    sleep 20
 
     ; Second half of image
     ;lda ScoreLabel+3,x
@@ -131,6 +184,7 @@ ScoreDraw:
     sta PF0
     sta PF1
     sta PF2
+
     sta WSYNC
 
     lda #SCORE_LEVEL_COLOR
@@ -141,37 +195,88 @@ ScoreDraw:
 
     sta WSYNC
 
-    ldx #SCORE_DIGIT_SIZE
-.score_draw_digit:
+    ; Prepare initial line
 
-    ldy ScoreDigitOnes
+    ; Level
+    ldy ScoreDigitTens
     lda ScoreDigits,y
     and #$f0
     sta ScoreDigitGfx
-    ldy #0
+
+    ldy ScoreDigitOnes
+    lda ScoreDigits,y
+    and #$0f
+    ora ScoreDigitGfx
+    sta ScoreDigitGfx
+
+    ; Score
+    ldy ScoreDigitTens+1
+    lda ScoreDigitsFlip,y
+    and #$0f
+    sta ScoreDigitGfx+1
+
+    ldy ScoreDigitOnes+1
+    lda ScoreDigitsFlip,y
+    and #$f0
+    ora ScoreDigitGfx+1
+    sta ScoreDigitGfx+1
+
+    ldx #SCORE_DIGIT_SIZE
+.score_draw_digit:
 
     sta WSYNC
-    sta PF1
-    sty PF2
-
-    lda ScoreBarGfx+0
-    ldy ScoreBarGfx+1
-    sleep 30
-    sta PF1
-    sty PF2
 
     lda ScoreDigitGfx
-    ldy #0
-    sta WSYNC
     sta PF1
-    sty PF2
+    lda ScoreDigitGfx+1
+    sta PF2
 
+    ; Begin preparing next line
     inc ScoreDigitOnes
+    inc ScoreDigitTens
+    inc ScoreDigitOnes+1
+    inc ScoreDigitTens+1
+
+    ; Level 1st Digit
+    ldy ScoreDigitTens
+    lda ScoreDigits,y
+    and #$f0
+    sta Temp
 
     lda ScoreBarGfx+0
-    ldy ScoreBarGfx+1
-    sleep 28
     sta PF1
+    lda ScoreBarGfx+1
+    sta PF2
+
+    ; Score 1st Digit
+    ldy ScoreDigitTens+1
+    lda ScoreDigitsFlip,y
+    and #$0f
+    sta Temp+1
+
+    sta WSYNC
+    lda ScoreDigitGfx
+    sta PF1
+    lda ScoreDigitGfx+1
+    sta PF2
+
+    ; Level 2nd Digit (and transfer)
+    ldy ScoreDigitOnes
+    lda ScoreDigits,y
+    and #$0f
+    ora Temp
+    sta ScoreDigitGfx
+
+    ; Score 2nd Digit (and transfer)
+    ldy ScoreDigitOnes+1
+    lda ScoreDigitsFlip,y
+    and #$f0
+    ora Temp+1
+    sta ScoreDigitGfx+1
+
+    lda ScoreBarGfx+0
+    sta PF1
+    ldy ScoreBarGfx+1
     sty PF2
 
     dex

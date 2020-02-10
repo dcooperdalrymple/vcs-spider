@@ -25,22 +25,19 @@ python ./assets/pf_image.py -type mirror -split 1 -reverse 0 -name WebImage -in 
 ## Sprites
 
 echo "/assets/title-spider.png => /src/title_spider.asm"
-python ./assets/sprite_image.py -name TitleSpider -in ./assets/title-spider.png -out ./src/title_spider.asm -reverse 1
+python ./assets/sprite_image.py -name TitleSpider -in ./assets/title-spider.png -out ./src/title_spider.asm -reverse 1 -flip 0
 
 echo "/assets/player.png => /src/objects/spider_sprite.asm"
-python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm -reverse 0
+python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm -reverse 0 -flip 0
 
 echo "/assets/swatter.png => /src/objects/swatter_sprite.asm"
-python ./assets/sprite_image.py -name SwatterSprite -in ./assets/swatter.png -out ./src/objects/swatter_sprite.asm -reverse 0
+python ./assets/sprite_image.py -name SwatterSprite -in ./assets/swatter.png -out ./src/objects/swatter_sprite.asm -reverse 0 -flip 0
 
 echo "/assets/digits.png => /src/objects/score_digits.asm"
-python ./assets/sprite_image.py -name ScoreDigits -in ./assets/digits.png -out ./src/objects/score_digits.asm -reverse 0
+python ./assets/sprite_image.py -name ScoreDigits -in ./assets/digits.png -out ./src/objects/score_digits.asm -reverse 0 -flip 0
 
-echo "/assets/score-level.png => /src/objects/score_level.asm"
-python ./assets/sprite_image.py -name ScoreLevel -in ./assets/score-level.png -out ./src/objects/score_level.asm -reverse 1
-
-echo "/assets/score-health.png => /src/objects/score_health.asm"
-python ./assets/sprite_image.py -name ScoreHealth -in ./assets/score-health.png -out ./src/objects/score_health.asm -reverse 1
+echo "/assets/digits-pad.png => /src/objects/score_digits_flip.asm"
+python ./assets/sprite_image.py -name ScoreDigitsFlip -in ./assets/digits-pad.png -out ./src/objects/score_digits_flip.asm -reverse 0 -flip 1
 
 # Source
 

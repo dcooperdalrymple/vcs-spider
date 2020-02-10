@@ -1,318 +1,318 @@
 --- Symbol List (sorted by symbol)
-0.bug_collision_active   f96c              (R )
-0.bug_collision_m0       f962                  
-0.bug_collision_m1       f967              (R )
-0.bug_collision_score_skip f974              (R )
-0.bug_draw_start_loop    f9a5              (R )
-0.bug_init_loop          f8c2              (R )
-0.bug_movement_boundary  f937              (R )
-0.bug_movement_boundary_bottom f953              (R )
-0.bug_movement_boundary_left f93b                  
-0.bug_movement_boundary_right f944              (R )
-0.bug_movement_boundary_top f94a              (R )
-0.bug_movement_load      f906                  
-0.bug_movement_random    f8ff                  
-0.bug_movement_return    f95d                  
-0.bug_movement_store     f959              (R )
-0.bug_movement_x         f908                  
-0.bug_movement_x_check   f90e                  
-0.bug_movement_x_left    f912              (R )
-0.bug_movement_x_right   f91a              (R )
-0.bug_movement_y         f91f              (R )
-0.bug_movement_y_check   f926                  
-0.bug_movement_y_down    f932              (R )
-0.bug_movement_y_up      f92a              (R )
-0.bug_stun_collision_active f986              (R )
-0.bug_stun_collision_m0  f97c                  
-0.bug_stun_collision_m1  f981              (R )
-0.bug_update_active      f8f3              (R )
-0.bug_update_loop        f8e3              (R )
-0.bug_update_next        f8f9              (R )
-0.bug_update_stunned     f8eb                  
+0.bin_bcd_convert_bit    f02d              (R )
+0.bug_collision_active   fa45              (R )
+0.bug_collision_m0       fa3b                  
+0.bug_collision_m1       fa40              (R )
+0.bug_collision_score_skip fa4d              (R )
+0.bug_draw_start_loop    fa7e              (R )
+0.bug_init_loop          f99b              (R )
+0.bug_movement_boundary  fa10              (R )
+0.bug_movement_boundary_bottom fa2c              (R )
+0.bug_movement_boundary_left fa14                  
+0.bug_movement_boundary_right fa1d              (R )
+0.bug_movement_boundary_top fa23              (R )
+0.bug_movement_load      f9df                  
+0.bug_movement_random    f9d8                  
+0.bug_movement_return    fa36                  
+0.bug_movement_store     fa32              (R )
+0.bug_movement_x         f9e1                  
+0.bug_movement_x_check   f9e7                  
+0.bug_movement_x_left    f9eb              (R )
+0.bug_movement_x_right   f9f3              (R )
+0.bug_movement_y         f9f8              (R )
+0.bug_movement_y_check   f9ff                  
+0.bug_movement_y_down    fa0b              (R )
+0.bug_movement_y_up      fa03              (R )
+0.bug_stun_collision_active fa5f              (R )
+0.bug_stun_collision_m0  fa55                  
+0.bug_stun_collision_m1  fa5a              (R )
+0.bug_update_active      f9cc              (R )
+0.bug_update_loop        f9bc              (R )
+0.bug_update_next        f9d2              (R )
+0.bug_update_stunned     f9c4                  
 0.FREE_BYTES             0000                  
-0.game_audio_mute_note   fbd7              (R )
-0.game_audio_play        fbba                  
-0.game_audio_play_note   fbc3              (R )
-0.game_audio_return      fbdf              (R )
-0.game_death_return      fbe9              (R )
-0.game_kernel_bug_1_0    fc94                  
-0.game_kernel_bug_1_0_off fca0              (R )
-0.game_kernel_bug_1_0_on fc9e                  
-0.game_kernel_bug_1_1    fca2                  
-0.game_kernel_bug_1_1_off fcae              (R )
-0.game_kernel_bug_1_1_on fcac                  
-0.game_kernel_bug_2_0    fd11                  
-0.game_kernel_bug_2_0_off fd1d              (R )
-0.game_kernel_bug_2_0_on fd1b                  
-0.game_kernel_bug_2_1    fd1f                  
-0.game_kernel_bug_2_1_off fd2b              (R )
-0.game_kernel_bug_2_1_on fd29                  
-0.game_kernel_clean      fd7d              (R )
-0.game_kernel_line_1     fc1f                  
-0.game_kernel_line_1_off fc31              (R )
-0.game_kernel_line_1_on  fc2f                  
-0.game_kernel_line_1_skip fc33              (R )
-0.game_kernel_line_2     fc82                  
-0.game_kernel_line_2_off fc92              (R )
-0.game_kernel_line_2_on  fc90                  
-0.game_kernel_line_2_skip fc94              (R )
-0.game_kernel_line_3     fcff                  
-0.game_kernel_line_3_off fd0f              (R )
-0.game_kernel_line_3_on  fd0d                  
-0.game_kernel_line_3_skip fd11              (R )
-0.game_kernel_objects    fc0a              (R )
-0.game_kernel_objects_start fbf1                  
-0.game_kernel_return     fd8e                  
-0.game_kernel_score      fbee                  
-0.game_kernel_spider_1   fc36                  
-0.game_kernel_spider_1_draw fc42              (R )
-0.game_kernel_spider_1_line fc56              (R )
-0.game_kernel_spider_1_load fc54              (R )
-0.game_kernel_spider_2   fcb3                  
-0.game_kernel_spider_2_draw fcbf              (R )
-0.game_kernel_spider_2_line fcd3              (R )
-0.game_kernel_spider_2_load fcd1              (R )
-0.game_kernel_spider_3   fd30                  
-0.game_kernel_spider_3_draw fd3c              (R )
-0.game_kernel_spider_3_line fd50              (R )
-0.game_kernel_spider_3_load fd4e              (R )
-0.game_kernel_spider_3_skip fd52                  
-0.game_kernel_swatter_1  fc58                  
-0.game_kernel_swatter_1_draw fc68              (R )
-0.game_kernel_swatter_1_line fc79              (R )
-0.game_kernel_swatter_1_load fc77              (R )
-0.game_kernel_swatter_2  fcd5                  
-0.game_kernel_swatter_2_draw fce5              (R )
-0.game_kernel_swatter_2_line fcf6              (R )
-0.game_kernel_swatter_2_load fcf4              (R )
-0.game_kernel_swatter_3  fd52                  
-0.game_kernel_swatter_3_draw fd62              (R )
-0.game_kernel_swatter_3_line fd73              (R )
-0.game_kernel_swatter_3_load fd71              (R )
-0.game_kernel_swatter_3_skip fd75                  
-0.game_kernel_web        fc0c                  
-0.game_sample_mute       fba1                  
-0.game_sample_return     fba9              (R )
-0.init_clean             f021                  
-0.init_game              f063                  
-0.init_seed              f05a                  
-0.init_tia               f02c                  
-0.kernel_call_ptr        f0a5              (R )
-0.level_update_return    f377              (R )
-0.line_collision_m0      f837                  
-0.line_collision_m1      f843              (R )
-0.line_collision_return  f84f              (R )
-0.line_collision_sample  f84c              (R )
-0.line_control_fire      f747              (R )
-0.line_control_position  f77a                  
-0.line_control_position_bottom f7a3              (R )
-0.line_control_position_bottom_left f7c2              (R )
-0.line_control_position_bottom_right f7b7              (R )
-0.line_control_position_left f782                  
-0.line_control_position_right f78d              (R )
-0.line_control_position_store f7d5              (R )
-0.line_control_position_top f798              (R )
-0.line_control_position_top_left f7cd              (R )
-0.line_control_position_top_right f7ac              (R )
-0.line_control_return    f7ed              (R )
-0.line_control_skip      f744              (R )
-0.line_control_x         f74a                  
-0.line_control_x_left    f750                  
-0.line_control_x_none    f75e              (R )
-0.line_control_x_right   f759              (R )
-0.line_control_x_store   f760              (R )
-0.line_control_y         f762                  
-0.line_control_y_down    f771              (R )
-0.line_control_y_none    f776              (R )
-0.line_control_y_store   f778              (R )
-0.line_control_y_up      f768                  
-0.line_disable_return    f898              (R )
-0.line_draw_start_nodelay f86c              (R )
-0.line_draw_start_pos    f870                  
-0.line_draw_start_set_delay f86e              (R )
-0.line_enable_return     f88a              (R )
-0.line_object_boundary   f812                  
-0.line_object_boundary_bottom f81a                  
-0.line_object_boundary_left f812                  
-0.line_object_boundary_right f816                  
-0.line_object_boundary_top f81e                  
-0.line_object_disable    f831              (R )
-0.line_object_distance   f7f6                  
-0.line_object_distance_x f7f6                  
-0.line_object_distance_x_check f800              (R )
-0.line_object_distance_y f804                  
-0.line_object_distance_y_check f80e              (R )
-0.line_object_return     f834              (R )
-0.line_object_velocity   f822                  
-0.over_audio_mute_note   fe1e              (R )
-0.over_audio_play        fe0b                  
-0.over_audio_play_note   fe12                  
-0.over_audio_return      fe24              (R )
-0.over_kernel_bottom_padding fe59                  
-0.over_kernel_image      fe43                  
-0.over_kernel_image_loop fe51              (R )
-0.over_kernel_image_next fe45              (R )
-0.over_kernel_init       fe36                  
-0.over_kernel_return     fe5c                  
-0.over_kernel_score      fe33                  
-0.over_kernel_top_padding fe40                  
-0.over_padding_loop      fe69              (R )
-0.over_state_return      fe2e              (R )
-0.overscan_logic         f0bd              (R )
-0.overscan_logic_call_ptr f0c8              (R )
-0.overscan_loop          f0c0              (R )
-0.overscan_return        f0c7                  
+0.game_audio_mute_note   fc9c              (R )
+0.game_audio_play        fc7f                  
+0.game_audio_play_note   fc88              (R )
+0.game_audio_return      fca4              (R )
+0.game_death_return      fcae              (R )
+0.game_kernel_bug_1_0    fd59                  
+0.game_kernel_bug_1_0_off fd65              (R )
+0.game_kernel_bug_1_0_on fd63                  
+0.game_kernel_bug_1_1    fd67                  
+0.game_kernel_bug_1_1_off fd73              (R )
+0.game_kernel_bug_1_1_on fd71                  
+0.game_kernel_bug_2_0    fdd6                  
+0.game_kernel_bug_2_0_off fde2              (R )
+0.game_kernel_bug_2_0_on fde0                  
+0.game_kernel_bug_2_1    fde4                  
+0.game_kernel_bug_2_1_off fdf0              (R )
+0.game_kernel_bug_2_1_on fdee                  
+0.game_kernel_clean      fe42              (R )
+0.game_kernel_line_1     fce4                  
+0.game_kernel_line_1_off fcf6              (R )
+0.game_kernel_line_1_on  fcf4                  
+0.game_kernel_line_1_skip fcf8              (R )
+0.game_kernel_line_2     fd47                  
+0.game_kernel_line_2_off fd57              (R )
+0.game_kernel_line_2_on  fd55                  
+0.game_kernel_line_2_skip fd59              (R )
+0.game_kernel_line_3     fdc4                  
+0.game_kernel_line_3_off fdd4              (R )
+0.game_kernel_line_3_on  fdd2                  
+0.game_kernel_line_3_skip fdd6              (R )
+0.game_kernel_objects    fccf              (R )
+0.game_kernel_objects_start fcb6                  
+0.game_kernel_return     fe53                  
+0.game_kernel_score      fcb3                  
+0.game_kernel_spider_1   fcfb                  
+0.game_kernel_spider_1_draw fd07              (R )
+0.game_kernel_spider_1_line fd1b              (R )
+0.game_kernel_spider_1_load fd19              (R )
+0.game_kernel_spider_2   fd78                  
+0.game_kernel_spider_2_draw fd84              (R )
+0.game_kernel_spider_2_line fd98              (R )
+0.game_kernel_spider_2_load fd96              (R )
+0.game_kernel_spider_3   fdf5                  
+0.game_kernel_spider_3_draw fe01              (R )
+0.game_kernel_spider_3_line fe15              (R )
+0.game_kernel_spider_3_load fe13              (R )
+0.game_kernel_spider_3_skip fe17                  
+0.game_kernel_swatter_1  fd1d                  
+0.game_kernel_swatter_1_draw fd2d              (R )
+0.game_kernel_swatter_1_line fd3e              (R )
+0.game_kernel_swatter_1_load fd3c              (R )
+0.game_kernel_swatter_2  fd9a                  
+0.game_kernel_swatter_2_draw fdaa              (R )
+0.game_kernel_swatter_2_line fdbb              (R )
+0.game_kernel_swatter_2_load fdb9              (R )
+0.game_kernel_swatter_3  fe17                  
+0.game_kernel_swatter_3_draw fe27              (R )
+0.game_kernel_swatter_3_line fe38              (R )
+0.game_kernel_swatter_3_load fe36              (R )
+0.game_kernel_swatter_3_skip fe3a                  
+0.game_kernel_web        fcd1                  
+0.game_sample_mute       fc66                  
+0.game_sample_return     fc6e              (R )
+0.init_clean             f1fc                  
+0.init_game              f23e                  
+0.init_seed              f235                  
+0.init_tia               f207                  
+0.kernel_call_ptr        f280              (R )
+0.level_update_return    f4de              (R )
+0.line_collision_m0      f910                  
+0.line_collision_m1      f91c              (R )
+0.line_collision_return  f928              (R )
+0.line_collision_sample  f925              (R )
+0.line_control_fire      f820              (R )
+0.line_control_position  f853                  
+0.line_control_position_bottom f87c              (R )
+0.line_control_position_bottom_left f89b              (R )
+0.line_control_position_bottom_right f890              (R )
+0.line_control_position_left f85b                  
+0.line_control_position_right f866              (R )
+0.line_control_position_store f8ae              (R )
+0.line_control_position_top f871              (R )
+0.line_control_position_top_left f8a6              (R )
+0.line_control_position_top_right f885              (R )
+0.line_control_return    f8c6              (R )
+0.line_control_skip      f81d              (R )
+0.line_control_x         f823                  
+0.line_control_x_left    f829                  
+0.line_control_x_none    f837              (R )
+0.line_control_x_right   f832              (R )
+0.line_control_x_store   f839              (R )
+0.line_control_y         f83b                  
+0.line_control_y_down    f84a              (R )
+0.line_control_y_none    f84f              (R )
+0.line_control_y_store   f851              (R )
+0.line_control_y_up      f841                  
+0.line_disable_return    f971              (R )
+0.line_draw_start_nodelay f945              (R )
+0.line_draw_start_pos    f949                  
+0.line_draw_start_set_delay f947              (R )
+0.line_enable_return     f963              (R )
+0.line_object_boundary   f8eb                  
+0.line_object_boundary_bottom f8f3                  
+0.line_object_boundary_left f8eb                  
+0.line_object_boundary_right f8ef                  
+0.line_object_boundary_top f8f7                  
+0.line_object_disable    f90a              (R )
+0.line_object_distance   f8cf                  
+0.line_object_distance_x f8cf                  
+0.line_object_distance_x_check f8d9              (R )
+0.line_object_distance_y f8dd                  
+0.line_object_distance_y_check f8e7              (R )
+0.line_object_return     f90d              (R )
+0.line_object_velocity   f8fb                  
+0.over_audio_mute_note   fee3              (R )
+0.over_audio_play        fed0                  
+0.over_audio_play_note   fed7                  
+0.over_audio_return      fee9              (R )
+0.over_kernel_bottom_padding ff1e                  
+0.over_kernel_image      ff08                  
+0.over_kernel_image_loop ff16              (R )
+0.over_kernel_image_next ff0a              (R )
+0.over_kernel_init       fefb                  
+0.over_kernel_return     ff21                  
+0.over_kernel_score      fef8                  
+0.over_kernel_top_padding ff05                  
+0.over_padding_loop      ff2e              (R )
+0.over_state_return      fef3              (R )
+0.overscan_logic         f298              (R )
+0.overscan_logic_call_ptr f2a3              (R )
+0.overscan_loop          f29b              (R )
+0.overscan_return        f2a2                  
 0.posobject_divide_loop  f003              (R )
 0.random_noeor           f01c              (R )
-0.score_draw_digit       f446              (R )
-0.score_draw_label       f405              (R )
-0.score_update_bar_bottom f3d0                  
-0.score_update_bar_empty f3e4              (R )
-0.score_update_bar_store f3e8              (R )
-0.score_update_bar_top   f3d9              (R )
-0.score_update_end       f3ec                  
-0.spider_collision_active f68d              (R )
-0.spider_collision_m0    f676                  
-0.spider_collision_m1    f680              (R )
-0.spider_collision_return f68f              (R )
-0.spider_control_boundary f5ce              (R )
-0.spider_control_boundary_bottom f5e6              (R )
-0.spider_control_boundary_left f5ce                  
-0.spider_control_boundary_right f5d7              (R )
-0.spider_control_boundary_top f5dd              (R )
-0.spider_control_check_down f59e              (R )
-0.spider_control_check_left f599              (R )
-0.spider_control_check_right f595                  
-0.spider_control_check_up f5a3              (R )
-0.spider_control_reflect f671              (R )
-0.spider_control_return  f673              (R )
-0.spider_control_sprite  f5a8              (R )
-0.spider_control_sprite_assign f5f0                  
-0.spider_control_sprite_assign_bottom f625              (R )
-0.spider_control_sprite_assign_bottom_left f652              (R )
-0.spider_control_sprite_assign_bottom_right f643              (R )
-0.spider_control_sprite_assign_left f5f6                  
-0.spider_control_sprite_assign_right f607              (R )
-0.spider_control_sprite_assign_top f616              (R )
-0.spider_control_sprite_assign_top_left f663              (R )
-0.spider_control_sprite_assign_top_right f634              (R )
-0.spider_control_sprite_down f5c1              (R )
-0.spider_control_sprite_left f5b2              (R )
-0.spider_control_sprite_right f5b7              (R )
-0.spider_control_sprite_store f5c8              (R )
-0.spider_control_sprite_up f5c6              (R )
-0.spider_control_sprite_x f5aa                  
-0.spider_control_sprite_y f5b9              (R )
-0.spider_control_store   f5ec              (R )
-0.spider_draw_start_nodelay f6b2              (R )
-0.spider_draw_start_pos  f6b6                  
-0.spider_draw_start_set_delay f6b4              (R )
-0.swatter_collision_active fa80              (R )
-0.swatter_collision_bug_reset fa68              (R )
-0.swatter_collision_m0   fa61              (R )
-0.swatter_collision_m1   fa66              (R )
-0.swatter_collision_p0   fa6e              (R )
-0.swatter_collision_p0_set fa7e              (R )
-0.swatter_collision_p0_zero fa7c              (R )
-0.swatter_update_collision fa44              (R )
-0.swatter_update_color   f9ed                  
-0.swatter_update_color_active f9f3                  
-0.swatter_update_color_hold f9f8              (R )
-0.swatter_update_color_set f9fa              (R )
-0.swatter_update_hold_sample f9fc                  
-0.swatter_update_return  fa53              (R )
-0.swatter_update_state   fa11              (R )
-0.swatter_update_state_hold fa39              (R )
-0.swatter_update_state_set fa40              (R )
-0.swatter_update_state_wait fa27              (R )
-0.title_animation_1      f16f              (R )
-0.title_animation_2      f17c              (R )
-0.title_audio_play       f19a                  
-0.title_audio_play_note  f1a3              (R )
-0.title_audio_play_note_1_mute f1bf              (R )
-0.title_audio_return     f1c7              (R )
-0.title_frame_bottom     f270              (R )
-0.title_frame_bottom_clean f2a1                  
-0.title_frame_bottom_index f293                  
-0.title_frame_bottom_index_next f296                  
-0.title_frame_bottom_load f272                  
-0.title_frame_top        f1e2              (R )
-0.title_frame_top_clean  f21b                  
-0.title_frame_top_index  f205                  
-0.title_frame_top_index_next f208                  
-0.title_frame_top_label_color_skip f217              (R )
-0.title_frame_top_load   f1e4                  
-0.title_kernel_return    f2a9                  
-0.title_spider           f252              (R )
-0.title_spider_clean     f262                  
-0.title_spider_delay     f258              (R )
-0.title_spider_extra_web_disable f246              (R )
-0.title_spider_extra_web_loop f23c              (R )
-0.title_spider_extra_web_start f23a              (R )
-0.title_spider_index     f25d                  
-0.title_state_return     f1cf              (R )
-0.title_web_gap          f22d              (R )
-0.vblank_logic           f093                  
-0.vblank_logic_call_ptr  f09e              (R )
-0.vblank_loop            f096              (R )
-0.vblank_return          f09d                  
-0.vsync_return           f08d                  
-1.CLEAR_STACK            f027              (R )
-10.CYCLES                0010              (R )
-11.CYCLES                001e              (R )
-12.CYCLES                001c              (R )
-13.ADDRESS               f6c7              (R )
-13.POINTER               009c              (R )
-14.ADDRESS               f6e7              (R )
-14.POINTER               009c              (R )
-15.ADDRESS               f6e7              (R )
-15.POINTER               009c              (R )
-16.ADDRESS               f6c7              (R )
-16.POINTER               009c              (R )
-17.ADDRESS               f707              (R )
-17.POINTER               009c              (R )
-18.ADDRESS               f6d7              (R )
-18.POINTER               009c              (R )
-19.ADDRESS               f6f7              (R )
-19.POINTER               009c              (R )
-2.ADDRESS                f138              (R )
-2.POINTER                0087              (R )
-20.ADDRESS               f6f7              (R )
-20.POINTER               009c              (R )
-21.ADDRESS               f6d7              (R )
-21.POINTER               009c              (R )
-22.ADDRESS               fb64              (R )
-22.POINTER               0087              (R )
-23.ADDRESS               fbea              (R )
-23.POINTER               0089              (R )
-24.ADDRESS               fb8e              (R )
-24.POINTER               008b              (R )
-25.ADDRESS               fdf1              (R )
-25.POINTER               0087              (R )
-26.ADDRESS               fe2f              (R )
-26.POINTER               0089              (R )
-27.ADDRESS               fdf5              (R )
-27.POINTER               008b              (R )
-3.ADDRESS                f1d0              (R )
-3.POINTER                0089              (R )
-4.ADDRESS                f189              (R )
-4.POINTER                008b              (R )
-5.ADDRESS                f310              (R )
-5.POINTER                009c              (R )
-6.ADDRESS                f310              (R )
-6.POINTER                009c              (R )
-7.ADDRESS                f319              (R )
-7.POINTER                009c              (R )
+0.score_draw_digit       f60f              (R )
+0.score_draw_label       f5a6              (R )
+0.score_update_bar_bottom f571                  
+0.score_update_bar_empty f585              (R )
+0.score_update_bar_store f589              (R )
+0.score_update_bar_top   f57a              (R )
+0.score_update_end       f58d                  
+0.spider_collision_active f7b6              (R )
+0.spider_collision_m0    f79f                  
+0.spider_collision_m1    f7a9              (R )
+0.spider_collision_return f7b8              (R )
+0.spider_control_boundary f6f7              (R )
+0.spider_control_boundary_bottom f70f              (R )
+0.spider_control_boundary_left f6f7                  
+0.spider_control_boundary_right f700              (R )
+0.spider_control_boundary_top f706              (R )
+0.spider_control_check_down f6c7              (R )
+0.spider_control_check_left f6c2              (R )
+0.spider_control_check_right f6be                  
+0.spider_control_check_up f6cc              (R )
+0.spider_control_reflect f79a              (R )
+0.spider_control_return  f79c              (R )
+0.spider_control_sprite  f6d1              (R )
+0.spider_control_sprite_assign f719                  
+0.spider_control_sprite_assign_bottom f74e              (R )
+0.spider_control_sprite_assign_bottom_left f77b              (R )
+0.spider_control_sprite_assign_bottom_right f76c              (R )
+0.spider_control_sprite_assign_left f71f                  
+0.spider_control_sprite_assign_right f730              (R )
+0.spider_control_sprite_assign_top f73f              (R )
+0.spider_control_sprite_assign_top_left f78c              (R )
+0.spider_control_sprite_assign_top_right f75d              (R )
+0.spider_control_sprite_down f6ea              (R )
+0.spider_control_sprite_left f6db              (R )
+0.spider_control_sprite_right f6e0              (R )
+0.spider_control_sprite_store f6f1              (R )
+0.spider_control_sprite_up f6ef              (R )
+0.spider_control_sprite_x f6d3                  
+0.spider_control_sprite_y f6e2              (R )
+0.spider_control_store   f715              (R )
+0.spider_draw_start_nodelay f7db              (R )
+0.spider_draw_start_pos  f7df                  
+0.spider_draw_start_set_delay f7dd              (R )
+0.swatter_collision_active fb59              (R )
+0.swatter_collision_bug_reset fb41              (R )
+0.swatter_collision_m0   fb3a              (R )
+0.swatter_collision_m1   fb3f              (R )
+0.swatter_collision_p0   fb47              (R )
+0.swatter_collision_p0_set fb57              (R )
+0.swatter_collision_p0_zero fb55              (R )
+0.swatter_update_collision fb1d              (R )
+0.swatter_update_color   fac6                  
+0.swatter_update_color_active facc                  
+0.swatter_update_color_hold fad1              (R )
+0.swatter_update_color_set fad3              (R )
+0.swatter_update_hold_sample fad5                  
+0.swatter_update_return  fb2c              (R )
+0.swatter_update_state   faea              (R )
+0.swatter_update_state_hold fb12              (R )
+0.swatter_update_state_set fb19              (R )
+0.swatter_update_state_wait fb00              (R )
+0.title_animation_1      f34a              (R )
+0.title_animation_2      f357              (R )
+0.title_audio_play       f375                  
+0.title_audio_play_note  f37e              (R )
+0.title_audio_play_note_1_mute f39a              (R )
+0.title_audio_return     f3a2              (R )
+0.title_frame_bottom     f44b              (R )
+0.title_frame_bottom_clean f47c                  
+0.title_frame_bottom_index f46e                  
+0.title_frame_bottom_index_next f471                  
+0.title_frame_bottom_load f44d                  
+0.title_frame_top        f3bd              (R )
+0.title_frame_top_clean  f3f6                  
+0.title_frame_top_index  f3e0                  
+0.title_frame_top_index_next f3e3                  
+0.title_frame_top_label_color_skip f3f2              (R )
+0.title_frame_top_load   f3bf                  
+0.title_kernel_return    f484                  
+0.title_spider           f42d              (R )
+0.title_spider_clean     f43d                  
+0.title_spider_delay     f433              (R )
+0.title_spider_extra_web_disable f421              (R )
+0.title_spider_extra_web_loop f417              (R )
+0.title_spider_extra_web_start f415              (R )
+0.title_spider_index     f438                  
+0.title_state_return     f3aa              (R )
+0.title_web_gap          f408              (R )
+0.vblank_logic           f26e                  
+0.vblank_logic_call_ptr  f279              (R )
+0.vblank_loop            f271              (R )
+0.vblank_return          f278                  
+0.vsync_return           f268                  
+1.CLEAR_STACK            f202              (R )
+10.CYCLES                0014              (R )
+11.ADDRESS               f198              (R )
+11.POINTER               00a1              (R )
+12.ADDRESS               f1b8              (R )
+12.POINTER               00a1              (R )
+13.ADDRESS               f1b8              (R )
+13.POINTER               00a1              (R )
+14.ADDRESS               f198              (R )
+14.POINTER               00a1              (R )
+15.ADDRESS               f1d8              (R )
+15.POINTER               00a1              (R )
+16.ADDRESS               f1a8              (R )
+16.POINTER               00a1              (R )
+17.ADDRESS               f1c8              (R )
+17.POINTER               00a1              (R )
+18.ADDRESS               f1c8              (R )
+18.POINTER               00a1              (R )
+19.ADDRESS               f1a8              (R )
+19.POINTER               00a1              (R )
+2.ADDRESS                f313              (R )
+2.POINTER                0088              (R )
+20.ADDRESS               fc29              (R )
+20.POINTER               0088              (R )
+21.ADDRESS               fcaf              (R )
+21.POINTER               008a              (R )
+22.ADDRESS               fc53              (R )
+22.POINTER               008c              (R )
+23.ADDRESS               feb6              (R )
+23.POINTER               0088              (R )
+24.ADDRESS               fef4              (R )
+24.POINTER               008a              (R )
+25.ADDRESS               feba              (R )
+25.POINTER               008c              (R )
+3.ADDRESS                f3ab              (R )
+3.POINTER                008a              (R )
+4.ADDRESS                f364              (R )
+4.POINTER                008c              (R )
+5.ADDRESS                f0aa              (R )
+5.POINTER                00a1              (R )
+6.ADDRESS                f0aa              (R )
+6.POINTER                00a1              (R )
+7.ADDRESS                f0b3              (R )
+7.POINTER                00a1              (R )
 8.CYCLES                 0006              (R )
 9.CYCLES                 0006              (R )
 AUDC0                    0015              (R )
 AUDC1                    0016              (R )
 AUDF0                    0017              (R )
 AUDF1                    0018              (R )
-AudioStep                0090              (R )
+AudioStep                0091              (R )
 AUDV0                    0019              (R )
 AUDV1                    001a              (R )
-BUG_BOUNDARY             0008              (R )
+BinBcdConvert            f021              (R )
+BUG_BOUNDARY             0018              (R )
 BUG_COL_SAMPLE_C         0008              (R )
 BUG_COL_SAMPLE_F         0008              (R )
 BUG_COL_SAMPLE_LEN       0001              (R )
@@ -326,31 +326,31 @@ BUG_SAMPLE_LEN           001e              (R )
 BUG_SAMPLE_V             0004              (R )
 BUG_SIZE                 0008              (R )
 BUG_STUN_LENGTH          0078                  
-BugClean                 f9c0              (R )
-BugCollision             f95e              (R )
-BugColor                 00b7              (R )
-BugColSample             f9d8              (R )
-BugDrawPosBottom         00b9              (R )
-BugDrawPosTop            00bb              (R )
-BugDrawStart             f9a3              (R )
-BugInit                  f8c0              (R )
-BugMovement              f8ff              (R )
-BugPosition              f994              (R )
-BugPosX                  00b3              (R )
-BugPosY                  00b5              (R )
-BugReset                 f8c9              (R )
-BugSample                f9c7              (R )
-BugSpeed                 00b0              (R )
-BugStunCollision         f978              (R )
-BugStunned               00b1              (R )
-BugUpdate                f8e1              (R )
+BugClean                 fa99              (R )
+BugCollision             fa37              (R )
+BugColor                 00bc              (R )
+BugColSample             fab1              (R )
+BugDrawPosBottom         00be              (R )
+BugDrawPosTop            00c0              (R )
+BugDrawStart             fa7c              (R )
+BugInit                  f999              (R )
+BugMovement              f9d8              (R )
+BugPosition              fa6d              (R )
+BugPosX                  00b8              (R )
+BugPosY                  00ba              (R )
+BugReset                 f9a2              (R )
+BugSample                faa0              (R )
+BugSpeed                 00b5              (R )
+BugStunCollision         fa51              (R )
+BugStunned               00b6              (R )
+BugUpdate                f9ba              (R )
 COLOR_NTSC               0001                  
 COLUBK                   0009              (R )
 COLUP0                   0006              (R )
 COLUP1                   0007              (R )
 COLUPF                   0008              (R )
-CtrlPf                   0080              (R )
 CTRLPF                   000a              (R )
+CtrlPf                   0080              (R )
 CXBLPF                   0006                  
 CXCLR                    002c              (R )
 CXM0FB                   0004              (R )
@@ -363,21 +363,21 @@ CXPPMM                   0007              (R )
 ENABL                    001f              (R )
 ENAM0                    001d              (R )
 ENAM1                    001e              (R )
-Frame                    008d              (R )
-FrameTimer               008e              (R )
+Frame                    008e              (R )
+FrameTimer               008f              (R )
 GAME_AUDIO_LENGTH        0020              (R )
 GAME_AUDIO_OFFSET        0001              (R )
 GAME_AUDIO_STEP          0009              (R )
 GAME_AUDIO_TONE          0006              (R )
 GAME_AUDIO_VOLUME        0002              (R )
-GameAudio                fbac              (R )
-GameAudio0               fd8f              (R )
-GameDeath                fbe0              (R )
-GameInit                 fb13              (R )
-GameKernel               fbea              (R )
-GameOverScan             fb8e              (R )
-GameSample               fb98              (R )
-GameVerticalBlank        fb64              (R )
+GameAudio                fc71              (R )
+GameAudio0               fe54              (R )
+GameDeath                fca5              (R )
+GameInit                 fbd8              (R )
+GameKernel               fcaf              (R )
+GameOverScan             fc53              (R )
+GameSample               fc5d              (R )
+GameVerticalBlank        fc29              (R )
 GRP0                     001b              (R )
 GRP1                     001c              (R )
 HMBL                     0024                  
@@ -387,7 +387,7 @@ HMM1                     0023
 HMOVE                    002a              (R )
 HMP0                     0020              (R )
 HMP1                     0021                  
-InitSystem               f021              (R )
+InitSystem               f1fc              (R )
 INPT0                    0008                  
 INPT1                    0009                  
 INPT2                    000a                  
@@ -396,7 +396,7 @@ INPT4                    000c              (R )
 INPT5                    000d                  
 InterruptVectors         fffa                  
 INTIM                    0284              (R )
-Kernel                   f0a1              (R )
+Kernel                   f27c              (R )
 KERNEL_HBLANK            0044                  
 KERNEL_IMAGE_FULL_DATA   0006              (R )
 KERNEL_IMAGE_LINE        0008              (R )
@@ -408,18 +408,18 @@ KERNEL_TOTAL             0106
 KERNEL_VBLANK            0025                  
 KERNEL_VSYNC             0003              (R )
 KERNEL_WIDTH             0140              (R )
-KernelPtr                0089              (R )
-LevelCurrent             0098              (R )
-LevelDataBk              f398              (R )
-LevelDataBug             f3a0              (R )
-LevelDataPf              f39c              (R )
-LevelDataScore           f394              (R )
-LevelDataSwatterDamage   f3a8              (R )
-LevelDataSwatterWait     f3a4              (R )
-LevelInit                f352              (R )
-LevelLoad                f378              (R )
+KernelPtr                008a              (R )
+LevelCurrent             009d              (R )
+LevelDataBk              f4ff              (R )
+LevelDataBug             f507              (R )
+LevelDataPf              f503              (R )
+LevelDataScore           f4fb              (R )
+LevelDataSwatterDamage   f50f              (R )
+LevelDataSwatterWait     f50b              (R )
+LevelInit                f4b5              (R )
+LevelLoad                f4df              (R )
 LEVELS                   0004              (R )
-LevelUpdate              f363              (R )
+LevelUpdate              f4c6              (R )
 LINE_AUDIO_C             0008              (R )
 LINE_AUDIO_F             0001              (R )
 LINE_AUDIO_V             0004              (R )
@@ -431,31 +431,31 @@ LINE_SAMPLE_V            0004              (R )
 LINE_SIZE                0008              (R )
 LINE_VEL_X               0004              (R )
 LINE_VEL_Y               0004              (R )
-LineAudioMute            f8a6              (R )
-LineAudioPlay            f899              (R )
-LineClean                f878              (R )
-LineCollision            f835              (R )
-LineControl              f736              (R )
-LineDisable              f88b              (R )
-LineDrawPos              00ae              (R )
-LineDrawStart            f858              (R )
-LineEnable               f87d              (R )
-LineEnabled              00a7              (R )
-LineInit                 f717              (R )
-LineObject               f7ee              (R )
-LinePos                  00a8              (R )
-LinePosition             f850              (R )
-LineSample               f8af              (R )
-LineStartPos             00ac              (R )
-LineUpdate               f72c              (R )
-LineVelocity             00aa              (R )
-Main                     f066              (R )
+LineAudioMute            f97f              (R )
+LineAudioPlay            f972              (R )
+LineClean                f951              (R )
+LineCollision            f90e              (R )
+LineControl              f80f              (R )
+LineDisable              f964              (R )
+LineDrawPos              00b3              (R )
+LineDrawStart            f931              (R )
+LineEnable               f956              (R )
+LineEnabled              00ac              (R )
+LineInit                 f7f0              (R )
+LineObject               f8c7              (R )
+LinePos                  00ad              (R )
+LinePosition             f929              (R )
+LineSample               f988              (R )
+LineStartPos             00b1              (R )
+LineUpdate               f805              (R )
+LineVelocity             00af              (R )
+Main                     f241              (R )
 NO_ILLEGAL_OPCODES       0000 ????         (R )
 NTSC                     0001              (R )
 NTSC_SCANLINES           00c0              (R )
 NTSC_TOTAL               0106              (R )
-NuSiz0                   0081              (R )
 NUSIZ0                   0004              (R )
+NuSiz0                   0081              (R )
 NUSIZ1                   0005              (R )
 NuSiz1                   0082              (R )
 OVER_AUDIO_LENGTH        0006              (R )
@@ -469,19 +469,19 @@ OVER_IMAGE_LINE_SIZE     0008              (R )
 OVER_IMAGE_LINES         0048              (R )
 OVER_IMAGE_PADDING       0032              (R )
 OVER_IMAGE_SIZE          0009              (R )
-OverAssets               fe6f                  
-OverAudio                fdfc              (R )
-OverAudio0               fe81              (R )
-OverImagePF1             fe6f              (R )
-OverImagePF2             fe78              (R )
-OverInit                 fdaf              (R )
-OverKernel               fe2f              (R )
-OverOverScan             fdf5              (R )
-OverPadding              fe5f              (R )
-OverScan                 f0a8              (R )
-OverScanPtr              008b              (R )
-OverState                fe25              (R )
-OverVerticalBlank        fdf1              (R )
+OverAssets               ff34                  
+OverAudio                fec1              (R )
+OverAudio0               ff46              (R )
+OverImagePF1             ff34              (R )
+OverImagePF2             ff3d              (R )
+OverInit                 fe74              (R )
+OverKernel               fef4              (R )
+OverOverScan             feba              (R )
+OverPadding              ff24              (R )
+OverScan                 f283              (R )
+OverScanPtr              008c              (R )
+OverState                feea              (R )
+OverVerticalBlank        feb6              (R )
 PAL                      0000              (R )
 PAL_SCANLINES            00f2                  
 PAL_TOTAL                0138                  
@@ -489,8 +489,8 @@ PF0                      000d              (R )
 PF1                      000e              (R )
 PF2                      000f              (R )
 PosObject                f000              (R )
-Rand16                   0086              (R )
-Rand8                    0085              (R )
+Rand16                   0087              (R )
+Rand8                    0086              (R )
 Random                   f013              (R )
 REFP0                    000b              (R )
 REFP1                    000c              (R )
@@ -502,7 +502,7 @@ RESMP1                   0029
 RESP0                    0010              (R )
 RESP1                    0011                  
 RSYNC                    0003                  
-SampleStep               0091              (R )
+SampleStep               0092              (R )
 SCORE_BG_COLOR           0000              (R )
 SCORE_DIGIT_SIZE         0005              (R )
 SCORE_HEALTH_COLOR       00c8              (R )
@@ -511,39 +511,41 @@ SCORE_LABEL_SIZE         0005              (R )
 SCORE_LEVEL_COLOR        0044              (R )
 SCORE_LINE_SIZE          0002              (R )
 SCORE_LINES              0013              (R )
-ScoreBar                 f49c              (R )
-ScoreBarFlip             f4a4              (R )
-ScoreBarGfx              0096              (R )
-ScoreDigitGfx            0095              (R )
-ScoreDigitOnes           0094              (R )
-ScoreDigits              f4ac              (R )
-ScoreDraw                f3ed              (R )
-ScoreInit                f3ac              (R )
-ScoreLabel               f4de              (R )
-ScoreUpdate              f3b5              (R )
-ScoreValue               0092              (R )
+ScoreBar                 f66f              (R )
+ScoreBarFlip             f677              (R )
+ScoreBarGfx              009b              (R )
+ScoreDigitGfx            0099              (R )
+ScoreDigitOnes           0095              (R )
+ScoreDigits              f0bc              (R )
+ScoreDigitsFlip          f0ee              (R )
+ScoreDigitTens           0097              (R )
+ScoreDraw                f58e              (R )
+ScoreInit                f513              (R )
+ScoreLabel               f120              (R )
+ScoreUpdate              f51c              (R )
+ScoreValue               0093              (R )
 SPIDER_COL_COLOR         0044              (R )
 SPIDER_COLOR             0056              (R )
 SPIDER_SIZE              0010              (R )
 SPIDER_SPRITE_SIZE       0010              (R )
 SPIDER_VEL_X             0002              (R )
 SPIDER_VEL_Y             0002              (R )
-SpiderClean              f6c2              (R )
-SpiderCollision          f674              (R )
-SpiderColor              00a1              (R )
-SpiderControl            f58e              (R )
-SpiderCtrl               00a0              (R )
-SpiderDrawPos            00a3              (R )
-SpiderDrawStart          f69a              (R )
-SpiderIndex              00a2              (R )
-SpiderInit               f576              (R )
-SpiderLine               00a4              (R )
-SpiderPos                009e              (R )
-SpiderPosition           f692              (R )
-SpiderPtr                009c              (R )
-SpiderPtr2               00a5                  
-SpiderSprite             f6c7              (R )
-SpiderUpdate             f587              (R )
+SpiderClean              f7eb              (R )
+SpiderCollision          f79d              (R )
+SpiderColor              00a6              (R )
+SpiderControl            f6b7              (R )
+SpiderCtrl               00a5              (R )
+SpiderDrawPos            00a8              (R )
+SpiderDrawStart          f7c3              (R )
+SpiderIndex              00a7              (R )
+SpiderInit               f69f              (R )
+SpiderLine               00a9              (R )
+SpiderPos                00a3              (R )
+SpiderPosition           f7bb              (R )
+SpiderPtr                00a1              (R )
+SpiderPtr2               00aa                  
+SpiderSprite             f198              (R )
+SpiderUpdate             f6b0              (R )
 SWACNT                   0281                  
 SWATTER_ACTIVE_SAMPLE_C  0008              (R )
 SWATTER_ACTIVE_SAMPLE_F  000c              (R )
@@ -567,27 +569,27 @@ SWATTER_SPRITE_SIZE      0014              (R )
 SWATTER_STATE_ACTIVE     00c0              (R )
 SWATTER_STATE_HOLD       0080              (R )
 SWATTER_STATE_WAIT       0000              (R )
-SwatterActiveSample      fadd              (R )
-SwatterClean             faa9              (R )
-SwatterCollision         fa54              (R )
-SwatterColor             00c0              (R )
-SwatterDrawPos           00c4              (R )
-SwatterDrawStart         fa8c              (R )
-SwatterHitDamage         00c2              (R )
-SwatterHitSample         faee              (R )
-SwatterHoldSample        face              (R )
-SwatterIndex             00c3              (R )
-SwatterInit              f9e9              (R )
-SwatterLine              00c5              (R )
-SwatterPos               00bd              (R )
-SwatterPosition          fa84              (R )
-SwatterReset             faae              (R )
-SwatterSampleCount       00c6              (R )
-SwatterSampleF           00c7              (R )
-SwatterSprite            faff              (R )
-SwatterState             00bf              (R )
-SwatterUpdate            f9ed              (R )
-SwatterWaitTime          00c1              (R )
+SwatterActiveSample      fbb6              (R )
+SwatterClean             fb82              (R )
+SwatterCollision         fb2d              (R )
+SwatterColor             00c5              (R )
+SwatterDrawPos           00c9              (R )
+SwatterDrawStart         fb65              (R )
+SwatterHitDamage         00c7              (R )
+SwatterHitSample         fbc7              (R )
+SwatterHoldSample        fba7              (R )
+SwatterIndex             00c8              (R )
+SwatterInit              fac2              (R )
+SwatterLine              00ca              (R )
+SwatterPos               00c2              (R )
+SwatterPosition          fb5d              (R )
+SwatterReset             fb87              (R )
+SwatterSampleCount       00cb              (R )
+SwatterSampleF           00cc              (R )
+SwatterSprite            f1e8              (R )
+SwatterState             00c4              (R )
+SwatterUpdate            fac6              (R )
+SwatterWaitTime          00c6              (R )
 SWBCNT                   0283                  
 SWCHA                    0280              (R )
 SWCHB                    0282              (R )
@@ -617,46 +619,45 @@ TITLE_SPIDER_LINE_SIZE   0004              (R )
 TITLE_SPIDER_POS_X       0026              (R )
 TITLE_SPIDER_SIZE        0009              (R )
 TITLE_WEB_COLOR          0006              (R )
-TitleAnimation           f15c              (R )
-TitleAssets              f2aa                  
-TitleAudio               f190              (R )
-TitleAudio0              f322              (R )
-TitleAudio1              f342              (R )
-TitleFrameBottom         f2f2              (R )
-TitleFrameBottomDraw     f268                  
-TitleFrameTop            f2aa              (R )
-TitleFrameTopDraw        f1de                  
-TitleInit                f0cb              (R )
-TitleKernel              f1d0              (R )
-TitleOverScan            f189              (R )
-TitlePosition            f142              (R )
-TitleSpider              f310              (R )
-TitleSpiderDraw          f232                  
-TitleState               f1c8              (R )
-TitleTone1               f332              (R )
-TitleVerticalBlank       f138              (R )
-TitleWebDraw             f223                  
+TitleAnimation           f337              (R )
+TitleAudio               f36b              (R )
+TitleAudio0              f485              (R )
+TitleAudio1              f4a5              (R )
+TitleFrameBottom         f08c              (R )
+TitleFrameBottomDraw     f443                  
+TitleFrameTop            f044              (R )
+TitleFrameTopDraw        f3b9                  
+TitleInit                f2a6              (R )
+TitleKernel              f3ab              (R )
+TitleOverScan            f364              (R )
+TitlePosition            f31d              (R )
+TitleSpider              f0aa              (R )
+TitleSpiderDraw          f40d                  
+TitleState               f3a3              (R )
+TitleTone1               f495              (R )
+TitleVerticalBlank       f313              (R )
+TitleWebDraw             f3fe                  
 VBLANK                   0001              (R )
-VBlankPtr                0087              (R )
+VBlankPtr                0088              (R )
 VDELBL                   0027              (R )
 VDELP0                   0025              (R )
 VDELP1                   0026                  
 VERSION_MACRO            006a                  
 VERSION_VCS              0069                  
-VerticalBlank            f08e              (R )
-VerticalSync             f075              (R )
+VerticalBlank            f269              (R )
+VerticalSync             f250              (R )
 VSYNC                    0000              (R )
 WEB_BG_COLOR             0000                  
 WEB_FG_COLOR             0006                  
 WEB_LINE                 0005                  
 WEB_LINES                00ad              (R )
 WEB_SIZE                 001e              (R )
-WebClean                 f50f              (R )
-WebColor                 009a              (R )
-WebDrawStart             f4fc              (R )
-WebImagePF0              f51c              (R )
-WebImagePF1              f53a              (R )
-WebImagePF2              f558              (R )
-WebIndex                 0099              (R )
+WebClean                 f692              (R )
+WebColor                 009f              (R )
+WebDrawStart             f67f              (R )
+WebImagePF0              f13e              (R )
+WebImagePF1              f15c              (R )
+WebImagePF2              f17a              (R )
+WebIndex                 009e              (R )
 WSYNC                    0002              (R )
 --- End of Symbol List.

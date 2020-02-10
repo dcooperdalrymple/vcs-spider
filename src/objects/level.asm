@@ -28,6 +28,10 @@ LevelUpdate:
     cmp LevelDataScore,y
     bcc .level_update_return
 
+    ; Reset score
+    lda #0
+    sta ScoreValue+1
+
     ; Check if we haven't reached the final level
     lda LevelCurrent
     cmp #LEVELS-1
@@ -65,10 +69,10 @@ LevelLoad:
     rts
 
 LevelDataScore:     ; Score needed
-    .BYTE #$10
-    .BYTE #$20
-    .BYTE #$40
-    .BYTE #$FF
+    .BYTE #10
+    .BYTE #20
+    .BYTE #40
+    .BYTE #99
 
 LevelDataBk:        ; Background Color
     .BYTE #$00

@@ -1,7 +1,0 @@
-ScoreHealth:
-
-    .BYTE %10101000
-    .BYTE %10101000
-    .BYTE %11101110
-    .BYTE %10101010
-    .BYTE %10101110
