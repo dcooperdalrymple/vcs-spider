@@ -96,24 +96,41 @@ ScoreDraw:
     sta CtrlPf
     sta CTRLPF
 
-    sta WSYNC
-
-    ldx #SCORE_LABEL_SIZE-1
+    ldx #0
 .score_draw_label:
-    lda ScoreLevel,x
-    ldy ScoreHealth,x
 
-    sta PF1
-    sleep 28
-    sty PF1
-
-    dex
     sta WSYNC
-    bpl .score_draw_label
+
+    ; First half of image
+    ;lda ScoreLabel+0,x ; 4
+    ;sta PF0 ; 3
+    lda ScoreLabel+1,x
+    sta PF1
+    lda ScoreLabel+2,x
+    sta PF2
+
+    sleep 19
+
+    ; Second half of image
+    ;lda ScoreLabel+3,x
+    ;sta PF0
+    lda ScoreLabel+4,x
+    sta PF1
+    lda ScoreLabel+5,x
+    sta PF2
+
+    txa
+    clc
+    adc #KERNEL_IMAGE_FULL_DATA
+    tax
+    cpx #KERNEL_IMAGE_FULL_DATA*SCORE_LABEL_SIZE
+    bne .score_draw_label
 
     ; Clear labels and setup color
     lda #0
+    sta PF0
     sta PF1
+    sta PF2
     sta WSYNC
 
     lda #SCORE_LEVEL_COLOR
@@ -188,5 +205,6 @@ ScoreBarFlip:
     .BYTE #%01111111
 
     include "objects/score_digits.asm"
-    include "objects/score_level.asm"
-    include "objects/score_health.asm"
+    include "objects/score_label.asm"
+;    include "objects/score_level.asm"
+;    include "objects/score_health.asm"
