@@ -33,8 +33,8 @@ python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out 
 echo "/assets/swatter.png => /src/objects/swatter_sprite.asm"
 python ./assets/sprite_image.py -name SwatterSprite -in ./assets/swatter.png -out ./src/objects/swatter_sprite.asm -reverse 0 -flip 0
 
-echo "/assets/digits.png => /src/objects/score_digits.asm"
-python ./assets/sprite_image.py -name ScoreDigits -in ./assets/digits.png -out ./src/objects/score_digits.asm -reverse 0 -flip 0
+echo "/assets/digits-pad.png => /src/objects/score_digits.asm"
+python ./assets/sprite_image.py -name ScoreDigits -in ./assets/digits-pad.png -out ./src/objects/score_digits.asm -reverse 0 -flip 0
 
 echo "/assets/digits-pad.png => /src/objects/score_digits_flip.asm"
 python ./assets/sprite_image.py -name ScoreDigitsFlip -in ./assets/digits-pad.png -out ./src/objects/score_digits_flip.asm -reverse 0 -flip 1

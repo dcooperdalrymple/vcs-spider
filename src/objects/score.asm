@@ -115,7 +115,7 @@ ScoreUpdate:
 .score_update_bar_top:
     and #%00000111
     tax
-    lda #$ff
+    lda #$7f
     ldy ScoreBarFlip,x
     jmp .score_update_bar_store
 
@@ -155,18 +155,19 @@ ScoreDraw:
     sta WSYNC
 
     ; First half of image
-    ;lda ScoreLabel+0,x ; 4
-    ;sta PF0 ; 3
+    lda ScoreLabel+0,x ; 4
+    sta PF0 ; 3
     lda ScoreLabel+1,x
     sta PF1
     lda ScoreLabel+2,x
     sta PF2
 
-    sleep 20
+    sleep 8
 
     ; Second half of image
-    ;lda ScoreLabel+3,x
-    ;sta PF0
+    ;lda ScoreLabel+3,x ; 4
+    lda #0 ; 2
+    sta PF0 ; 3
     lda ScoreLabel+4,x
     sta PF1
     lda ScoreLabel+5,x
@@ -199,36 +200,37 @@ ScoreDraw:
 
     ; Level
     ldy ScoreDigitTens
-    lda ScoreDigits,y
+    lda ScoreDigitsFlip,y
     and #$f0
     sta ScoreDigitGfx
 
     ldy ScoreDigitOnes
     lda ScoreDigits,y
-    and #$0f
-    ora ScoreDigitGfx
-    sta ScoreDigitGfx
+    and #$f0
+    sta ScoreDigitGfx+1
 
     ; Score
     ldy ScoreDigitTens+1
     lda ScoreDigitsFlip,y
     and #$0f
-    sta ScoreDigitGfx+1
+    sta ScoreDigitGfx+2
 
     ldy ScoreDigitOnes+1
     lda ScoreDigitsFlip,y
     and #$f0
-    ora ScoreDigitGfx+1
-    sta ScoreDigitGfx+1
+    ora ScoreDigitGfx+2
+    sta ScoreDigitGfx+2
 
     ldx #SCORE_DIGIT_SIZE
+    lda ScoreDigitGfx
+    sta WSYNC
 .score_draw_digit:
 
-    sta WSYNC
-
-    lda ScoreDigitGfx
-    sta PF1
+    ;lda ScoreDigitGfx
+    sta PF0
     lda ScoreDigitGfx+1
+    sta PF1
+    lda ScoreDigitGfx+2
     sta PF2
 
     ; Begin preparing next line
@@ -237,16 +239,18 @@ ScoreDraw:
     inc ScoreDigitOnes+1
     inc ScoreDigitTens+1
 
-    ; Level 1st Digit
-    ldy ScoreDigitTens
-    lda ScoreDigits,y
-    and #$f0
-    sta Temp
-
+    lda #0
+    sta PF0
     lda ScoreBarGfx+0
     sta PF1
     lda ScoreBarGfx+1
     sta PF2
+
+    ; Level 1st Digit
+    ldy ScoreDigitTens
+    lda ScoreDigitsFlip,y
+    and #$f0
+    sta Temp
 
     ; Score 1st Digit
     ldy ScoreDigitTens+1
@@ -254,50 +258,58 @@ ScoreDraw:
     and #$0f
     sta Temp+1
 
-    sta WSYNC
     lda ScoreDigitGfx
-    sta PF1
+    sta PF0
     lda ScoreDigitGfx+1
+    sta PF1
+    lda ScoreDigitGfx+2
     sta PF2
 
     ; Level 2nd Digit (and transfer)
     ldy ScoreDigitOnes
     lda ScoreDigits,y
-    and #$0f
-    ora Temp
-    sta ScoreDigitGfx
+    and #$f0
+    sta ScoreDigitGfx+1
+
+    sleep 3
+
+    lda #0
+    sta PF0
+    lda ScoreBarGfx+0
+    sta PF1
+    ldy ScoreBarGfx+1
+    sty PF2
 
     ; Score 2nd Digit (and transfer)
     ldy ScoreDigitOnes+1
     lda ScoreDigitsFlip,y
     and #$f0
     ora Temp+1
-    sta ScoreDigitGfx+1
+    sta ScoreDigitGfx+2
 
-    lda ScoreBarGfx+0
-    sta PF1
-    ldy ScoreBarGfx+1
-    sty PF2
+    ; Transfer Level 1st Digit
+    lda Temp
+    sta ScoreDigitGfx
 
     dex
     bne .score_draw_digit
 
     lda #0
-    sta WSYNC
+    sta PF0
     sta PF1
     sta PF2
 
     rts
 
 ScoreBar:
-    .BYTE #%10000000
-    .BYTE #%11000000
-    .BYTE #%11100000
-    .BYTE #%11110000
-    .BYTE #%11111000
-    .BYTE #%11111100
-    .BYTE #%11111110
-    .BYTE #%11111111
+    .BYTE #%01000000
+    .BYTE #%01000000
+    .BYTE #%01100000
+    .BYTE #%01110000
+    .BYTE #%01111000
+    .BYTE #%01111100
+    .BYTE #%01111110
+    .BYTE #%01111111
 
 ScoreBarFlip:
     .BYTE #%00000001

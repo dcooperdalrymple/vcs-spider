@@ -77,7 +77,7 @@ SampleStep          ds 1
 ScoreValue          ds 2
 ScoreDigitOnes      ds 2
 ScoreDigitTens      ds 2
-ScoreDigitGfx       ds 2
+ScoreDigitGfx       ds 3
 ScoreBarGfx         ds 2
 
 ; Level
