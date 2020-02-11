@@ -141,8 +141,8 @@ LevelDataBk:        ; Background Color
     .BYTE #$30      ; rgb(71, 0, 0)
     .BYTE #$50      ; rgb(45, 0, 74)    Extreme
     .BYTE #$50      ; rgb(45, 0, 74)
-    .BYTE #$00      ; rgb(0, 0, 0)
-    .BYTE #$00      ; rgb(0, 0, 0)
+    .BYTE #$08      ; rgb(126, 126, 126)
+    .BYTE #$0A      ; rgb(162, 162, 162)
 
 LevelDataPf:        ; Web Color
     .BYTE #$06      ; rgb(91, 91, 91)   Easy
@@ -160,7 +160,7 @@ LevelDataPf:        ; Web Color
     .BYTE #$44      ; rgb(150, 6, 64)
     .BYTE #$34      ; rgb(152, 19, 0)
     .BYTE #$24      ; rgb(131, 39, 0)
-    .BYTE #$54      ; rgb(125, 5, 140)  Extreme
-    .BYTE #$56      ; rgb(161, 34, 177)
-    .BYTE #$08      ; rgb(126, 126, 126)
-    .BYTE #$0A      ; rgb(162, 162, 162)
+    .BYTE #$52      ; rgb(87, 0, 103)  Extreme
+    .BYTE #$54      ; rgb(125, 5, 140)
+    .BYTE #$00      ; rgb(0, 0, 0)
+    .BYTE #$00      ; rgb(0, 0, 0)

@@ -11,7 +11,7 @@
 - [x] Swatter collision logic
 - [x] Swatter enemy sprite, kernel routines, and animation
 - [x] Add strands of web holding each spider up on title screen using missles and balls
-- [ ] Optimize game kernel loop for rom size
+- [x] Optimize game kernel loop for rom size
 - [x] Improve level progression
 
 ## BUGS
@@ -21,3 +21,4 @@
 - [x] Spider boundary
 - [x] Line spawning
 - [x] Fix playfield loading of title after color switch
+- [ ] Fix line wsync

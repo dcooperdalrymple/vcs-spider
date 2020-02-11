@@ -36,67 +36,33 @@
 0.game_audio_play_note   fd0e              (R )
 0.game_audio_return      fd2a              (R )
 0.game_death_return      fd32              (R )
-0.game_kernel__bug_3_0   fe66                  
-0.game_kernel_bug_2_0    fde2                  
-0.game_kernel_bug_2_0_off fdee              (R )
-0.game_kernel_bug_2_0_on fdec                  
-0.game_kernel_bug_2_1    fdf0                  
-0.game_kernel_bug_2_1_off fdfc              (R )
-0.game_kernel_bug_2_1_on fdfa                  
-0.game_kernel_bug_3_0_off fe72              (R )
-0.game_kernel_bug_3_0_on fe70                  
-0.game_kernel_bug_3_1    fe74                  
-0.game_kernel_bug_3_1_off fe80              (R )
-0.game_kernel_bug_3_1_on fe7e                  
-0.game_kernel_clean      fedb              (R )
-0.game_kernel_line_1     fd66                  
-0.game_kernel_line_1_off fd78              (R )
-0.game_kernel_line_1_on  fd76                  
-0.game_kernel_line_1_skip fd7a              (R )
-0.game_kernel_line_2     fdd0                  
-0.game_kernel_line_2_off fde0              (R )
-0.game_kernel_line_2_on  fdde                  
-0.game_kernel_line_2_skip fde2              (R )
-0.game_kernel_line_3     fe54                  
-0.game_kernel_line_3_off fe64              (R )
-0.game_kernel_line_3_on  fe62                  
-0.game_kernel_line_3_skip fe66              (R )
-0.game_kernel_objects    fd53              (R )
+0.game_kernel_clean      fdf9              (R )
+0.game_kernel_line       fd93              (R )
+0.game_kernel_line_set   fda5              (R )
+0.game_kernel_line_skip  fda7              (R )
+0.game_kernel_missle     fd75              (R )
+0.game_kernel_missle_bug_0 fd77                  
+0.game_kernel_missle_bug_0_off fd83              (R )
+0.game_kernel_missle_bug_0_on fd81                  
+0.game_kernel_missle_bug_1 fd85                  
+0.game_kernel_missle_bug_1_off fd91              (R )
+0.game_kernel_missle_bug_1_on fd8f                  
+0.game_kernel_objects    fd57              (R )
 0.game_kernel_objects_start fd3a                  
-0.game_kernel_return     feec                  
+0.game_kernel_return     fe0a                  
 0.game_kernel_score      fd37                  
-0.game_kernel_spider_1   fd7d                  
-0.game_kernel_spider_1_draw fd89              (R )
-0.game_kernel_spider_1_line fd9d              (R )
-0.game_kernel_spider_1_load fd9b              (R )
-0.game_kernel_spider_2   fe01                  
-0.game_kernel_spider_2_draw fe0d              (R )
-0.game_kernel_spider_2_line fe21              (R )
-0.game_kernel_spider_2_load fe1f              (R )
-0.game_kernel_spider_3   fe85                  
-0.game_kernel_spider_3_draw fe91              (R )
-0.game_kernel_spider_3_line fea5              (R )
-0.game_kernel_spider_3_load fea3              (R )
-0.game_kernel_spider_3_skip fea7                  
-0.game_kernel_swatter_1  fd9f                  
-0.game_kernel_swatter_1_draw fdaf              (R )
-0.game_kernel_swatter_1_draw_line fdc0              (R )
-0.game_kernel_swatter_1_draw_load fdbe                  
-0.game_kernel_swatter_1_load fdc5              (R )
-0.game_kernel_swatter_1_skip fdcb              (R )
-0.game_kernel_swatter_2  fe23                  
-0.game_kernel_swatter_2_draw fe33              (R )
-0.game_kernel_swatter_2_draw_line fe44              (R )
-0.game_kernel_swatter_2_draw_load fe42                  
-0.game_kernel_swatter_2_load fe49              (R )
-0.game_kernel_swatter_2_skip fe4f              (R )
-0.game_kernel_swatter_3  fea7                  
-0.game_kernel_swatter_3_draw feb7              (R )
-0.game_kernel_swatter_3_draw_line fec8              (R )
-0.game_kernel_swatter_3_draw_load fec6                  
-0.game_kernel_swatter_3_load fecd              (R )
-0.game_kernel_swatter_3_skip fed3              (R )
-0.game_kernel_web        fd53                  
+0.game_kernel_sprite     fda8                  
+0.game_kernel_sprite_end fdef                  
+0.game_kernel_sprite_spider fda8                  
+0.game_kernel_sprite_spider_draw fdb4              (R )
+0.game_kernel_sprite_spider_line fdc8              (R )
+0.game_kernel_sprite_spider_load fdc6              (R )
+0.game_kernel_sprite_swatter fdca                  
+0.game_kernel_sprite_swatter_draw fdda              (R )
+0.game_kernel_sprite_swatter_line fdeb              (R )
+0.game_kernel_sprite_swatter_load fde9              (R )
+0.game_kernel_web        fd5f                  
+0.game_kernel_web_pf     fd5f                  
 0.game_sample_mute       fcec                  
 0.game_sample_return     fcf4              (R )
 0.init_clean             f1dc                  
@@ -152,25 +118,25 @@
 0.line_object_distance_y_check f970              (R )
 0.line_object_return     f996              (R )
 0.line_object_velocity   f984                  
-0.over_audio_mute_note   ff7e              (R )
-0.over_audio_play        ff6d                  
-0.over_audio_play_note   ff74                  
-0.over_audio_return      ff84              (R )
-0.over_bw                ff53              (R )
-0.over_color             ff4e                  
-0.over_kernel_bottom_padding ffc0                  
-0.over_kernel_image      ffaa                  
-0.over_kernel_image_loop ffb8              (R )
-0.over_kernel_image_next ffac              (R )
-0.over_kernel_init       ff9d                  
-0.over_kernel_return     ffc3                  
-0.over_kernel_score      ff9a                  
-0.over_kernel_top_padding ffa7                  
-0.over_padding_loop      ffd0              (R )
-0.over_state_check       ff8e              (R )
-0.over_state_next        ff92                  
-0.over_state_on          ff89                  
-0.over_state_return      ff95              (R )
+0.over_audio_mute_note   fe9c              (R )
+0.over_audio_play        fe8b                  
+0.over_audio_play_note   fe92                  
+0.over_audio_return      fea2              (R )
+0.over_bw                fe71              (R )
+0.over_color             fe6c                  
+0.over_kernel_bottom_padding fede                  
+0.over_kernel_image      fec8                  
+0.over_kernel_image_loop fed6              (R )
+0.over_kernel_image_next feca              (R )
+0.over_kernel_init       febb                  
+0.over_kernel_return     fee1                  
+0.over_kernel_score      feb8                  
+0.over_kernel_top_padding fec5                  
+0.over_padding_loop      feee              (R )
+0.over_state_check       feac              (R )
+0.over_state_next        feb0                  
+0.over_state_on          fea7                  
+0.over_state_return      feb3              (R )
 0.overscan_logic         f278              (R )
 0.overscan_logic_call_ptr f283              (R )
 0.overscan_loop          f27b              (R )
@@ -313,11 +279,11 @@
 22.POINTER               008a              (R )
 23.ADDRESS               fcd9              (R )
 23.POINTER               008c              (R )
-24.ADDRESS               ff3e              (R )
+24.ADDRESS               fe5c              (R )
 24.POINTER               0088              (R )
-25.ADDRESS               ff96              (R )
+25.ADDRESS               feb4              (R )
 25.POINTER               008a              (R )
-26.ADDRESS               ff58              (R )
+26.ADDRESS               fe76              (R )
 26.POINTER               008c              (R )
 3.ADDRESS                f3a8              (R )
 3.POINTER                008a              (R )
@@ -399,7 +365,7 @@ GAME_AUDIO_STEP          0009              (R )
 GAME_AUDIO_TONE          0006              (R )
 GAME_AUDIO_VOLUME        0002              (R )
 GameAudio                fcf7              (R )
-GameAudio0               feed              (R )
+GameAudio0               fe0b              (R )
 GameDeath                fd2b              (R )
 GameInit                 fc6e              (R )
 GameKernel               fd33              (R )
@@ -495,19 +461,19 @@ OVER_IMAGE_LINE_SIZE     0008              (R )
 OVER_IMAGE_LINES         0048              (R )
 OVER_IMAGE_PADDING       0032              (R )
 OVER_IMAGE_SIZE          0009              (R )
-OverAssets               ffd6                  
-OverAudio                ff5f              (R )
-OverAudio0               ffe8              (R )
-OverImagePF1             ffd6              (R )
-OverImagePF2             ffdf              (R )
-OverInit                 ff0d              (R )
-OverKernel               ff96              (R )
-OverOverScan             ff58              (R )
-OverPadding              ffc6              (R )
+OverAssets               fef4                  
+OverAudio                fe7d              (R )
+OverAudio0               ff06              (R )
+OverImagePF1             fef4              (R )
+OverImagePF2             fefd              (R )
+OverInit                 fe2b              (R )
+OverKernel               feb4              (R )
+OverOverScan             fe76              (R )
+OverPadding              fee4              (R )
 OverScan                 f263              (R )
 OverScanPtr              008c              (R )
-OverState                ff85              (R )
-OverVerticalBlank        ff3e              (R )
+OverState                fea3              (R )
+OverVerticalBlank        fe5c              (R )
 PAL                      0000              (R )
 PAL_SCANLINES            00f2                  
 PAL_TOTAL                0138                  
