@@ -150,14 +150,14 @@ SpiderControl:
 .spider_control_sprite_assign_left:
     cmp #%10000000
     bne .spider_control_sprite_assign_right
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*2
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
     ldx #%00001000
     jmp .spider_control_reflect
 
 .spider_control_sprite_assign_right:
     cmp #%01000000
     bne .spider_control_sprite_assign_top
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*2
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
     jmp .spider_control_reflect
 
 .spider_control_sprite_assign_top:
@@ -169,7 +169,7 @@ SpiderControl:
 .spider_control_sprite_assign_bottom:
     cmp #%00010000
     bne .spider_control_sprite_assign_top_right
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*4
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*2
     jmp .spider_control_reflect
 
 .spider_control_sprite_assign_top_right:
@@ -181,13 +181,13 @@ SpiderControl:
 .spider_control_sprite_assign_bottom_right:
     cmp #%01010000
     bne .spider_control_sprite_assign_bottom_left
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*3
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
     jmp .spider_control_reflect
 
 .spider_control_sprite_assign_bottom_left:
     cmp #%10010000
     bne .spider_control_sprite_assign_top_left
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*3
+    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
     ldx #%00001000
     jmp .spider_control_reflect
 
