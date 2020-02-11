@@ -122,7 +122,7 @@ TitlePosition:
 TitleAnimation:
 
     lda AudioStep
-    cmp #0
+    ;cmp #0
     beq .title_animation_1
     cmp #4
     beq .title_animation_2

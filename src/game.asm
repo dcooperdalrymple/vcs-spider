@@ -180,7 +180,6 @@ GameAudio:
 
 GameDeath:
     lda ScoreValue+0
-    cmp #0
     bne .game_death_return
 
     ; Show Game Over Screen

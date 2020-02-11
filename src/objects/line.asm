@@ -54,7 +54,6 @@ LineControl:
     bmi .line_control_skip
 
     lda SpiderCtrl
-    cmp #0
     bne .line_control_fire
 
 .line_control_skip:
@@ -352,7 +351,6 @@ LineEnable:
     sta LineEnabled
 
     lda SampleStep
-    cmp #0
     bne .line_enable_return
 
     jsr LineAudioPlay
@@ -365,7 +363,6 @@ LineDisable:
     sta LineEnabled
 
     lda SampleStep
-    cmp #0
     bne .line_disable_return
 
     jsr LineAudioMute

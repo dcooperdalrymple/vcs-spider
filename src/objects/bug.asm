@@ -67,7 +67,6 @@ BugUpdate:
     stx Temp+0
 
     lda BugStunned,x
-    cmp #0
     beq .bug_update_active
 
 .bug_update_stunned:
@@ -197,7 +196,6 @@ BugCollision:
 
     ; Reduce players score
     lda ScoreValue
-    cmp #0
     beq .bug_collision_score_skip
     dec ScoreValue
 .bug_collision_score_skip:
