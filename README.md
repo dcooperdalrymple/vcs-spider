@@ -2,7 +2,7 @@
 > Spider Web game for Atari VCS/2600<br />
 > Created by D Cooper Dalrymple 2018 - [dcdalrymple.com](https://dcdalrymple.com/)<br />
 > Licensed under GNU LGPL V3.0<br />
-> Last revision: February 10th, 2020
+> Last revision: February 11th, 2020
 
 ## Compilation
 
@@ -20,32 +20,11 @@ Make sure that you have the `dasm` executable copied into a location in your pat
 
 Physical distribution for commercial use (whether in cartridge or compact format) is not permitted whereas for personal use is strongly recommended as this game is intended to be used on the original Atari 2600 hardware.
 
-## Build With
+## Built With
 
 * Assembled with dasm from [dasm-dillon.sourceforge.net](http://dasm-dillon.sourceforge.net)
 * Tested with Stella from [stella-emu.github.io](https://stella-emu.github.io)
 * Tested with real Atari 2600 using custom EEPROM cartridges
-
-## TODO
-
-- [x] Level variable with increasing difficulty and changing color palette
-- [x] Difficulty switch support to increase starting difficulty
-- [x] Health bar and level counter
-- [x] Black and white TV switch support
-- [ ] Game select switch support? (Easter egg?)
-- [x] Revised game kernel
-- [x] Swatter collision logic
-- [x] Swatter enemy sprite, kernel routines, and animation
-- [x] Add strands of web holding each spider up on title screen using missles and balls
-- [ ] Optimize game kernel loop for rom size
-
-## BUGS
-
-- [x] Improve multiple sprite scanlines
-- [x] Start on button release
-- [x] Spider boundary
-- [x] Line spawning
-- [x] Fix playfield loading of title after color switch
 
 ## License
 
