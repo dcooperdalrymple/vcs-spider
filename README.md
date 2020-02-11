@@ -41,6 +41,7 @@ Physical distribution for commercial use (whether in cartridge or compact format
 ## BUGS
 
 - [ ] Improve multiple sprite scanlines
+- [x] Start on button release
 - [x] Spider boundary
 - [x] Line spawning
 - [x] Fix playfield loading of title after color switch

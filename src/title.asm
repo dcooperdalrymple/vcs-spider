@@ -81,6 +81,10 @@ TitleInit:
     lda #0
     sta ENAM0
 
+    ; Set initial button state
+    ;lda #0
+    sta InputState
+
     rts
 
 TitleVerticalBlank:
@@ -231,10 +235,22 @@ TitleAudio:
     rts
 
 TitleState:
-    ; Check if Fire Button on controller 1 is pressed
-    lda INPT4
-    bmi .title_state_return
 
+    ; Check if Fire Button on controller 1 is released
+    lda INPT4
+    bmi .title_state_check
+
+.title_state_on:
+    lda #1
+    sta InputState
+    rts
+
+.title_state_check:
+    lda InputState
+    beq .title_state_return
+
+.title_state_next:
+    ; Button is released, load up game
     jsr GameInit
 
 .title_state_return:

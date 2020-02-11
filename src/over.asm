@@ -39,6 +39,9 @@ OverInit:
     ; Play first note
     lda OverAudio0,AudioStep
     sta AUDF0
+    ; Set initial button state
+    ;lda #0
+    sta InputState
 
     ; Setup frame counters
     lda #0
@@ -126,10 +129,22 @@ OverAudio:
     rts
 
 OverState:
-    lda Frame
-    cmp #OVER_FRAMES
-    bne .over_state_return
 
+    ; Check if Fire Button on controller 1 is released
+    lda INPT4
+    bmi .over_state_check
+
+.over_state_on:
+    lda #1
+    sta InputState
+    rts
+
+.over_state_check:
+    lda InputState
+    beq .over_state_return
+
+.over_state_next:
+    ; Button is released, load title screen
     jsr TitleInit
 
 .over_state_return:

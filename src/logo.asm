@@ -43,6 +43,10 @@ LogoInit:
     lda #0
     sta AudioStep
 
+    ; Set initial button state
+    ;lda #0
+    sta InputState
+
     ; Play first note
     lda LogoAudio0,AudioStep
     sta AUDF0
@@ -129,9 +133,23 @@ LogoAudio:
 
 LogoState:
     lda FrameTimer
-    cmp #0
-    bne .logo_state_return
+    beq .logo_state_next
 
+    ; Check if Fire Button on controller 1 is released
+    lda INPT4
+    bmi .logo_state_check
+
+.logo_state_on:
+    lda #1
+    sta InputState
+    rts
+
+.logo_state_check:
+    ldx InputState
+    beq .logo_state_return
+
+.logo_state_next:
+    ; Button is released, load title screen
     jsr TitleInit
 
 .logo_state_return:

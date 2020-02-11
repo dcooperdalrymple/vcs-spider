@@ -67,6 +67,7 @@ OverScanPtr         ds 2
 
 Frame               ds 1
 FrameTimer          ds 2
+InputState          ds 1
 
 AudioStep           ds 1
 
