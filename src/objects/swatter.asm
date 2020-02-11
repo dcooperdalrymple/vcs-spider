@@ -95,7 +95,6 @@ SwatterUpdate:
 
 .swatter_update_state:
     ldx FrameTimer+1
-    cpx #0
     bne .swatter_update_collision
 
     ldy SwatterState
@@ -227,14 +226,6 @@ SwatterDrawStart:
     lda #0
     sta SwatterIndex
     sta SwatterLine
-
-    rts
-
-SwatterClean:
-
-    ; Clear out Player1 sprite
-    lda #0
-    sta GRP1
 
     rts
 

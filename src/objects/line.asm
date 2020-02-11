@@ -338,14 +338,6 @@ LineDrawStart:
 
     rts
 
-LineClean:
-
-    ; Clear out Line
-    lda #0
-    sta ENABL
-
-    rts
-
 LineEnable:
     lda #%10000000
     sta LineEnabled

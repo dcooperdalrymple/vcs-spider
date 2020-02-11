@@ -31,17 +31,3 @@ WebDrawStart:
     sta WebIndex
 
     rts
-
-WebClean:
-
-    ; Clear out playfield
-    lda #0
-    sta PF0
-    sta PF1
-    sta PF2
-
-    ; Clear colors
-    sta COLUBK
-    sta COLUPF
-
-    rts

@@ -277,12 +277,6 @@ BugDrawStart:
 
     rts
 
-BugClean:
-    lda #0
-    sta ENAM0
-    sta ENAM1
-    rts
-
 BugSample:
     lda #BUG_SAMPLE_LEN
     sta SampleStep

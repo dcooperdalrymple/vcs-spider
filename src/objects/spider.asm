@@ -218,7 +218,6 @@ SpiderCollision:
 .spider_collision_m0:
     ; Check stun status
     ldx BugStunned
-    cpx #0
     bne .spider_collision_m1
 
     ; Collision for M0 (V set)
@@ -228,7 +227,6 @@ SpiderCollision:
 .spider_collision_m1:
     ; Check stun status
     ldx BugStunned+1
-    cpx #0
     bne .spider_collision_return
 
     ; Collision for M1 (N set)
@@ -301,13 +299,5 @@ SpiderDrawStart:
     lda #0
     sta SpiderIndex
     sta SpiderLine
-
-    rts
-
-SpiderClean:
-
-    ; Clear out Player0 sprite
-    lda #0
-    sta GRP0
 
     rts

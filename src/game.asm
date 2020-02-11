@@ -111,7 +111,6 @@ GameOverScan:
 GameSample:
 
     ldx SampleStep
-    cpx #0
     beq .game_sample_return
 
     dex
@@ -408,11 +407,21 @@ GameKernel:
 
 .game_kernel_clean:
 
-    jsr WebClean
-    jsr SpiderClean
-    jsr LineClean
-    jsr BugClean
-    jsr SwatterClean
+    sta WSYNC
+
+    lda #0
+    sta COLUBK
+    sta COLUPF
+    sta COLUP0
+    sta COLUP1
+    sta PF0
+    sta PF1
+    sta PF2
+    sta GRP0
+    sta GRP1
+    sta ENAM0
+    sta ENAM1
+    sta ENABL
 
     sta WSYNC
 

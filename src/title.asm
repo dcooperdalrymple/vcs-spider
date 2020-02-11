@@ -182,7 +182,6 @@ TitleOverScan:
 TitleAudio:
 
     ldx FrameTimer
-    cpx #0
     bne .title_audio_return
 
     ; Reset Timer
