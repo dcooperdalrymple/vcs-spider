@@ -31,9 +31,9 @@ GameInit:
 
     ; Mute Audio
     lda #0
-    sta AUDC0
-    sta AUDV0
-    sta AUDF0
+;    sta AUDC0
+;    sta AUDV0
+;    sta AUDF0
     sta AUDC1
     sta AUDV1
     sta AUDF1
@@ -50,11 +50,11 @@ GameInit:
     sta FrameTimer
 
     ; Reset NuSiz
-    lda #0
-    sta NuSiz0
-    sta NUSIZ0
-    sta NuSiz1
-    sta NUSIZ1
+;    lda #0
+;    sta NuSiz0
+;    sta NUSIZ0
+;    sta NuSiz1
+;    sta NUSIZ1
 
     ; Initialize Objects
     jsr LevelInit

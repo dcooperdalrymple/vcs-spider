@@ -2,8 +2,6 @@
 ; Constants
 ;================
 
-OVER_FRAMES         = 220
-
 OVER_BG_COLOR       = #$00
 OVER_FG_COLOR       = #$44
 OVER_FG_BW_COLOR    = #$06
@@ -28,27 +26,23 @@ OverInit:
     ; Load audio settings
     lda #OVER_AUDIO_TONE
     sta AUDC0
-    lda #OVER_AUDIO_VOLUME
-    sta AUDV0
+    ;lda #OVER_AUDIO_VOLUME
+    ;sta AUDV0
     lda #0
     sta AUDC1
     sta AUDV1
-    lda #0
-    sta AudioStep
 
-    ; Play first note
-    lda OverAudio0,AudioStep
-    sta AUDF0
     ; Set initial button state
     ;lda #0
     sta InputState
 
     ; Setup frame counters
-    lda #0
-    sta Frame
-    lda #OVER_AUDIO_STEP
+    lda #1
     sta FrameTimer
-    sta Temp+1
+    lda #OVER_AUDIO_STEP
+    sta SampleStep
+    lda #OVER_AUDIO_LENGTH
+    sta AudioStep
 
     rts
 
@@ -86,31 +80,25 @@ OverOverScan:
 
 OverAudio:
 
-    ldx FrameTimer
-    cpx #0
+    lda FrameTimer
     bne .over_audio_return
 
     ; Reset Timer
-    ldx Temp+1
     REPEAT 3
-    inx
+    inc SampleStep
     REPEND
-    stx FrameTimer
-    stx Temp+1
+    lda SampleStep
+    sta FrameTimer
 
 .over_audio_play:
 
     ; Increment melody position
     ldy AudioStep
-    iny
-
-    cpy #OVER_AUDIO_LENGTH
     beq .over_audio_mute_note
+    dec AudioStep
+    dey
 
 .over_audio_play_note:
-
-    ; Save current position
-    sty AudioStep
 
     ; Melody Line
     lda OverAudio0,y
@@ -222,9 +210,9 @@ OverAssets:
 
 OverAudio0:
 
-    .BYTE #12   ; D#2
-    .BYTE #13   ; D2
-    .BYTE #17   ; A1
-    .BYTE #22   ; F1
     .BYTE #26   ; D1
     .BYTE #26
+    .BYTE #22   ; F1
+    .BYTE #17   ; A1
+    .BYTE #13   ; D2
+    .BYTE #12   ; D#2

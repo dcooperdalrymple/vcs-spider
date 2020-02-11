@@ -29,8 +29,6 @@ LogoInit:
     SET_POINTER KernelPtr, LogoKernel
     SET_POINTER OverScanPtr, LogoOverScan
 
-.logo_init_audio:
-
     ; Load audio settings
     lda #LOGO_AUDIO_0_TONE
     sta AUDC0
