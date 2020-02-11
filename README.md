@@ -37,10 +37,11 @@ Physical distribution for commercial use (whether in cartridge or compact format
 - [x] Swatter collision logic
 - [x] Swatter enemy sprite, kernel routines, and animation
 - [x] Add strands of web holding each spider up on title screen using missles and balls
+- [ ] Optimize game kernel loop for rom size
 
 ## BUGS
 
-- [ ] Improve multiple sprite scanlines
+- [x] Improve multiple sprite scanlines
 - [x] Start on button release
 - [x] Spider boundary
 - [x] Line spawning

@@ -36,62 +36,67 @@
 0.game_audio_play_note   fd09              (R )
 0.game_audio_return      fd25              (R )
 0.game_death_return      fd2d              (R )
-0.game_kernel_bug_1_0    fdd8                  
-0.game_kernel_bug_1_0_off fde4              (R )
-0.game_kernel_bug_1_0_on fde2                  
-0.game_kernel_bug_1_1    fde6                  
-0.game_kernel_bug_1_1_off fdf2              (R )
-0.game_kernel_bug_1_1_on fdf0                  
-0.game_kernel_bug_2_0    fe55                  
-0.game_kernel_bug_2_0_off fe61              (R )
-0.game_kernel_bug_2_0_on fe5f                  
-0.game_kernel_bug_2_1    fe63                  
-0.game_kernel_bug_2_1_off fe6f              (R )
-0.game_kernel_bug_2_1_on fe6d                  
-0.game_kernel_clean      fec1              (R )
-0.game_kernel_line_1     fd63                  
-0.game_kernel_line_1_off fd75              (R )
-0.game_kernel_line_1_on  fd73                  
-0.game_kernel_line_1_skip fd77              (R )
-0.game_kernel_line_2     fdc6                  
-0.game_kernel_line_2_off fdd6              (R )
-0.game_kernel_line_2_on  fdd4                  
-0.game_kernel_line_2_skip fdd8              (R )
-0.game_kernel_line_3     fe43                  
-0.game_kernel_line_3_off fe53              (R )
-0.game_kernel_line_3_on  fe51                  
-0.game_kernel_line_3_skip fe55              (R )
+0.game_kernel__bug_3_0   fe61                  
+0.game_kernel_bug_2_0    fddd                  
+0.game_kernel_bug_2_0_off fde9              (R )
+0.game_kernel_bug_2_0_on fde7                  
+0.game_kernel_bug_2_1    fdeb                  
+0.game_kernel_bug_2_1_off fdf7              (R )
+0.game_kernel_bug_2_1_on fdf5                  
+0.game_kernel_bug_3_0_off fe6d              (R )
+0.game_kernel_bug_3_0_on fe6b                  
+0.game_kernel_bug_3_1    fe6f                  
+0.game_kernel_bug_3_1_off fe7b              (R )
+0.game_kernel_bug_3_1_on fe79                  
+0.game_kernel_clean      fed6              (R )
+0.game_kernel_line_1     fd61                  
+0.game_kernel_line_1_off fd73              (R )
+0.game_kernel_line_1_on  fd71                  
+0.game_kernel_line_1_skip fd75              (R )
+0.game_kernel_line_2     fdcb                  
+0.game_kernel_line_2_off fddb              (R )
+0.game_kernel_line_2_on  fdd9                  
+0.game_kernel_line_2_skip fddd              (R )
+0.game_kernel_line_3     fe4f                  
+0.game_kernel_line_3_off fe5f              (R )
+0.game_kernel_line_3_on  fe5d                  
+0.game_kernel_line_3_skip fe61              (R )
 0.game_kernel_objects    fd4e              (R )
 0.game_kernel_objects_start fd35                  
-0.game_kernel_return     fed2                  
+0.game_kernel_return     fee7                  
 0.game_kernel_score      fd32                  
-0.game_kernel_spider_1   fd7a                  
-0.game_kernel_spider_1_draw fd86              (R )
-0.game_kernel_spider_1_line fd9a              (R )
-0.game_kernel_spider_1_load fd98              (R )
-0.game_kernel_spider_2   fdf7                  
-0.game_kernel_spider_2_draw fe03              (R )
-0.game_kernel_spider_2_line fe17              (R )
-0.game_kernel_spider_2_load fe15              (R )
-0.game_kernel_spider_3   fe74                  
-0.game_kernel_spider_3_draw fe80              (R )
-0.game_kernel_spider_3_line fe94              (R )
-0.game_kernel_spider_3_load fe92              (R )
-0.game_kernel_spider_3_skip fe96                  
-0.game_kernel_swatter_1  fd9c                  
-0.game_kernel_swatter_1_draw fdac              (R )
-0.game_kernel_swatter_1_line fdbd              (R )
-0.game_kernel_swatter_1_load fdbb              (R )
-0.game_kernel_swatter_2  fe19                  
-0.game_kernel_swatter_2_draw fe29              (R )
-0.game_kernel_swatter_2_line fe3a              (R )
-0.game_kernel_swatter_2_load fe38              (R )
-0.game_kernel_swatter_3  fe96                  
-0.game_kernel_swatter_3_draw fea6              (R )
-0.game_kernel_swatter_3_line feb7              (R )
-0.game_kernel_swatter_3_load feb5              (R )
-0.game_kernel_swatter_3_skip feb9                  
-0.game_kernel_web        fd50                  
+0.game_kernel_spider_1   fd78                  
+0.game_kernel_spider_1_draw fd84              (R )
+0.game_kernel_spider_1_line fd98              (R )
+0.game_kernel_spider_1_load fd96              (R )
+0.game_kernel_spider_2   fdfc                  
+0.game_kernel_spider_2_draw fe08              (R )
+0.game_kernel_spider_2_line fe1c              (R )
+0.game_kernel_spider_2_load fe1a              (R )
+0.game_kernel_spider_3   fe80                  
+0.game_kernel_spider_3_draw fe8c              (R )
+0.game_kernel_spider_3_line fea0              (R )
+0.game_kernel_spider_3_load fe9e              (R )
+0.game_kernel_spider_3_skip fea2                  
+0.game_kernel_swatter_1  fd9a                  
+0.game_kernel_swatter_1_draw fdaa              (R )
+0.game_kernel_swatter_1_draw_line fdbb              (R )
+0.game_kernel_swatter_1_draw_load fdb9                  
+0.game_kernel_swatter_1_load fdc0              (R )
+0.game_kernel_swatter_1_skip fdc6              (R )
+0.game_kernel_swatter_2  fe1e                  
+0.game_kernel_swatter_2_draw fe2e              (R )
+0.game_kernel_swatter_2_draw_line fe3f              (R )
+0.game_kernel_swatter_2_draw_load fe3d                  
+0.game_kernel_swatter_2_load fe44              (R )
+0.game_kernel_swatter_2_skip fe4a              (R )
+0.game_kernel_swatter_3  fea2                  
+0.game_kernel_swatter_3_draw feb2              (R )
+0.game_kernel_swatter_3_draw_line fec3              (R )
+0.game_kernel_swatter_3_draw_load fec1                  
+0.game_kernel_swatter_3_load fec8              (R )
+0.game_kernel_swatter_3_skip fece              (R )
+0.game_kernel_web        fd4e                  
 0.game_sample_mute       fce7                  
 0.game_sample_return     fcef              (R )
 0.init_clean             f1fc                  
@@ -147,25 +152,25 @@
 0.line_object_distance_y_check f96b              (R )
 0.line_object_return     f991              (R )
 0.line_object_velocity   f97f                  
-0.over_audio_mute_note   ff64              (R )
-0.over_audio_play        ff53                  
-0.over_audio_play_note   ff5a                  
-0.over_audio_return      ff6a              (R )
-0.over_bw                ff39              (R )
-0.over_color             ff34                  
-0.over_kernel_bottom_padding ffa6                  
-0.over_kernel_image      ff90                  
-0.over_kernel_image_loop ff9e              (R )
-0.over_kernel_image_next ff92              (R )
-0.over_kernel_init       ff83                  
-0.over_kernel_return     ffa9                  
-0.over_kernel_score      ff80                  
-0.over_kernel_top_padding ff8d                  
-0.over_padding_loop      ffb6              (R )
-0.over_state_check       ff74              (R )
-0.over_state_next        ff78                  
-0.over_state_on          ff6f                  
-0.over_state_return      ff7b              (R )
+0.over_audio_mute_note   ff79              (R )
+0.over_audio_play        ff68                  
+0.over_audio_play_note   ff6f                  
+0.over_audio_return      ff7f              (R )
+0.over_bw                ff4e              (R )
+0.over_color             ff49                  
+0.over_kernel_bottom_padding ffbb                  
+0.over_kernel_image      ffa5                  
+0.over_kernel_image_loop ffb3              (R )
+0.over_kernel_image_next ffa7              (R )
+0.over_kernel_init       ff98                  
+0.over_kernel_return     ffbe                  
+0.over_kernel_score      ff95                  
+0.over_kernel_top_padding ffa2                  
+0.over_padding_loop      ffcb              (R )
+0.over_state_check       ff89              (R )
+0.over_state_next        ff8d                  
+0.over_state_on          ff84                  
+0.over_state_return      ff90              (R )
 0.overscan_logic         f298              (R )
 0.overscan_logic_call_ptr f2a3              (R )
 0.overscan_loop          f29b              (R )
@@ -308,11 +313,11 @@
 22.POINTER               008a              (R )
 23.ADDRESS               fcd4              (R )
 23.POINTER               008c              (R )
-24.ADDRESS               ff24              (R )
+24.ADDRESS               ff39              (R )
 24.POINTER               0088              (R )
-25.ADDRESS               ff7c              (R )
+25.ADDRESS               ff91              (R )
 25.POINTER               008a              (R )
-26.ADDRESS               ff3e              (R )
+26.ADDRESS               ff53              (R )
 26.POINTER               008c              (R )
 3.ADDRESS                f3c8              (R )
 3.POINTER                008a              (R )
@@ -394,7 +399,7 @@ GAME_AUDIO_STEP          0009              (R )
 GAME_AUDIO_TONE          0006              (R )
 GAME_AUDIO_VOLUME        0002              (R )
 GameAudio                fcf2              (R )
-GameAudio0               fed3              (R )
+GameAudio0               fee8              (R )
 GameDeath                fd26              (R )
 GameInit                 fc69              (R )
 GameKernel               fd2e              (R )
@@ -494,19 +499,19 @@ OVER_IMAGE_LINE_SIZE     0008              (R )
 OVER_IMAGE_LINES         0048              (R )
 OVER_IMAGE_PADDING       0032              (R )
 OVER_IMAGE_SIZE          0009              (R )
-OverAssets               ffbc                  
-OverAudio                ff45              (R )
-OverAudio0               ffce              (R )
-OverImagePF1             ffbc              (R )
-OverImagePF2             ffc5              (R )
-OverInit                 fef3              (R )
-OverKernel               ff7c              (R )
-OverOverScan             ff3e              (R )
-OverPadding              ffac              (R )
+OverAssets               ffd1                  
+OverAudio                ff5a              (R )
+OverAudio0               ffe3              (R )
+OverImagePF1             ffd1              (R )
+OverImagePF2             ffda              (R )
+OverInit                 ff08              (R )
+OverKernel               ff91              (R )
+OverOverScan             ff53              (R )
+OverPadding              ffc1              (R )
 OverScan                 f283              (R )
 OverScanPtr              008c              (R )
-OverState                ff6b              (R )
-OverVerticalBlank        ff24              (R )
+OverState                ff80              (R )
+OverVerticalBlank        ff39              (R )
 PAL                      0000              (R )
 PAL_SCANLINES            00f2                  
 PAL_TOTAL                0138                  

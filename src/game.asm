@@ -220,9 +220,9 @@ GameKernel:
     lda WebColor+0
     sta COLUBK
 
-.game_kernel_objects:
+    ;sta WSYNC
 
-    sta WSYNC
+.game_kernel_objects:
 
 .game_kernel_web:
 
@@ -326,19 +326,28 @@ GameKernel:
 
     ; See if we're at the end
     cpy #(SWATTER_SPRITE_SIZE-1)
-    bne .game_kernel_swatter_1_line
+    bne .game_kernel_swatter_1_draw_line
     ldy #-1 ; Load a negative value to tell draw routine to stop
     sty SwatterIndex
 
+.game_kernel_swatter_1_draw_load:
+    lda SwatterLine
+.game_kernel_swatter_1_draw_line:
+    sta GRP1
+    jmp .game_kernel_swatter_1_skip
+
 .game_kernel_swatter_1_load:
     lda SwatterLine
-.game_kernel_swatter_1_line:
     sta GRP1
+
+    sta WSYNC
+
+.game_kernel_swatter_1_skip:
 
     ; New line and decrement half scanline
     dec Temp+1
     dex
-    sta WSYNC
+    ;sta WSYNC
 
     ; Preload half-line
     lda Temp+1
@@ -367,42 +376,42 @@ GameKernel:
 
 .game_kernel_line_2_skip:
 
-.game_kernel_bug_1_0:
-    ; First Bug (1st time)
+.game_kernel_bug_2_0:
+    ; First Bug (2nd time)
 
     ldy #%00000000
 
     ; Top
     cmp BugDrawPosTop+0
-    bcs .game_kernel_bug_1_0_off
+    bcs .game_kernel_bug_2_0_off
 
     ; Bottom
     cmp BugDrawPosBottom+0
-    bcc .game_kernel_bug_1_0_off
+    bcc .game_kernel_bug_2_0_off
 
-.game_kernel_bug_1_0_on:
+.game_kernel_bug_2_0_on:
     ldy #%00000010
 
-.game_kernel_bug_1_0_off:
+.game_kernel_bug_2_0_off:
     sty ENAM0
 
-.game_kernel_bug_1_1:
-    ; Second Bug (1st time)
+.game_kernel_bug_2_1:
+    ; Second Bug (2nd time)
 
     ldy #%00000000
 
     ; Top
     cmp BugDrawPosTop+1
-    bcs .game_kernel_bug_1_1_off
+    bcs .game_kernel_bug_2_1_off
 
     ; Bottom
     cmp BugDrawPosBottom+1
-    bcc .game_kernel_bug_1_1_off
+    bcc .game_kernel_bug_2_1_off
 
-.game_kernel_bug_1_1_on:
+.game_kernel_bug_2_1_on:
     ldy #%00000010
 
-.game_kernel_bug_1_1_off:
+.game_kernel_bug_2_1_off:
     sty ENAM1
 
     ; Next Line
@@ -466,19 +475,28 @@ GameKernel:
 
     ; See if we're at the end
     cpy #(SWATTER_SPRITE_SIZE-1)
-    bne .game_kernel_swatter_2_line
+    bne .game_kernel_swatter_2_draw_line
     ldy #-1 ; Load a negative value to tell draw routine to stop
     sty SwatterIndex
 
+.game_kernel_swatter_2_draw_load:
+    lda SwatterLine
+.game_kernel_swatter_2_draw_line:
+    sta GRP1
+    jmp .game_kernel_swatter_2_skip
+
 .game_kernel_swatter_2_load:
     lda SwatterLine
-.game_kernel_swatter_2_line:
     sta GRP1
+
+    sta WSYNC
+
+.game_kernel_swatter_2_skip:
 
     ; Next Line and half-line
     dec Temp+1
     dex
-    sta WSYNC
+    ;sta WSYNC
 
     ; Preload half-line
     lda Temp+1
@@ -507,42 +525,42 @@ GameKernel:
 
 .game_kernel_line_3_skip:
 
-.game_kernel_bug_2_0:
-    ; First Bug (2nd time)
+.game_kernel__bug_3_0:
+    ; First Bug (3rd time)
 
     ldy #%00000000
 
     ; Top
     cmp BugDrawPosTop+0
-    bcs .game_kernel_bug_2_0_off
+    bcs .game_kernel_bug_3_0_off
 
     ; Bottom
     cmp BugDrawPosBottom+0
-    bcc .game_kernel_bug_2_0_off
+    bcc .game_kernel_bug_3_0_off
 
-.game_kernel_bug_2_0_on:
+.game_kernel_bug_3_0_on:
     ldy #%00000010
 
-.game_kernel_bug_2_0_off:
+.game_kernel_bug_3_0_off:
     sty ENAM0
 
-.game_kernel_bug_2_1:
-    ; Second Bug (2nd time)
+.game_kernel_bug_3_1:
+    ; Second Bug (3rd time)
 
     ldy #%00000000
 
     ; Top
     cmp BugDrawPosTop+1
-    bcs .game_kernel_bug_2_1_off
+    bcs .game_kernel_bug_3_1_off
 
     ; Bottom
     cmp BugDrawPosBottom+1
-    bcc .game_kernel_bug_2_1_off
+    bcc .game_kernel_bug_3_1_off
 
-.game_kernel_bug_2_1_on:
+.game_kernel_bug_3_1_on:
     ldy #%00000010
 
-.game_kernel_bug_2_1_off:
+.game_kernel_bug_3_1_off:
     sty ENAM1
 
     ; Next Line
@@ -608,14 +626,22 @@ GameKernel:
 
     ; See if we're at the end
     cpy #(SWATTER_SPRITE_SIZE-1)
-    bne .game_kernel_swatter_3_line
+    bne .game_kernel_swatter_3_draw_line
     ldy #-1 ; Load a negative value to tell draw routine to stop
     sty SwatterIndex
 
+.game_kernel_swatter_3_draw_load:
+    lda SwatterLine
+.game_kernel_swatter_3_draw_line:
+    sta GRP1
+    jmp .game_kernel_swatter_3_skip
+
 .game_kernel_swatter_3_load:
     lda SwatterLine
-.game_kernel_swatter_3_line:
     sta GRP1
+
+    ; go to new line since we're not loading in new swatter sprite
+    sta WSYNC
 
 .game_kernel_swatter_3_skip:
 
