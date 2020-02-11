@@ -4,7 +4,7 @@
 
 ; Constants
 
-LEVELS          = 4
+LEVELS          = 19
 
 LevelInit:
 
@@ -22,11 +22,18 @@ LevelInit:
 
 LevelUpdate:
 
+    ; Calculate Desired score: (level+2)*5
+    lda LevelCurrent
+    clc
+    adc #2 ; +2
+    sta Temp
+    asl ; x2
+    asl ; x2
+    adc Temp ; x1
+
     ; Check if score is high enough
-    ldy LevelCurrent
-    lda ScoreValue+1
-    cmp LevelDataScore,y
-    bcc .level_update_return
+    cmp ScoreValue+1
+    bcs .level_update_return
 
     ; Reset score
     lda #0
@@ -47,18 +54,32 @@ LevelUpdate:
     rts
 
 LevelLoad:
-    ldy LevelCurrent
 
-    ; Bug Speed
-    lda LevelDataBug,y
+    ; Bug Speed: level/4+2
+    lda LevelCurrent
+    lsr ; /2
+    lsr ; /2
+    adc #2
     sta BugSpeed
 
-    ; Swatter Wait Time
-    lda LevelDataSwatterWait,y
+    ; Swatter Wait Time Min (adds random 0-128): (20-level)*10
+    lda #20
+    clc
+    sbc LevelCurrent
+    asl ; x2
+    sta Temp
+    asl ; x2
+    asl ; x2
+    adc Temp
     sta SwatterWaitTime
 
-    ; Swatter Hit Damage
-    lda LevelDataSwatterDamage,y
+    ; Swatter Hit Damage: level*3+$10
+    lda LevelCurrent
+    clc
+    sta Temp
+    asl ; x2
+    adc Temp
+    adc #$10
     sta SwatterHitDamage
 
     rts
@@ -97,38 +118,49 @@ LevelLoadColor:
 
     rts
 
-LevelDataScore:     ; Score needed
-    .BYTE #10
-    .BYTE #20
-    .BYTE #40
-    .BYTE #99
+    ; Easy: 1-5
+    ; Medium: 6-9
+    ; Hard: 10-15
+    ; Extreme: 16-19
 
 LevelDataBk:        ; Background Color
-    .BYTE #$00
-    .BYTE #$60
-    .BYTE #$50
-    .BYTE #$30
+    .BYTE #$00      ; rgb(0, 0, 0)      Easy
+    .BYTE #$D0      ; rgb(0, 21, 1)
+    .BYTE #$A0      ; rgb(0, 31, 2) *
+    .BYTE #$C0      ; rgb(0, 33, 2)
+    .BYTE #$B0      ; rgb(0, 36, 3)
+    .BYTE #$90      ; rgb(0, 16, 58)    Medium
+    .BYTE #$80      ; rgb(0, 0, 114)
+    .BYTE #$60      ; rgb(13, 0, 130)
+    .BYTE #$50      ; rgb(45, 0, 74)
+    .BYTE #$10      ; rgb(25, 2, 0)     Hard
+    .BYTE #$E0      ; rgb(26, 2, 0)
+    .BYTE #$20      ; rgb(55, 0, 0)
+    .BYTE #$F0      ; rgb(56, 0, 0)
+    .BYTE #$40      ; rgb(68, 0, 8)
+    .BYTE #$30      ; rgb(71, 0, 0)
+    .BYTE #$50      ; rgb(45, 0, 74)    Extreme
+    .BYTE #$50      ; rgb(45, 0, 74)
+    .BYTE #$00      ; rgb(0, 0, 0)
+    .BYTE #$00      ; rgb(0, 0, 0)
 
 LevelDataPf:        ; Web Color
-    .BYTE #$06
-    .BYTE #$64
-    .BYTE #$54
-    .BYTE #$34
-
-LevelDataBug:       ; Bug Speed
-    .BYTE #2
-    .BYTE #3
-    .BYTE #4
-    .BYTE #5
-
-LevelDataSwatterWait: ; Swatter Wait Time Min (adds random 0-128)
-    .BYTE #180
-    .BYTE #150
-    .BYTE #120
-    .BYTE #60
-
-LevelDataSwatterDamage: ; Swatter Damage
-    .BYTE #$10
-    .BYTE #$18
-    .BYTE #$20
-    .BYTE #$40
+    .BYTE #$06      ; rgb(91, 91, 91)   Easy
+    .BYTE #$D4      ; rgb(48, 89, 0)
+    .BYTE #$C4      ; rgb(8, 107, 0)
+    .BYTE #$B4      ; rgb(0, 112, 12)
+    .BYTE #$A4      ; rgb(0, 105, 87)
+    .BYTE #$92      ; rgb(0, 49, 110)   Medium
+    .BYTE #$84      ; rgb(3, 60, 214)
+    .BYTE #$94      ; rgb(0, 85, 162)
+    .BYTE #$64      ; rgb(85, 15, 201)
+    .BYTE #$22      ; rgb(94, 8, 0)     Hard
+    .BYTE #$32      ; rgb(115, 0, 0)
+    .BYTE #$42      ; rgb(111, 0, 31)
+    .BYTE #$44      ; rgb(150, 6, 64)
+    .BYTE #$34      ; rgb(152, 19, 0)
+    .BYTE #$24      ; rgb(131, 39, 0)
+    .BYTE #$54      ; rgb(125, 5, 140)  Extreme
+    .BYTE #$56      ; rgb(161, 34, 177)
+    .BYTE #$08      ; rgb(126, 126, 126)
+    .BYTE #$0A      ; rgb(162, 162, 162)

@@ -12,7 +12,7 @@
 - [x] Swatter enemy sprite, kernel routines, and animation
 - [x] Add strands of web holding each spider up on title screen using missles and balls
 - [ ] Optimize game kernel loop for rom size
-- [ ] Improve level progression
+- [x] Improve level progression
 
 ## BUGS
 
