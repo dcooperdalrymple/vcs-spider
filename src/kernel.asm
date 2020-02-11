@@ -158,6 +158,8 @@ SwatterSampleF      ds 1
 
     include "objects/swatter_sprite.asm"
 
+    include "logo_image.asm"
+
 InitSystem:
 
 .init_clean:
@@ -211,8 +213,7 @@ InitSystem:
 
 .init_game:
 
-;   jsr LogoInit
-    jsr TitleInit
+   jsr LogoInit
 
 ;=======================================
 ; Game Kernel
@@ -299,8 +300,7 @@ OverScan:
     bcs .overscan_logic     ; If D0 is set, no reset
 
     ; Perform reset
-;    jsr LogoInit            ; No need for logic
-    jsr TitleInit
+    jsr LogoInit            ; No need for logic
     jmp .overscan_loop
 
 .overscan_logic:
@@ -323,7 +323,7 @@ OverScan:
 ; State Code
 ;================
 
-;    include "logo.asm"
+    include "logo.asm"
     include "title.asm"
     include "game.asm"
     include "over.asm"

@@ -2,25 +2,19 @@
 ; Constants
 ;================
 
-LOGO_FRAMES         = 180
+LOGO_FRAMES         = 140
 
 LOGO_BG_COLOR       = #$00
 LOGO_FG_COLOR       = #$C6
 LOGO_BG_BW_COLOR    = #$00
 LOGO_FG_BW_COLOR    = #$0E
 
-LOGO_AUDIO_0_TONE   = 4
-LOGO_AUDIO_0_VOLUME = 15 ; 15 is max
-LOGO_AUDIO_1_TONE   = 1
-LOGO_AUDIO_1_VOLUME = 3
-LOGO_AUDIO_LENGTH   = 12
-LOGO_AUDIO_STEP     = 8
-
-LOGO_IMAGE_SIZE         = 16
+LOGO_IMAGE_SIZE         = 12
 LOGO_IMAGE_LINE_SIZE    = 5
 LOGO_IMAGE_LINES        = LOGO_IMAGE_SIZE*LOGO_IMAGE_LINE_SIZE
 LOGO_IMAGE_PADDING      = #(KERNEL_SCANLINES-LOGO_IMAGE_LINES)/2
-LOGO_IMAGE_ANIM_PADDING = #LOGO_IMAGE_PADDING-6 ; The extra 6 is for processing overflow
+LOGO_IMAGE_ANIM_PADDING = #LOGO_IMAGE_PADDING-10 ; The extra 10 is for processing overflow
+LOGO_IMAGE_ANIM_SPEED   = #6
 
 LogoInit:
 
@@ -29,36 +23,23 @@ LogoInit:
     SET_POINTER KernelPtr, LogoKernel
     SET_POINTER OverScanPtr, LogoOverScan
 
-    ; Load audio settings
-    lda #LOGO_AUDIO_0_TONE
-    sta AUDC0
-    lda #LOGO_AUDIO_0_VOLUME
-    sta AUDV0
-    lda #LOGO_AUDIO_1_TONE
-    sta AUDC1
-    lda #LOGO_AUDIO_1_VOLUME
-    sta AUDV1
+    ; Clean audio
     lda #0
-    sta AudioStep
+    sta AUDV0
+    sta AUDV1
 
     ; Set initial button state
-    ;lda #0
+;    lda #0
     sta InputState
 
-    ; Play first note
-    lda LogoAudio0,AudioStep
-    sta AUDF0
-    lda LogoAudio1,AudioStep
-    sta AUDF1
-
     ; Setup frame counters
-    lda #0
+;    lda #0
     sta Frame
     lda #LOGO_FRAMES
     sta FrameTimer
 
     ; Setup Image Animation
-    lda #(LOGO_IMAGE_SIZE+1)*2
+    lda #LOGO_IMAGE_SIZE-1
     sta WebIndex
 
     rts
@@ -68,65 +49,24 @@ LogoVerticalBlank:
     rts
 
 LogoOverScan:
-    jsr LogoAudio
     jsr LogoState
     rts
 
 LogoAnimation:
     lda Frame
-    and #%00000011 ; Every 4 when bits are 00
+    cmp #LOGO_IMAGE_ANIM_SPEED
     bne .logo_animation_return
 
+    lda #0
+    sta Frame
+
     ldx WebIndex
-    cpx #0
     beq .logo_animation_return
 
     ; Add another visible line
-    dex
-    dex
-    stx WebIndex
+    dec WebIndex
 
 .logo_animation_return:
-    rts
-
-LogoAudio:
-
-    lda Frame
-    and #%00000111 ; Every 8 when bits are 000
-    bne .logo_audio_return
-
-.logo_audio_play:
-
-    ; Check if we're at the end of the melody
-    ldy AudioStep
-    cpy #LOGO_AUDIO_LENGTH-1
-    beq .logo_audio_mute
-
-.logo_audio_play_note:
-    ; Increment audio position
-    iny
-    sty AudioStep
-
-    ; Logo note and play
-    lda LogoAudio0,y
-    sta AUDF0
-    lda LogoAudio1,y
-    sta AUDF1
-    jmp .logo_audio_mute_skip
-
-.logo_audio_mute:
-
-    ; Mute audio
-    lda #0
-    sta AUDC0
-    sta AUDV0
-    sta AUDF0
-    sta AUDC1
-    sta AUDV1
-    sta AUDF1
-
-.logo_audio_mute_skip:
-.logo_audio_return:
     rts
 
 LogoState:
@@ -147,7 +87,7 @@ LogoState:
     beq .logo_state_return
 
 .logo_state_next:
-    ; Button is released, load title screen
+    ; Button is released or timer runs out, load title screen
     jsr TitleInit
 
 .logo_state_return:
@@ -156,9 +96,8 @@ LogoState:
 LogoKernel:
 
     ; Playfield Control
-    lda CtrlPf
-    and #%11111110 ; No mirroring
-    sta CtrlPf
+    lda #%00000001 ; Mirror
+    ;sta CtrlPf
     sta CTRLPF
 
     ; Load Colors
@@ -166,21 +105,20 @@ LogoKernel:
     REPEAT 4
     lsr
     REPEND
-    bcc .level_kernel_bw
+    bcc .logo_kernel_bw
 
 .logo_kernel_color:
-    lda #LOGO_BG_COLOR
-    sta COLUBK
-    lda #LOGO_FG_COLOR
-    sta COLUPF
-
-    jmp .logo_kernel_start
+    ldx #LOGO_BG_COLOR
+    ldy #LOGO_FG_COLOR
+    jmp .logo_kernel_set
 
 .logo_kernel_bw:
     lda #LOGO_BG_BW_COLOR
-    sta COLUBK
     lda #LOGO_FG_BW_COLOR
-    sta COLUPF
+
+.logo_kernel_set:
+    stx COLUBK
+    sty COLUPF
 
 .logo_kernel_start:
 
@@ -189,7 +127,6 @@ LogoKernel:
     sta VBLANK
 
     ldy WebIndex
-    cpy #0
     bne .logo_kernel_top_anim_padding
 
 .logo_kernel_top_padding:
@@ -209,44 +146,38 @@ LogoKernel:
     bne .logo_kernel_image_animation_loop
 
     dey
-    dey
-    bne .logo_kernel_image_animation_start
+    bpl .logo_kernel_image_animation_start
 
 .logo_kernel_image:
 
-    ldx #(LOGO_IMAGE_SIZE*2)
-    ldy #LOGO_IMAGE_LINE_SIZE-1
-    ; The extra 1 on line size is for processing overflow
+    ldx #LOGO_IMAGE_SIZE-1
+    ldy #LOGO_IMAGE_LINE_SIZE-2
+    ; The extra 2 on line size is for processing overflow
 
-    dex
+    ;dex
     cpx WebIndex
     bcc .logo_kernel_bottom_padding
 
 .logo_kernel_image_line:
     sta WSYNC
 
-    lda LogoImagePF0-1,x
-    sta PF0
-    lda LogoImagePF1-1,x
+    lda LogoImage1,x
     sta PF1
-    lda LogoImagePF2-1,x
+    lda LogoImage2,x
     sta PF2
 
-    sleep 6
+    sleep 26
 
-    lda LogoImagePF0,x
-    sta PF0
-    lda LogoImagePF1,x
-    sta PF1
-    lda LogoImagePF2,x
+    lda LogoImage3,x
     sta PF2
+    lda LogoImage4,x
+    sta PF1
 
     dey
     bne .logo_kernel_image_line
 
     ldy #LOGO_IMAGE_LINE_SIZE
 
-    dex
     cpx WebIndex
     bcc .logo_kernel_bottom_padding
 
@@ -282,38 +213,3 @@ LogoAnimPadding:
 
     ldx #LOGO_IMAGE_ANIM_PADDING
     jmp .logo_padding_loop
-
-LogoAssets:
-
-    ; Assets
-    include "logo_image.asm"
-
-LogoAudio0:
-
-    .BYTE #29   ; C
-    .BYTE #23   ; E
-    .BYTE #19   ; G
-    .BYTE #15   ; A
-    .BYTE #23   ; E
-    .BYTE #19   ; G
-    .BYTE #15   ; B
-    .BYTE #14   ; C
-    .BYTE #11   ; E
-    .BYTE #11
-    .BYTE #11
-    .BYTE #11
-
-LogoAudio1:
-
-    .BYTE #31   ; C
-    .BYTE #31
-    .BYTE #31
-    .BYTE #31
-    .BYTE #25   ; E
-    .BYTE #25
-    .BYTE #25
-    .BYTE #25
-    .BYTE #20   ; G
-    .BYTE #20
-    .BYTE #20
-    .BYTE #20

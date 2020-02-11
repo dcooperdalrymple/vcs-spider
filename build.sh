@@ -4,8 +4,8 @@
 
 ## Playfield Images
 
-echo "/assets/logo.png => /src/logo_image.asm"
-python ./assets/pf_image.py -type full -split 1 -reverse 1 -name LogoImage -in ./assets/logo.png -out ./src/logo_image.asm
+#echo "/assets/logo.png => /src/logo_image.asm"
+#python ./assets/pf_image.py -type full -split 1 -reverse 1 -name LogoImage -in ./assets/logo.png -out ./src/logo_image.asm
 
 echo "/assets/title-frame-top.png => /src/title_frame_top.asm"
 python ./assets/pf_image.py -type full -split 0 -reverse 0 -name TitleFrameTop -in ./assets/title-frame-top.png -out ./src/title_frame_top.asm
