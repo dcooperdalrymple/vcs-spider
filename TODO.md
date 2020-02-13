@@ -13,7 +13,7 @@
 - [x] Add strands of web holding each spider up on title screen using missles and balls
 - [x] Optimize game kernel loop for rom size
 - [x] Improve level progression
-- [ ] Improve title screen music
+- [x] Improve title screen music
 - [x] Increase game music speed with level
 
 ## BUGS

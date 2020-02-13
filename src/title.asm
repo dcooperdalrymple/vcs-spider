@@ -36,13 +36,8 @@ TitleInit:
     ; Melody Line
     lda #TITLE_AUDIO_0_TONE
     sta AUDC0
-    lda #TITLE_AUDIO_0_VOLUME
-    sta AUDV0
-
-    ; Drums and Bass
-    lda #0
-    ;sta AUDC1
-    sta AUDV1
+    ;lda #TITLE_AUDIO_0_VOLUME
+    ;sta AUDV0
 
     ; Make it so that we play the first note immediately
     lda #TITLE_AUDIO_LENGTH-1
@@ -58,16 +53,21 @@ TitleInit:
     lda #%00000110  ; Triple Sprite
     sta NUSIZ1
 
-    lda #0          ; No reflect
-    sta REFP0
     lda #$FF        ; Reflect P1
     sta REFP1
+    lda #0          ; No reflect
+    sta REFP0
 
-    lda #0
+    ; Drums and Bass
+    ;lda #0
+    ;sta AUDC1
+    sta AUDV1
+
+    ;lda #0
     sta SpiderDrawPos ; Initialize animation state
 
     ; Disable at start
-    lda #0
+    ;lda #0
     sta ENAM0
 
     ; Set initial button state
@@ -258,14 +258,27 @@ TitleAudio:
     ; Save current position
     sty AudioStep
 
+.title_audio_play_melody:
     ; Basic Melody Line
     lda TitleAudio0,y
+    bmi .title_audio_play_melody_mute
+
     sta AUDF0
+    lda #TITLE_AUDIO_0_VOLUME
+    sta AUDV0
+
+    jmp .title_audio_play_rhythm
+
+.title_audio_play_melody_mute:
+
+    lda #0
+    sta AUDV0
+
+.title_audio_play_rhythm:
 
     ; Drums and Bass
     lda TitleTone1,y
-    cmp #$FF
-    beq .title_audio_play_note_1_mute
+    bmi .title_audio_play_rhythm_mute
 
     sta AUDC1
     lda TitleAudio1,y
@@ -273,9 +286,9 @@ TitleAudio:
     lda #TITLE_AUDIO_1_VOLUME
     sta AUDV1
 
-    jmp .title_audio_return
+    rts
 
-.title_audio_play_note_1_mute:
+.title_audio_play_rhythm_mute:
 
     lda #0
     ;sta AUDF1
@@ -544,52 +557,52 @@ TitleAudio0:
     .BYTE #23   ; E
     .BYTE #19   ; G
     .BYTE #14   ; C
-    .BYTE #19
-    .BYTE #23
-    .BYTE #19
+    .BYTE #14
+    .BYTE #-1
+    .BYTE #-1
     .BYTE #12   ; D
     .BYTE #19
     .BYTE #23
     .BYTE #19
     .BYTE #14   ; C
-    .BYTE #19
-    .BYTE #23
-    .BYTE #19
+    .BYTE #14
+    .BYTE #-1
+    .BYTE #-1
 
 TitleTone1:
 
     .BYTE #15   ; Electronic Rumble
-    .BYTE #$FF
+    .BYTE #-1
     .BYTE #1    ; Low Pure Tone
     .BYTE #1
     .BYTE #8    ; White Noise
     .BYTE #1
     .BYTE #1
-    .BYTE #$FF
-    .BYTE #$FF
+    .BYTE #-1
+    .BYTE #-1
     .BYTE #15
-    .BYTE #$FF
-    .BYTE #$FF
+    .BYTE #-1
+    .BYTE #-1
     .BYTE #8
-    .BYTE #$FF
+    .BYTE #-1
     .BYTE #1
     .BYTE #1
 
 TitleAudio1:
 
     .BYTE #29   ; Kick
-    .BYTE #$FF
+    .BYTE #-1
     .BYTE #31   ; C
     .BYTE #31
     .BYTE #7    ; Snare
     .BYTE #31
     .BYTE #31
-    .BYTE #$FF
-    .BYTE #$FF
+    .BYTE #-1
+    .BYTE #-1
     .BYTE #29
-    .BYTE #$FF
-    .BYTE #$FF
+    .BYTE #-1
+    .BYTE #-1
     .BYTE #7
-    .BYTE #$FF
+    .BYTE #-1
     .BYTE #23   ; F
     .BYTE #24   ; E
