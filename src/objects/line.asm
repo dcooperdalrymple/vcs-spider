@@ -26,14 +26,17 @@ LineInit:
     sta LineEnabled
     sta LinePos+0
     sta LinePos+1
-    sta LineDrawPos+0
-    sta LineDrawPos+1
 
     ; Initial direction
     ;lda #0
     sta LineVelocity+0
     lda #LINE_VEL_Y
     sta LineVelocity+1
+
+    ; Disable line at start
+    ;lda #-1
+    ;sta LineDrawPos+0
+    ;sta LineDrawPos+1
 
     rts
 
@@ -281,13 +284,15 @@ LinePosition:
 
 LineDrawStart:
 
-    ; Set ball size to be 4 clocks (4/5 bits)
-    ;lda CtrlPf
-    ;and #%11001111
-    ;ora #%00100000
-    ;sta CtrlPf
-    ;sta CTRLPF
+    bit LineEnabled
+    bmi .line_draw_start
 
+    lda #-1
+    sta LineDrawPos+0
+    sta LineDrawPos+1
+    rts
+
+.line_draw_start:
     ; Determine if we need to use vertical delay (oven line)
     lda LinePos+1
     lsr

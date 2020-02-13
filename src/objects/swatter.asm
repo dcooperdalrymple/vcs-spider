@@ -172,7 +172,7 @@ SwatterCollision:
     lda ScoreValue
     cmp SwatterHitDamage
     bcc .swatter_collision_p0_zero
-    beq .swatter_collision_p0_zero
+    ;beq .swatter_collision_p0_zero
 
     clc
     sbc SwatterHitDamage
@@ -202,12 +202,19 @@ SwatterPosition:
 
 SwatterDrawStart:
 
-    ; Set player 1 to be quad size
-    ;lda NuSiz1
-    ;and #%11111000
-    ;ora #%00000111
-    ;sta NuSiz1
-    ;sta NUSIZ1
+    ; Hide swatter if wait state
+    bit SwatterState
+    bmi .swatter_draw_start
+
+    lda #-1
+    sta SwatterIndex
+    ;sta SwatterDrawPos
+    lda #0
+    sta SwatterLine
+
+    rts
+
+.swatter_draw_start:
 
     ; Set sprite color
     lda SwatterColor

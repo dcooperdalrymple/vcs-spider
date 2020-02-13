@@ -224,172 +224,191 @@ GameKernel:
     lda #0
     sta Temp+2
 
-    sta WSYNC
-
-    ; Load background color
+    ; Load background color and start first line
     lda WebColor+0
+    sta WSYNC
     sta COLUBK
 
-.game_kernel_objects:
+.game_kernel_objects: ; 5 or 10 cycles
 
-    lda Temp+2
-    bne .game_kernel_missle
+    lda Temp+2 ; 3
+    bne .game_kernel_missle ; 2*
 
-    lda #3
-    sta Temp+2
+    lda #3 ; 2
+    sta Temp+2 ; 3
 
-.game_kernel_web:
-
-.game_kernel_web_pf:
+.game_kernel_web: ; 32 cycles
     ; Web
 
-    ldy WebIndex
+    ldy WebIndex ; 3
 
     ; Load Image
-    lda WebImagePF0,y
-    sta PF0
-    lda WebImagePF1,y
-    sta PF1
-    lda WebImagePF2,y
-    sta PF2
+    lda WebImagePF0,y ; 4
+    sta PF0 ; 3
+    lda WebImagePF1,y ; 4
+    sta PF1 ; 3
+    lda WebImagePF2,y ; 4
+    sta PF2 ; 3
 
-    inc WebIndex
+    inc WebIndex ; 5
 
-    jmp .game_kernel_line
+    jmp .game_kernel_line ; 3
 
 .game_kernel_missle:
 
-.game_kernel_missle_bug_0:
+.game_kernel_missle_bug_0: ; 18 cycles
     ; First Bug
 
-    ldy #%00000000
-
     ; Top
-    cpx BugDrawPosTop+0
-    bcs .game_kernel_missle_bug_0_off
+    cpx BugDrawPosTop+0 ; 3
+    bcs .game_kernel_missle_bug_0_off_1 ; 2 or 3 if branching
 
     ; Bottom
-    cpx BugDrawPosBottom+0
-    bcc .game_kernel_missle_bug_0_off
+    cpx BugDrawPosBottom+0 ; 3
+    bcc .game_kernel_missle_bug_0_off_2 ; 2 or 3 if branching
 
 .game_kernel_missle_bug_0_on:
-    ldy #%00000010
+    ldy #%00000010 ; 2
+    jmp .game_kernel_missle_bug_0_set ; 3
 
-.game_kernel_missle_bug_0_off:
-    sty ENAM0
+.game_kernel_missle_bug_0_off_1:
+    sleep 5
+.game_kernel_missle_bug_0_off_2:
+    sleep 2
+    ldy #%00000000 ; 2
+.game_kernel_missle_bug_0_set:
+    sty ENAM0 ; 3
 
-.game_kernel_missle_bug_1:
+.game_kernel_missle_bug_1: ; 18 cycles
     ; Second Bug
 
-    ldy #%00000000
-
     ; Top
-    cpx BugDrawPosTop+1
-    bcs .game_kernel_missle_bug_1_off
+    cpx BugDrawPosTop+1 ; 3
+    bcs .game_kernel_missle_bug_1_off_1 ; 2 or 3 if branching
 
     ; Bottom
-    cpx BugDrawPosBottom+1
-    bcc .game_kernel_missle_bug_1_off
+    cpx BugDrawPosBottom+1 ; 3
+    bcc .game_kernel_missle_bug_1_off_2 ; 2 or 3 if branching
 
 .game_kernel_missle_bug_1_on:
-    ldy #%00000010
+    ldy #%00000010 ; 2
+    jmp .game_kernel_missle_bug_1_set ; 3
 
-.game_kernel_missle_bug_1_off:
-    sty ENAM1
+.game_kernel_missle_bug_1_off_1:
+    sleep 5
+.game_kernel_missle_bug_1_off_2:
+    sleep 2
+    ldy #%00000000 ; 2
+.game_kernel_missle_bug_1_set:
+    sty ENAM1 ; 3
 
-.game_kernel_line:
+.game_kernel_line: ; 18 cycles
     ; Line
 
-    bit LineEnabled
-    bpl .game_kernel_line_skip
-
-    ldy #%00000000
-
     ; Top
-    cpx LineDrawPos+1
-    bcs .game_kernel_line_set
+    cpx LineDrawPos+1 ; 3
+    bcs .game_kernel_line_set_off_1 ; 2 or 3 if branching
 
     ; Bottom
-    cpx LineDrawPos+0
-    bcc .game_kernel_line_set
+    cpx LineDrawPos+0 ; 3
+    bcc .game_kernel_line_set_off_2 ; 2 or 3 if branching
 
-    ldy #%00000010
+.game_kernel_line_set_on:
+    ldy #%00000010 ; 2
+    jmp .game_kernel_line_set ; 3
+
+.game_kernel_line_set_off_1:
+    sleep 5
+.game_kernel_line_set_off_2:
+    sleep 2
+    ldy #%00000000 ; 2
 .game_kernel_line_set:
-    sty ENABL
-
-.game_kernel_line_skip:
+    sty ENABL ; 3
 
     ; Next Line
+    ;sleep 17 or 16
     sta WSYNC
 
 .game_kernel_sprite:
 
-.game_kernel_sprite_spider:
+.game_kernel_sprite_spider: ; 34 cycles
     ; Spider
 
-    ldy SpiderIndex
-    bmi .game_kernel_sprite_spider_load  ; At end of sprite
+    ldy SpiderIndex ; 3
+    bmi .game_kernel_sprite_spider_load_1 ; At end of sprite / 2 or 3 if branching
 
     ; Check y position to see if we should be drawing
-    txa
-    sbc SpiderDrawPos
-    bpl .game_kernel_sprite_spider_load
+    txa ; 2
+    sbc SpiderDrawPos ; 3
+    bpl .game_kernel_sprite_spider_load_2 ; 2 or 3 if branching
 
 .game_kernel_sprite_spider_draw:
 
     ; Decrement sprite index
-    dey
-    bpl .game_kernel_sprite_spider_grab
+    dey ; 2
+    bpl .game_kernel_sprite_spider_grab ; 2 or 3 if branching
 
-    lda #0
-    jmp .game_kernel_sprite_spider_store
+    lda #0 ; 2
+    ;sleep 1
+    jmp .game_kernel_sprite_spider_store ; 3
 
 .game_kernel_sprite_spider_grab:
-    lda (SpiderPtr),y
+    lda (SpiderPtr),y ; 5
 .game_kernel_sprite_spider_store:
-    sty SpiderIndex
-    sta SpiderLine
+    sty SpiderIndex ; 3
+    sta SpiderLine ; 3
 
-.game_kernel_sprite_spider_load:
-    lda SpiderLine
-    sta GRP0
+    jmp .game_kernel_sprite_spider_load_3 ; 3
 
-.game_kernel_sprite_swatter:
+.game_kernel_sprite_spider_load_1:
+    sleep 7
+.game_kernel_sprite_spider_load_2:
+    sleep 15
+    lda SpiderLine ; 3
+.game_kernel_sprite_spider_load_3:
+    sta GRP0 ; 3
+
+.game_kernel_sprite_swatter: ; 30 cycles
     ; Swatter
 
     ; Check if wait state
-    bit SwatterState
-    bpl .game_kernel_sprite_swatter_load
+    ;bit SwatterState
+    ;bpl .game_kernel_sprite_swatter_load
 
-    ldy SwatterIndex
-    bmi .game_kernel_sprite_swatter_load ; At end of sprite
+    ldy SwatterIndex ; 3
+    bmi .game_kernel_sprite_swatter_load_1 ; At end of sprite / 2 or 3 if branching
 
     ; Check y position to see if we should be drawing
-    txa
-    sbc SwatterDrawPos
-    bpl .game_kernel_sprite_swatter_load
+    txa ; 2
+    sbc SwatterDrawPos ; 3
+    bpl .game_kernel_sprite_swatter_load_2 ; 2 or 3 if branching
 
 .game_kernel_sprite_swatter_draw:
-    lda SwatterSprite,y
-    sta SwatterLine
+    lda SwatterSprite,y ; 4
+    sta SwatterLine ; 3
 
     ; Decrement sprite index
-    dec SwatterIndex
+    dec SwatterIndex ; 5
 
-.game_kernel_sprite_swatter_load:
-    lda SwatterLine
+    jmp .game_kernel_sprite_swatter_line ; 3
+
+.game_kernel_sprite_swatter_load_1:
+    sleep 7
+.game_kernel_sprite_swatter_load_2:
+    sleep 11
+    lda SwatterLine ; 3
 .game_kernel_sprite_swatter_line:
-    sta GRP1
+    sta GRP1 ; 3
 
-.game_kernel_sprite_end:
+.game_kernel_sprite_end: ; 12 or 11 cycles
 
-    sta WSYNC
+    ;sta WSYNC
 
     ; New line, decrement half scanline, and increment 3 line counter
-    dec Temp+2
-    dex
-    beq .game_kernel_clean
-    jmp .game_kernel_objects
+    dec Temp+2 ; 5
+    dex ; 2
+    beq .game_kernel_clean ; 2 or 3 if branching
+    jmp .game_kernel_objects ; 3
 
 .game_kernel_clean:
 
