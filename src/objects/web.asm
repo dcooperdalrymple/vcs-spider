@@ -7,7 +7,7 @@
 WEB_BG_COLOR        = #$00
 WEB_FG_COLOR        = #$02
 
-WEB_SIZE            = 30
+WEB_SIZE            = 28
 WEB_LINES           = KERNEL_SCANLINES-SCORE_LINES
 WEB_LINE            = WEB_LINES/WEB_SIZE
 
