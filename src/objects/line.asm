@@ -5,7 +5,6 @@
 ; Constants
 
 LINE_SIZE       = 8
-LINE_DISTANCE   = 64    ; Distance from player
 LINE_VEL_X      = 4
 LINE_VEL_Y      = 4
 
@@ -203,38 +202,12 @@ LineObject:
     ldx LinePos
     ldy LinePos+1
 
-.line_object_distance:
-
-    ; Check distance from player with absolute value differences
-
-.line_object_distance_x:
-    txa
-    clc
-    sbc LineStartPos
-    bcs .line_object_distance_x_check
-    eor #$FF    ; C flag is clear here
-    adc #$01    ; form two's complement
-.line_object_distance_x_check: ; Jumps to if positive
-    cmp #LINE_DISTANCE
-    bcs .line_object_disable
-
-.line_object_distance_y:
-    tya
-    clc
-    sbc LineStartPos+1
-    bcs .line_object_distance_y_check
-    eor #$FF    ; C flag is clear here
-    adc #$01    ; form two's complement
-.line_object_distance_y_check: ; Jumps to if positive
-    cmp #LINE_DISTANCE
-    bcs .line_object_disable
-
 .line_object_boundary:
 .line_object_boundary_left:
     cpx #LINE_VEL_X
     bcc .line_object_disable
 .line_object_boundary_right:
-    cpx #160-LINE_VEL_X
+    cpx #160-LINE_VEL_X-1
     bcs .line_object_disable
 .line_object_boundary_bottom:
     cpy #LINE_VEL_Y
