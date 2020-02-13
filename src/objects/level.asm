@@ -10,10 +10,14 @@ LevelInit:
 
     ; Set beginning level by difficulty switches treated as binary
     lda SWCHB
-    REPEAT 6
+    REPEAT 6 ; shift to 0-3
     lsr
     REPEND
-    and #%00000011
+    clc ; multiply by 5
+    sta Temp
+    asl
+    asl
+    adc Temp
     sta LevelCurrent
 
     jsr LevelLoad
