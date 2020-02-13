@@ -24,6 +24,10 @@ SpiderInit:
     lda #(KERNEL_SCANLINES-SCORE_LINES)/2-SPIDER_SIZE-1
     sta SpiderPos+1
 
+    ; Initial direction
+    lda #%00100000
+    sta SpiderCtrl
+
     ; Setup Sprite
     SET_POINTER SpiderPtr, SpiderSprite
 

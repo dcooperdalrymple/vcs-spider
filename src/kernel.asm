@@ -107,7 +107,6 @@ SpiderPtr2          ds 2
 LineEnabled         ds 1
 LinePos             ds 2
 LineVelocity        ds 2
-LineStartPos        ds 2
 LineDrawPos         ds 2
 
 ; Bug

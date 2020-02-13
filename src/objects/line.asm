@@ -26,12 +26,14 @@ LineInit:
     sta LineEnabled
     sta LinePos+0
     sta LinePos+1
-    sta LineVelocity+0
-    sta LineVelocity+1
-    sta LineStartPos+0
-    sta LineStartPos+1
     sta LineDrawPos+0
     sta LineDrawPos+1
+
+    ; Initial direction
+    ;lda #0
+    sta LineVelocity+0
+    lda #LINE_VEL_Y
+    sta LineVelocity+1
 
     rts
 
@@ -186,8 +188,6 @@ LineControl:
 
     stx LinePos
     sty LinePos+1
-    stx LineStartPos
-    sty LineStartPos+1
 
 .line_control_return:
     rts
