@@ -4795,7 +4795,7 @@
       1  fedb				   .POINTER   SET	KernelPtr
       2  fedb				   .ADDRESS   SET	OverKernel
       3  fedb
-      4  fedb		       a9 5c		      LDA	#<.ADDRESS
+      4  fedb		       a9 60		      LDA	#<.ADDRESS
       5  fedd		       85 8a		      STA	.POINTER
       6  fedf		       a9 ff		      LDA	#>.ADDRESS
       7  fee1		       85 8b		      STA	.POINTER+1
@@ -4898,7 +4898,7 @@
     101  ff3a				   .over_audio_play_note
     102  ff3a
     103  ff3a							; Melody Line
-    104  ff3a		       b9 ae ff 	      lda	OverAudio0,y
+    104  ff3a		       b9 b2 ff 	      lda	OverAudio0,y
     105  ff3d		       85 17		      sta	AUDF0
     106  ff3f		       a9 06		      lda	#OVER_AUDIO_VOLUME
     107  ff41		       85 19		      sta	AUDV0
@@ -4915,144 +4915,148 @@
     118  ff4b
     119  ff4b				   OverState
     120  ff4b
-    121  ff4b							; Check if Fire Button on controller 1 is released
-    122  ff4b		       a5 0c		      lda	INPT4
-    123  ff4d		       30 05		      bmi	.over_state_check
+    121  ff4b							; Check to see if audio has finished
+    122  ff4b		       a5 92		      lda	AudioStep
+    123  ff4d		       d0 10		      bne	.over_state_return
     124  ff4f
-    125  ff4f				   .over_state_on
-    126  ff4f		       a9 01		      lda	#1
-    127  ff51		       85 91		      sta	InputState
-    128  ff53		       60		      rts
-    129  ff54
-    130  ff54				   .over_state_check
-    131  ff54		       a5 91		      lda	InputState
-    132  ff56		       f0 03		      beq	.over_state_return
+    125  ff4f							; Check if Fire Button on controller 1 is released
+    126  ff4f		       a5 0c		      lda	INPT4
+    127  ff51		       30 05		      bmi	.over_state_check
+    128  ff53
+    129  ff53				   .over_state_on
+    130  ff53		       a9 01		      lda	#1
+    131  ff55		       85 91		      sta	InputState
+    132  ff57		       60		      rts
     133  ff58
-    134  ff58				   .over_state_next
-    135  ff58							; Button is released, load title screen
-    136  ff58		       20 6a f3 	      jsr	TitleInit
-    137  ff5b
-    138  ff5b				   .over_state_return
-    139  ff5b		       60		      rts
-    140  ff5c
-    141  ff5c				   OverKernel
-    142  ff5c
-    143  ff5c							; Turn on display
-    144  ff5c		       a9 00		      lda	#0
-    145  ff5e		       85 01		      sta	VBLANK
+    134  ff58				   .over_state_check
+    135  ff58		       a5 91		      lda	InputState
+    136  ff5a		       f0 03		      beq	.over_state_return
+    137  ff5c
+    138  ff5c				   .over_state_next
+    139  ff5c							; Button is released, load title screen
+    140  ff5c		       20 6a f3 	      jsr	TitleInit
+    141  ff5f
+    142  ff5f				   .over_state_return
+    143  ff5f		       60		      rts
+    144  ff60
+    145  ff60				   OverKernel
     146  ff60
-    147  ff60				   .over_kernel_score
-    148  ff60
-    149  ff60							; Draw Score on top first (no update)
-    150  ff60		       20 bc f6 	      jsr	ScoreDraw
-    151  ff63
-    152  ff63				   .over_kernel_init
-    153  ff63							; Playfield Control
-    154  ff63		       a5 80		      lda	CtrlPf
-    155  ff65		       29 fd		      and	#%11111101	; Use playfield foreground color
-    156  ff67		       09 01		      ora	#%00000001	; Set mirroring
-    157  ff69		       85 80		      sta	CtrlPf
-    158  ff6b		       85 0a		      sta	CTRLPF
-    159  ff6d
-    160  ff6d				   .over_kernel_top_padding
-    161  ff6d							; Top Padding
-    162  ff6d		       20 8c ff 	      jsr	OverPadding
-    163  ff70
-    164  ff70				   .over_kernel_image
-    165  ff70		       a2 08		      ldx	#OVER_IMAGE_SIZE-1
-    166  ff72
-    167  ff72				   .over_kernel_image_next
-    168  ff72		       bd a5 ff 	      lda	OverImagePF2,x
-    169  ff75		       85 0f		      sta	PF2
-    170  ff77		       bd 9c ff 	      lda	OverImagePF1,x
-    171  ff7a		       85 0e		      sta	PF1
-    172  ff7c							;    lda OverImagePF0,x
-    173  ff7c							;    sta PF0
-    174  ff7c
-    175  ff7c		       a0 08		      ldy	#OVER_IMAGE_LINE_SIZE
-    176  ff7e				   .over_kernel_image_loop
-    177  ff7e		       85 02		      sta	WSYNC
-    178  ff80		       88		      dey
-    179  ff81		       d0 fb		      bne	.over_kernel_image_loop
-    180  ff83
-    181  ff83		       ca		      dex
-    182  ff84		       10 ec		      bpl	.over_kernel_image_next
-    183  ff86
-    184  ff86				   .over_kernel_bottom_padding
-    185  ff86							; Bottom Padding
-    186  ff86		       20 8c ff 	      jsr	OverPadding
-    187  ff89
-    188  ff89				   .over_kernel_return
-    189  ff89		       85 02		      sta	WSYNC	; This extra line is to account for constant rounding
-    190  ff8b		       60		      rts
-    191  ff8c
-    192  ff8c				   OverPadding
-    193  ff8c		       a9 00		      lda	#0
-    194  ff8e		       85 0d		      sta	PF0
-    195  ff90		       85 0e		      sta	PF1
-    196  ff92		       85 0f		      sta	PF2
-    197  ff94
-    198  ff94		       a2 32		      ldx	#OVER_IMAGE_PADDING
-    199  ff96				   .over_padding_loop
-    200  ff96		       85 02		      sta	WSYNC
-    201  ff98		       ca		      dex
-    202  ff99		       d0 fb		      bne	.over_padding_loop
-    203  ff9b
-    204  ff9b		       60		      rts
-    205  ff9c
-    206  ff9c				   OverAssets
-    207  ff9c
-    208  ff9c							; Assets
+    147  ff60							; Turn on display
+    148  ff60		       a9 00		      lda	#0
+    149  ff62		       85 01		      sta	VBLANK
+    150  ff64
+    151  ff64				   .over_kernel_score
+    152  ff64
+    153  ff64							; Draw Score on top first (no update)
+    154  ff64		       20 bc f6 	      jsr	ScoreDraw
+    155  ff67
+    156  ff67				   .over_kernel_init
+    157  ff67							; Playfield Control
+    158  ff67		       a5 80		      lda	CtrlPf
+    159  ff69		       29 fd		      and	#%11111101	; Use playfield foreground color
+    160  ff6b		       09 01		      ora	#%00000001	; Set mirroring
+    161  ff6d		       85 80		      sta	CtrlPf
+    162  ff6f		       85 0a		      sta	CTRLPF
+    163  ff71
+    164  ff71				   .over_kernel_top_padding
+    165  ff71							; Top Padding
+    166  ff71		       20 90 ff 	      jsr	OverPadding
+    167  ff74
+    168  ff74				   .over_kernel_image
+    169  ff74		       a2 08		      ldx	#OVER_IMAGE_SIZE-1
+    170  ff76
+    171  ff76				   .over_kernel_image_next
+    172  ff76		       bd a9 ff 	      lda	OverImagePF2,x
+    173  ff79		       85 0f		      sta	PF2
+    174  ff7b		       bd a0 ff 	      lda	OverImagePF1,x
+    175  ff7e		       85 0e		      sta	PF1
+    176  ff80							;    lda OverImagePF0,x
+    177  ff80							;    sta PF0
+    178  ff80
+    179  ff80		       a0 08		      ldy	#OVER_IMAGE_LINE_SIZE
+    180  ff82				   .over_kernel_image_loop
+    181  ff82		       85 02		      sta	WSYNC
+    182  ff84		       88		      dey
+    183  ff85		       d0 fb		      bne	.over_kernel_image_loop
+    184  ff87
+    185  ff87		       ca		      dex
+    186  ff88		       10 ec		      bpl	.over_kernel_image_next
+    187  ff8a
+    188  ff8a				   .over_kernel_bottom_padding
+    189  ff8a							; Bottom Padding
+    190  ff8a		       20 90 ff 	      jsr	OverPadding
+    191  ff8d
+    192  ff8d				   .over_kernel_return
+    193  ff8d		       85 02		      sta	WSYNC	; This extra line is to account for constant rounding
+    194  ff8f		       60		      rts
+    195  ff90
+    196  ff90				   OverPadding
+    197  ff90		       a9 00		      lda	#0
+    198  ff92		       85 0d		      sta	PF0
+    199  ff94		       85 0e		      sta	PF1
+    200  ff96		       85 0f		      sta	PF2
+    201  ff98
+    202  ff98		       a2 32		      ldx	#OVER_IMAGE_PADDING
+    203  ff9a				   .over_padding_loop
+    204  ff9a		       85 02		      sta	WSYNC
+    205  ff9c		       ca		      dex
+    206  ff9d		       d0 fb		      bne	.over_padding_loop
+    207  ff9f
+    208  ff9f		       60		      rts
+    209  ffa0
+    210  ffa0				   OverAssets
+    211  ffa0
+    212  ffa0							; Assets
 ------- FILE over_image.asm LEVEL 3 PASS 2
-      0  ff9c					      include	"over_image.asm"
-      1  ff9c							;OverImagePF0:
-      2  ff9c							;    .BYTE %00000000
-      3  ff9c							;    .BYTE %00000000
-      4  ff9c							;    .BYTE %00000000
-      5  ff9c							;    .BYTE %00000000
-      6  ff9c							;    .BYTE %00000000
-      7  ff9c							;    .BYTE %00000000
-      8  ff9c							;    .BYTE %00000000
-      9  ff9c							;    .BYTE %00000000
-     10  ff9c							;    .BYTE %00000000
-     11  ff9c
-     12  ff9c				   OverImagePF1
-     13  ff9c		       0c		      .BYTE.b	%00001100
-     14  ff9d		       13		      .BYTE.b	%00010011
-     15  ff9e		       20		      .BYTE.b	%00100000
-     16  ff9f		       23		      .BYTE.b	%00100011
-     17  ffa0		       24		      .BYTE.b	%00100100
-     18  ffa1		       24		      .BYTE.b	%00100100
-     19  ffa2		       12		      .BYTE.b	%00010010
-     20  ffa3		       10		      .BYTE.b	%00010000
-     21  ffa4		       08		      .BYTE.b	%00001000
-     22  ffa5
-     23  ffa5				   OverImagePF2
-     24  ffa5		       e0		      .BYTE.b	%11100000
-     25  ffa6		       18		      .BYTE.b	%00011000
-     26  ffa7		       05		      .BYTE.b	%00000101
-     27  ffa8		       52		      .BYTE.b	%01010010
-     28  ffa9		       23		      .BYTE.b	%00100011
-     29  ffaa		       52		      .BYTE.b	%01010010
-     30  ffab		       04		      .BYTE.b	%00000100
-     31  ffac		       18		      .BYTE.b	%00011000
-     32  ffad		       e0		      .BYTE.b	%11100000
+      0  ffa0					      include	"over_image.asm"
+      1  ffa0							;OverImagePF0:
+      2  ffa0							;    .BYTE %00000000
+      3  ffa0							;    .BYTE %00000000
+      4  ffa0							;    .BYTE %00000000
+      5  ffa0							;    .BYTE %00000000
+      6  ffa0							;    .BYTE %00000000
+      7  ffa0							;    .BYTE %00000000
+      8  ffa0							;    .BYTE %00000000
+      9  ffa0							;    .BYTE %00000000
+     10  ffa0							;    .BYTE %00000000
+     11  ffa0
+     12  ffa0				   OverImagePF1
+     13  ffa0		       0c		      .BYTE.b	%00001100
+     14  ffa1		       13		      .BYTE.b	%00010011
+     15  ffa2		       20		      .BYTE.b	%00100000
+     16  ffa3		       23		      .BYTE.b	%00100011
+     17  ffa4		       24		      .BYTE.b	%00100100
+     18  ffa5		       24		      .BYTE.b	%00100100
+     19  ffa6		       12		      .BYTE.b	%00010010
+     20  ffa7		       10		      .BYTE.b	%00010000
+     21  ffa8		       08		      .BYTE.b	%00001000
+     22  ffa9
+     23  ffa9				   OverImagePF2
+     24  ffa9		       e0		      .BYTE.b	%11100000
+     25  ffaa		       18		      .BYTE.b	%00011000
+     26  ffab		       05		      .BYTE.b	%00000101
+     27  ffac		       52		      .BYTE.b	%01010010
+     28  ffad		       23		      .BYTE.b	%00100011
+     29  ffae		       52		      .BYTE.b	%01010010
+     30  ffaf		       04		      .BYTE.b	%00000100
+     31  ffb0		       18		      .BYTE.b	%00011000
+     32  ffb1		       e0		      .BYTE.b	%11100000
 ------- FILE over.asm
-    210  ffae
-    211  ffae				   OverAudio0
-    212  ffae
-    213  ffae		       1a		      .BYTE.b	#26	; D1
-    214  ffaf		       1a		      .BYTE.b	#26
-    215  ffb0		       16		      .BYTE.b	#22	; F1
-    216  ffb1		       11		      .BYTE.b	#17	; A1
-    217  ffb2		       0d		      .BYTE.b	#13	; D2
-    218  ffb3		       0c		      .BYTE.b	#12	; D#2
+    214  ffb2
+    215  ffb2				   OverAudio0
+    216  ffb2
+    217  ffb2		       1a		      .BYTE.b	#26	; D1
+    218  ffb3		       1a		      .BYTE.b	#26
+    219  ffb4		       16		      .BYTE.b	#22	; F1
+    220  ffb5		       11		      .BYTE.b	#17	; A1
+    221  ffb6		       0d		      .BYTE.b	#13	; D2
+    222  ffb7		       0c		      .BYTE.b	#12	; D#2
 ------- FILE kernel.asm
-    330  ffb4
-    331  ffb4							;================
-    332  ffb4							; End of cart
-    333  ffb4							;================
-    334  ffb4
+    330  ffb8
+    331  ffb8							;================
+    332  ffb8							; End of cart
+    333  ffb8							;================
+    334  ffb8
     335  fffa					      ORG	$FFFA	; 2k = $F7FA, 4k = $FFFA
     336  fffa
     337  fffa				   InterruptVectors

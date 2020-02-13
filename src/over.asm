@@ -118,6 +118,10 @@ OverAudio:
 
 OverState:
 
+    ; Check to see if audio has finished
+    lda AudioStep
+    bne .over_state_return
+
     ; Check if Fire Button on controller 1 is released
     lda INPT4
     bmi .over_state_check

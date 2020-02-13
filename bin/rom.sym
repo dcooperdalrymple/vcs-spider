@@ -137,19 +137,19 @@
 0.over_audio_return      ff4a              (R )
 0.over_bw                ff19              (R )
 0.over_color             ff14                  
-0.over_kernel_bottom_padding ff86                  
-0.over_kernel_image      ff70                  
-0.over_kernel_image_loop ff7e              (R )
-0.over_kernel_image_next ff72              (R )
-0.over_kernel_init       ff63                  
-0.over_kernel_return     ff89                  
-0.over_kernel_score      ff60                  
-0.over_kernel_top_padding ff6d                  
-0.over_padding_loop      ff96              (R )
-0.over_state_check       ff54              (R )
-0.over_state_next        ff58                  
-0.over_state_on          ff4f                  
-0.over_state_return      ff5b              (R )
+0.over_kernel_bottom_padding ff8a                  
+0.over_kernel_image      ff74                  
+0.over_kernel_image_loop ff82              (R )
+0.over_kernel_image_next ff76              (R )
+0.over_kernel_init       ff67                  
+0.over_kernel_return     ff8d                  
+0.over_kernel_score      ff64                  
+0.over_kernel_top_padding ff71                  
+0.over_padding_loop      ff9a              (R )
+0.over_state_check       ff58              (R )
+0.over_state_next        ff5c                  
+0.over_state_on          ff53                  
+0.over_state_return      ff5f              (R )
 0.overscan_logic         f274              (R )
 0.overscan_logic_call_ptr f27f              (R )
 0.overscan_loop          f277              (R )
@@ -300,7 +300,7 @@
 27.POINTER               008c              (R )
 28.ADDRESS               ff04              (R )
 28.POINTER               0088              (R )
-29.ADDRESS               ff5c              (R )
+29.ADDRESS               ff60              (R )
 29.POINTER               008a              (R )
 3.ADDRESS                f2db              (R )
 3.POINTER                008a              (R )
@@ -501,15 +501,15 @@ OVER_IMAGE_LINE_SIZE     0008              (R )
 OVER_IMAGE_LINES         0048              (R )
 OVER_IMAGE_PADDING       0032              (R )
 OVER_IMAGE_SIZE          0009              (R )
-OverAssets               ff9c                  
+OverAssets               ffa0                  
 OverAudio                ff25              (R )
-OverAudio0               ffae              (R )
-OverImagePF1             ff9c              (R )
-OverImagePF2             ffa5              (R )
+OverAudio0               ffb2              (R )
+OverImagePF1             ffa0              (R )
+OverImagePF2             ffa9              (R )
 OverInit                 fed3              (R )
-OverKernel               ff5c              (R )
+OverKernel               ff60              (R )
 OverOverScan             ff1e              (R )
-OverPadding              ff8c              (R )
+OverPadding              ff90              (R )
 OverScan                 f25f              (R )
 OverScanPtr              008c              (R )
 OverState                ff4b              (R )
