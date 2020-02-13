@@ -203,11 +203,11 @@ SwatterPosition:
 SwatterDrawStart:
 
     ; Set player 1 to be quad size
-    lda NuSiz1
-    and #%11111000
-    ora #%00000111
-    sta NuSiz1
-    sta NUSIZ1
+    ;lda NuSiz1
+    ;and #%11111000
+    ;ora #%00000111
+    ;sta NuSiz1
+    ;sta NUSIZ1
 
     ; Set sprite color
     lda SwatterColor

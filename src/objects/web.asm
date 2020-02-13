@@ -20,11 +20,11 @@ WebDrawStart:
     sta COLUPF
 
     ; Mirror playfield and use standard playfield color
-    lda CtrlPf
-    and #%11111100
-    ora #%00000001
-    sta CtrlPf
-    sta CTRLPF
+    ;lda CtrlPf
+    ;and #%11111100
+    ;ora #%00000001
+    ;sta CtrlPf
+    ;sta CTRLPF
 
     ; Initialize image index
     lda #0

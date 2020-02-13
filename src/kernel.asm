@@ -51,9 +51,9 @@ KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
 
 ; TIA Register Copies
 
-CtrlPf              ds 1
-NuSiz0              ds 1
-NuSiz1              ds 1
+;CtrlPf              ds 1
+;NuSiz0              ds 1
+;NuSiz1              ds 1
 
 ; Global
 
@@ -147,6 +147,7 @@ SwatterSampleF      ds 1
     include "title_frame_top.asm"
     include "title_frame_bottom.asm"
     include "title_spider.asm"
+    include "title_bug.asm"
 
     include "objects/score_digits.asm"
     include "objects/score_digits_flip.asm"

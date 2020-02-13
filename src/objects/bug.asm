@@ -259,10 +259,10 @@ BugDrawStart:
 .bug_draw_start_loop:
 
     ; Set missile 0 & 1 to be 8 clock size
-    lda NuSiz0,y
-    ora #%00110000
-    sta NuSiz0,y
-    sta NUSIZ0,y
+    ;lda NuSiz0,y
+    ;ora #%00110000
+    ;sta NuSiz0,y
+    ;sta NUSIZ0,y
 
     ; Setup half scanline positions
     lda BugPosY,y

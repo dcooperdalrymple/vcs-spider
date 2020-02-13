@@ -282,11 +282,11 @@ LinePosition:
 LineDrawStart:
 
     ; Set ball size to be 4 clocks (4/5 bits)
-    lda CtrlPf
-    and #%11001111
-    ora #%00100000
-    sta CtrlPf
-    sta CTRLPF
+    ;lda CtrlPf
+    ;and #%11001111
+    ;ora #%00100000
+    ;sta CtrlPf
+    ;sta CTRLPF
 
     ; Determine if we need to use vertical delay (oven line)
     lda LinePos+1
@@ -347,8 +347,8 @@ LineAudioPlay:
 LineAudioMute:
     lda #0
     sta AUDV1
-    sta AUDF1
-    sta AUDC1
+    ;sta AUDF1
+    ;sta AUDC1
     rts
 
 LineSample:

@@ -145,10 +145,7 @@ ScoreDraw:
     sta COLUP1
 
     ; Set Non-Mirror
-    lda CtrlPf
-    and #%11111100
-    ora #%00000010
-    sta CtrlPf
+    lda #%00000010
     sta CTRLPF
 
     ldx #0

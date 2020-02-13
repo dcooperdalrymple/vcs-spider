@@ -41,7 +41,7 @@ TitleInit:
 
     ; Drums and Bass
     lda #0
-    sta AUDC1
+    ;sta AUDC1
     sta AUDV1
 
     ; Make it so that we play the first note immediately
@@ -53,12 +53,9 @@ TitleInit:
     ; Setup Spider Sprite
     SET_POINTER SpiderPtr, TitleSpider
 
-    lda NuSiz0
-    and #%11111000
-    ora #%00000110  ; Triple Sprite
-    sta NuSiz0
+    lda #%00010110  ; Triple Sprite and 2 clock size missle0
     sta NUSIZ0
-    sta NuSiz1
+    lda #%00000110  ; Triple Sprite
     sta NUSIZ1
 
     lda #0          ; No reflect
@@ -69,14 +66,6 @@ TitleInit:
     lda #0
     sta SpiderDrawPos ; Initialize animation state
 
-    ; Setup Web Line
-    ; Missle0 (2 clock size)
-    lda NuSiz0
-    and #%11001111
-    ora #%00010000
-    sta NuSiz0
-    sta NUSIZ0
-
     ; Disable at start
     lda #0
     sta ENAM0
@@ -84,6 +73,9 @@ TitleInit:
     ; Set initial button state
     ;lda #0
     sta InputState
+
+    ; Set initial select state
+    sta Temp+2
 
     rts
 
@@ -121,26 +113,86 @@ TitlePosition:
 
 TitleAnimation:
 
+    lda SWCHB
+    and #%00000010
+    bne .title_animation_state_check
+
+    lda Temp+2
+
+.title_animation_state_on:
+    ora #%01000000
+    sta Temp+2
+    jmp .title_animation_load
+
+.title_animation_state_check:
+    bit Temp+2
+    bvc .title_animation_load
+
+    lda Temp+2
+    and #%10111111
+
+.title_animation_state_swap:
+    bpl .title_animation_state_bug
+
+.title_animation_state_spider:
+    and #%01111111
+    jmp .title_animation_state_set
+
+.title_animation_state_bug:
+    ora #%10000000
+
+.title_animation_state_set:
+    sta Temp+2
+
+.title_animation_load:
+
+    bit Temp+2
+    bmi .title_animation_bug
+
+.title_animation_spider:
+
     lda AudioStep
-    ;cmp #0
-    beq .title_animation_1
+    beq .title_animation_spider_1
     cmp #4
-    beq .title_animation_2
+    beq .title_animation_spider_2
     cmp #9
-    beq .title_animation_1
+    beq .title_animation_spider_1
     cmp #12
-    beq .title_animation_2
+    beq .title_animation_spider_2
     rts
 
-.title_animation_1:
+.title_animation_spider_1:
     SET_POINTER SpiderPtr, TitleSpider
     lda #0
-    sta SpiderDrawPos
-    rts
+    jmp .title_animation_return
 
-.title_animation_2:
+.title_animation_spider_2:
     SET_POINTER SpiderPtr, TitleSpider+#TITLE_SPIDER_SIZE
     lda #1
+    jmp .title_animation_return
+
+.title_animation_bug:
+
+    lda AudioStep
+    beq .title_animation_bug_1
+    cmp #4
+    beq .title_animation_bug_2
+    cmp #9
+    beq .title_animation_bug_1
+    cmp #12
+    beq .title_animation_bug_2
+    rts
+
+.title_animation_bug_1:
+    SET_POINTER SpiderPtr, TitleBug
+    lda #0
+    jmp .title_animation_return
+
+.title_animation_bug_2:
+    SET_POINTER SpiderPtr, TitleBug+#TITLE_SPIDER_SIZE
+    lda #1
+
+.title_animation_return:
     sta SpiderDrawPos
     rts
 
@@ -226,8 +278,8 @@ TitleAudio:
 .title_audio_play_note_1_mute:
 
     lda #0
-    sta AUDF1
-    sta AUDC1
+    ;sta AUDF1
+    ;sta AUDC1
     sta AUDV1
 
 .title_audio_return:
@@ -258,9 +310,10 @@ TitleState:
 TitleKernel:
 
     ; Playfield Control
-    lda CtrlPf
-    and #%11111110  ; No mirroring
-    sta CtrlPf
+    ;lda CtrlPf
+    ;and #%11111110  ; No mirroring
+    ;sta CtrlPf
+    lda #%00000000
     sta CTRLPF
 
     ; Turn on display
@@ -336,7 +389,16 @@ TitleFrameTopDraw:
     sta PF2
 
 TitleWebDraw:
+
+    bit Temp+2
+    bmi .title_web_bug
+
+.title_web_spider:
     lda #%00000010
+    jmp .title_web_set
+.title_web_bug:
+    lda #%00000000
+.title_web_set:
     sta ENAM0
 
     lda #TITLE_WEB_COLOR

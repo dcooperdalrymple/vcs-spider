@@ -29,7 +29,7 @@ OverInit:
     ;lda #OVER_AUDIO_VOLUME
     ;sta AUDV0
     lda #0
-    sta AUDC1
+    ;sta AUDC1
     sta AUDV1
 
     ; Set initial button state
@@ -110,7 +110,7 @@ OverAudio:
 
 .over_audio_mute_note:
     lda #0
-    sta AUDF0
+    ;sta AUDF0
     sta AUDV0
 
 .over_audio_return:
@@ -155,10 +155,11 @@ OverKernel:
 
 .over_kernel_init:
     ; Playfield Control
-    lda CtrlPf
-    and #%11111101 ; Use playfield foreground color
-    ora #%00000001 ; Set mirroring
-    sta CtrlPf
+    ;lda CtrlPf
+    ;and #%11111101 ; Use playfield foreground color
+    ;ora #%00000001 ; Set mirroring
+    ;sta CtrlPf
+    lda #%00000001
     sta CTRLPF
 
 .over_kernel_top_padding:

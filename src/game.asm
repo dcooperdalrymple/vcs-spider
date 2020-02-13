@@ -34,9 +34,9 @@ GameInit:
 ;    sta AUDC0
 ;    sta AUDV0
 ;    sta AUDF0
-    sta AUDC1
+    ;sta AUDC1
     sta AUDV1
-    sta AUDF1
+    ;sta AUDF1
     sta SampleStep
 
     ; Load Audio Settings
@@ -119,8 +119,8 @@ GameSample:
 .game_sample_mute:
     lda #0
     sta AUDV1
-    sta AUDF1
-    sta AUDC1
+    ;sta AUDF1
+    ;sta AUDC1
 
 .game_sample_return:
     stx SampleStep
@@ -170,8 +170,8 @@ GameAudio:
 .game_audio_mute_note:
 
     lda #0
-    sta AUDF0
-    sta AUDC0
+    ;sta AUDF0
+    ;sta AUDC0
     sta AUDV0
 
 .game_audio_return:
@@ -206,6 +206,16 @@ GameKernel:
     jsr SwatterDrawStart
     jsr LineDrawStart
     jsr BugDrawStart
+
+    ; Set missle and sprite sizes
+    lda #%00110101
+    sta NUSIZ0
+    lda #%00110111
+    sta NUSIZ1
+
+    ; Set playfield settings and ball size
+    lda #%00100001
+    sta CTRLPF
 
     ; Start Scanline Counter
     ldx #KERNEL_SCANLINES-SCORE_LINES-5

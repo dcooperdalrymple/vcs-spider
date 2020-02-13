@@ -269,11 +269,11 @@ SpiderPosition:
 SpiderDrawStart:
 
     ; Set player 0 to be quad size
-    lda NuSiz0
-    and #%11111000
-    ora #%00000101
-    sta NuSiz0
-    sta NUSIZ0
+    ;lda NuSiz0
+    ;and #%11111000
+    ;ora #%00000101
+    ;sta NuSiz0
+    ;sta NUSIZ0
 
     ; Set sprite color
     lda SpiderColor
