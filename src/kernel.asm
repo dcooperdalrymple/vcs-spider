@@ -64,8 +64,8 @@ FrameTimer          ds 2
 InputState          ds 1
 
 AudioStep           ds 1
-
 SampleStep          ds 1
+GameAudioStep       ds 1
 
 ; Score
 

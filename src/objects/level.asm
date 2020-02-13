@@ -59,6 +59,16 @@ LevelUpdate:
 
 LevelLoad:
 
+    ; Game Audio Step: 9-(level/4)
+    lda LevelCurrent
+    lsr ; /2
+    lsr ; /2
+    sta Temp
+    lda #GAME_AUDIO_STEP+1
+    clc
+    sbc Temp
+    sta GameAudioStep
+
     ; Bug Speed: level/4+2
     lda LevelCurrent
     lsr ; /2

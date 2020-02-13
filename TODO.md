@@ -14,7 +14,7 @@
 - [x] Optimize game kernel loop for rom size
 - [x] Improve level progression
 - [ ] Improve title screen music
-- [ ] Increase game music speed with level
+- [x] Increase game music speed with level
 
 ## BUGS
 

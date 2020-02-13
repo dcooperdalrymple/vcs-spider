@@ -135,7 +135,7 @@ GameAudio:
     bne .game_audio_return
 
     ; Reset Timer
-    ldx #GAME_AUDIO_STEP
+    ldx GameAudioStep
     stx FrameTimer
 
 .game_audio_play:
