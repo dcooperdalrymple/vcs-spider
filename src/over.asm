@@ -188,6 +188,7 @@ OverKernel:
 
 .over_kernel_bottom_padding:
     ; Bottom Padding
+    sta WSYNC ; Add extra line to get to 262
     jsr OverPadding
 
 .over_kernel_return:
@@ -196,7 +197,7 @@ OverKernel:
 
 OverPadding:
     lda #0
-    sta PF0
+    ;sta PF0
     sta PF1
     sta PF2
 
