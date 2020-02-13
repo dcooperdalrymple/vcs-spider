@@ -51,7 +51,7 @@ KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
 
 ; Global
 
-Temp                ds 3
+Temp                ds 4
 Rand8               ds 1
 Rand16              ds 1
 

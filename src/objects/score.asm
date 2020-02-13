@@ -38,65 +38,13 @@ ScoreUpdate:
     lda LevelCurrent
     clc
     adc #1
-
-    jsr BinBcdConvert
-
-    ; Only use first byte
-    txa
-    and #$0f
-    tay
-    txa
-    and #$f0
-    REPEAT 4
-    lsr
-    REPEND
-    tax
-
-    ; Adjust index positions by multiplying by 5
-    txa
-    sta Temp
-    asl
-    asl
-    adc Temp
-    sta ScoreDigitTens
-
-    tya
-    sta Temp
-    asl
-    asl
-    adc Temp
-    sta ScoreDigitOnes
+    ldy #0
+    jsr ScoreUpdateDigits
 
     ; Score Digits
     lda ScoreValue+1
-
-    jsr BinBcdConvert
-
-    ; Only use first byte
-    txa
-    and #$0f
-    tay
-    txa
-    and #$f0
-    REPEAT 4
-    lsr
-    REPEND
-    tax
-
-    ; Adjust index positions by multiplying by 5
-    txa
-    sta Temp
-    asl
-    asl
-    adc Temp
-    sta ScoreDigitTens+1
-
-    tya
-    sta Temp
-    asl
-    asl
-    adc Temp
-    sta ScoreDigitOnes+1
+    ldy #1
+    jsr ScoreUpdateDigits
 
     ; Health Bar
     lda ScoreValue+0
@@ -130,6 +78,42 @@ ScoreUpdate:
     sty ScoreBarGfx+1
 
 .score_update_end:
+    rts
+
+ScoreUpdateDigits: ; Value in A, ScoreDigit index in Y
+
+    sty Temp+3
+
+    jsr BinBcdConvert
+
+    ; Only use first byte
+    txa
+    and #$0f
+    tay
+    txa
+    and #$f0
+    REPEAT 4
+    lsr
+    REPEND
+    tax
+
+    ; Adjust index positions by multiplying by 5
+    txa
+    sta Temp
+    asl
+    asl
+    adc Temp
+    ldx Temp+3
+    sta ScoreDigitTens,x
+
+    tya
+    sta Temp
+    asl
+    asl
+    adc Temp
+    ldy Temp+3
+    sta ScoreDigitOnes,y
+
     rts
 
 ; Draw loop (uses SCORE_LINES scanlines)
