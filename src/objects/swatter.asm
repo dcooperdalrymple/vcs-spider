@@ -223,8 +223,9 @@ SwatterDrawStart:
     sta SwatterDrawPos
 
     ; Initialize sprite index
-    lda #0
+    lda #SWATTER_SPRITE_SIZE-1
     sta SwatterIndex
+    lda #0
     sta SwatterLine
 
     rts

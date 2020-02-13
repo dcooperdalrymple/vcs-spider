@@ -217,23 +217,18 @@ GameKernel:
     lda #%00100001
     sta CTRLPF
 
-    ; Start Scanline Counter
-    ldx #KERNEL_SCANLINES-SCORE_LINES-5
-    ; The extra 5 is for processing overflow
-
-    ; Half scanline counter in Temp+1
-    lda #(KERNEL_SCANLINES-SCORE_LINES)/2
-    sta Temp+1
+    ; Half scanline counter
+    ldx #(KERNEL_SCANLINES-SCORE_LINES)/2-2
 
     ; 6 line counter
     lda #0
     sta Temp+2
 
+    sta WSYNC
+
     ; Load background color
     lda WebColor+0
     sta COLUBK
-
-    ;sta WSYNC
 
 .game_kernel_objects:
 
@@ -264,20 +259,17 @@ GameKernel:
 
 .game_kernel_missle:
 
-    ; Preload half-line
-    lda Temp+1
-
 .game_kernel_missle_bug_0:
     ; First Bug
 
     ldy #%00000000
 
     ; Top
-    cmp BugDrawPosTop+0
+    cpx BugDrawPosTop+0
     bcs .game_kernel_missle_bug_0_off
 
     ; Bottom
-    cmp BugDrawPosBottom+0
+    cpx BugDrawPosBottom+0
     bcc .game_kernel_missle_bug_0_off
 
 .game_kernel_missle_bug_0_on:
@@ -292,11 +284,11 @@ GameKernel:
     ldy #%00000000
 
     ; Top
-    cmp BugDrawPosTop+1
+    cpx BugDrawPosTop+1
     bcs .game_kernel_missle_bug_1_off
 
     ; Bottom
-    cmp BugDrawPosBottom+1
+    cpx BugDrawPosBottom+1
     bcc .game_kernel_missle_bug_1_off
 
 .game_kernel_missle_bug_1_on:
@@ -305,25 +297,20 @@ GameKernel:
 .game_kernel_missle_bug_1_off:
     sty ENAM1
 
-    ;jmp .game_kernel_line_skip
-
 .game_kernel_line:
     ; Line
 
     bit LineEnabled
     bpl .game_kernel_line_skip
 
-    ; Load half-line
-    lda Temp+1
-
     ldy #%00000000
 
     ; Top
-    cmp LineDrawPos+1
+    cpx LineDrawPos+1
     bcs .game_kernel_line_set
 
     ; Bottom
-    cmp LineDrawPos+0
+    cpx LineDrawPos+0
     bcc .game_kernel_line_set
 
     ldy #%00000010
@@ -333,8 +320,7 @@ GameKernel:
 .game_kernel_line_skip:
 
     ; Next Line
-    dex
-    ;sta WSYNC
+    sta WSYNC
 
 .game_kernel_sprite:
 
@@ -343,31 +329,29 @@ GameKernel:
 
     ldy SpiderIndex
     bmi .game_kernel_sprite_spider_load  ; At end of sprite
-    bne .game_kernel_sprite_spider_draw  ; Currently drawing (not zero)
 
-    ; Check y position to see if we should start
-    lda Temp+1  ; Use half scanline
+    ; Check y position to see if we should be drawing
+    txa
     sbc SpiderDrawPos
     bpl .game_kernel_sprite_spider_load
 
 .game_kernel_sprite_spider_draw:
-    lda (SpiderPtr),y
-    sta SpiderLine
 
-    ; Increment sprite index
-    inc SpiderIndex
+    ; Decrement sprite index
+    dey
+    bpl .game_kernel_sprite_spider_grab
 
-    ; See if we're at the end
-    cpy #SPIDER_SPRITE_SIZE
-    bne .game_kernel_sprite_spider_line
-    ldy #-1 ; Load a negative value to tell draw routine to stop
-    sty SpiderIndex
     lda #0
+    jmp .game_kernel_sprite_spider_store
+
+.game_kernel_sprite_spider_grab:
+    lda (SpiderPtr),y
+.game_kernel_sprite_spider_store:
+    sty SpiderIndex
     sta SpiderLine
 
 .game_kernel_sprite_spider_load:
     lda SpiderLine
-.game_kernel_sprite_spider_line:
     sta GRP0
 
 .game_kernel_sprite_swatter:
@@ -379,10 +363,9 @@ GameKernel:
 
     ldy SwatterIndex
     bmi .game_kernel_sprite_swatter_load ; At end of sprite
-    bne .game_kernel_sprite_swatter_draw ; Currently drawing (not zero)
 
-    ; Check y position to see if we should start
-    lda Temp+1 ; Use half scanline
+    ; Check y position to see if we should be drawing
+    txa
     sbc SwatterDrawPos
     bpl .game_kernel_sprite_swatter_load
 
@@ -390,26 +373,19 @@ GameKernel:
     lda SwatterSprite,y
     sta SwatterLine
 
-    ; Increment index
-    inc SwatterIndex
-
-    ; See if we're at the end
-    cpy #(SWATTER_SPRITE_SIZE-1)
-    bne .game_kernel_sprite_swatter_line
-    ldy #-1 ; Load a negative value to tell draw routine to stop
-    sty SwatterIndex
+    ; Decrement sprite index
+    dec SwatterIndex
 
 .game_kernel_sprite_swatter_load:
     lda SwatterLine
 .game_kernel_sprite_swatter_line:
     sta GRP1
 
-    sta WSYNC
-
 .game_kernel_sprite_end:
 
+    sta WSYNC
+
     ; New line, decrement half scanline, and increment 3 line counter
-    dec Temp+1
     dec Temp+2
     dex
     beq .game_kernel_clean

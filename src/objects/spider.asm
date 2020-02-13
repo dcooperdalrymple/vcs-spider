@@ -300,8 +300,9 @@ SpiderDrawStart:
     sta SpiderDrawPos
 
     ; Initialize sprite index and line buffer
-    lda #0
+    lda #SPIDER_SPRITE_SIZE
     sta SpiderIndex
+    lda #0
     sta SpiderLine
 
     rts

@@ -31,10 +31,10 @@ echo "/assets/title-bug.png => /src/title_bug.asm"
 python ./assets/sprite_image.py -name TitleBug -in ./assets/title-bug.png -out ./src/title_bug.asm -reverse 1 -flip 0
 
 echo "/assets/player.png => /src/objects/spider_sprite.asm"
-python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm -reverse 0 -flip 0
+python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm -reverse 1 -flip 0
 
 echo "/assets/swatter.png => /src/objects/swatter_sprite.asm"
-python ./assets/sprite_image.py -name SwatterSprite -in ./assets/swatter.png -out ./src/objects/swatter_sprite.asm -reverse 0 -flip 0
+python ./assets/sprite_image.py -name SwatterSprite -in ./assets/swatter.png -out ./src/objects/swatter_sprite.asm -reverse 1 -flip 0
 
 echo "/assets/digits-pad.png => /src/objects/score_digits.asm"
 python ./assets/sprite_image.py -name ScoreDigits -in ./assets/digits-pad.png -out ./src/objects/score_digits.asm -reverse 0 -flip 0

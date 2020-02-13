@@ -49,12 +49,6 @@ KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
     SEG.U vars
     org $80
 
-; TIA Register Copies
-
-;CtrlPf              ds 1
-;NuSiz0              ds 1
-;NuSiz1              ds 1
-
 ; Global
 
 Temp                ds 3

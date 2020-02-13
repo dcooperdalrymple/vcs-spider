@@ -6,7 +6,7 @@
 - [x] Difficulty switch support to increase starting difficulty
 - [x] Health bar and level counter
 - [x] Black and white TV switch support
-- [ ] Game select switch support? (Easter egg?)
+- [x] Game select switch support? (Easter egg?)
 - [x] Revised game kernel
 - [x] Swatter collision logic
 - [x] Swatter enemy sprite, kernel routines, and animation
