@@ -127,6 +127,7 @@ SwatterState        ds 1
 SwatterColor        ds 1
 
 SwatterWaitTime     ds 1
+SwatterHoldTime     ds 1
 SwatterHitDamage    ds 1
 
 SwatterIndex        ds 1

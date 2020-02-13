@@ -77,6 +77,16 @@ LevelLoad:
     adc Temp
     sta SwatterWaitTime
 
+    ; Swatter Hold Time: 60-(level*2)
+
+    lda LevelCurrent
+    asl ; x2
+    sta Temp
+    lda #60
+    clc
+    sbc Temp
+    sta SwatterHoldTime
+
     ; Swatter Hit Damage: level*3+$10
     lda LevelCurrent
     clc

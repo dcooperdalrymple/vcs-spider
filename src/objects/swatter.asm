@@ -117,7 +117,7 @@ SwatterUpdate:
     sta SwatterSampleCount
 
     lda #SWATTER_STATE_HOLD
-    ldx #SWATTER_HOLD_TIME
+    ldx SwatterHoldTime
     jmp .swatter_update_state_set
 
 .swatter_update_state_hold:
