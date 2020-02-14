@@ -15,7 +15,6 @@
 - [x] Improve level progression
 - [x] Improve title screen music
 - [x] Increase game music speed with level
-- [ ] Increase player speed with level
 - [x] Support second joystick for aiming and firing
 
 ## BUGS
@@ -26,3 +25,7 @@
 - [x] Line spawning
 - [x] Fix playfield loading of title after color switch
 - [x] Fix line wsync
+
+## Maybe
+
+- [ ] Increase player speed with level
