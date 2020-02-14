@@ -25,6 +25,7 @@
 - [x] Line spawning
 - [x] Fix playfield loading of title after color switch
 - [x] Fix line wsync
+- [x] Logo b/w mode
 
 ## Maybe
 

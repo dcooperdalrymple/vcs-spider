@@ -116,8 +116,8 @@ LogoKernel:
     jmp .logo_kernel_set
 
 .logo_kernel_bw:
-    lda #LOGO_BG_BW_COLOR
-    lda #LOGO_FG_BW_COLOR
+    ldx #LOGO_BG_BW_COLOR
+    ldy #LOGO_FG_BW_COLOR
 
 .logo_kernel_set:
     stx COLUBK
