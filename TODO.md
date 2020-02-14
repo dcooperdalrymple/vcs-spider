@@ -15,6 +15,8 @@
 - [x] Improve level progression
 - [x] Improve title screen music
 - [x] Increase game music speed with level
+- [ ] Increase player speed with level
+- [ ] Support second joystick for aiming and firing
 
 ## BUGS
 
