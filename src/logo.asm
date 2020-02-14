@@ -73,24 +73,29 @@ LogoState:
     lda FrameTimer
     beq .logo_state_next
 
-    ; Check if Fire Button on controller 1 is released
-    lda INPT4
+    ldx #1
+.logo_state:
+    ; Check if Fire Button on controller 0 or 1 is released
+    lda INPT4,x
     bmi .logo_state_check
 
 .logo_state_on:
     lda #1
-    sta InputState
+    sta InputState,x
     rts
 
 .logo_state_check:
-    ldx InputState
-    beq .logo_state_return
+    lda InputState,x
+    bne .logo_state_next
+
+.logo_state_loop:
+    dex
+    bpl .logo_state
+    rts
 
 .logo_state_next:
     ; Button is released or timer runs out, load title screen
     jsr TitleInit
-
-.logo_state_return:
     rts
 
 LogoKernel:
@@ -102,10 +107,8 @@ LogoKernel:
 
     ; Load Colors
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcc .logo_kernel_bw
+    and #%00001000
+    beq .logo_kernel_bw
 
 .logo_kernel_color:
     ldx #LOGO_BG_COLOR

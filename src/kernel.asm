@@ -61,10 +61,14 @@ OverScanPtr         ds 2
 
 Frame               ds 1
 FrameTimer          ds 2
-InputState          ds 1
+InputState          ds 2
 
 AudioStep           ds 1
 SampleStep          ds 1
+
+; Game
+
+GameType            ds 1
 GameAudioStep       ds 1
 
 ; Score
@@ -288,7 +292,7 @@ OverScan:
     lda #36 ; #KERNEL_OVERSCAN*76/64
     sta TIM64T
 
-;.overscan_reset:
+.overscan_reset:
     ; Check for reset switch
     lda SWCHB
     lsr                     ; Push D0 to carry (C)

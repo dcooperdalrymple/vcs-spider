@@ -173,10 +173,8 @@ ScoreDraw:
 
     ; Load Colors
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcc .score_draw_bw
+    and #%00001000
+    beq .score_draw_bw
 
 .score_draw_color:
     lda #SCORE_LEVEL_COLOR

@@ -49,10 +49,8 @@ SwatterUpdate:
 
     ; Check b/w
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcc .swatter_update_bw
+    and #%00001000
+    beq .swatter_update_bw
 
 .swatter_update_color:
     lda SwatterState

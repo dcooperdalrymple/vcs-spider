@@ -25,7 +25,7 @@ SpiderInit:
     sta SpiderPos+1
 
     ; Initial direction
-    lda #%00100000
+    lda #%00010000
     sta SpiderCtrl
 
     ; Setup Sprite
@@ -80,7 +80,11 @@ SpiderControl:
 
 .spider_control_sprite:
     ; Control Sprite
-    lda #%00000000 ; First 2 bits are left or right, second 2 bits are up or down
+    lda #%00000000
+    ; 7th bit: right
+    ; 6th bit: left
+    ; 5th bit: down
+    ; 4th bit: up
 
 .spider_control_sprite_x:
     cpx SpiderPos
@@ -89,11 +93,11 @@ SpiderControl:
     bcs .spider_control_sprite_right
 
 .spider_control_sprite_left:
-    ora #%10000000
+    ora #%01000000
     jmp .spider_control_sprite_y
 
 .spider_control_sprite_right:
-    ora #%01000000
+    ora #%10000000
 
 .spider_control_sprite_y:
     cpy SpiderPos+1
@@ -102,11 +106,11 @@ SpiderControl:
     bcs .spider_control_sprite_up
 
 .spider_control_sprite_down:
-    ora #%00010000
+    ora #%00100000
     jmp .spider_control_sprite_store
 
 .spider_control_sprite_up:
-    ora #%00100000
+    ora #%00010000
 
 .spider_control_sprite_store:
     cmp #%00000000
@@ -143,7 +147,6 @@ SpiderControl:
     stx SpiderPos
     sty SpiderPos+1
 
-; TODO: Optimize this somehow?
 .spider_control_sprite_assign:
     ; Skip if no change
     cmp #%00000000
@@ -151,55 +154,28 @@ SpiderControl:
 
     ldx #%00000000  ; For reflection
 
+    bit SpiderCtrl
+    bmi .spider_control_sprite_assign_right
+    bvc .spider_control_sprite_assign_top
+
 .spider_control_sprite_assign_left:
-    cmp #%10000000
-    bne .spider_control_sprite_assign_right
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
     ldx #%00001000
     jmp .spider_control_reflect
 
 .spider_control_sprite_assign_right:
-    cmp #%01000000
-    bne .spider_control_sprite_assign_top
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
     jmp .spider_control_reflect
 
 .spider_control_sprite_assign_top:
-    cmp #%00100000
+    cmp #%00010000
     bne .spider_control_sprite_assign_bottom
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*0
     jmp .spider_control_reflect
 
 .spider_control_sprite_assign_bottom:
-    cmp #%00010000
-    bne .spider_control_sprite_assign_top_right
     SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*2
     jmp .spider_control_reflect
-
-.spider_control_sprite_assign_top_right:
-    cmp #%01100000
-    bne .spider_control_sprite_assign_bottom_right
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
-    jmp .spider_control_reflect
-
-.spider_control_sprite_assign_bottom_right:
-    cmp #%01010000
-    bne .spider_control_sprite_assign_bottom_left
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
-    jmp .spider_control_reflect
-
-.spider_control_sprite_assign_bottom_left:
-    cmp #%10010000
-    bne .spider_control_sprite_assign_top_left
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
-    ldx #%00001000
-    jmp .spider_control_reflect
-
-.spider_control_sprite_assign_top_left:
-    cmp #%10100000
-    bne .spider_control_reflect
-    SET_POINTER SpiderPtr, SpiderSprite+#SPIDER_SPRITE_SIZE*1
-    ldx #%00001000
 
 .spider_control_reflect:
     stx REFP0
@@ -212,10 +188,8 @@ SpiderCollision:
 
     ; Check b/w
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcs .spider_collision_m0
+    and #%00001000
+    bne .spider_collision_m0
 
     ldy #SPIDER_BW_COLOR
 
@@ -244,10 +218,8 @@ SpiderCollision:
 
     ; Check b/w
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcs .spider_collision_return
+    and #%00001000
+    bne .spider_collision_return
 
     ldy #SPIDER_COL_BW_COLOR
 

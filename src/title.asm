@@ -206,10 +206,8 @@ TitleColor:
 
     ; Check b/w
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcc .title_bw
+    and #%00001000
+    beq .title_bw
 
 .title_color:
     lda #TITLE_SPIDER_COLOR
@@ -300,19 +298,47 @@ TitleAudio:
 
 TitleState:
 
-    ; Check if Fire Button on controller 1 is released
-    lda INPT4
+    ldx #1
+
+.title_state:
+    ; Check if fire button on controller is released
+    lda INPT4,x
     bmi .title_state_check
 
 .title_state_on:
-    lda #1
+    lda #%01000000
+    cpx #1
+    bne .title_state_on_set
+.title_state_on_1:
+    lda #%10000000
+.title_state_on_set:
+    ora InputState
     sta InputState
-    rts
 
 .title_state_check:
-    lda InputState
-    beq .title_state_return
+    txa
+    bne .title_state_check_1
+.title_state_check_0:
+    bit InputState
+    bvs .title_state_type_0
+    jmp .title_state_dec
+.title_state_check_1:
+    bit InputState
+    bmi .title_state_type_1
 
+.title_state_dec:
+    dex
+    bpl .title_state
+
+    rts
+
+.title_state_type_0:
+    lda #%01000000
+    jmp .title_state_type_set
+.title_state_type_1:
+    lda #%10000000
+.title_state_type_set:
+    sta GameType
 .title_state_next:
     ; Button is released, load up game
     jsr GameInit
@@ -323,14 +349,11 @@ TitleState:
 TitleKernel:
 
     ; Playfield Control
-    ;lda CtrlPf
-    ;and #%11111110  ; No mirroring
-    ;sta CtrlPf
-    lda #%00000000
+    lda #%00000000 ; No mirroring
     sta CTRLPF
 
     ; Turn on display
-    lda #0
+    ;lda #0
     sta VBLANK
 
     sta WSYNC
@@ -403,14 +426,11 @@ TitleFrameTopDraw:
 
 TitleWebDraw:
 
+    lda #%00000000
     bit Temp+2
-    bmi .title_web_bug
-
+    bmi .title_web_set
 .title_web_spider:
     lda #%00000010
-    jmp .title_web_set
-.title_web_bug:
-    lda #%00000000
 .title_web_set:
     sta ENAM0
 
@@ -428,8 +448,7 @@ TitleSpiderDraw:
     ldy #TITLE_SPIDER_SIZE-1
 
     lda SpiderDrawPos
-    cmp #1
-    bne .title_spider_extra_web_disable
+    beq .title_spider_extra_web_disable
 
 .title_spider_extra_web_start:
     ldx #TITLE_SPIDER_LINE_SIZE
@@ -443,7 +462,7 @@ TitleSpiderDraw:
     bne .title_spider_extra_web_start
 
 .title_spider_extra_web_disable:
-    lda #0
+    ;lda #0
     ldx #TITLE_SPIDER_LINE_SIZE
 
     sta WSYNC
@@ -452,11 +471,8 @@ TitleSpiderDraw:
 
     ; Check b/w
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcc .title_spider_bw
-
+    and #%00001000
+    beq .title_spider_bw
 .title_spider_color:
     lda #TITLE_SPIDER_COLOR
     jmp .title_spider_color_set

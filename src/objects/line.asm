@@ -50,34 +50,55 @@ LineUpdate:
 
 LineControl:
 
-    ; Check if Fire Button on controller 1 is pressed
-    lda INPT4
+    ; Check if Fire Button on controller is pressed (0 or 1)
+
+    ldx #0
+    bit GameType
+    bvs .line_control_check
+    ldx #1
+
+.line_control_check:
+    lda INPT4,x
     bmi .line_control_skip
 
     bit LineEnabled
     bmi .line_control_skip
 
+    bit GameType
+    bmi .line_control_check_ctrl_1
+
+.line_control_check_ctrl_0:
     lda SpiderCtrl
+    jmp .line_control_check_ctrl
+
+.line_control_check_ctrl_1:
+    lda SWCHA
+    eor #$ff ; invert bits
+    REPEAT 4
+    asl
+    REPEND
+    and #%11110000
+
+.line_control_check_ctrl:
+    sta Temp+3
     bne .line_control_fire
 
 .line_control_skip:
-    jmp .line_control_return
+    rts
 
 .line_control_fire:
     jsr LineEnable
 
 .line_control_x:
-    lda SpiderCtrl
-    and #%11000000
+    lda #%11000000
+    bit Temp+3
     beq .line_control_x_none
-.line_control_x_left:
-    cmp #%10000000
-    bne .line_control_x_right
-
-    lda #-LINE_VEL_X
-    jmp .line_control_x_store
 .line_control_x_right:
+    bpl .line_control_x_left
     lda #LINE_VEL_X
+    jmp .line_control_x_store
+.line_control_x_left:
+    lda #-LINE_VEL_X
     jmp .line_control_x_store
 .line_control_x_none:
     lda #0
@@ -85,17 +106,16 @@ LineControl:
     sta LineVelocity
 
 .line_control_y:
-    lda SpiderCtrl
+    lda Temp+3
     and #%00110000
     beq .line_control_y_none
-.line_control_y_up:
-    cmp #%00100000
-    bne .line_control_y_down
-
-    lda #LINE_VEL_Y
-    jmp .line_control_y_store
 .line_control_y_down:
+    cmp #%00100000
+    bne .line_control_y_up
     lda #-LINE_VEL_Y
+    jmp .line_control_y_store
+.line_control_y_up:
+    lda #LINE_VEL_Y
     jmp .line_control_y_store
 .line_control_y_none:
     lda #0
@@ -107,11 +127,10 @@ LineControl:
     ldx #0 ; offsetX
     ldy #0 ; offsetY
 
-    lda SpiderCtrl
-    and #%11110000
+    lda Temp+3
 
 .line_control_position_left:
-    cmp #%10000000
+    cmp #%01000000
     bne .line_control_position_right
 
     ldx #0
@@ -119,7 +138,7 @@ LineControl:
     jmp .line_control_position_store
 
 .line_control_position_right:
-    cmp #%01000000
+    cmp #%10000000
     bne .line_control_position_top
 
     ldx #SPIDER_SIZE-LINE_SIZE/2
@@ -127,7 +146,7 @@ LineControl:
     jmp .line_control_position_store
 
 .line_control_position_top:
-    cmp #%00100000
+    cmp #%00010000
     bne .line_control_position_bottom
 
     ldx #SPIDER_SIZE/2
@@ -135,14 +154,14 @@ LineControl:
     jmp .line_control_position_store
 
 .line_control_position_bottom:
-    cmp #%00010000
+    cmp #%00100000
     bne .line_control_position_top_right
 
     ldx #SPIDER_SIZE/2
     jmp .line_control_position_store
 
 .line_control_position_top_right:
-    cmp #%01100000
+    cmp #%10010000
     bne .line_control_position_bottom_right
 
     ldx #SPIDER_SIZE
@@ -150,7 +169,7 @@ LineControl:
     jmp .line_control_position_store
 
 .line_control_position_bottom_right:
-    cmp #%01010000
+    cmp #%10100000
     bne .line_control_position_bottom_left
 
     ldx #SPIDER_SIZE-LINE_SIZE/2
@@ -158,7 +177,7 @@ LineControl:
     jmp .line_control_position_store
 
 .line_control_position_bottom_left:
-    cmp #%10010000
+    cmp #%01100000
     bne .line_control_position_top_left
 
     ; No Offset
@@ -167,7 +186,7 @@ LineControl:
     jmp .line_control_position_store
 
 .line_control_position_top_left:
-    cmp #%10100000
+    cmp #%01010000
     bne .line_control_position_store
 
     ldx #0

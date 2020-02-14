@@ -113,10 +113,8 @@ LevelLoadColor:
 
     ; check b/w
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcc .level_load_bw
+    and #%00001000
+    beq .level_load_bw
 
 .level_load_color:
 

@@ -55,10 +55,8 @@ OverVerticalBlank:
 
     ; Check b/w
     lda SWCHB
-    REPEAT 4
-    lsr
-    REPEND
-    bcc .over_bw
+    and #%00001000
+    beq .over_bw
 
 .over_color:
     lda #OVER_FG_COLOR
@@ -122,18 +120,25 @@ OverState:
     lda AudioStep
     bne .over_state_return
 
+    ldx #1
+.over_state:
     ; Check if Fire Button on controller 1 is released
-    lda INPT4
+    lda INPT4,x
     bmi .over_state_check
 
 .over_state_on:
     lda #1
-    sta InputState
+    sta InputState,x
     rts
 
 .over_state_check:
-    lda InputState
-    beq .over_state_return
+    lda InputState,x
+    bne .over_state_next
+
+.over_state_loop:
+    dex
+    bpl .over_state
+    rts
 
 .over_state_next:
     ; Button is released, load title screen
