@@ -50,17 +50,16 @@ LineUpdate:
 
 LineControl:
 
-    ; Check if Fire Button on controller is pressed (0 or 1)
-
-    ldx #0
+    ; If in two player mode, no fire is required
     bit GameType
-    bvs .line_control_check
-    ldx #1
+    bmi .line_control_check_enabled
 
-.line_control_check:
-    lda INPT4,x
+.line_control_check_fire:
+    ; Check if Fire Button on controller 0 is pressed
+    lda INPT4
     bmi .line_control_skip
 
+.line_control_check_enabled:
     bit LineEnabled
     bmi .line_control_skip
 
