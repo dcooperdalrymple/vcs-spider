@@ -16,6 +16,9 @@
 - [x] Improve title screen music
 - [x] Increase game music speed with level
 - [x] Support second joystick for aiming and firing
+- [ ] Make bugs not spawn near player (maybe spawn at edge)
+- [ ] Increase spider speed with level
+- [ ] Increase stun length with level
 
 ## BUGS
 
