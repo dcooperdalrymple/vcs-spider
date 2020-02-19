@@ -24,14 +24,14 @@ LineInit:
     ; Initial Line Control
     lda #0
     sta LineEnabled
-    sta LinePos+0
-    sta LinePos+1
+    ;sta LinePos+0
+    ;sta LinePos+1
 
     ; Initial direction
     ;lda #0
-    sta LineVelocity+0
-    lda #LINE_VEL_Y
-    sta LineVelocity+1
+    ;sta LineVelocity+0
+    ;lda #LINE_VEL_Y
+    ;sta LineVelocity+1
 
     ; Disable line at start
     ;lda #-1

@@ -16,6 +16,7 @@
 - [x] Improve title screen music
 - [x] Increase game music speed with level
 - [x] Support second joystick for aiming and firing
+- [ ] Spawn bugs at the sides of playfield area
 
 ## BUGS
 
@@ -26,7 +27,10 @@
 - [x] Fix playfield loading of title after color switch
 - [x] Fix line wsync
 - [x] Logo b/w mode
+- [ ] COLUP1 when swatter isn't visible
 
 ## Maybe
 
-- [ ] Increase player speed with level
+- [ ] ~~Increase player speed with level~~
+- [ ] Add success screen (using over.asm code) when reached 99 points on level 22.
+- [ ] Only write graphics registers after wsync to reduce mid-line graphical glitches
