@@ -3168,20 +3168,20 @@
     121  f8ad							; Check Playfield Boundaries
     122  f8ad
     123  f8ad				   .spider_control_boundary_left
-    124  f8ad		       e0 03		      cpx	#SPIDER_VEL_X+1
+    124  f8ad		       e0 02		      cpx	#SPIDER_VEL_X
     125  f8af		       b0 05		      bcs	.spider_control_boundary_right
-    126  f8b1		       a2 03		      ldx	#SPIDER_VEL_X+1
+    126  f8b1		       a2 02		      ldx	#SPIDER_VEL_X
     127  f8b3		       4c bc f8 	      jmp	.spider_control_boundary_top
     128  f8b6
     129  f8b6				   .spider_control_boundary_right
-    130  f8b6		       e0 8b		      cpx	#(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X-3
+    130  f8b6		       e0 8e		      cpx	#(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X
     131  f8b8		       90 02		      bcc	.spider_control_boundary_top
-    132  f8ba		       a2 8b		      ldx	#(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X-3
+    132  f8ba		       a2 8e		      ldx	#(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X
     133  f8bc
     134  f8bc				   .spider_control_boundary_top
-    135  f8bc		       c0 0d		      cpy	#SPIDER_VEL_Y+11
+    135  f8bc		       c0 04		      cpy	#SPIDER_VEL_Y+2
     136  f8be		       b0 05		      bcs	.spider_control_boundary_bottom
-    137  f8c0		       a0 0d		      ldy	#SPIDER_VEL_Y+11
+    137  f8c0		       a0 04		      ldy	#SPIDER_VEL_Y+2
     138  f8c2		       4c cb f8 	      jmp	.spider_control_store
     139  f8c5
     140  f8c5				   .spider_control_boundary_bottom

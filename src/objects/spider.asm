@@ -121,20 +121,20 @@ SpiderControl:
     ; Check Playfield Boundaries
 
 .spider_control_boundary_left:
-    cpx #SPIDER_VEL_X+1
+    cpx #SPIDER_VEL_X
     bcs .spider_control_boundary_right
-    ldx #SPIDER_VEL_X+1
+    ldx #SPIDER_VEL_X
     jmp .spider_control_boundary_top
 
 .spider_control_boundary_right:
-    cpx #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X-3
+    cpx #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X
     bcc .spider_control_boundary_top
-    ldx #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X-3
+    ldx #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X
 
 .spider_control_boundary_top:
-    cpy #SPIDER_VEL_Y+11
+    cpy #SPIDER_VEL_Y+2
     bcs .spider_control_boundary_bottom
-    ldy #SPIDER_VEL_Y+11
+    ldy #SPIDER_VEL_Y+2
     jmp .spider_control_store
 
 .spider_control_boundary_bottom:
