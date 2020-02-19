@@ -223,7 +223,7 @@
 0.swatter_collision_p0   fc8e              (R )
 0.swatter_collision_p0_set fc9c              (R )
 0.swatter_collision_p0_zero fc9a              (R )
-0.swatter_draw_start     fcb7              (R )
+0.swatter_draw_start     fcbb              (R )
 0.swatter_update_bw      fc0f              (R )
 0.swatter_update_bw_active fc1a              (R )
 0.swatter_update_bw_hold fc15                  

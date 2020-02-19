@@ -27,7 +27,7 @@
 - [x] Fix playfield loading of title after color switch
 - [x] Fix line wsync
 - [x] Logo b/w mode
-- [ ] COLUP1 when swatter isn't visible
+- [x] COLUP1 when swatter isn't visible
 
 ## Maybe
 

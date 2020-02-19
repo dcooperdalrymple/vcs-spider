@@ -4261,23 +4261,23 @@
     200  fcaa
     201  fcaa				   SwatterDrawStart
     202  fcaa
-    203  fcaa							; Hide swatter if wait state
-    204  fcaa		       24 c3		      bit	SwatterState
-    205  fcac		       30 09		      bmi	.swatter_draw_start
+    203  fcaa							; Set sprite color
+    204  fcaa		       a5 c4		      lda	SwatterColor
+    205  fcac		       85 07		      sta	COLUP1
     206  fcae
-    207  fcae		       a9 ff		      lda	#-1
-    208  fcb0		       85 c8		      sta	SwatterIndex
-    209  fcb2							;sta SwatterDrawPos
-    210  fcb2		       a9 00		      lda	#0
-    211  fcb4		       85 ca		      sta	SwatterLine
-    212  fcb6
-    213  fcb6		       60		      rts
-    214  fcb7
-    215  fcb7				   .swatter_draw_start
-    216  fcb7
-    217  fcb7							; Set sprite color
-    218  fcb7		       a5 c4		      lda	SwatterColor
-    219  fcb9		       85 07		      sta	COLUP1
+    207  fcae							; Hide swatter if wait state
+    208  fcae		       24 c3		      bit	SwatterState
+    209  fcb0		       30 09		      bmi	.swatter_draw_start
+    210  fcb2
+    211  fcb2		       a9 ff		      lda	#-1
+    212  fcb4		       85 c8		      sta	SwatterIndex
+    213  fcb6							;sta SwatterDrawPos
+    214  fcb6		       a9 00		      lda	#0
+    215  fcb8		       85 ca		      sta	SwatterLine
+    216  fcba
+    217  fcba		       60		      rts
+    218  fcbb
+    219  fcbb				   .swatter_draw_start
     220  fcbb
     221  fcbb							; Note: Doesn't need vertical delay
     222  fcbb

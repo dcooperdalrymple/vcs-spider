@@ -200,6 +200,10 @@ SwatterPosition:
 
 SwatterDrawStart:
 
+    ; Set sprite color
+    lda SwatterColor
+    sta COLUP1
+
     ; Hide swatter if wait state
     bit SwatterState
     bmi .swatter_draw_start
@@ -213,10 +217,6 @@ SwatterDrawStart:
     rts
 
 .swatter_draw_start:
-
-    ; Set sprite color
-    lda SwatterColor
-    sta COLUP1
 
     ; Note: Doesn't need vertical delay
 
