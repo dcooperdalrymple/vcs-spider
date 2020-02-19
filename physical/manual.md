@@ -9,19 +9,19 @@ D Cooper Dalrymple
 
 ## Table of Contents
 
-1. [Introduction](#introduction)
-2. [Objective](#objective)
-3. [Console Controls](#console-controls)
+1. [Introduction](#1-introduction)
+2. [Objective](#2-objective)
+3. [Console Controls](#3-console-controls)
     * [Game Reset Switch](#game-reset-switch)
     * [Player Skill Switches](#player-skill-switches)
     * [TV Type Switch](#tv-type-switch)
     * [Game Select Switch](#game-select-switch)
-4. [Using the Controllers](#using-the-controllers)
-5. [Game Variations](#game-variations)
+4. [Using the Controllers](#4-using-the-controllers)
+5. [Game Variations](#5-game-variations)
     * [A. Single Player](#a-single-player)
     * [B. Twin-Stick](#b-twin-stick)
     * [C. Two Player](#c-two-player)
-6. [Helpful Hints](#helpful-hints)
+6. [Helpful Hints](#6-helpful-hints)
 
 ## 1. Introduction
 
