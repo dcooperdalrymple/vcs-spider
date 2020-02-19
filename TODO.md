@@ -16,7 +16,7 @@
 - [x] Improve title screen music
 - [x] Increase game music speed with level
 - [x] Support second joystick for aiming and firing
-- [ ] Spawn bugs at the sides of playfield area
+- [x] Spawn bugs at the sides of playfield area
 
 ## BUGS
 

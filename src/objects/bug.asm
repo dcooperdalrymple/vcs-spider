@@ -5,7 +5,7 @@
 ; Constants
 
 BUG_SIZE            = 8
-BUG_BOUNDARY        = #(BUG_SIZE*3)
+BUG_BOUNDARY        = #(BUG_SIZE)
 BUG_STUN_LENGTH     = 120
 BUG_POINTS          = 4
 
@@ -45,13 +45,39 @@ BugReset:   ; x = bug (0 or 1)
     jsr Random
 
     lda Rand8
+    bmi .bug_reset_v
+
+.bug_reset_h:
     and #$7f
     sta BugPosX,x
 
     lda Rand16
+    bmi .bug_reset_h_bottom
+.bug_reset_h_top:
+    lda #BUG_BOUNDARY
+    jmp .bug_reset_h_y
+.bug_reset_h_bottom:
+    lda #KERNEL_SCANLINES-SCORE_LINES-BUG_BOUNDARY
+.bug_reset_h_y:
+    sta BugPosY,x
+    jmp .bug_reset_active
+
+.bug_reset_v:
     and #$7f
     sta BugPosY,x
 
+    lda Rand16
+    bmi .bug_reset_v_right
+
+.bug_reset_v_left:
+    lda #BUG_BOUNDARY
+    jmp .bug_reset_v_x
+.bug_reset_v_right:
+    lda #(KERNEL_WIDTH/2)-BUG_BOUNDARY
+.bug_reset_v_x:
+    sta BugPosX,x
+
+.bug_reset_active:
     ; Set as active
     lda #0
     sta BugStunned,x
