@@ -35,3 +35,4 @@
 - [ ] ~~Increase stun length with level~~
 - [ ] Add success screen (using over.asm code) when reached 99 points on level 22
 - [ ] Only write graphics registers after wsync to reduce mid-line graphical glitches
+- [ ] Increase player health with each bug

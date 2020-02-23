@@ -98,4 +98,8 @@ This variation allows one player to focus on evading danger and eating bugs to g
 
 ## 6. Helpful Hints
 
-TODO
+Avoid staying close to the sides for too long. Bugs will respawn near the edges of the playfield once eaten and may catch you off guard. Always keep moving. If you stand still, the swatter may have a better chance of hitting you.
+
+Once you've stunned a bug, keep firing at it with your stunning ability as you approach it. It will make sure that it remains still until you eat it.
+
+If you're having trouble progressing beyond a certain level, try setting the difficulty switches to practice at a higher level with more life or try playing in twin-stick mode to give you better control over the player.
