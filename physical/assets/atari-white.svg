@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16.002001mm"
+   height="19.448999mm"
+   viewBox="0 0 16.002 19.448999"
+   version="1.1"
+   id="svg983"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   sodipodi:docname="atari-white.svg"
+   inkscape:export-filename="/home/ogrecooper/repos/vcs-spider/physical/assets/atari-white.png"
+   inkscape:export-xdpi="812.70001"
+   inkscape:export-ydpi="812.70001">
+  <defs
+     id="defs977" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="29.270846"
+     inkscape:cy="67.485132"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="mm"
+     inkscape:window-width="960"
+     inkscape:window-height="1043"
+     inkscape:window-x="2880"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata980">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-277.55097)">
+    <g
+       id="g883"
+       transform="matrix(0.11891916,0,0,0.11891916,0,277.55053)"
+       style="fill:#ffffff;fill-opacity:1;stroke:none">
+      <g
+         id="g871"
+         style="fill:#ffffff;fill-opacity:1;stroke:none">
+        <polygon
+           style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="polygon2"
+           points="60.497,0 60.497,106.054 75.94,106.054 75.94,0 " />
+        <path
+           style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           inkscape:connector-curvature="0"
+           id="path4"
+           d="m 49.151,0 h 8.195 v 0 c 0,49.166 -1.261,61.143 -8.825,75.641 -7.563,14.498 -28.68,28.837 -46.645,30.414 v 0 -16.205 0 C 15.428,87.643 27.72,80.368 38.436,64.294 49.151,48.221 49.466,10.085 49.151,0 Z" />
+        <path
+           style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           inkscape:connector-curvature="0"
+           id="path6"
+           d="m 87.286,0 h -8.194 v 0 c 0,49.166 1.261,61.143 8.824,75.641 7.564,14.498 28.681,28.837 46.646,30.414 v 0 -16.205 0 C 121.01,87.643 108.718,80.368 98.002,64.294 87.286,48.22 86.972,10.085 87.286,0 Z" />
+      </g>
+      <g
+         id="g866"
+         style="fill:#ffffff;fill-opacity:1;stroke:none">
+        <polygon
+           style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="polygon8"
+           points="127.138,115.66 127.138,163.552 134.31,163.552 134.31,115.66 " />
+        <polygon
+           style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           id="polygon10"
+           points="40.76,122.833 40.76,163.552 47.933,163.552 47.933,122.833 57.881,122.833 57.881,115.66 30.812,115.66 30.812,122.833 " />
+        <path
+           style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           inkscape:connector-curvature="0"
+           id="path12"
+           d="m 100.222,125.03 v 38.522 h -7.173 v -40.72 0 c 0,-4.975 1.967,-7.173 7.057,-7.173 v 0 h 7.751 v 0 c 5.784,0 12.841,4.396 12.841,13.998 0,9.602 -5.321,12.03 -8.098,13.534 -1.619,1.157 -1.272,2.083 -0.578,3.587 v 0 l 11.221,16.773 -8.387,-0.058 -10.99,-16.543 v 0 c -2.024,-3.297 -1.099,-6.767 1.1,-7.924 1.65,-0.869 8.561,-2.776 8.561,-8.908 0,-5.899 -3.587,-7.287 -6.363,-7.287 v 0 h -4.858 v 0 c -1.39,0.002 -2.084,0.58 -2.084,2.199 z" />
+        <path
+           style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           inkscape:connector-curvature="0"
+           id="path14-1"
+           d="m 77.085,120.403 c -1.272,-4.396 -3.934,-4.743 -5.784,-4.743 -1.851,0 -4.512,0.347 -5.784,4.743 v 0 L 53.37,163.552 h 7.404 l 3.355,-12.03 h 14.344 l 3.355,12.03 h 7.403 z m -10.99,24.178 5.206,-18.162 5.206,18.162 z" />
+        <path
+           style="clip-rule:evenodd;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+           inkscape:connector-curvature="0"
+           id="path16"
+           d="m 23.715,120.403 c -1.272,-4.396 -3.933,-4.743 -5.784,-4.743 -1.851,0 -4.512,0.347 -5.784,4.743 v 0 L 0,163.552 h 7.404 l 3.355,-12.03 h 14.345 l 3.355,12.03 h 7.404 z m -10.989,24.178 5.206,-18.162 5.206,18.162 z" />
+      </g>
+    </g>
+  </g>
+</svg>
