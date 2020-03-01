@@ -2,7 +2,7 @@
       1  10000 ????						; Spider Web game for Atari VCS/2600
       2  10000 ????						; Created by D Cooper Dalrymple 2018 - dcdalrymple.com
       3  10000 ????						; Licensed under GNU LGPL V3.0
-      4  10000 ????						; Last revision: February 11th, 2020
+      4  10000 ????						; Last revision: March 1st, 2020
       5  10000 ????
       6  10000 ????				       processor	6502
 ------- FILE vcs.h LEVEL 2 PASS 2
