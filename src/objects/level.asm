@@ -26,14 +26,11 @@ LevelInit:
 
 LevelUpdate:
 
-    ; Calculate Desired score: (level+2)*5
+    ; Calculate Desired score: level*4+23
     lda LevelCurrent
-    clc
-    adc #2 ; +2
-    sta Temp
     asl ; x2
     asl ; x2
-    adc Temp ; x1
+    adc #23 ; +23
 
     ; Check if score is high enough
     cmp ScoreValue+1
