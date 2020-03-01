@@ -39,14 +39,25 @@ LevelUpdate:
     cmp ScoreValue+1
     bcs .level_update_return
 
-    ; Reset score
-    lda #0
-    sta ScoreValue+1
-
     ; Check if we haven't reached the final level
     lda LevelCurrent
     cmp #LEVELS-1
-    bcs .level_update_return
+    bcc .level_update_next
+
+    ; Force score to 99
+    lda #99
+    sta ScoreValue+1
+
+    ; Show Win Screen
+    sec ; Define win
+    jsr OverInit
+    rts
+
+.level_update_next:
+
+    ; Reset score
+    lda #0
+    sta ScoreValue+1
 
     inc LevelCurrent
     jsr LevelLoad

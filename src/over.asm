@@ -3,7 +3,8 @@
 ;================
 
 OVER_BG_COLOR       = #$00
-OVER_FG_COLOR       = #$44
+OVER_FG_WIN_COLOR   = #SPIDER_COLOR
+OVER_FG_LOSE_COLOR  = #$44
 OVER_FG_BW_COLOR    = #$06
 
 OVER_AUDIO_TONE     = 7
@@ -17,6 +18,26 @@ OVER_IMAGE_LINES    = OVER_IMAGE_SIZE*OVER_IMAGE_LINE_SIZE
 OVER_IMAGE_PADDING  = #(KERNEL_SCANLINES-SCORE_LINES-OVER_IMAGE_LINES)/2
 
 OverInit:
+
+    bcc .over_init_lose
+
+.over_init_win:
+    SET_POINTER OverImagePF1Ptr, OverWinImagePF1
+    SET_POINTER OverImagePF2Ptr, OverWinImagePF2
+    SET_POINTER OverAudio0Ptr, OverWinAudio0
+    lda #OVER_FG_WIN_COLOR
+    sta OverColor
+
+    jmp .over_init_logic
+
+.over_init_lose:
+    SET_POINTER OverImagePF1Ptr, OverLoseImagePF1
+    SET_POINTER OverImagePF2Ptr, OverLoseImagePF2
+    SET_POINTER OverAudio0Ptr, OverLoseAudio0
+    lda #OVER_FG_LOSE_COLOR
+    sta OverColor
+
+.over_init_logic:
 
     ; Setup logic and kernel
     SET_POINTER VBlankPtr, OverVerticalBlank
@@ -48,27 +69,6 @@ OverInit:
 
 OverVerticalBlank:
     jsr ScoreUpdate
-
-    ; Load Colors
-    lda #OVER_BG_COLOR
-    sta COLUBK
-
-    ; Check b/w
-    lda SWCHB
-    and #%00001000
-    beq .over_bw
-
-.over_color:
-    lda #OVER_FG_COLOR
-    sta COLUPF
-
-    rts
-
-.over_bw:
-    ; Load b/w Colors
-    lda #OVER_FG_BW_COLOR
-    sta COLUPF
-
     rts
 
 OverOverScan:
@@ -99,7 +99,7 @@ OverAudio:
 .over_audio_play_note:
 
     ; Melody Line
-    lda OverAudio0,y
+    lda (OverAudio0Ptr),y
     sta AUDF0
     lda #OVER_AUDIO_VOLUME
     sta AUDV0
@@ -158,6 +158,27 @@ OverKernel:
     ; Draw Score on top first (no update)
     jsr ScoreDraw
 
+.over_kernel_color:
+    ; Load Colors
+    lda #OVER_BG_COLOR
+    sta COLUBK
+
+    ; Check b/w
+    lda SWCHB
+    and #%00001000
+    beq .over_kernel_color_bw
+
+.over_kernel_color_color:
+    lda OverColor
+    sta COLUPF
+
+    jmp .over_kernel_init
+
+.over_kernel_color_bw:
+    ; Load b/w Colors
+    lda #OVER_FG_BW_COLOR
+    sta COLUPF
+
 .over_kernel_init:
     ; Playfield Control
     ;lda CtrlPf
@@ -172,23 +193,23 @@ OverKernel:
     jsr OverPadding
 
 .over_kernel_image:
-    ldx #OVER_IMAGE_SIZE-1
+    ldy #OVER_IMAGE_SIZE-1
 
 .over_kernel_image_next:
-    lda OverImagePF2,x
+    lda (OverImagePF2Ptr),y
     sta PF2
-    lda OverImagePF1,x
+    lda (OverImagePF1Ptr),y
     sta PF1
-;    lda OverImagePF0,x
+;    lda (OverImagePF0Ptr),y
 ;    sta PF0
 
-    ldy #OVER_IMAGE_LINE_SIZE
+    ldx #OVER_IMAGE_LINE_SIZE
 .over_kernel_image_loop:
     sta WSYNC
-    dey
+    dex
     bne .over_kernel_image_loop
 
-    dex
+    dey
     bpl .over_kernel_image_next
 
 .over_kernel_bottom_padding:
@@ -217,9 +238,18 @@ OverPadding:
 OverAssets:
 
     ; Assets
-    include "over_image.asm"
+    include "over_win_image.asm"
+    include "over_lose_image.asm"
 
-OverAudio0:
+OverWinAudio0:
+    .BYTE #12
+    .BYTE #12
+    .BYTE #13
+    .BYTE #14
+    .BYTE #16
+    .BYTE #18
+
+OverLoseAudio0:
 
     .BYTE #26   ; D1
     .BYTE #26

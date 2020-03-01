@@ -182,6 +182,7 @@ GameDeath:
     bne .game_death_return
 
     ; Show Game Over Screen
+    clc ; Define lose
     jsr OverInit
 
 .game_death_return:

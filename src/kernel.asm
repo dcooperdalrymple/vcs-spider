@@ -135,6 +135,13 @@ SwatterLine         ds 1
 SwatterSampleCount  ds 1
 SwatterSampleF      ds 1
 
+; Over
+
+OverImagePF1Ptr     ds 2
+OverImagePF2Ptr     ds 2
+OverAudio0Ptr       ds 2
+OverColor           ds 1
+
     SEG
     org $F000           ; Start of cart area
 

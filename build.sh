@@ -19,8 +19,11 @@ python ./assets/pf_image.py -type full -split 0 -reverse 0 -name ScoreLabel -in 
 echo "/assets/web.png => /src/objects/web_image.asm"
 python ./assets/pf_image.py -type mirror -split 1 -reverse 0 -name WebImage -in ./assets/web.png -out ./src/objects/web_image.asm
 
-#echo "/assets/over.png => /src/over_image.asm"
-#python ./assets/pf_image.py -type mirror -split 1 -reverse 1 -name OverImage -in ./assets/over.png -out ./src/over_image.asm
+#echo "/assets/over_lose.png => /src/over_lose_image.asm"
+#python ./assets/pf_image.py -type mirror -split 1 -reverse 1 -name OverLoseImage -in ./assets/over_lose.png -out ./src/over_lose_image.asm
+
+#echo "/assets/over_win.png => /src/over_win_image.asm"
+#python ./assets/pf_image.py -type mirror -split 1 -reverse 1 -name OverWinImage -in ./assets/over_win.png -out ./src/over_win_image.asm
 
 ## Sprites
 
