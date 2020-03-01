@@ -8,6 +8,7 @@ BUG_SIZE            = 8
 BUG_BOUNDARY        = #(BUG_SIZE)
 BUG_STUN_LENGTH     = 120
 BUG_POINTS          = 4
+BUG_HP              = 3
 
 BUG_ACTIVE_COLOR    = #$CC
 BUG_ACTIVE_BW_COLOR = #$0C
@@ -249,6 +250,15 @@ BugStunCollision:
     rts
 
 .bug_stun_collision_active:
+    ; Add health to player
+    clc
+    lda ScoreValue
+    adc #BUG_HP
+    bcc .bug_stun_collision_active_hp_skip
+    lda #$ff
+.bug_stun_collision_active_hp_skip:
+    sta ScoreValue
+
     ; Add points to score
     clc
     lda ScoreValue+1
