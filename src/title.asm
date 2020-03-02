@@ -419,10 +419,10 @@ TitleFrameTopDraw:
 .title_frame_top_clean:
 
     ; Clear out playfield
-    lda #0
-    sta PF0
-    sta PF1
-    sta PF2
+    ;lda #0
+    ;sta PF0
+    ;sta PF1
+    ;sta PF2
 
 TitleWebDraw:
 
@@ -438,10 +438,7 @@ TitleWebDraw:
     sta COLUP0
 
     ldx #TITLE_GAP_SIZE
-.title_web_gap:
-    dex
-    sta WSYNC
-    bne .title_web_gap
+    jsr BlankLines
 
 TitleSpiderDraw:
 

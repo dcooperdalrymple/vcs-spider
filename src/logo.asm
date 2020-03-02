@@ -19,9 +19,9 @@ LOGO_IMAGE_ANIM_SPEED   = #6
 LogoInit:
 
     ; Setup logic and kernel
-    SET_POINTER VBlankPtr, LogoVerticalBlank
+    SET_POINTER VBlankPtr, LogoAnimation
     SET_POINTER KernelPtr, LogoKernel
-    SET_POINTER OverScanPtr, LogoOverScan
+    SET_POINTER OverScanPtr, LogoState
 
     ; Clean audio
     lda #0
@@ -42,14 +42,6 @@ LogoInit:
     lda #LOGO_IMAGE_SIZE-1
     sta WebIndex
 
-    rts
-
-LogoVerticalBlank:
-    jsr LogoAnimation
-    rts
-
-LogoOverScan:
-    jsr LogoState
     rts
 
 LogoAnimation:
@@ -134,11 +126,13 @@ LogoKernel:
 
 .logo_kernel_top_padding:
     ; Top Padding
-    jsr LogoPadding
+    ldx #LOGO_IMAGE_PADDING
+    jsr BlankLines
     jmp .logo_kernel_image
 
 .logo_kernel_top_anim_padding:
-    jsr LogoAnimPadding
+    ldx #LOGO_IMAGE_ANIM_PADDING
+    jsr BlankLines
 
 .logo_kernel_image_animation_start:
     ldx #LOGO_IMAGE_LINE_SIZE
@@ -189,30 +183,8 @@ LogoKernel:
 
 .logo_kernel_bottom_padding:
     ; Bottom Padding
-    jsr LogoPadding
+    ldx #LOGO_IMAGE_PADDING
+    jsr BlankLines
 
 .logo_kernel_image_return:
     rts
-
-LogoPadding:
-    lda #0
-    sta PF0
-    sta PF1
-    sta PF2
-
-    ldx #LOGO_IMAGE_PADDING
-.logo_padding_loop:
-    sta WSYNC
-    dex
-    bne .logo_padding_loop
-
-    rts
-
-LogoAnimPadding:
-    lda #0
-    sta PF0
-    sta PF1
-    sta PF2
-
-    ldx #LOGO_IMAGE_ANIM_PADDING
-    jmp .logo_padding_loop

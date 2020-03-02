@@ -40,7 +40,7 @@ OverInit:
 .over_init_logic:
 
     ; Setup logic and kernel
-    SET_POINTER VBlankPtr, OverVerticalBlank
+    SET_POINTER VBlankPtr, ScoreUpdate
     SET_POINTER KernelPtr, OverKernel
     SET_POINTER OverScanPtr, OverOverScan
 
@@ -65,10 +65,6 @@ OverInit:
     lda #OVER_AUDIO_LENGTH
     sta AudioStep
 
-    rts
-
-OverVerticalBlank:
-    jsr ScoreUpdate
     rts
 
 OverOverScan:
@@ -190,7 +186,8 @@ OverKernel:
 
 .over_kernel_top_padding:
     ; Top Padding
-    jsr OverPadding
+    ldx #OVER_IMAGE_PADDING
+    jsr BlankLines
 
 .over_kernel_image:
     ldy #OVER_IMAGE_SIZE-1
@@ -215,24 +212,11 @@ OverKernel:
 .over_kernel_bottom_padding:
     ; Bottom Padding
     sta WSYNC ; Add extra line to get to 262
-    jsr OverPadding
+    ldx #OVER_IMAGE_PADDING
+    jsr BlankLines
 
 .over_kernel_return:
     sta WSYNC   ; This extra line is to account for constant rounding
-    rts
-
-OverPadding:
-    lda #0
-    ;sta PF0
-    sta PF1
-    sta PF2
-
-    ldx #OVER_IMAGE_PADDING
-.over_padding_loop:
-    sta WSYNC
-    dex
-    bne .over_padding_loop
-
     rts
 
 OverAssets:

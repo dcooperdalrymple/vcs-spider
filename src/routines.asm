@@ -90,3 +90,25 @@ BinBcdConvert:
     ldy Temp+2
 
     rts
+
+;=======================================
+; BlankLines
+; ---------
+; X - Number of lines to draw
+;
+; Uses: A,X
+; Draws blank playfield lines
+;=======================================
+
+BlankLines:
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
+
+.blank_lines_loop:
+    sta WSYNC
+    dex
+    bne .blank_lines_loop
+
+    rts

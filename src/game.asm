@@ -62,7 +62,8 @@ GameInit:
     jsr SpiderInit
     jsr LineInit
     jsr BugInit
-    jsr SwatterInit
+    ;jsr SwatterInit
+    jsr SwatterReset
 
     rts
 
@@ -86,10 +87,12 @@ GameVerticalBlank:
     sta HMCLR
 
     ; Update Positions
-    jsr SpiderPosition
-    jsr LinePosition
-    jsr BugPosition
-    jsr SwatterPosition
+    ldx #4
+.game_positions_loop:
+    lda XPositions,x
+    jsr PosObject
+    dex
+    bpl .game_positions_loop
 
     ; Set final x positions
     sta WSYNC
@@ -103,9 +106,15 @@ GameOverScan:
     jsr GameAudio
     jsr GameSample
 
-    ; State Routines
-    jsr GameDeath
+    ; Check if player is dead
+    lda ScoreValue+0
+    bne .game_overscan_return
 
+    ; Show Game Over Screen
+    clc ; Define lose
+    jsr OverInit
+
+.game_overscan_return:
     rts
 
 GameSample:
@@ -175,17 +184,6 @@ GameAudio:
     sta AUDV0
 
 .game_audio_return:
-    rts
-
-GameDeath:
-    lda ScoreValue+0
-    bne .game_death_return
-
-    ; Show Game Over Screen
-    clc ; Define lose
-    jsr OverInit
-
-.game_death_return:
     rts
 
 GameKernel:

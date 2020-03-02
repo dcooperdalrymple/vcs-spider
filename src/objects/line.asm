@@ -24,8 +24,8 @@ LineInit:
     ; Initial Line Control
     lda #0
     sta LineEnabled
-    ;sta LinePos+0
-    ;sta LinePos+1
+    ;sta LinePosX
+    ;sta LinePosY
 
     ; Initial direction
     ;lda #0
@@ -194,21 +194,21 @@ LineControl:
 .line_control_position_store:
 
     ; Apply offsetX to playerX
-    lda SpiderPos
+    lda SpiderPosX
     stx Temp
     clc
     adc Temp
     tax
 
     ; Apply offsetY to playerY
-    lda SpiderPos+1
+    lda SpiderPosY
     sty Temp
     clc
     adc Temp
     tay
 
-    stx LinePos
-    sty LinePos+1
+    stx LinePosX
+    sty LinePosY
 
 .line_control_return:
     rts
@@ -220,8 +220,8 @@ LineObject:
     bpl .line_object_return
 
     ; Load position
-    ldx LinePos
-    ldy LinePos+1
+    ldx LinePosX
+    ldy LinePosY
 
 .line_object_boundary:
 .line_object_boundary_left:
@@ -243,12 +243,12 @@ LineObject:
     txa
     clc
     adc LineVelocity
-    sta LinePos
+    sta LinePosX
 
     tya
     clc
     adc LineVelocity+1
-    sta LinePos+1
+    sta LinePosY
 
     jmp .line_object_return
 
@@ -284,18 +284,16 @@ LineCollision:
     jsr LineDisable
 
 .line_collision_sample:
-    jsr LineSample
+    lda #LINE_SAMPLE_LEN
+    sta SampleStep
+    lda #LINE_SAMPLE_C
+    sta AUDC1
+    lda #LINE_SAMPLE_F
+    sta AUDF1
+    lda #LINE_SAMPLE_V
+    sta AUDV1
 
 .line_collision_return:
-    rts
-
-LinePosition:
-
-    ; Set Line Position
-    ldx #4                  ; Object (ball)
-    lda LinePos        ; X Position
-    jsr PosObject
-
     rts
 
 ; Scanline Draw
@@ -312,7 +310,7 @@ LineDrawStart:
 
 .line_draw_start:
     ; Determine if we need to use vertical delay (oven line)
-    lda LinePos+1
+    lda LinePosY
     lsr
     bcc .line_draw_start_nodelay
 
@@ -341,7 +339,13 @@ LineEnable:
     lda SampleStep
     bne .line_enable_return
 
-    jsr LineAudioPlay
+    ; Play line audio
+    lda #LINE_AUDIO_C
+    sta AUDC1
+    lda #LINE_AUDIO_F
+    sta AUDF1
+    lda #LINE_AUDIO_V
+    sta AUDV1
 
 .line_enable_return:
     rts
@@ -350,37 +354,14 @@ LineDisable:
     lda #0
     sta LineEnabled
 
-    lda SampleStep
+    ldx SampleStep
     bne .line_disable_return
 
-    jsr LineAudioMute
-
-.line_disable_return:
-    rts
-
-LineAudioPlay:
-    lda #LINE_AUDIO_C
-    sta AUDC1
-    lda #LINE_AUDIO_F
-    sta AUDF1
-    lda #LINE_AUDIO_V
-    sta AUDV1
-    rts
-
-LineAudioMute:
-    lda #0
+    ; Mute audio
+    ;lda #0
     sta AUDV1
     ;sta AUDF1
     ;sta AUDC1
-    rts
 
-LineSample:
-    lda #LINE_SAMPLE_LEN
-    sta SampleStep
-    lda #LINE_SAMPLE_C
-    sta AUDC1
-    lda #LINE_SAMPLE_F
-    sta AUDF1
-    lda #LINE_SAMPLE_V
-    sta AUDV1
+.line_disable_return:
     rts

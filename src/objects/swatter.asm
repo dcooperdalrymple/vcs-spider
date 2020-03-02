@@ -37,11 +37,9 @@ SWATTER_HIT_SAMPLE_V     = 4
 
 ; Initialization
 
-SwatterInit:
-
-    jsr SwatterReset
-
-    rts
+;SwatterInit:
+;    jsr SwatterReset
+;    rts
 
 ; Frame Update
 
@@ -119,7 +117,15 @@ SwatterUpdate:
     jmp .swatter_update_state_set
 
 .swatter_update_state_hold:
-    jsr SwatterActiveSample
+    ; Play Swatter Active Sample
+    lda #SWATTER_ACTIVE_SAMPLE_LEN
+    sta SampleStep
+    lda #SWATTER_ACTIVE_SAMPLE_C
+    sta AUDC1
+    lda #SWATTER_ACTIVE_SAMPLE_F
+    sta AUDF1
+    lda #SWATTER_ACTIVE_SAMPLE_V
+    sta AUDV1
 
     lda #SWATTER_STATE_ACTIVE
     ldx #SWATTER_ACTIVE_TIME
@@ -183,16 +189,15 @@ SwatterCollision:
     sta ScoreValue
 
 .swatter_collision_active:
-    jsr SwatterHitSample
-
-    rts
-
-SwatterPosition:
-
-    ; Set Position
-    ldx #1              ; Object (player1)
-    lda SwatterPos      ; X Position
-    jsr PosObject
+    ; Player swatter hit sample
+    lda #SWATTER_HIT_SAMPLE_LEN
+    sta SampleStep
+    lda #SWATTER_HIT_SAMPLE_C
+    sta AUDC1
+    lda #SWATTER_HIT_SAMPLE_F
+    sta AUDF1
+    lda #SWATTER_HIT_SAMPLE_V
+    sta AUDV1
 
     rts
 
@@ -221,7 +226,7 @@ SwatterDrawStart:
     ; Note: Doesn't need vertical delay
 
     ; Calculate starting position
-    lda SwatterPos+1        ; Y Position
+    lda SwatterPosY         ; Y Position
     lsr
     clc
     adc #SWATTER_SPRITE_SIZE
@@ -252,10 +257,10 @@ SwatterReset:
     jsr Random
     lda Rand8           ; X Position
     and #$7f
-    sta SwatterPos+0
+    sta SwatterPosX
     lda Rand16          ; Y Position
     and #$7e            ; Ensure that Y position is even
-    sta SwatterPos+1
+    sta SwatterPosY
 
     rts
 
@@ -269,26 +274,4 @@ SwatterHoldSample:
 
     sty AUDF1 ; Store value of y as frequency
 
-    rts
-
-SwatterActiveSample:
-    lda #SWATTER_ACTIVE_SAMPLE_LEN
-    sta SampleStep
-    lda #SWATTER_ACTIVE_SAMPLE_C
-    sta AUDC1
-    lda #SWATTER_ACTIVE_SAMPLE_F
-    sta AUDF1
-    lda #SWATTER_ACTIVE_SAMPLE_V
-    sta AUDV1
-    rts
-
-SwatterHitSample:
-    lda #SWATTER_HIT_SAMPLE_LEN
-    sta SampleStep
-    lda #SWATTER_HIT_SAMPLE_C
-    sta AUDC1
-    lda #SWATTER_HIT_SAMPLE_F
-    sta AUDF1
-    lda #SWATTER_HIT_SAMPLE_V
-    sta AUDV1
     rts

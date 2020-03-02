@@ -87,10 +87,18 @@ LevelCurrent        ds 1
 WebIndex            ds 1
 WebColor            ds 2
 
+; Object X Positions
+
+XPositions:
+SpiderPosX          ds 1 ; 0
+SwatterPosX         ds 1 ; 1
+BugPosX             ds 2 ; 2/3
+LinePosX            ds 1 ; 4
+
 ; Spider
 
 SpiderPtr           ds 2
-SpiderPos           ds 2
+SpiderPosY           ds 1
 SpiderCtrl          ds 1
 SpiderColor         ds 1
 
@@ -103,7 +111,7 @@ SpiderPtr2          ds 2
 ; Line
 
 LineEnabled         ds 1
-LinePos             ds 2
+LinePosY            ds 1
 LineVelocity        ds 2
 LineDrawPos         ds 2
 
@@ -112,7 +120,6 @@ LineDrawPos         ds 2
 BugSpeed            ds 1
 
 BugStunned          ds 2
-BugPosX             ds 2
 BugPosY             ds 2
 
 BugDrawPosBottom    ds 2
@@ -120,7 +127,7 @@ BugDrawPosTop       ds 2
 
 ; Swatter
 
-SwatterPos          ds 2
+SwatterPosY         ds 1
 SwatterState        ds 1
 SwatterColor        ds 1
 
@@ -172,44 +179,6 @@ InitSystem:
     ; Resets RAM, TIA registers, and CPU registers
     CLEAN_START
 
-.init_tia:
-    ; Define default TIA register values
-
-    ; Initialize copies
-;    lda #0
-;    sta CtrlPf
-;    sta NuSiz0
-;    sta NuSiz1
-
-    ; Set background color
-;    lda #$00        ; Black
-;    sta COLUBK
-
-    ; Set the playfield and player color
-;    lda #$0E        ; White
-;    sta COLUPF
-;    sta COLUP0
-;    sta COLUP1
-
-    ; Playfield Control
-;    lda #%00000001  ; 1 for mirroring
-;    sta CtrlPf
-;    sta CTRLPF
-
-    ; Disable Game Elements
-;    lda #$00
-;    sta ENABL       ; Turn off ball
-;    sta ENAM0       ; Turn off player 1 missile
-;    sta ENAM1       ; Turn off player 2 missile
-;    sta GRP0        ; Turn off player 1
-;    sta GRP1        ; Turn off player 2
-
-    ; Empty playfield
-;    lda #%00000000
-;    sta PF0
-;    sta PF1
-;    sta PF2
-
 .init_seed:
     ; Seed the random number generator
     lda INTIM       ; Unknown value
@@ -219,7 +188,7 @@ InitSystem:
 
 .init_game:
 
-   jsr LogoInit
+    jsr LogoInit
 
 ;=======================================
 ; Game Kernel

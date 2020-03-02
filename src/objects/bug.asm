@@ -227,8 +227,15 @@ BugCollision:
     dec ScoreValue
 .bug_collision_score_skip:
 
-    ; Play sound
-    jsr BugColSample
+    ; Play collision sound
+    lda #BUG_COL_SAMPLE_LEN
+    sta SampleStep
+    lda #BUG_COL_SAMPLE_C
+    sta AUDC1
+    lda #BUG_COL_SAMPLE_F
+    sta AUDF1
+    lda #BUG_COL_SAMPLE_V
+    sta AUDV1
 
     rts
 
@@ -269,21 +276,14 @@ BugStunCollision:
     jsr BugReset
 
     ; Play sample
-    jsr BugSample
-
-    rts
-
-; Horizontal Positioning
-
-BugPosition:
-
-    ldx #2
-    lda BugPosX+0
-    jsr PosObject
-
-    ldx #3
-    lda BugPosX+1
-    jsr PosObject
+    lda #BUG_SAMPLE_LEN
+    sta SampleStep
+    lda #BUG_SAMPLE_C
+    sta AUDC1
+    lda #BUG_SAMPLE_F
+    sta AUDF1
+    lda #BUG_SAMPLE_V
+    sta AUDV1
 
     rts
 
@@ -311,26 +311,4 @@ BugDrawStart:
     dey
     bpl .bug_draw_start_loop
 
-    rts
-
-BugSample:
-    lda #BUG_SAMPLE_LEN
-    sta SampleStep
-    lda #BUG_SAMPLE_C
-    sta AUDC1
-    lda #BUG_SAMPLE_F
-    sta AUDF1
-    lda #BUG_SAMPLE_V
-    sta AUDV1
-    rts
-
-BugColSample:
-    lda #BUG_COL_SAMPLE_LEN
-    sta SampleStep
-    lda #BUG_COL_SAMPLE_C
-    sta AUDC1
-    lda #BUG_COL_SAMPLE_F
-    sta AUDF1
-    lda #BUG_COL_SAMPLE_V
-    sta AUDV1
     rts

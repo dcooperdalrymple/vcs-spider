@@ -20,9 +20,9 @@ SpiderInit:
 
     ; Initialize Position in center of screen
     lda #(KERNEL_WIDTH/4)-SPIDER_SIZE-1
-    sta SpiderPos
+    sta SpiderPosX
     lda #(KERNEL_SCANLINES-SCORE_LINES)/2-SPIDER_SIZE-1
-    sta SpiderPos+1
+    sta SpiderPosY
 
     ; Initial direction
     lda #%00010000
@@ -36,15 +36,12 @@ SpiderInit:
 ; Frame Update
 
 SpiderUpdate:
-    jsr SpiderControl
-    jsr SpiderCollision
-    rts
 
 SpiderControl:
 
     ; Control Position
-    ldx SpiderPos
-    ldy SpiderPos+1
+    ldx SpiderPosX
+    ldy SpiderPosY
     lda SWCHA
 
 .spider_control_check_right:
@@ -87,7 +84,7 @@ SpiderControl:
     ; 4th bit: up
 
 .spider_control_sprite_x:
-    cpx SpiderPos
+    cpx SpiderPosX
     bcc .spider_control_sprite_left
     beq .spider_control_sprite_y
     bcs .spider_control_sprite_right
@@ -100,7 +97,7 @@ SpiderControl:
     ora #%10000000
 
 .spider_control_sprite_y:
-    cpy SpiderPos+1
+    cpy SpiderPosY
     bcc .spider_control_sprite_down
     beq .spider_control_sprite_store
     bcs .spider_control_sprite_up
@@ -144,8 +141,8 @@ SpiderControl:
 
 .spider_control_store:
     ; Store new position
-    stx SpiderPos
-    sty SpiderPos+1
+    stx SpiderPosX
+    sty SpiderPosY
 
 .spider_control_sprite_assign:
     ; Skip if no change
@@ -181,7 +178,7 @@ SpiderControl:
     stx REFP0
 
 .spider_control_return:
-    rts
+;    rts
 
 SpiderCollision:
     ldy #SPIDER_COLOR
@@ -225,15 +222,8 @@ SpiderCollision:
 
 .spider_collision_return:
     sty SpiderColor
-    rts
 
-SpiderPosition:
-
-    ; Set Position
-    ldx #0              ; Object (player0)
-    lda SpiderPos       ; X Position
-    jsr PosObject
-
+.spider_update_return:
     rts
 
 ; Scanline Draw
@@ -252,7 +242,7 @@ SpiderDrawStart:
     sta COLUP0
 
     ; Determine if we need to use vertical delay (odd line)
-    lda SpiderPos+1    ; Y Position
+    lda SpiderPosY     ; Y Position
     lsr
     bcs .spider_draw_start_nodelay
 
