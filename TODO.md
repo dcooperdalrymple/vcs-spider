@@ -18,6 +18,7 @@
 - [x] Support second joystick for aiming and firing
 - [x] Spawn bugs at the sides of playfield area
 - [x] Increase player health with each bug
+- [x] Add success screen (using over.asm code) when reached 99 points on level 20
 
 ## BUGS
 
@@ -34,5 +35,4 @@
 
 - [ ] ~~Increase player speed with level~~
 - [ ] ~~Increase stun length with level~~
-- [x] Add success screen (using over.asm code) when reached 99 points on level 20
-- [ ] Only write graphics registers after wsync to reduce mid-line graphical glitches
+- [ ] ~~Only write graphics registers after wsync to reduce mid-line graphical glitches~~
