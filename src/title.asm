@@ -419,10 +419,10 @@ TitleFrameTopDraw:
 .title_frame_top_clean:
 
     ; Clear out playfield
-    ;lda #0
-    ;sta PF0
-    ;sta PF1
-    ;sta PF2
+    lda #0
+    sta PF0
+    sta PF1
+    sta PF2
 
 TitleWebDraw:
 
