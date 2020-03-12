@@ -1,6 +1,34 @@
 # Development To-Do list
 
 ## TODO
+- [ ] Remove logo screen for more rom real estate
+- [ ] Add copyright info to title screen
+- [ ] Missle 1 color to spider color when no swatter
+- [ ] Use difficulty switches to change variable scaling, not starting level (always start on level 1)
+- [ ] Health/power/points pickup
+- [ ] Game Over text
+- [ ] Better success screen (baby spiders?)
+- [ ] PAL Support
+- [ ] Add level points matrix to manual
+- [ ] Remove background color variations
+- [ ] Improve playfield level color choices
+
+## BUGS
+- [ ] Score Midline color swap timing
+- [ ] Lost scanline when spider is at the bottom of the playfield
+
+## Maybe
+- [ ] Web playfield variations
+- [ ] Boss levels: restrict spider to top shooting down with missle 0
+- [ ] Bug boss level: use bug sprite from intro with missle 1
+- [ ] Swatter boss level: use standard sprite (or larger flipped), no missle
+- [ ] Reduce levels to 10; 5 -> Bug Boss -> 5 -> Swatter Boss
+- [ ] Creep up with swatter
+- [ ] 4 digit score without level clearing
+- [ ] Bonus bug running across top of screen
+- [ ] ~~Only write graphics registers after wsync to reduce mid-line graphical glitches~~
+
+## Past TODO
 
 - [x] Level variable with increasing difficulty and changing color palette
 - [x] Difficulty switch support to increase starting difficulty
@@ -20,7 +48,7 @@
 - [x] Increase player health with each bug
 - [x] Add success screen (using over.asm code) when reached 99 points on level 20
 
-## BUGS
+## Past BUGS
 
 - [x] Improve multiple sprite scanlines
 - [x] Start on button release
@@ -30,9 +58,3 @@
 - [x] Fix line wsync
 - [x] Logo b/w mode
 - [x] COLUP1 when swatter isn't visible
-
-## Maybe
-
-- [ ] ~~Increase player speed with level~~
-- [ ] ~~Increase stun length with level~~
-- [ ] ~~Only write graphics registers after wsync to reduce mid-line graphical glitches~~
