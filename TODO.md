@@ -15,7 +15,7 @@
 
 ## BUGS
 - [ ] Score Midline color swap timing
-- [ ] Lost scanline when spider is at the bottom of the playfield
+- [x] Lost scanline when spider is at the bottom of the playfield
 
 ## Maybe
 - [ ] Web playfield variations

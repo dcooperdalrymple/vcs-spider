@@ -14,6 +14,11 @@ SPIDER_SIZE         = #SPIDER_SPRITE_SIZE
 SPIDER_VEL_X        = 2
 SPIDER_VEL_Y        = 2
 
+SPIDER_BOUNDARY_LEFT   = #SPIDER_VEL_X
+SPIDER_BOUNDARY_RIGHT  = #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X
+SPIDER_BOUNDARY_TOP    = #SPIDER_VEL_Y+4
+SPIDER_BOUNDARY_BOTTOM = #KERNEL_SCANLINES-SCORE_LINES-SPIDER_SIZE-SPIDER_VEL_Y-17
+
 ; Initialization
 
 SpiderInit:
@@ -118,26 +123,26 @@ SpiderControl:
     ; Check Playfield Boundaries
 
 .spider_control_boundary_left:
-    cpx #SPIDER_VEL_X
+    cpx #SPIDER_BOUNDARY_LEFT
     bcs .spider_control_boundary_right
-    ldx #SPIDER_VEL_X
+    ldx #SPIDER_BOUNDARY_LEFT
     jmp .spider_control_boundary_top
 
 .spider_control_boundary_right:
-    cpx #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X
+    cpx #SPIDER_BOUNDARY_RIGHT
     bcc .spider_control_boundary_top
-    ldx #(KERNEL_WIDTH/2)-SPIDER_SIZE-SPIDER_VEL_X
+    ldx #SPIDER_BOUNDARY_RIGHT
 
 .spider_control_boundary_top:
-    cpy #SPIDER_VEL_Y+2
+    cpy #SPIDER_BOUNDARY_TOP
     bcs .spider_control_boundary_bottom
-    ldy #SPIDER_VEL_Y+2
+    ldy #SPIDER_BOUNDARY_TOP
     jmp .spider_control_store
 
 .spider_control_boundary_bottom:
-    cpy #KERNEL_SCANLINES-SCORE_LINES-SPIDER_SIZE-SPIDER_VEL_Y-17
+    cpy #SPIDER_BOUNDARY_BOTTOM
     bcc .spider_control_store
-    ldy #KERNEL_SCANLINES-SCORE_LINES-SPIDER_SIZE-SPIDER_VEL_Y-17
+    ldy #SPIDER_BOUNDARY_BOTTOM
 
 .spider_control_store:
     ; Store new position
