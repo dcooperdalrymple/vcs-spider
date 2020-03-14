@@ -1,7 +1,7 @@
 # Development To-Do list
 
 ## TODO
-- [ ] Remove logo screen for more rom real estate
+- [x] Remove logo screen for more rom real estate
 - [ ] Add copyright info to title screen
 - [ ] Missle 1 color to spider color when no swatter
 - [ ] Use difficulty switches to change variable scaling, not starting level (always start on level 1)

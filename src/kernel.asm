@@ -171,7 +171,7 @@ OverColor           ds 1
 
     include "objects/swatter_sprite.asm"
 
-    include "logo_image.asm"
+;    include "logo_image.asm"
 
 InitSystem:
 
@@ -188,7 +188,8 @@ InitSystem:
 
 .init_game:
 
-    jsr LogoInit
+;    jsr LogoInit
+    jsr TitleInit
 
 ;=======================================
 ; Game Kernel
@@ -275,7 +276,8 @@ OverScan:
     bcs .overscan_logic     ; If D0 is set, no reset
 
     ; Perform reset
-    jsr LogoInit            ; No need for logic
+;    jsr LogoInit            ; No need for logic
+    jsr TitleInit
     jmp .overscan_loop
 
 .overscan_logic:
@@ -298,7 +300,7 @@ OverScan:
 ; State Code
 ;================
 
-    include "logo.asm"
+;    include "logo.asm"
     include "title.asm"
     include "game.asm"
     include "over.asm"
