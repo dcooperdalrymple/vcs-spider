@@ -33,6 +33,9 @@ python ./assets/sprite_image.py -name TitleSpider -in ./assets/title-spider.png 
 echo "/assets/title-bug.png => /src/title_bug.asm"
 python ./assets/sprite_image.py -name TitleBug -in ./assets/title-bug.png -out ./src/title_bug.asm -reverse 1 -flip 0
 
+echo "/assets/title-logo.png => /src/title_logo.asm"
+python ./assets/sprite_image.py -name TitleLogo -in ./assets/title-logo.png -out ./src/title_logo.asm -reverse 1 -flip 0
+
 echo "/assets/player.png => /src/objects/spider_sprite.asm"
 python ./assets/sprite_image.py -name SpiderSprite -in ./assets/player.png -out ./src/objects/spider_sprite.asm -reverse 1 -flip 0
 

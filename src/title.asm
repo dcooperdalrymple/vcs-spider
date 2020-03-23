@@ -16,6 +16,7 @@ TITLE_AUDIO_STEP        = 9
 
 TITLE_FRAME_TOP_LINES   = 12
 TITLE_FRAME_BOT_LINES   = 5
+TITLE_FRAME_BOT_WIDTH   = 6
 TITLE_LABEL_LINE        = 7
 
 TITLE_GAP_SIZE          = #16
@@ -23,6 +24,9 @@ TITLE_GAP_SIZE          = #16
 TITLE_SPIDER_POS_X      = #(KERNEL_WIDTH/4)-(8*3)-(8*2)-2
 TITLE_SPIDER_SIZE       = #9
 TITLE_SPIDER_LINE_SIZE  = #4
+
+TITLE_LOGO_LINES        = 7
+TITLE_LOGO_POS_X        = #(KERNEL_WIDTH/4)-(8*2)-4
 
 TitleInit:
 
@@ -48,18 +52,8 @@ TitleInit:
     ; Setup Spider Sprite
     SET_POINTER SpiderPtr, TitleSpider
 
-    lda #%00010110  ; Triple Sprite and 2 clock size missle0
-    sta NUSIZ0
-    lda #%00000110  ; Triple Sprite
-    sta NUSIZ1
-
-    lda #$FF        ; Reflect P1
-    sta REFP1
-    lda #0          ; No reflect
-    sta REFP0
-
     ; Drums and Bass
-    ;lda #0
+    lda #0
     ;sta AUDC1
     sta AUDV1
 
@@ -352,6 +346,18 @@ TitleKernel:
     lda #%00000000 ; No mirroring
     sta CTRLPF
 
+    ; Spider Sprite Settings
+
+    lda #%00010110  ; Triple Sprite and 2 clock size missle0
+    sta NUSIZ0
+    lda #%00000110  ; Triple Sprite
+    sta NUSIZ1
+
+    lda #$FF        ; Reflect P1
+    sta REFP1
+    lda #0          ; No reflect
+    sta REFP0
+
     ; Turn on display
     ;lda #0
     sta VBLANK
@@ -507,7 +513,7 @@ TitleFrameBottomDraw:
     sta COLUPF
 
     ; Start Counters
-    ldx #KERNEL_IMAGE_LINE ; Scanline Counter
+    ldx #TITLE_FRAME_BOT_WIDTH ; Scanline Counter
     ldy #0 ; Image Counter
 
 .title_frame_bottom:
@@ -543,7 +549,7 @@ TitleFrameBottomDraw:
 .title_frame_bottom_index_next: ; 6 cycles
 
     ; Restore scanline counter
-    ldx #KERNEL_IMAGE_LINE ; 2
+    ldx #TITLE_FRAME_BOT_WIDTH ; 2
 
     tya ; 2
     clc ; 2
@@ -559,6 +565,70 @@ TitleFrameBottomDraw:
     sta PF0
     sta PF1
     sta PF2
+
+TitleLogoDraw:
+
+    ; Load Logo Color (sprites)
+    lda #TITLE_LABEL_COLOR
+    sta COLUP0
+    sta COLUP1
+
+    ; Setup Sprite Config
+    lda #%00000001
+    sta NUSIZ0
+    sta NUSIZ1
+
+    lda #0          ; No reflect
+    sta REFP1
+    sta REFP0
+
+    ; Position sprites
+
+    lda #TITLE_LOGO_POS_X
+    ldx #0
+    jsr PosObject
+
+    lda #(TITLE_LOGO_POS_X+8)
+    ldx #1
+    jsr PosObject
+
+    ; Start Counters
+    ldx #TITLE_LOGO_LINES-1
+
+    ; Preload first grp
+    lda TitleLogo,x
+
+    ; Set Positions
+    sta WSYNC
+    sta HMOVE
+
+    jmp .title_logo_load
+
+.title_logo:
+
+    ; 76 machine cycles per scanline
+    sta WSYNC
+
+    lda TitleLogo,x
+.title_logo_load: ; Skip to account for hmove
+    ldy TitleLogo+#TITLE_LOGO_LINES,x
+    sta GRP0
+    sty GRP1
+
+    lda TitleLogo+#TITLE_LOGO_LINES*2,x
+    ldy TitleLogo+#TITLE_LOGO_LINES*3,x
+    sleep 20
+    sta GRP0
+    sty GRP1
+
+.title_logo_index:
+    dex
+    bpl .title_logo
+
+.title_logo_clean:
+    lda #0
+    sta GRP0
+    sta GRP1
 
 .title_kernel_return:
     rts

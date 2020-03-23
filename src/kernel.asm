@@ -98,7 +98,7 @@ LinePosX            ds 1 ; 4
 ; Spider
 
 SpiderPtr           ds 2
-SpiderPosY           ds 1
+SpiderPosY          ds 1
 SpiderCtrl          ds 1
 SpiderColor         ds 1
 
@@ -160,6 +160,7 @@ OverColor           ds 1
     include "title_frame_bottom.asm"
     include "title_spider.asm"
     include "title_bug.asm"
+    include "title_logo.asm"
 
     include "objects/score_digits.asm"
     include "objects/score_digits_flip.asm"

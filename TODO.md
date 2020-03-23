@@ -2,7 +2,7 @@
 
 ## TODO
 - [x] Remove logo screen for more rom real estate
-- [ ] Add copyright info to title screen
+- [x] Add copyright info to title screen
 - [ ] Missle 1 color to spider color when no swatter
 - [ ] Use difficulty switches to change variable scaling, not starting level (always start on level 1)
 - [ ] Health/power/points pickup
@@ -14,7 +14,7 @@
 - [ ] Improve playfield level color choices
 
 ## BUGS
-- [ ] Score Midline color swap timing
+- [ ] ~~Score Midline color swap timing~~
 - [x] Lost scanline when spider is at the bottom of the playfield
 
 ## Maybe
