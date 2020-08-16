@@ -15,14 +15,16 @@
 PAL                 = 0
 PAL_SCANLINES       = 242
 PAL_TOTAL           = 312
+PAL_FRAMES          = 50
 
 ; NTSC Region
 NTSC                = 1
 NTSC_SCANLINES      = 192
 NTSC_TOTAL          = 262
+NTSC_FRAMES         = 60
 
 ; Kernel
-SYSTEM              = NTSC
+;SYSTEM              = NTSC
 #if SYSTEM = NTSC
 KERNEL_SCANLINES    = NTSC_SCANLINES
 KERNEL_TOTAL        = NTSC_TOTAL
@@ -39,7 +41,12 @@ KERNEL_HBLANK       = 68
 
 KERNEL_IMAGE_MIRROR_DATA   = #3
 KERNEL_IMAGE_FULL_DATA = #6
+#if SYSTEM = NTSC
 KERNEL_IMAGE_LINE   = #8
+#endif
+#if SYSTEM = PAL
+KERNEL_IMAGE_LINE   = #10
+#endif
 KERNEL_IMAGE_SIZE   = #24 ; KERNEL_SCANLINES/KERNEL_IMAGE_LINE
 
 ;================

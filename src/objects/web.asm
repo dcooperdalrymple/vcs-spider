@@ -7,9 +7,15 @@
 WEB_BG_COLOR        = #$00
 WEB_FG_COLOR        = #$02
 
+#if SYSTEM = NTSC
 WEB_SIZE            = 28
+#endif
+#if SYSTEM = PAL
+WEB_SIZE            = 37
+#endif
+
 WEB_LINES           = KERNEL_SCANLINES-SCORE_LINES
-WEB_LINE            = WEB_LINES/WEB_SIZE
+WEB_LINE            = 6 ; WEB_LINES/WEB_SIZE
 
 ; Scanline Draw
 

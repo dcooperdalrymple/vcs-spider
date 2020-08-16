@@ -153,6 +153,7 @@ LevelLoadColor:
     ; Hard: 10-15
     ; Extreme: 16-19
 
+#if SYSTEM = NTSC
 LevelDataBk:        ; Background Color
     .BYTE #$00      ; rgb(0, 0, 0)      Easy
     .BYTE #$D0      ; rgb(0, 21, 1)
@@ -174,7 +175,6 @@ LevelDataBk:        ; Background Color
     .BYTE #$08      ; rgb(126, 126, 126)
     .BYTE #$0A      ; rgb(162, 162, 162)
     .BYTE #$0C      ; rgb(199, 199, 199)
-
 LevelDataPf:        ; Web Color
     .BYTE #$06      ; rgb(91, 91, 91)   Easy
     .BYTE #$D4      ; rgb(48, 89, 0)
@@ -196,3 +196,48 @@ LevelDataPf:        ; Web Color
     .BYTE #$00      ; rgb(0, 0, 0)
     .BYTE #$00      ; rgb(0, 0, 0)
     .BYTE #$00      ; rgb(0, 0, 0)
+#endif
+#if SYSTEM = PAL
+LevelDataBk:        ; Background Color
+    .BYTE #$00      ; rgb(0, 0, 0)      Easy
+    .BYTE #$30      ; rgb(0, 21, 1)
+    .BYTE #$90      ; rgb(0, 31, 2) *
+    .BYTE #$50      ; rgb(0, 33, 2)
+    .BYTE #$70      ; rgb(0, 36, 3)
+    .BYTE #$B0      ; rgb(0, 16, 58)    Medium
+    .BYTE #$80      ; rgb(0, 0, 114)
+    .BYTE #$D0      ; rgb(13, 0, 130)
+    .BYTE #$80      ; rgb(45, 0, 74)
+    .BYTE #$20      ; rgb(25, 2, 0)     Hard
+    .BYTE #$20      ; rgb(26, 2, 0)
+    .BYTE #$20      ; rgb(55, 0, 0)
+    .BYTE #$20      ; rgb(56, 0, 0)
+    .BYTE #$60      ; rgb(68, 0, 8)
+    .BYTE #$40      ; rgb(71, 0, 0)
+    .BYTE #$80      ; rgb(45, 0, 74)    Extreme
+    .BYTE #$80      ; rgb(45, 0, 74)
+    .BYTE #$08      ; rgb(126, 126, 126)
+    .BYTE #$0A      ; rgb(162, 162, 162)
+    .BYTE #$0C      ; rgb(199, 199, 199)
+LevelDataPf:        ; Web Color
+    .BYTE #$06      ; rgb(91, 91, 91)   Easy
+    .BYTE #$34      ; rgb(48, 89, 0)
+    .BYTE #$54      ; rgb(8, 107, 0)
+    .BYTE #$74      ; rgb(0, 112, 12)
+    .BYTE #$94      ; rgb(0, 105, 87)
+    .BYTE #$B2      ; rgb(0, 49, 110)   Medium
+    .BYTE #$D4      ; rgb(3, 60, 214)
+    .BYTE #$B4      ; rgb(0, 85, 162)
+    .BYTE #$A4      ; rgb(85, 15, 201)
+    .BYTE #$22      ; rgb(94, 8, 0)     Hard
+    .BYTE #$42      ; rgb(115, 0, 0)
+    .BYTE #$62      ; rgb(111, 0, 31)
+    .BYTE #$64      ; rgb(150, 6, 64)
+    .BYTE #$44      ; rgb(152, 19, 0)
+    .BYTE #$24      ; rgb(131, 39, 0)
+    .BYTE #$82      ; rgb(87, 0, 103)  Extreme
+    .BYTE #$84      ; rgb(125, 5, 140)
+    .BYTE #$00      ; rgb(0, 0, 0)
+    .BYTE #$00      ; rgb(0, 0, 0)
+    .BYTE #$00      ; rgb(0, 0, 0)
+#endif

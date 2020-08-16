@@ -4,10 +4,18 @@
 
 LOGO_FRAMES         = 140
 
+#if SYSTEM = NTSC
 LOGO_BG_COLOR       = #$00
 LOGO_FG_COLOR       = #$C6
 LOGO_BG_BW_COLOR    = #$00
 LOGO_FG_BW_COLOR    = #$0E
+#endif
+#if SYSTEM = PAL
+LOGO_BG_COLOR       = #$00
+LOGO_FG_COLOR       = #$56
+LOGO_BG_BW_COLOR    = #$00
+LOGO_FG_BW_COLOR    = #$0E
+#endif
 
 LOGO_IMAGE_SIZE         = 12
 LOGO_IMAGE_LINE_SIZE    = 5

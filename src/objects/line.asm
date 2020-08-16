@@ -5,14 +5,25 @@
 ; Constants
 
 LINE_SIZE       = 8
+#if SYSTEM = NTSC
 LINE_VEL_X      = 4
 LINE_VEL_Y      = 4
+#endif
+#if SYSTEM = PAL
+LINE_VEL_X      = 3
+LINE_VEL_Y      = 3
+#endif
 
 LINE_AUDIO_C    = 8
 LINE_AUDIO_F    = 1
 LINE_AUDIO_V    = 4
 
+#if SYSTEM = NTSC
 LINE_SAMPLE_LEN = 8
+#endif
+#if SYSTEM = PAL
+LINE_SAMPLE_LEN = 7
+#endif
 LINE_SAMPLE_C   = 3
 LINE_SAMPLE_F   = 1
 LINE_SAMPLE_V   = 4

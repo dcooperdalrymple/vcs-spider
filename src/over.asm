@@ -2,15 +2,28 @@
 ; Constants
 ;================
 
+#if SYSTEM = NTSC
 OVER_BG_COLOR       = #$00
 OVER_FG_WIN_COLOR   = #SPIDER_COLOR
 OVER_FG_LOSE_COLOR  = #$44
 OVER_FG_BW_COLOR    = #$06
+#endif
+#if SYSTEM = PAL
+OVER_BG_COLOR       = #$00
+OVER_FG_WIN_COLOR   = #SPIDER_COLOR
+OVER_FG_LOSE_COLOR  = #$64
+OVER_FG_BW_COLOR    = #$06
+#endif
 
 OVER_AUDIO_TONE     = 7
 OVER_AUDIO_VOLUME   = 6 ; 15 is max
 OVER_AUDIO_LENGTH   = 6
+#if SYSTEM = NTSC
 OVER_AUDIO_STEP     = 16
+#endif
+#if SYSTEM = PAL
+OVER_AUDIO_STEP     = 13
+#endif
 
 OVER_IMAGE_SIZE     = 9
 OVER_IMAGE_LINE_SIZE = 8

@@ -10,12 +10,25 @@ BUG_STUN_LENGTH     = 120
 BUG_POINTS          = 4
 BUG_HP              = 3
 
+#if SYSTEM = NTSC
 BUG_ACTIVE_COLOR    = #$CC
 BUG_ACTIVE_BW_COLOR = #$0C
 BUG_STUN_COLOR      = #$38
 BUG_STUN_BW_COLOR   = #$08
+#endif
+#if SYSTEM = PAL
+BUG_ACTIVE_COLOR    = #$5C
+BUG_ACTIVE_BW_COLOR = #$0C
+BUG_STUN_COLOR      = #$48
+BUG_STUN_BW_COLOR   = #$08
+#endif
 
+#if SYSTEM = NTSC
 BUG_SAMPLE_LEN      = 30
+#endif
+#if SYSTEM = PAL
+BUG_SAMPLE_LEN      = 25
+#endif
 BUG_SAMPLE_C        = 3
 BUG_SAMPLE_F        = 20
 BUG_SAMPLE_V        = 4

@@ -2,24 +2,48 @@
 ; Constants
 ;================
 
+#if SYSTEM = NTSC
 TITLE_BG_COLOR          = #$00
 TITLE_WEB_COLOR         = #$06
 TITLE_LABEL_COLOR       = #$0E
 TITLE_SPIDER_COLOR      = #$56
 TITLE_SPIDER_BW_COLOR   = #$0E
+#endif
+#if SYSTEM = PAL
+TITLE_BG_COLOR          = #$00
+TITLE_WEB_COLOR         = #$06
+TITLE_LABEL_COLOR       = #$0E
+TITLE_SPIDER_COLOR      = #$86
+TITLE_SPIDER_BW_COLOR   = #$0E
+#endif
 
 TITLE_AUDIO_0_TONE      = 4
 TITLE_AUDIO_0_VOLUME    = 1
 TITLE_AUDIO_1_VOLUME    = 5
 TITLE_AUDIO_LENGTH      = 16
+#if SYSTEM = NTSC
 TITLE_AUDIO_STEP        = 9
+#endif
+#if SYSTEM = PAL
+TITLE_AUDIO_STEP        = 8
+#endif
 
 TITLE_FRAME_TOP_LINES   = 12
 TITLE_FRAME_BOT_LINES   = 5
+#if SYSTEM = NTSC
 TITLE_FRAME_BOT_WIDTH   = 6
-TITLE_LABEL_LINE        = 7
+#endif
+#if SYSTEM = PAL
+TITLE_FRAME_BOT_WIDTH   = KERNEL_IMAGE_LINE
+#endif
+TITLE_LABEL_LINES        = 7
 
+#if SYSTEM = NTSC
 TITLE_GAP_SIZE          = #16
+#endif
+#if SYSTEM = PAL
+TITLE_GAP_SIZE          = #22
+#endif
 
 TITLE_SPIDER_POS_X      = #(KERNEL_WIDTH/4)-(8*3)-(8*2)-2
 TITLE_SPIDER_SIZE       = #9
@@ -410,7 +434,7 @@ TitleFrameTopDraw:
     adc #KERNEL_IMAGE_FULL_DATA ; 2
     tay ; 2
 
-    cpy #TITLE_LABEL_LINE*KERNEL_IMAGE_FULL_DATA ; 2
+    cpy #TITLE_LABEL_LINES*KERNEL_IMAGE_FULL_DATA ; 2
     bne .title_frame_top_label_color_skip ; 2
     lda #TITLE_LABEL_COLOR ; 2
     sta COLUPF ; 4
