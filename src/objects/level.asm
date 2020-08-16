@@ -8,16 +8,7 @@ LEVELS          = 20
 
 LevelInit:
 
-    ; Set beginning level by difficulty switches treated as binary
-    lda SWCHB
-    REPEAT 6 ; shift to 0-3
-    lsr
-    REPEND
-    clc ; multiply by 5
-    sta Temp
-    asl
-    asl
-    adc Temp
+    lda #0
     sta LevelCurrent
 
     jsr LevelLoad
@@ -77,13 +68,60 @@ LevelLoad:
     sbc Temp
     sta GameAudioStep
 
+    ; Check Difficulty Setting
+    bit SWCHB ; LevelDifficulty
+    beq .level_difficulty_3_bug ; Both A
+    bmi .level_difficulty_2_bug ; P0 B & P1 A
+    bvs .level_difficulty_1_bug ; P0 A & P1 B
+    ; Both B
+
+.level_difficulty_0_bug: ; Easy
+    ; Bug Speed: level/2+1
+    lda LevelCurrent
+    lsr
+    adc #2
+    sta BugSpeed
+    jmp .level_difficulty_0_swatter_wait
+
+.level_difficulty_1_bug: ; Normal
     ; Bug Speed: level/4+2
     lda LevelCurrent
     lsr ; /2
     lsr ; /2
     adc #2
     sta BugSpeed
+    jmp .level_difficulty_1_swatter_wait
 
+.level_difficulty_2_bug: ; Hard
+    ; Bug Speed: level/2+3
+    lda LevelCurrent
+    lsr ; /2
+    adc #3
+    sta BugSpeed
+    jmp .level_difficulty_2_swatter_wait
+
+.level_difficulty_3_bug: ; Extreme
+    ; Bug Speed: level/2+5
+    lda LevelCurrent
+    lsr ; /2
+    adc #5
+    sta BugSpeed
+    jmp .level_difficulty_3_swatter_wait
+
+.level_difficulty_0_swatter_wait:
+    ; Swatter Wait Time Min (adds random 0-128): (20-level)*5+100
+    lda #20
+    clc
+    sbc LevelCurrent
+    asl
+    sta Temp
+    asl
+    adc Temp
+    adc #100
+    sta SwatterWaitTime
+    jmp .level_difficulty_0_swatter_hold
+
+.level_difficulty_1_swatter_wait:
     ; Swatter Wait Time Min (adds random 0-128): (20-level)*10
     lda #20
     clc
@@ -94,9 +132,41 @@ LevelLoad:
     asl ; x2
     adc Temp
     sta SwatterWaitTime
+    jmp .level_difficulty_1_swatter_hold
 
+.level_difficulty_2_swatter_wait:
+    ; Swatter Wait Time Min (adds random 0-128): (20-level)*8
+    lda #20
+    clc
+    sbc LevelCurrent
+    asl ; x2
+    asl ; x2
+    asl ; x2
+    sta SwatterWaitTime
+    jmp .level_difficulty_1_swatter_hold
+
+.level_difficulty_3_swatter_wait:
+    ; Swatter Wait Time Min (adds random 0-128): (20-level)*6
+    lda #20
+    clc
+    sbc LevelCurrent
+    asl ; x2
+    sta Temp
+    asl ; x2
+    adc Temp
+    sta SwatterWaitTime
+    jmp .level_difficulty_3_swatter_hold
+
+.level_difficulty_0_swatter_hold:
+    ; Swatter Hold Time: 80-level
+    lda #80
+    clc
+    sbc LevelCurrent
+    sta SwatterHoldTime
+    jmp .level_difficulty_0_swatter_dmg
+
+.level_difficulty_1_swatter_hold:
     ; Swatter Hold Time: 60-(level*2)
-
     lda LevelCurrent
     asl ; x2
     sta Temp
@@ -104,7 +174,40 @@ LevelLoad:
     clc
     sbc Temp
     sta SwatterHoldTime
+    jmp .level_difficulty_1_swatter_dmg
 
+.level_difficulty_2_swatter_hold:
+    ; Swatter Hold Time: 50-(level*2)
+    lda LevelCurrent
+    asl ; x2
+    sta Temp
+    lda #50
+    clc
+    sbc Temp
+    sta SwatterHoldTime
+    jmp .level_difficulty_2_swatter_dmg
+
+.level_difficulty_3_swatter_hold:
+    ; Swatter Hold Time: 40-(level*2)
+    lda LevelCurrent
+    asl ; x2
+    sta Temp
+    lda #40
+    clc
+    sbc Temp
+    sta SwatterHoldTime
+    jmp .level_difficulty_3_swatter_dmg
+
+.level_difficulty_0_swatter_dmg:
+    ; Swatter Hit Damage: level*2+$08
+    lda LevelCurrent
+    clc
+    asl
+    adc #$08
+    sta SwatterHitDamage
+    rts
+
+.level_difficulty_1_swatter_dmg:
     ; Swatter Hit Damage: level*3+$10
     lda LevelCurrent
     clc
@@ -113,7 +216,27 @@ LevelLoad:
     adc Temp
     adc #$10
     sta SwatterHitDamage
+    rts
 
+.level_difficulty_2_swatter_dmg:
+    ; Swatter Hit Damage: level*4+$18
+    lda LevelCurrent
+    clc
+    asl ; x2
+    asl ; x2
+    adc #$18
+    sta SwatterHitDamage
+    rts
+
+.level_difficulty_3_swatter_dmg:
+    ; Swatter Hit Damage: level*8+$20
+    lda LevelCurrent
+    clc
+    asl ; x2
+    asl ; x2
+    asl ; x2
+    adc #$20
+    sta SwatterHitDamage
     rts
 
 LevelLoadColor:
@@ -144,29 +267,24 @@ LevelLoadColor:
 
     rts
 
-    ; Easy: 1-5
-    ; Medium: 6-9
-    ; Hard: 10-15
-    ; Extreme: 16-19
-
 #if SYSTEM = NTSC
 LevelDataPf:        ; Web Color
-    .BYTE #$06      ; rgb(91, 91, 91)   Easy
+    .BYTE #$06      ; rgb(91, 91, 91)
     .BYTE #$D4      ; rgb(48, 89, 0)
     .BYTE #$C4      ; rgb(8, 107, 0)
     .BYTE #$B4      ; rgb(0, 112, 12)
     .BYTE #$A4      ; rgb(0, 105, 87)
-    .BYTE #$92      ; rgb(0, 49, 110)   Medium
+    .BYTE #$92      ; rgb(0, 49, 110)
     .BYTE #$84      ; rgb(3, 60, 214)
     .BYTE #$94      ; rgb(0, 85, 162)
     .BYTE #$64      ; rgb(85, 15, 201)
-    .BYTE #$22      ; rgb(94, 8, 0)     Hard
+    .BYTE #$22      ; rgb(94, 8, 0)
     .BYTE #$32      ; rgb(115, 0, 0)
     .BYTE #$42      ; rgb(111, 0, 31)
     .BYTE #$44      ; rgb(150, 6, 64)
     .BYTE #$34      ; rgb(152, 19, 0)
     .BYTE #$24      ; rgb(131, 39, 0)
-    .BYTE #$52      ; rgb(87, 0, 103)  Extreme
+    .BYTE #$52      ; rgb(87, 0, 103)
     .BYTE #$54      ; rgb(125, 5, 140)
     .BYTE #$5A      ; rgb(237, 101, 254)
     .BYTE #$5C      ; rgb(254, 138, 246)
@@ -174,22 +292,22 @@ LevelDataPf:        ; Web Color
 #endif
 #if SYSTEM = PAL
 LevelDataPf:        ; Web Color
-    .BYTE #$06      ; rgb(91, 91, 91)   Easy
+    .BYTE #$06      ; rgb(91, 91, 91)
     .BYTE #$34      ; rgb(48, 89, 0)
     .BYTE #$54      ; rgb(8, 107, 0)
     .BYTE #$74      ; rgb(0, 112, 12)
     .BYTE #$94      ; rgb(0, 105, 87)
-    .BYTE #$B2      ; rgb(0, 49, 110)   Medium
+    .BYTE #$B2      ; rgb(0, 49, 110)
     .BYTE #$D4      ; rgb(3, 60, 214)
     .BYTE #$B4      ; rgb(0, 85, 162)
     .BYTE #$A4      ; rgb(85, 15, 201)
-    .BYTE #$22      ; rgb(94, 8, 0)     Hard
+    .BYTE #$22      ; rgb(94, 8, 0)
     .BYTE #$42      ; rgb(115, 0, 0)
     .BYTE #$62      ; rgb(111, 0, 31)
     .BYTE #$64      ; rgb(150, 6, 64)
     .BYTE #$44      ; rgb(152, 19, 0)
     .BYTE #$24      ; rgb(131, 39, 0)
-    .BYTE #$82      ; rgb(87, 0, 103)  Extreme
+    .BYTE #$82      ; rgb(87, 0, 103)
     .BYTE #$84      ; rgb(125, 5, 140)
     .BYTE #$8A      ; rgb(254, 101, 227)
     .BYTE #$8C      ; rgb(254, 138, 254)

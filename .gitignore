@@ -1,2 +1,3 @@
 *.sla.autosave
 /bin/*
+*.ods#
