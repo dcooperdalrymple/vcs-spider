@@ -67,7 +67,7 @@ LevelUpdate:
 
 LevelLoad:
 
-    ; Game Audio Step: 9-(level/4)
+    ; Game Audio Step: (9 or 8)-(level/4)
     lda LevelCurrent
     lsr ; /2
     lsr ; /2

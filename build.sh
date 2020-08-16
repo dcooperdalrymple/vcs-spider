@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Assets
-./assets.sh
+#./assets.sh
 
 # Source
 [ ! -d "bin" ] && mkdir bin

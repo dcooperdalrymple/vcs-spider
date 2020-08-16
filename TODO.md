@@ -8,7 +8,7 @@
 - [ ] Health/power/points pickup
 - [ ] Game Over text
 - [ ] Better success screen (baby spiders?)
-- [ ] PAL Support
+- [x] PAL Support
 - [ ] Add level points matrix to manual
 - [ ] Remove background color variations
 - [ ] Improve playfield level color choices
