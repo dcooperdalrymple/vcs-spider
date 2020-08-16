@@ -10,7 +10,7 @@
 - [ ] Better success screen (baby spiders?)
 - [x] PAL Support
 - [ ] Add level points matrix to manual
-- [ ] Remove background color variations
+- [x] Remove background color variations
 - [ ] Improve playfield level color choices
 
 ## BUGS
