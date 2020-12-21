@@ -8,7 +8,7 @@ if [ $1 = "pal" ]; then
     dasm kernel.asm -DSYSTEM=0 -f3 -v5 -lrom.lst -orom.bin -srom.sym
 else
     echo "NTSC Mode"
-    ./assets-ntsc.sh
+    #./assets-ntsc.sh
     cd src
     dasm kernel.asm -DSYSTEM=1 -f3 -v5 -lrom.lst -orom.bin -srom.sym
 fi

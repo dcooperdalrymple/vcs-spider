@@ -163,11 +163,11 @@ OverColor           ds 1
 
     ; Assets
 
-    include "title_frame_top.asm"
-    include "title_frame_bottom.asm"
-    include "title_spider.asm"
-    include "title_bug.asm"
-    include "title_logo.asm"
+;    include "title_frame_top.asm"
+;    include "title_frame_bottom.asm"
+;    include "title_spider.asm"
+;    include "title_bug.asm"
+;    include "title_logo.asm"
 
     include "objects/score_digits.asm"
     include "objects/score_digits_flip.asm"
@@ -197,7 +197,8 @@ InitSystem:
 .init_game:
 
 ;    jsr LogoInit
-    jsr TitleInit
+;    jsr TitleInit
+    jsr GameInit
 
 ;=======================================
 ; Game Kernel
@@ -224,6 +225,7 @@ VerticalSync:
     inc Frame
     dec FrameTimer
     dec FrameTimer+1
+    dec FrameTimer+2
 
     ; VSYNCH signal scanlines
     REPEAT #KERNEL_VSYNC
@@ -285,7 +287,8 @@ OverScan:
 
     ; Perform reset
 ;    jsr LogoInit            ; No need for logic
-    jsr TitleInit
+;    jsr TitleInit
+    jsr GameInit
     jmp .overscan_loop
 
 .overscan_logic:
@@ -309,7 +312,7 @@ OverScan:
 ;================
 
 ;    include "logo.asm"
-    include "title.asm"
+;    include "title.asm"
     include "game.asm"
     include "over.asm"
 

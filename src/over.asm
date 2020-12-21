@@ -151,7 +151,8 @@ OverState:
 
 .over_state_next:
     ; Button is released, load title screen
-    jsr TitleInit
+;    jsr TitleInit
+    jsr GameInit
 
 .over_state_return:
     rts
