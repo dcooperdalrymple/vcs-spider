@@ -244,12 +244,17 @@ SwatterDrawStart:
 
     rts
 
-.swatter_draw_start:
+.swatter_draw_start: ; Note: Doesn't need vertical delay
 
-    ; Note: Doesn't need vertical delay
+    bvs .swatter_draw_y ; Skip animate if active state, bit already performed
+    inc SwatterPosY ; Animate y pos by 1 step
+.swatter_draw_y:
+    lda SwatterPosY
+    bpl .swatter_draw_calc
+    lda #0
 
+.swatter_draw_calc:
     ; Calculate starting position
-    lda SwatterPosY         ; Y Position
     lsr
     clc
     adc #SWATTER_SPRITE_SIZE
@@ -283,6 +288,7 @@ SwatterReset:
     sta SwatterPosX
     lda Rand16          ; Y Position
     and #$7e            ; Ensure that Y position is even
+    sbc SwatterHoldTime ; Subtract time for animation at 1 step per frame
     sta SwatterPosY
 
     rts
