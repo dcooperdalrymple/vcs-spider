@@ -22,6 +22,7 @@ GAME_AUDIO_TONE     = 6
     include "objects/web.asm"
     include "objects/spider.asm"
     include "objects/line.asm"
+    include "objects/pickup.asm"
     include "objects/bug.asm"
     include "objects/swatter.asm"
 
@@ -66,6 +67,7 @@ GameInit:
     jsr ScoreInit
     jsr SpiderInit
     jsr LineInit
+    jsr PickupInit
     jsr BugInit
     ;jsr SwatterInit
     jsr SwatterReset
@@ -81,6 +83,7 @@ GameVerticalBlank:
     jsr LevelUpdate
     jsr SpiderUpdate
     jsr LineUpdate
+    jsr PickupUpdate
     jsr BugUpdate
     jsr SwatterUpdate
     jsr ScoreUpdate

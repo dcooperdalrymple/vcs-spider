@@ -67,7 +67,7 @@ KernelPtr           ds 2
 OverScanPtr         ds 2
 
 Frame               ds 1
-FrameTimer          ds 2
+FrameTimer          ds 3
 InputState          ds 2
 
 AudioStep           ds 1
@@ -148,6 +148,11 @@ SwatterLine         ds 1
 
 SwatterSampleCount  ds 1
 SwatterSampleF      ds 1
+
+; Pickup
+
+PickupPosY          ds 1
+PickupPosX          ds 1
 
 ; Over
 
