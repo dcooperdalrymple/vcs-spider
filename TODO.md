@@ -23,7 +23,7 @@
 - [ ] Bug boss level: use bug sprite from intro with missle 1
 - [ ] Swatter boss level: use standard sprite (or larger flipped), no missle
 - [ ] Reduce levels to 10; 5 -> Bug Boss -> 5 -> Swatter Boss
-- [ ] Creep up with swatter
+- [x] Creep up with swatter
 - [ ] 4 digit score without level clearing
 - [ ] Bonus bug running across top of screen
 - [ ] ~~Only write graphics registers after wsync to reduce mid-line graphical glitches~~
