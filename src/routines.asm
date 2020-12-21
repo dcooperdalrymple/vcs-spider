@@ -55,7 +55,7 @@ Random:
 ; Input: A
 ; Uses: A,X,Y,Temp0/1/2
 ; Converts binary value to decimal value (BCD)
-; Returns X,Y
+; Returns: X,Y
 ; Sourced from http://www.6502.org/source/integers/hex2dec-more.htm
 ;=======================================
 
@@ -112,3 +112,23 @@ BlankLines:
     bne .blank_lines_loop
 
     rts
+
+;=======================================
+; ByteDivide
+; ---------
+; Input: A - dividend, Y - divisor
+; Uses: A,Y,Temp0
+; Returns: Y - quotient, A - Remainder
+;=======================================
+
+;ByteDivide:
+;    sty Temp+0  ; Divisor
+;    ldy #0
+;    sec
+;.byte_divide_1:
+;    sbc Temp+0
+;    bcc .byte_divide_2  ; if carry cleared, subtraction below 0
+;    iny
+;    bne .byte_divide_1
+;.byte_divide_2:
+;    rts
