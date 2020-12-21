@@ -16,6 +16,8 @@ SWATTER_BW_COLOR        = #$0E
 SWATTER_HOLD_COLOR      = #$46
 SWATTER_HOLD_BW_COLOR   = #$04
 #endif
+SWATTER_WAIT_COLOR      = #SPIDER_COLOR ; NTSC/PAL calculated in spider.asm
+SWATTER_WAIT_BW_COLOR   = #SPIDER_BW_COLOR
 
 SWATTER_SPRITE_SIZE     = #20
 SWATTER_SIZE            = #SWATTER_SPRITE_SIZE*2
@@ -74,25 +76,31 @@ SwatterUpdate:
     beq .swatter_update_bw
 
 .swatter_update_color:
-    lda SwatterState
-    cmp #SWATTER_STATE_ACTIVE
-    bne .swatter_update_color_hold
+    bit SwatterState
+    bpl .swatter_update_color_wait
+    bvc .swatter_update_color_hold
 .swatter_update_color_active:
     lda #SWATTER_COLOR
     jmp .swatter_update_color_set
 .swatter_update_color_hold:
     lda #SWATTER_HOLD_COLOR
     jmp .swatter_update_color_set
+.swatter_update_color_wait:
+    lda #SWATTER_WAIT_COLOR
+    jmp .swatter_update_color_set
 
 .swatter_update_bw:
-    lda SwatterState
-    cmp #SWATTER_STATE_HOLD
-    bne .swatter_update_bw_active
+    bit SwatterState
+    bpl .swatter_update_bw_wait
+    bvc .swatter_update_bw_hold
+.swatter_update_bw_active:
+    lda #SWATTER_BW_COLOR
+    jmp .swatter_update_color_set
 .swatter_update_bw_hold:
     lda #SWATTER_HOLD_BW_COLOR
     jmp .swatter_update_color_set
-.swatter_update_bw_active:
-    lda #SWATTER_BW_COLOR
+.swatter_update_bw_wait:
+    lda #SWATTER_WAIT_BW_COLOR
 
 .swatter_update_color_set:
     sta SwatterColor
