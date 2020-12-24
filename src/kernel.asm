@@ -113,8 +113,6 @@ SpiderIndex         ds 1
 SpiderDrawPos       ds 1
 SpiderLine          ds 1
 
-SpiderPtr2          ds 2
-
 ; Line
 
 LineEnabled         ds 1
@@ -148,6 +146,14 @@ SwatterLine         ds 1
 
 SwatterSampleCount  ds 1
 SwatterSampleF      ds 1
+
+; Fly
+
+FlyPosX             ds 1
+FlyState            ds 1
+FlyLineX            ds 1
+FlyLineY            ds 1
+FlyPtr              ds 2
 
 ; Over
 

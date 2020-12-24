@@ -24,6 +24,7 @@ GAME_AUDIO_TONE     = 6
     include "objects/line.asm"
     include "objects/bug.asm"
     include "objects/swatter.asm"
+    include "objects/fly.asm"
 
 ; Initialization
 
@@ -69,6 +70,7 @@ GameInit:
     jsr BugInit
     ;jsr SwatterInit
     jsr SwatterReset
+    jsr FlyInit
 
     rts
 
@@ -84,6 +86,7 @@ GameVerticalBlank:
     jsr BugUpdate
     jsr SwatterUpdate
     jsr ScoreUpdate
+    jsr FlyUpdate
 
     ; Reset Collisions
     sta CXCLR
@@ -227,6 +230,8 @@ GameKernel:
     ; 6 line counter
     lda #0
     sta Temp+2
+
+    jsr FlyDrawStart ; If active, takes over some lines
 
     ; Load background color and start first line
     lda WebColor+0
