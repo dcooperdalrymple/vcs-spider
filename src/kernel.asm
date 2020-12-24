@@ -197,7 +197,8 @@ InitSystem:
 .init_game:
 
 ;    jsr LogoInit
-    jsr TitleInit
+;    jsr TitleInit
+    jsr GameInit
 
 ;=======================================
 ; Game Kernel
@@ -285,7 +286,8 @@ OverScan:
 
     ; Perform reset
 ;    jsr LogoInit            ; No need for logic
-    jsr TitleInit
+;    jsr TitleInit
+    jsr GameInit
     jmp .overscan_loop
 
 .overscan_logic:
@@ -309,7 +311,7 @@ OverScan:
 ;================
 
 ;    include "logo.asm"
-    include "title.asm"
+;    include "title.asm"
     include "game.asm"
     include "over.asm"
 
