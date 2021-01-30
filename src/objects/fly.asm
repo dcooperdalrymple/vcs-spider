@@ -19,6 +19,10 @@ FLY_WEB_LINES = #FLY_SIZE*FLY_LINE_SIZE/WEB_LINE ; 6
 FLY_BOUNDARY_LEFT = #4
 FLY_BOUNDARY_RIGHT = #(KERNEL_WIDTH/2)-FLY_WIDTH-4
 
+FLY_SCORE_HIT = #2
+FLY_SCORE_DESTROY = #16
+FLY_HEALTH = #64
+
 ; Initialization
 
 FlyInit:
@@ -252,12 +256,34 @@ FlyDamage:
     lda FlyState
     and #%00000011
     beq .fly_damage_destroy
-    dec FlyState
-    rts
+    dec FlyState ; Damage
+
+    ; Add points to score
+    clc
+    lda ScoreValue+1
+    adc #FLY_SCORE_HIT
+    sta ScoreValue+1
+
+    jmp .fly_damage_return
 
 .fly_damage_destroy:
     lda #0
     sta FlyState
+
+    ; Add to health
+    clc
+    lda ScoreValue
+    adc #FLY_HEALTH
+    bcc .fly_damage_hp_skip
+    lda #$ff
+.fly_damage_hp_skip:
+    sta ScoreValue
+
+    ; Add points to score
+    clc
+    lda ScoreValue+1
+    adc #FLY_SCORE_DESTROY
+    sta ScoreValue+1
 
 .fly_damage_return:
     sta CXCLR ; Reset Collisions
