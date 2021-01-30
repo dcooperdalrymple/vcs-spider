@@ -69,7 +69,7 @@ LevelLoad:
     sta GameAudioStep
 
     ; Fly Status
-    ldx #%10000000
+    ldx #%10000011
     lda LevelCurrent
     and #%00000001 ; only even levels
     bne .level_fly_set
