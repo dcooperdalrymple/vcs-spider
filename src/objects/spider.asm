@@ -148,9 +148,18 @@ SpiderControl:
     jmp .spider_control_store
 
 .spider_control_boundary_bottom:
+    bit FlyState
+    bmi .spider_control_boundary_bottom_fly
+
     cpy #SPIDER_BOUNDARY_BOTTOM
     bcc .spider_control_store
     ldy #SPIDER_BOUNDARY_BOTTOM
+    jmp .spider_control_store
+
+.spider_control_boundary_bottom_fly:
+    cpy #SPIDER_BOUNDARY_BOTTOM-FLY_LINES
+    bcc .spider_control_store
+    ldy #SPIDER_BOUNDARY_BOTTOM-FLY_LINES
 
 .spider_control_store:
     ; Store new position
@@ -188,7 +197,7 @@ SpiderControl:
     jmp .spider_control_reflect
 
 .spider_control_reflect:
-    stx REFP0
+    stx SpiderReflect
 
 .spider_control_return:
 ;    rts
@@ -253,6 +262,10 @@ SpiderDrawStart:
     ; Set sprite color
     lda SpiderColor
     sta COLUP0
+
+    ; Set Sprite Reflection
+    ;lda SpiderReflect
+    ;sta REFP0
 
     ; Determine if we need to use vertical delay (odd line)
     lda SpiderPosY     ; Y Position

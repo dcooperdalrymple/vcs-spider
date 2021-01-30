@@ -112,6 +112,7 @@ SpiderColor         ds 1
 SpiderIndex         ds 1
 SpiderDrawPos       ds 1
 SpiderLine          ds 1
+SpiderReflect       ds 1
 
 ; Line
 
@@ -149,7 +150,8 @@ SwatterSampleF      ds 1
 
 ; Fly
 
-FlyPosX             ds 1
+FlyPosX             ds 2
+FlyPosXBackup       ds 2
 FlyState            ds 1
 FlyLineX            ds 1
 FlyLineY            ds 1

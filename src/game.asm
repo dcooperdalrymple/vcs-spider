@@ -17,6 +17,7 @@ GAME_AUDIO_TONE     = 6
 
 ; Object Code
 
+    include "objects/fly.asm"
     include "objects/level.asm"
     include "objects/score.asm"
     include "objects/web.asm"
@@ -24,7 +25,6 @@ GAME_AUDIO_TONE     = 6
     include "objects/line.asm"
     include "objects/bug.asm"
     include "objects/swatter.asm"
-    include "objects/fly.asm"
 
 ; Initialization
 
@@ -232,6 +232,10 @@ GameKernel:
     sta Temp+2
 
     jsr FlyDrawStart ; If active, takes over some lines
+
+    ; Spider Reflection
+    lda SpiderReflect
+    sta REFP0
 
     ; Load background color and start first line
     lda WebColor+0

@@ -68,6 +68,15 @@ LevelLoad:
     sbc Temp
     sta GameAudioStep
 
+    ; Fly Status
+    ldx #%10000000
+    lda LevelCurrent
+    and #%00000001 ; only even levels
+    bne .level_fly_set
+    ldx #%00000000
+.level_fly_set:
+    stx FlyState
+
     ; Check Difficulty Setting
     bit SWCHB ; LevelDifficulty
     beq .level_difficulty_3_bug ; Both A

@@ -204,9 +204,18 @@ BugMovement:
     jmp .bug_movement_store
 
 .bug_movement_boundary_bottom:
+    bit FlyState
+    bmi .bug_movement_boundary_bottom_fly
+
     cpy #KERNEL_SCANLINES-SCORE_LINES-BUG_BOUNDARY
     bcc .bug_movement_store
     ldy #KERNEL_SCANLINES-SCORE_LINES-BUG_BOUNDARY
+    jmp .bug_movement_store
+
+.bug_movement_boundary_bottom_fly:
+    cpy #KERNEL_SCANLINES-SCORE_LINES-BUG_BOUNDARY-FLY_LINES
+    bcc .bug_movement_store
+    ldy #KERNEL_SCANLINES-SCORE_LINES-BUG_BOUNDARY-FLY_LINES
 
 .bug_movement_store:
     sta BugPosX,x

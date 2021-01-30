@@ -11,8 +11,8 @@ FLY_COLOR = #$86
 FLY_BW_COLOR = #$0E
 
 FLY_SIZE = 9
-FLY_WIDTH = 32
-FLY_LINE_SIZE = 4
+FLY_WIDTH = 16
+FLY_LINE_SIZE = #WEB_LINE/2
 FLY_LINES = #FLY_SIZE*FLY_LINE_SIZE ; 36
 FLY_WEB_LINES = #FLY_SIZE*FLY_LINE_SIZE/WEB_LINE ; 6
 
@@ -25,13 +25,19 @@ FlyInit:
     ;SET_POINTER FlyPtr, TitleBug
     lda #50
     sta FlyPosX
-    lda #%10000000 ; 7 = direction, 8 = active
+    lda #%00000000 ; 7 = direction, 8 = active
     sta FlyState
     rts
 
 FlyUpdate:
+    bit FlyState
+    bpl .fly_update_return
+
     jsr FlyAnimation
     jsr FlyMovement
+    jsr FlyPosition
+
+.fly_update_return:
     rts
 
 FlyAnimation:
@@ -77,28 +83,32 @@ FlyMovement:
 .fly_movement_return:
     rts
 
+FlyPosition:
+    lda FlyPosX
+    clc
+    adc #FLY_WIDTH/2
+    sta FlyPosX+1
+
+    ldx #1
+.fly_position_loop:
+    lda XPositions,x
+    sta FlyPosXBackup,x
+    lda FlyPosX,x
+    sta XPositions,x
+    dex
+    bpl .fly_position_loop
+
+    rts
+
 FlyDrawStart:
     bit FlyState
     bmi .fly_draw_start
-    ;rts
+    rts
 
 .fly_draw_start:
 
-    ; Set x pos
-    lda FlyPosX
-    ldx #0
-    jsr PosObject
-    lda FlyPosX
-    clc
-    adc #16
-    ldx #1
-    jsr PosObject
-
-    sta WSYNC
-    sta HMOVE
-
     ; Single sprite, double size
-    lda #%00000101
+    lda #%00000000
     sta NUSIZ0
     sta NUSIZ1
 
@@ -119,37 +129,52 @@ FlyDrawStart:
 .fly_draw_bw:
     lda #FLY_BW_COLOR
 .fly_draw_color_set:
+    sta COLUP0
     sta COLUP1
 
-    ldx #FLY_LINE_SIZE
+    sta WSYNC
+    ; Load background colors
+    lda WebColor+0
+    sta COLUBK
+    lda WebColor+1
+    sta COLUPF
+
     ldy #FLY_SIZE-1
 .fly_draw_line:
+
+    tya
+    and #%00000001
+    sta WSYNC
+    beq .fly_draw_skip
+.fly_draw_web:
+    ldx WebIndex
+    lda WebImagePF0,x
+    sta PF0
+    lda WebImagePF1,x
+    sta PF1
+    lda WebImagePF2,x
+    sta PF2
+    inc WebIndex
+.fly_draw_skip:
+
+.fly_draw_sprite:
+    sta WSYNC
     lda (FlyPtr),y
     sta GRP0
     sta GRP1
 
-.fly_draw_delay:
-    dex
     sta WSYNC
-    bne .fly_draw_delay
+    ; Draw ball?
 
 .fly_draw_index:
-    ldx #FLY_LINE_SIZE
     dey
     bpl .fly_draw_line
 
 .fly_draw_clean:
+    ; Turn off sprites
     lda #0
     sta GRP0
     sta GRP1
-
-    ; Rest object x pos
-    ldx #4
-.fly_draw_pos_reset:
-    lda XPositions,x
-    jsr PosObject
-    dex
-    bpl .fly_draw_pos_reset
 
     ; Restore bug size
     lda #%00110101
@@ -157,13 +182,35 @@ FlyDrawStart:
     lda #%00110111
     sta NUSIZ1
 
-    ; Account for scanline difference
-    ldx #(KERNEL_SCANLINES-SCORE_LINES-FLY_LINES)/2-2-5 ; Half scanline counter
-    lda #FLY_WEB_LINES
-    sta WebIndex
+    ; Restore player colors
+    lda SpiderColor
+    sta COLUP0
+    lda SwatterColor
+    sta COLUP1
+
+    ; Rest object x pos
+    ldx #1
+.fly_draw_pos_backup:
+    lda FlyPosXBackup,x
+    sta XPositions,x
+    dex
+    bpl .fly_draw_pos_backup
+
+    sta HMCLR
+    ldx #1
+.fly_draw_pos_reset:
+    lda XPositions,x
+    jsr PosObject
+    dex
+    bpl .fly_draw_pos_reset
 
     ; Set final x positions
     sta WSYNC
     sta HMOVE
+
+    ; Account for scanline difference
+    ldx #(KERNEL_SCANLINES-SCORE_LINES-FLY_LINES)/2-2-5 ; Half scanline counter
+    ;lda #FLY_WEB_LINES
+    ;sta WebIndex
 
     rts
