@@ -152,6 +152,7 @@ SwatterSampleF      ds 1
 
 FlyPosX             ds 2
 FlyPosXBackup       ds 2
+FlySpeed            ds 2
 FlyState            ds 1
 FlyLineX            ds 1
 FlyLineY            ds 1

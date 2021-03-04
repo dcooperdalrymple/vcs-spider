@@ -56,6 +56,14 @@ FlyAnimation:
     rts
 
 FlyMovement:
+    dec FlySpeed+1
+    beq .fly_movement_do
+    rts
+
+.fly_movement_do:
+    lda FlySpeed
+    sta FlySpeed+1
+
     bit FlyState
     bvs .fly_movement_right
 .fly_movement_left:

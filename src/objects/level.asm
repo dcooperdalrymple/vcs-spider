@@ -95,7 +95,7 @@ LevelLoad:
     clc
     adc #1
     sta BugSpeed
-    jmp .level_difficulty_0_swatter_wait
+    jmp .level_difficulty_0_fly
 
 .level_difficulty_1_bug: ; Normal
     ; Bug Speed: level/4+2
@@ -105,7 +105,7 @@ LevelLoad:
     clc
     adc #2
     sta BugSpeed
-    jmp .level_difficulty_1_swatter_wait
+    jmp .level_difficulty_1_fly
 
 .level_difficulty_2_bug: ; Hard
     ; Bug Speed: level/2+3
@@ -114,7 +114,7 @@ LevelLoad:
     clc
     adc #3
     sta BugSpeed
-    jmp .level_difficulty_2_swatter_wait
+    jmp .level_difficulty_2_fly
 
 .level_difficulty_3_bug: ; Extreme
     ; Bug Speed: level/2+5
@@ -123,6 +123,54 @@ LevelLoad:
     clc
     adc #5
     sta BugSpeed
+    jmp .level_difficulty_3_fly
+
+.level_difficulty_0_fly:
+    ; Fly Speed: 10-level/2
+    lda LevelCurrent
+    lsr
+    sta FlySpeed
+    lda #10
+    clc
+    sbc FlySpeed
+    sta FlySpeed
+    sta FlySpeed+1
+    jmp .level_difficulty_0_swatter_wait
+
+.level_difficulty_1_fly:
+    ; Fly Speed: 10-level/2
+    lda LevelCurrent
+    lsr
+    sta FlySpeed
+    lda #10
+    clc
+    sbc FlySpeed
+    sta FlySpeed
+    sta FlySpeed+1
+    jmp .level_difficulty_1_swatter_wait
+
+.level_difficulty_2_fly:
+    ; Fly Speed: 10-level/2
+    lda LevelCurrent
+    lsr
+    sta FlySpeed
+    lda #10
+    clc
+    sbc FlySpeed
+    sta FlySpeed
+    sta FlySpeed+1
+    jmp .level_difficulty_2_swatter_wait
+
+.level_difficulty_3_fly:
+    ; Fly Speed: 10-level/2
+    lda LevelCurrent
+    lsr
+    sta FlySpeed
+    lda #10
+    clc
+    sbc FlySpeed
+    sta FlySpeed
+    sta FlySpeed+1
     jmp .level_difficulty_3_swatter_wait
 
 .level_difficulty_0_swatter_wait:
