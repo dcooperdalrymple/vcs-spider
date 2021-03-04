@@ -17,13 +17,14 @@
 - [o] ~~Score Midline color swap timing~~
 - [x] Lost scanline when spider is at the bottom of the playfield
 - [x] Difficulty switch test and bug speed on easy.
+- [x] Fly two-sprite collision test.
 
 ## Maybe
 - [o] Web playfield variations
 - [ ] Boss levels: restrict spider to top shooting down with missle 0
 - [ ] Bug boss level: use bug sprite from intro with missle 1
 - [ ] Swatter boss level: use standard sprite (or larger flipped), no missle
-- [ ] Reduce levels to 10; 5 -> Bug Boss -> 5 -> Swatter Boss
+- [o] Reduce levels to 10; 5 -> Bug Boss -> 5 -> Swatter Boss
 - [x] Creep up with swatter
 - [ ] 4 digit score without level clearing
 - [o] Bonus bug running across top of screen

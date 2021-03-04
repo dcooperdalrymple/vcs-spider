@@ -245,9 +245,11 @@ FlyDrawStart:
 FlyDamage:
     ; Check Collision
     bit CXP0FB
-    bvc .fly_damage_return
+    bvs .fly_damage_do
     bit CXP1FB
     bvc .fly_damage_return
+    
+.fly_damage_do:
 
     ; Disable Line
     jsr LineDisable
