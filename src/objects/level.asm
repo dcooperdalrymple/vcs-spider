@@ -79,16 +79,21 @@ LevelLoad:
 
     ; Check Difficulty Setting
     bit SWCHB ; LevelDifficulty
-    beq .level_difficulty_3_bug ; Both A
+    bpl .level_difficulty_check_bug
+    bvc .level_difficulty_check_bug
+    jmp .level_difficulty_3_bug ; Both A
+.level_difficulty_check_bug:
     bmi .level_difficulty_2_bug ; P0 B & P1 A
     bvs .level_difficulty_1_bug ; P0 A & P1 B
     ; Both B
 
 .level_difficulty_0_bug: ; Easy
-    ; Bug Speed: level/2+1
+    ; Bug Speed: level/4+1
     lda LevelCurrent
     lsr
-    adc #2
+    lsr
+    clc
+    adc #1
     sta BugSpeed
     jmp .level_difficulty_0_swatter_wait
 
@@ -97,6 +102,7 @@ LevelLoad:
     lda LevelCurrent
     lsr ; /2
     lsr ; /2
+    clc
     adc #2
     sta BugSpeed
     jmp .level_difficulty_1_swatter_wait
@@ -105,6 +111,7 @@ LevelLoad:
     ; Bug Speed: level/2+3
     lda LevelCurrent
     lsr ; /2
+    clc
     adc #3
     sta BugSpeed
     jmp .level_difficulty_2_swatter_wait
@@ -113,6 +120,7 @@ LevelLoad:
     ; Bug Speed: level/2+5
     lda LevelCurrent
     lsr ; /2
+    clc
     adc #5
     sta BugSpeed
     jmp .level_difficulty_3_swatter_wait

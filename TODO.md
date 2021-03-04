@@ -16,6 +16,7 @@
 ## BUGS
 - [o] ~~Score Midline color swap timing~~
 - [x] Lost scanline when spider is at the bottom of the playfield
+- [x] Difficulty switch test and bug speed on easy.
 
 ## Maybe
 - [o] Web playfield variations
