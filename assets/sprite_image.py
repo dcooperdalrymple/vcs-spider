@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/env python
 
 # Initialize the program and modules
 
@@ -7,11 +7,11 @@ try:
     from PIL import Image
     import math
 
-except ImportError, err:
-    print "Could not load %s module." % (err)
+except ImportError as err:
+    print("Could not load %s module.".format(err))
     raise SystemExit
 
-print "\nVCS Sprite Image Converter\nCopyright (c) 2020 D Cooper Dalrymple\n"
+print("\nVCS Sprite Image Converter\nCopyright (c) 2020 D Cooper Dalrymple\n")
 
 # Constants
 SPRITE_WIDTH = 8
@@ -105,14 +105,14 @@ def compose_output(sprite_data, address_name):
 
 # No input, prompt user
 if len(sys.argv) < 2:
-    print "No arguments given. Run with -h for a list of options."
+    print("No arguments given. Run with -h for a list of options.")
     raise SystemExit
 
 # Help message
 elif sys.argv[1] == "-h" or sys.argv[1] == "-help" or sys.argv[1] == "--help":
-    print "Convert " + str(SPRITE_WIDTH) + " pixel wide sprite frames to GRP bytes:"
-    print "  sprite_image.py -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME] -reverse [0/1] -flip [0/1]"
-    print "\nAccepts png/jpg input and .asm output is preferred."
+    print("Convert " + str(SPRITE_WIDTH) + " pixel wide sprite frames to GRP bytes:")
+    print("  sprite_image.py -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME] -reverse [0/1] -flip [0/1]")
+    print("\nAccepts png/jpg input and .asm output is preferred.")
     raise SystemExit
 
 if len(sys.argv) == 11 and sys.argv[1] == '-name' and sys.argv[3] == '-in' and sys.argv[5] == '-out' and sys.argv[7] == '-reverse' and sys.argv[9] == '-flip':
@@ -136,7 +136,7 @@ if len(sys.argv) == 11 and sys.argv[1] == '-name' and sys.argv[3] == '-in' and s
     output.write(sprite_output)
     output.close()
 
-    print "Successfully converted image to sprite frames.\n"
-    raise SystemExit
+    print("Successfully converted image to sprite frames.\n")
+    raise(SystemExit)
 
-print "Invalid arguments. Run with -h for a list of options."
+print("Invalid arguments. Run with -h for a list of options.")

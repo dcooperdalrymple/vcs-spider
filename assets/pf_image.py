@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/env python
 
 # Initialize the program and modules
 
@@ -7,11 +7,11 @@ try:
     from PIL import Image
     import math
 
-except ImportError, err:
-    print "Could not load %s module." % (err)
+except ImportError as err:
+    print("Could not load %s module.".format(err))
     raise SystemExit
 
-print "\nVCS Playfield Image Converter\nCopyright (c) 2020 D Cooper Dalrymple\n"
+print("\nVCS Playfield Image Converter\nCopyright (c) 2020 D Cooper Dalrymple\n")
 
 # Constants
 #PF_HEIGHT = 192 / 8
@@ -169,17 +169,17 @@ def compose_merge(strs):
 
 # No input, prompt user
 if len(sys.argv) < 2:
-    print "No arguments given. Run with -h for a list of options."
+    print("No arguments given. Run with -h for a list of options.")
     raise SystemExit
 
 # Help message
 elif sys.argv[1] == "-h" or sys.argv[1] == "-help" or sys.argv[1] == "--help":
-    print "Convert mirrored monochromatic image to playfield bytes:"
-    print "  pf_image.py -type mirror -split 0 -reverse 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
-    print "Convert fullscreen monochromatic image to playfield bytes:"
-    print "  pf_image.py -type full -split 0 -reverse 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]"
-    print "\nSetting split to 1 will separate playfield bytes into different address positions."
-    print "Accepts png/jpg input and .asm output is preferred.\n"
+    print("Convert mirrored monochromatic image to playfield bytes:")
+    print("  pf_image.py -type mirror -split 0 -reverse 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]")
+    print("Convert fullscreen monochromatic image to playfield bytes:")
+    print("  pf_image.py -type full -split 0 -reverse 0 -name [ADDRESSNAME] -in [FILENAME] -out [FILENAME]")
+    print("\nSetting split to 1 will separate playfield bytes into different address positions.")
+    print("Accepts png/jpg input and .asm output is preferred.\n")
     raise SystemExit
 
 if len(sys.argv) == 13 and sys.argv[1] == '-type' and sys.argv[3] == '-split' and sys.argv[5] == '-reverse' and sys.argv[7] == '-name' and sys.argv[9] == '-in' and sys.argv[11] == '-out':
@@ -200,7 +200,7 @@ if len(sys.argv) == 13 and sys.argv[1] == '-type' and sys.argv[3] == '-split' an
         pf_data = convert_full(image_data)
         group_size = PF_FULL_GROUP
     else:
-        print "Invalid conversion type. Must be \"mirror\" or \"full\"."
+        print("Invalid conversion type. Must be \"mirror\" or \"full\".")
         raise SystemExit
 
     if reverse == '1':
@@ -219,7 +219,7 @@ if len(sys.argv) == 13 and sys.argv[1] == '-type' and sys.argv[3] == '-split' an
     output.write(pf_output)
     output.close()
 
-    print "Successfully converted image to playfield data.\n"
+    print("Successfully converted image to playfield data.\n")
     raise SystemExit
 
-print "Invalid arguments. Run with -h for a list of options.\n"
+print("Invalid arguments. Run with -h for a list of options.\n")
