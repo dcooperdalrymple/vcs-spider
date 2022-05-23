@@ -1,3 +1,6 @@
 *.sla.autosave
 /bin/*
 *.ods#
+*.bin
+*.lst
+*.sym
