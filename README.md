@@ -2,7 +2,9 @@
 > Spider Web game for Atari VCS/2600<br />
 > Created by D Cooper Dalrymple 2018 - [dcdalrymple.com](https://dcdalrymple.com/)<br />
 > Licensed under GNU LGPL V3.0<br />
-> Last revision: March 1st, 2020
+> Last revision: May 23rd, 2022
+
+<a href="https://www.tindie.com/products/relic/spider-web-for-the-atari-2600/?ref=offsite_badges&utm_source=sellers_dcdalrymple&utm_medium=badges&utm_campaign=badge_small"><img src="https://d2ss6ovg47m0r5.cloudfront.net/badges/tindie-smalls.png" alt="I sell on Tindie" width="200" height="55"></a>
 
 ## Compilation
 
